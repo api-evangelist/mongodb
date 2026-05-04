@@ -1,0 +1,134 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: MongoDB Atlas
+providerId: mongodb
+created: '2026-05-04'
+modified: '2026-05-04'
+reconciled: true
+tags:
+  - Database
+  - NoSQL
+  - DBaaS
+description: 'MongoDB Atlas: M0 Free / Flex / Dedicated Mx / Serverless.'
+sources:
+  - https://www.mongodb.com/pricing
+  - https://www.mongodb.com/pricing/calculator
+plans:
+  - id: mongodb-atlas-m0
+    name: Atlas M0 (Free)
+    type: freemium
+    description: 'Free shared cluster: 512 MB storage, ~100 ops/sec.'
+    entries:
+      - label: Storage
+        name: storage
+        type: quota
+        metric: MB
+        limit: 512
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Sort memory
+        name: sort_memory
+        type: quota
+        metric: MB
+        limit: 32
+        timeFrame: usage
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Operations per second
+        name: ops
+        type: quota
+        metric: ops_per_second
+        limit: 100
+        timeFrame: usage
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+    elements:
+      - name: Shared cluster
+      - name: Single-region
+      - name: Best for development/learning
+  - id: mongodb-atlas-flex
+    name: Atlas Flex
+    type: paid
+    description: $8-$30/30 days, capped at $30/month. Variable workload sweet spot.
+    entries:
+      - label: Monthly cost (capped)
+        name: monthly
+        type: metered
+        metric: month
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: 8.00-30.00
+        userMultiplied: false
+    elements:
+      - name: Predictable monthly cap
+      - name: Dynamic scaling
+      - name: Production-ready
+  - id: mongodb-atlas-m10
+    name: Atlas Dedicated M10+
+    type: paid
+    description: From ~$0.08/hour ($57/month) for M10 entry-level dedicated.
+    entries:
+      - label: M10 hourly
+        name: m10_hour
+        type: metered
+        metric: hour
+        limit: -1
+        timeFrame: usage
+        geo: global
+        unit: 1
+        price: '0.08'
+        userMultiplied: false
+    elements:
+      - name: Dedicated cluster
+      - name: Multi-region available
+      - name: Backup included
+      - name: Various M-tiers (M10-M700)
+  - id: mongodb-atlas-serverless
+    name: Atlas Serverless
+    type: usage-based
+    description: Per-operation pricing for unpredictable traffic.
+    entries:
+      - label: Reads per million
+        name: reads
+        type: metered
+        metric: million_reads
+        limit: -1
+        timeFrame: usage
+        geo: global
+        unit: 1000000
+        price: '0.10'
+        userMultiplied: false
+      - label: Writes per million
+        name: writes
+        type: metered
+        metric: million_writes
+        limit: -1
+        timeFrame: usage
+        geo: global
+        unit: 1000000
+        price: '1.00'
+        userMultiplied: false
+      - label: Storage
+        name: storage
+        type: metered
+        metric: GB-month
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.025'
+        userMultiplied: false
+    elements:
+      - name: Auto-scales to zero
+      - name: Pay-per-operation
+      - name: Best for spiky workloads

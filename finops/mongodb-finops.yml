@@ -1,0 +1,71 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: MongoDB Atlas
+providerId: mongodb
+created: '2026-05-04'
+modified: '2026-05-04'
+reconciled: true
+tags:
+  - FinOps
+  - FOCUS
+  - Database
+description: FOCUS-aligned FinOps for MongoDB Atlas.
+sources:
+  - https://www.mongodb.com/pricing
+  - https://www.mongodb.com/pricing/calculator
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: MongoDB, Inc.
+serviceCategory: Database-as-a-Service
+billingModel:
+  pricingCategory: Subscription + Usage-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+focusColumns:
+  ServiceName: MongoDB Atlas
+  ServiceCategory: Database-as-a-Service
+  ProviderName: MongoDB
+  PublisherName: MongoDB, Inc.
+  BillingCurrency: USD
+meters:
+  - name: cluster_hours
+    unit: cluster-hour
+    aggregation: sum
+    dimensions:
+      - cluster
+      - tier
+      - region
+      - cloud
+  - name: serverless_reads
+    unit: million_reads
+    aggregation: sum
+  - name: serverless_writes
+    unit: million_writes
+    aggregation: sum
+  - name: data_transfer_inter_region
+    unit: GB
+    aggregation: sum
+  - name: data_transfer_internet
+    unit: GB
+    aggregation: sum
+  - name: backup_storage
+    unit: GB-month
+    aggregation: max
+  - name: atlas_search_indexes
+    unit: search-index-hour
+    aggregation: sum
+principles:
+  - name: Visibility
+    description: Use Atlas Cost Explorer per project; export billing JSON via Atlas Admin API.
+  - name: Allocation
+    description: Use projects per env/team; tag clusters for chargeback.
+  - name: Optimization
+    description: Right-size cluster tier; use Flex for unpredictable; serverless for spiky reads; cap
+      egress with VPC peering.
+  - name: Accountability
+    description: Per-project billing alerts; quarterly tier review using Performance Advisor.
