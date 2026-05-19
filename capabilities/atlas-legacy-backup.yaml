@@ -1,0 +1,542 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Legacy Backup
+  description: 'MongoDB Atlas Administration API — Legacy Backup. 11 operations. Lead operation: Return All Legacy Backup
+    Checkpoints. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Legacy Backup
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-legacy-backup
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Legacy Backup business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backupCheckpoints
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints
+      operations:
+      - name: listgroupclusterbackupcheckpoints
+        method: GET
+        description: Return All Legacy Backup Checkpoints
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster that contains the checkpoints that you want to return.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backupCheckpoints-checkpointId
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints/{checkpointId}
+      operations:
+      - name: getgroupclusterbackupcheckpoint
+        method: GET
+        description: Return One Legacy Backup Checkpoint
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: checkpointId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the checkpoint.
+          required: true
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster that contains the checkpoints that you want to return.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-restoreJobs
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs
+      operations:
+      - name: listgroupclusterrestorejobs
+        method: GET
+        description: Return All Legacy Backup Restore Jobs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: batchId
+          in: query
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the batch of restore jobs to return. Timestamp in
+            ISO 8601 date and time format in UTC when creating a restor
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster with the snapshot you want to return.
+          required: true
+      - name: creategroupclusterrestorejob
+        method: POST
+        description: Create One Legacy Backup Restore Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster with the snapshot you want to return.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-restoreJobs-jobId
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs/{jobId}
+      operations:
+      - name: getgroupclusterrestorejob
+        method: GET
+        description: Return One Legacy Backup Restore Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster with the snapshot you want to return.
+          required: true
+        - name: jobId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the restore job.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-snapshotSchedule
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshotSchedule
+      operations:
+      - name: getgroupclustersnapshotschedule
+        method: GET
+        description: Return One Snapshot Schedule
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster with the snapshot you want to return.
+          required: true
+      - name: updategroupclustersnapshotschedule
+        method: PATCH
+        description: Update Snapshot Schedule for One Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster with the snapshot you want to return.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-snapshots
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots
+      operations:
+      - name: listgroupclustersnapshots
+        method: GET
+        description: Return All Legacy Backup Snapshots
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: completed
+          in: query
+          type: string
+          description: Human-readable label that specifies whether to return only completed, incomplete, or all snapshots.
+            By default, MongoDB Cloud only returns completed snapshots.
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-snapshots-snapshotId
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}
+      operations:
+      - name: deletegroupclustersnapshot
+        method: DELETE
+        description: Remove One Legacy Backup Snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+      - name: getgroupclustersnapshot
+        method: GET
+        description: Return One Legacy Backup Snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+      - name: updategroupclustersnapshot
+        method: PATCH
+        description: Update Expiration Date for One Legacy Backup Snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-legacy-backup-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Legacy Backup. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backupcheckpoints
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backupcheckpoints
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backupCheckpoints.
+      operations:
+      - method: GET
+        name: listgroupclusterbackupcheckpoints
+        description: Return All Legacy Backup Checkpoints
+        call: atlas-legacy-backup.listgroupclusterbackupcheckpoints
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backupcheckpoints/{checkpointid}
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backupcheckpoints-checkpointid
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backupCheckpoints-checkpointId.
+      operations:
+      - method: GET
+        name: getgroupclusterbackupcheckpoint
+        description: Return One Legacy Backup Checkpoint
+        call: atlas-legacy-backup.getgroupclusterbackupcheckpoint
+        with:
+          checkpointId: rest.checkpointId
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/restorejobs
+      name: api-atlas-v2-groups-groupid-clusters-clustername-restorejobs
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-restoreJobs.
+      operations:
+      - method: GET
+        name: listgroupclusterrestorejobs
+        description: Return All Legacy Backup Restore Jobs
+        call: atlas-legacy-backup.listgroupclusterrestorejobs
+        with:
+          batchId: rest.batchId
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupclusterrestorejob
+        description: Create One Legacy Backup Restore Job
+        call: atlas-legacy-backup.creategroupclusterrestorejob
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/restorejobs/{jobid}
+      name: api-atlas-v2-groups-groupid-clusters-clustername-restorejobs-jobid
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-restoreJobs-jobId.
+      operations:
+      - method: GET
+        name: getgroupclusterrestorejob
+        description: Return One Legacy Backup Restore Job
+        call: atlas-legacy-backup.getgroupclusterrestorejob
+        with:
+          clusterName: rest.clusterName
+          jobId: rest.jobId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/snapshotschedule
+      name: api-atlas-v2-groups-groupid-clusters-clustername-snapshotschedule
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-snapshotSchedule.
+      operations:
+      - method: GET
+        name: getgroupclustersnapshotschedule
+        description: Return One Snapshot Schedule
+        call: atlas-legacy-backup.getgroupclustersnapshotschedule
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupclustersnapshotschedule
+        description: Update Snapshot Schedule for One Cluster
+        call: atlas-legacy-backup.updategroupclustersnapshotschedule
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/snapshots
+      name: api-atlas-v2-groups-groupid-clusters-clustername-snapshots
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-snapshots.
+      operations:
+      - method: GET
+        name: listgroupclustersnapshots
+        description: Return All Legacy Backup Snapshots
+        call: atlas-legacy-backup.listgroupclustersnapshots
+        with:
+          clusterName: rest.clusterName
+          completed: rest.completed
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/snapshots/{snapshotid}
+      name: api-atlas-v2-groups-groupid-clusters-clustername-snapshots-snapshotid
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-snapshots-snapshotId.
+      operations:
+      - method: DELETE
+        name: deletegroupclustersnapshot
+        description: Remove One Legacy Backup Snapshot
+        call: atlas-legacy-backup.deletegroupclustersnapshot
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupclustersnapshot
+        description: Return One Legacy Backup Snapshot
+        call: atlas-legacy-backup.getgroupclustersnapshot
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupclustersnapshot
+        description: Update Expiration Date for One Legacy Backup Snapshot
+        call: atlas-legacy-backup.updategroupclustersnapshot
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-legacy-backup-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Legacy Backup. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-legacy-backup-checkpoints
+      description: Return All Legacy Backup Checkpoints
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.listgroupclusterbackupcheckpoints
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-legacy-backup-checkpoint
+      description: Return One Legacy Backup Checkpoint
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.getgroupclusterbackupcheckpoint
+      with:
+        checkpointId: tools.checkpointId
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-legacy-backup-restore
+      description: Return All Legacy Backup Restore Jobs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.listgroupclusterrestorejobs
+      with:
+        batchId: tools.batchId
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-legacy-backup-restore
+      description: Create One Legacy Backup Restore Job
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-legacy-backup.creategroupclusterrestorejob
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-legacy-backup-restore
+      description: Return One Legacy Backup Restore Job
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.getgroupclusterrestorejob
+      with:
+        clusterName: tools.clusterName
+        jobId: tools.jobId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-snapshot-schedule
+      description: Return One Snapshot Schedule
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.getgroupclustersnapshotschedule
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-snapshot-schedule-one-cluster
+      description: Update Snapshot Schedule for One Cluster
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.updategroupclustersnapshotschedule
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-legacy-backup-snapshots
+      description: Return All Legacy Backup Snapshots
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.listgroupclustersnapshots
+      with:
+        clusterName: tools.clusterName
+        completed: tools.completed
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-legacy-backup-snapshot
+      description: Remove One Legacy Backup Snapshot
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-legacy-backup.deletegroupclustersnapshot
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-legacy-backup-snapshot
+      description: Return One Legacy Backup Snapshot
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.getgroupclustersnapshot
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-expiration-date-one-legacy
+      description: Update Expiration Date for One Legacy Backup Snapshot
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-legacy-backup.updategroupclustersnapshot
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

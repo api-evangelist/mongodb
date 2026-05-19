@@ -1,0 +1,266 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Flex Clusters
+  description: 'MongoDB Atlas Administration API — Flex Clusters. 6 operations. Lead operation: Return All Flex Clusters from
+    One Project. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Flex Clusters
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-flex-clusters
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Flex Clusters business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-flexClusters
+      path: /api/atlas/v2/groups/{groupId}/flexClusters
+      operations:
+      - name: listgroupflexclusters
+        method: GET
+        description: Return All Flex Clusters from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupflexcluster
+        method: POST
+        description: Create One Flex Cluster in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-flexClusters-name
+      path: /api/atlas/v2/groups/{groupId}/flexClusters/{name}
+      operations:
+      - name: deletegroupflexcluster
+        method: DELETE
+        description: Remove One Flex Cluster from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+      - name: getgroupflexcluster
+        method: GET
+        description: Return One Flex Cluster from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+      - name: updategroupflexcluster
+        method: PATCH
+        description: Update One Flex Cluster in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-flexClusters:tenantUpgrade
+      path: /api/atlas/v2/groups/{groupId}/flexClusters:tenantUpgrade
+      operations:
+      - name: tenantgroupflexclusterupgrade
+        method: POST
+        description: Upgrade One Flex Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-flex-clusters-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Flex Clusters. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters
+      name: api-atlas-v2-groups-groupid-flexclusters
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters.
+      operations:
+      - method: GET
+        name: listgroupflexclusters
+        description: Return All Flex Clusters from One Project
+        call: atlas-flex-clusters.listgroupflexclusters
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupflexcluster
+        description: Create One Flex Cluster in One Project
+        call: atlas-flex-clusters.creategroupflexcluster
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters/{name}
+      name: api-atlas-v2-groups-groupid-flexclusters-name
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters-name.
+      operations:
+      - method: DELETE
+        name: deletegroupflexcluster
+        description: Remove One Flex Cluster from One Project
+        call: atlas-flex-clusters.deletegroupflexcluster
+        with:
+          name: rest.name
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupflexcluster
+        description: Return One Flex Cluster from One Project
+        call: atlas-flex-clusters.getgroupflexcluster
+        with:
+          name: rest.name
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupflexcluster
+        description: Update One Flex Cluster in One Project
+        call: atlas-flex-clusters.updategroupflexcluster
+        with:
+          name: rest.name
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters-tenantupgrade
+      name: api-atlas-v2-groups-groupid-flexclusters-tenantupgrade
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters:tenantUpgrade.
+      operations:
+      - method: POST
+        name: tenantgroupflexclusterupgrade
+        description: Upgrade One Flex Cluster
+        call: atlas-flex-clusters.tenantgroupflexclusterupgrade
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-flex-clusters-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Flex Clusters. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-flex-clusters-one
+      description: Return All Flex Clusters from One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-flex-clusters.listgroupflexclusters
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-flex-cluster-one
+      description: Create One Flex Cluster in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-flex-clusters.creategroupflexcluster
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-flex-cluster-one
+      description: Remove One Flex Cluster from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-flex-clusters.deletegroupflexcluster
+      with:
+        name: tools.name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-flex-cluster-one
+      description: Return One Flex Cluster from One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-flex-clusters.getgroupflexcluster
+      with:
+        name: tools.name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-flex-cluster-one
+      description: Update One Flex Cluster in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-flex-clusters.updategroupflexcluster
+      with:
+        name: tools.name
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: upgrade-one-flex-cluster
+      description: Upgrade One Flex Cluster
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-flex-clusters.tenantgroupflexclusterupgrade
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

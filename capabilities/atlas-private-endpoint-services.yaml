@@ -1,0 +1,496 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Private Endpoint Services
+  description: 'MongoDB Atlas Administration API — Private Endpoint Services. 10 operations. Lead operation: Create One Private
+    Endpoint Service for One Provider. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Private Endpoint Services
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-private-endpoint-services
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Private Endpoint Services business capability. Self-contained, no shared
+      references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-endpointService
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/endpointService
+      operations:
+      - name: creategroupprivateendpointendpointservice
+        method: POST
+        description: Create One Private Endpoint Service for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-endpointService-endpointServiceId
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/endpointService/{endpointServiceId}
+      operations:
+      - name: updategroupprivateendpointendpointservice
+        method: PATCH
+        description: Update One Private Endpoint Service for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: endpointServiceId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint service that you want to update.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-regionalMode
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/regionalMode
+      operations:
+      - name: getgroupprivateendpointregionalmode
+        method: GET
+        description: Return Regionalized Private Endpoint Status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: togglegroupprivateendpointregionalmode
+        method: PATCH
+        description: Toggle Regionalized Private Endpoint Status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/{cloudProvider}/endpointService
+      operations:
+      - name: listgroupprivateendpointendpointservice
+        method: GET
+        description: Return All Private Endpoint Services for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Cloud service provider that manages this private endpoint service.
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService-endpoi
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/{cloudProvider}/endpointService/{endpointServiceId}
+      operations:
+      - name: deletegroupprivateendpointendpointservice
+        method: DELETE
+        description: Remove One Private Endpoint Service for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Cloud service provider that manages this private endpoint service.
+          required: true
+        - name: endpointServiceId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint service that you want to delete.
+          required: true
+      - name: getgroupprivateendpointendpointservice
+        method: GET
+        description: Return One Private Endpoint Service for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Cloud service provider that manages this private endpoint service.
+          required: true
+        - name: endpointServiceId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint service that you want to return.
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService-endpoi
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/{cloudProvider}/endpointService/{endpointServiceId}/endpoint
+      operations:
+      - name: creategroupprivateendpointendpointserviceendpoint
+        method: POST
+        description: Create One Private Endpoint for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Cloud service provider that manages this private endpoint.
+          required: true
+        - name: endpointServiceId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint service for which you want
+            to create a private endpoint.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService-endpoi
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/{cloudProvider}/endpointService/{endpointServiceId}/endpoint/{endpointId}
+      operations:
+      - name: deletegroupprivateendpointendpointserviceendpoint
+        method: DELETE
+        description: Remove One Private Endpoint for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Cloud service provider that manages this private endpoint.
+          required: true
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique string that identifies the private endpoint you want to delete. The format of the `endpointId`
+            parameter differs for AWS and Azure. You must URL encode t
+          required: true
+        - name: endpointServiceId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint service from which you want
+            to delete a private endpoint.
+          required: true
+      - name: getgroupprivateendpointendpointserviceendpoint
+        method: GET
+        description: Return One Private Endpoint for One Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Cloud service provider that manages this private endpoint.
+          required: true
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique string that identifies the private endpoint you want to return. The format of the `endpointId`
+            parameter differs for AWS and Azure. You must URL encode t
+          required: true
+        - name: endpointServiceId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint service for which you want
+            to return a private endpoint.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-private-endpoint-services-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Private Endpoint Services. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/endpointservice
+      name: api-atlas-v2-groups-groupid-privateendpoint-endpointservice
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-endpointService.
+      operations:
+      - method: POST
+        name: creategroupprivateendpointendpointservice
+        description: Create One Private Endpoint Service for One Provider
+        call: atlas-private-endpoint-services.creategroupprivateendpointendpointservice
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/endpointservice/{endpointserviceid}
+      name: api-atlas-v2-groups-groupid-privateendpoint-endpointservice-endpointserviceid
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-endpointService-endpointServiceId.
+      operations:
+      - method: PATCH
+        name: updategroupprivateendpointendpointservice
+        description: Update One Private Endpoint Service for One Provider
+        call: atlas-private-endpoint-services.updategroupprivateendpointendpointservice
+        with:
+          endpointServiceId: rest.endpointServiceId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/regionalmode
+      name: api-atlas-v2-groups-groupid-privateendpoint-regionalmode
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-regionalMode.
+      operations:
+      - method: GET
+        name: getgroupprivateendpointregionalmode
+        description: Return Regionalized Private Endpoint Status
+        call: atlas-private-endpoint-services.getgroupprivateendpointregionalmode
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: togglegroupprivateendpointregionalmode
+        description: Toggle Regionalized Private Endpoint Status
+        call: atlas-private-endpoint-services.togglegroupprivateendpointregionalmode
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/{cloudprovider}/endpointservice
+      name: api-atlas-v2-groups-groupid-privateendpoint-cloudprovider-endpointservice
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService.
+      operations:
+      - method: GET
+        name: listgroupprivateendpointendpointservice
+        description: Return All Private Endpoint Services for One Provider
+        call: atlas-private-endpoint-services.listgroupprivateendpointendpointservice
+        with:
+          cloudProvider: rest.cloudProvider
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/{cloudprovider}/endpointservice/{endpointserviceid}
+      name: api-atlas-v2-groups-groupid-privateendpoint-cloudprovider-endpointservice-endpoi
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService-endpoi.
+      operations:
+      - method: DELETE
+        name: deletegroupprivateendpointendpointservice
+        description: Remove One Private Endpoint Service for One Provider
+        call: atlas-private-endpoint-services.deletegroupprivateendpointendpointservice
+        with:
+          cloudProvider: rest.cloudProvider
+          endpointServiceId: rest.endpointServiceId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupprivateendpointendpointservice
+        description: Return One Private Endpoint Service for One Provider
+        call: atlas-private-endpoint-services.getgroupprivateendpointendpointservice
+        with:
+          cloudProvider: rest.cloudProvider
+          endpointServiceId: rest.endpointServiceId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/{cloudprovider}/endpointservice/{endpointserviceid}/endpoint
+      name: api-atlas-v2-groups-groupid-privateendpoint-cloudprovider-endpointservice-endpoi
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService-endpoi.
+      operations:
+      - method: POST
+        name: creategroupprivateendpointendpointserviceendpoint
+        description: Create One Private Endpoint for One Provider
+        call: atlas-private-endpoint-services.creategroupprivateendpointendpointserviceendpoint
+        with:
+          cloudProvider: rest.cloudProvider
+          endpointServiceId: rest.endpointServiceId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/{cloudprovider}/endpointservice/{endpointserviceid}/endpoint/{endpointid}
+      name: api-atlas-v2-groups-groupid-privateendpoint-cloudprovider-endpointservice-endpoi
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-cloudProvider-endpointService-endpoi.
+      operations:
+      - method: DELETE
+        name: deletegroupprivateendpointendpointserviceendpoint
+        description: Remove One Private Endpoint for One Provider
+        call: atlas-private-endpoint-services.deletegroupprivateendpointendpointserviceendpoint
+        with:
+          cloudProvider: rest.cloudProvider
+          endpointId: rest.endpointId
+          endpointServiceId: rest.endpointServiceId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupprivateendpointendpointserviceendpoint
+        description: Return One Private Endpoint for One Provider
+        call: atlas-private-endpoint-services.getgroupprivateendpointendpointserviceendpoint
+        with:
+          cloudProvider: rest.cloudProvider
+          endpointId: rest.endpointId
+          endpointServiceId: rest.endpointServiceId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-private-endpoint-services-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Private Endpoint Services. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: create-one-private-endpoint-service
+      description: Create One Private Endpoint Service for One Provider
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-private-endpoint-services.creategroupprivateendpointendpointservice
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-private-endpoint-service
+      description: Update One Private Endpoint Service for One Provider
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-private-endpoint-services.updategroupprivateendpointendpointservice
+      with:
+        endpointServiceId: tools.endpointServiceId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-regionalized-private-endpoint-status
+      description: Return Regionalized Private Endpoint Status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-private-endpoint-services.getgroupprivateendpointregionalmode
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: toggle-regionalized-private-endpoint-status
+      description: Toggle Regionalized Private Endpoint Status
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-private-endpoint-services.togglegroupprivateendpointregionalmode
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-private-endpoint-services
+      description: Return All Private Endpoint Services for One Provider
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-private-endpoint-services.listgroupprivateendpointendpointservice
+      with:
+        cloudProvider: tools.cloudProvider
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-private-endpoint-service
+      description: Remove One Private Endpoint Service for One Provider
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-private-endpoint-services.deletegroupprivateendpointendpointservice
+      with:
+        cloudProvider: tools.cloudProvider
+        endpointServiceId: tools.endpointServiceId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-private-endpoint-service
+      description: Return One Private Endpoint Service for One Provider
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-private-endpoint-services.getgroupprivateendpointendpointservice
+      with:
+        cloudProvider: tools.cloudProvider
+        endpointServiceId: tools.endpointServiceId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-private-endpoint-one
+      description: Create One Private Endpoint for One Provider
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-private-endpoint-services.creategroupprivateendpointendpointserviceendpoint
+      with:
+        cloudProvider: tools.cloudProvider
+        endpointServiceId: tools.endpointServiceId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-private-endpoint-one
+      description: Remove One Private Endpoint for One Provider
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-private-endpoint-services.deletegroupprivateendpointendpointserviceendpoint
+      with:
+        cloudProvider: tools.cloudProvider
+        endpointId: tools.endpointId
+        endpointServiceId: tools.endpointServiceId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-private-endpoint-one
+      description: Return One Private Endpoint for One Provider
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-private-endpoint-services.getgroupprivateendpointendpointserviceendpoint
+      with:
+        cloudProvider: tools.cloudProvider
+        endpointId: tools.endpointId
+        endpointServiceId: tools.endpointServiceId
+      outputParameters:
+      - type: object
+        mapping: $.

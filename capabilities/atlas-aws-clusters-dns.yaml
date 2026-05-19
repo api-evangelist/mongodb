@@ -1,0 +1,105 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — AWS Clusters DNS
+  description: 'MongoDB Atlas Administration API — AWS Clusters DNS. 2 operations. Lead operation: Return One Custom DNS Configuration
+    for Atlas Clusters on AWS. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - AWS Clusters DNS
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-aws-clusters-dns
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — AWS Clusters DNS business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-awsCustomDNS
+      path: /api/atlas/v2/groups/{groupId}/awsCustomDNS
+      operations:
+      - name: getgroupawscustomdns
+        method: GET
+        description: Return One Custom DNS Configuration for Atlas Clusters on AWS
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: togglegroupawscustomdns
+        method: PATCH
+        description: Update State of One Custom DNS Configuration for Atlas Clusters on AWS
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-aws-clusters-dns-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — AWS Clusters DNS. One Spectral-compliant resource per
+      consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/awscustomdns
+      name: api-atlas-v2-groups-groupid-awscustomdns
+      description: REST surface for api-atlas-v2-groups-groupId-awsCustomDNS.
+      operations:
+      - method: GET
+        name: getgroupawscustomdns
+        description: Return One Custom DNS Configuration for Atlas Clusters on AWS
+        call: atlas-aws-clusters-dns.getgroupawscustomdns
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: togglegroupawscustomdns
+        description: Update State of One Custom DNS Configuration for Atlas Clusters on AWS
+        call: atlas-aws-clusters-dns.togglegroupawscustomdns
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-aws-clusters-dns-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — AWS Clusters DNS. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-one-custom-dns-configuration
+      description: Return One Custom DNS Configuration for Atlas Clusters on AWS
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-aws-clusters-dns.getgroupawscustomdns
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-state-one-custom-dns
+      description: Update State of One Custom DNS Configuration for Atlas Clusters on AWS
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-aws-clusters-dns.togglegroupawscustomdns
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

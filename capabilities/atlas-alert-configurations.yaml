@@ -1,0 +1,340 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Alert Configurations
+  description: 'MongoDB Atlas Administration API — Alert Configurations. 8 operations. Lead operation: Return All Alert Configuration
+    Matchers Field Names. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Alert Configurations
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-alert-configurations
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Alert Configurations business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-alertConfigs-matchers-fieldNames
+      path: /api/atlas/v2/alertConfigs/matchers/fieldNames
+      operations:
+      - name: listalertconfigmatcherfieldnames
+        method: GET
+        description: Return All Alert Configuration Matchers Field Names
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-alertConfigs
+      path: /api/atlas/v2/groups/{groupId}/alertConfigs
+      operations:
+      - name: listgroupalertconfigs
+        method: GET
+        description: Return All Alert Configurations in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupalertconfig
+        method: POST
+        description: Create One Alert Configuration in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-alertConfigs-alertConfigId
+      path: /api/atlas/v2/groups/{groupId}/alertConfigs/{alertConfigId}
+      operations:
+      - name: deletegroupalertconfig
+        method: DELETE
+        description: Remove One Alert Configuration from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: alertConfigId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration.
+          required: true
+      - name: getgroupalertconfig
+        method: GET
+        description: Return One Alert Configuration from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: alertConfigId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration.
+          required: true
+      - name: togglegroupalertconfig
+        method: PATCH
+        description: Toggle State of One Alert Configuration in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: alertConfigId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration that triggered this alert.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: updategroupalertconfig
+        method: PUT
+        description: Update One Alert Configuration in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: alertConfigId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-alerts-alertId-alertConfigs
+      path: /api/atlas/v2/groups/{groupId}/alerts/{alertId}/alertConfigs
+      operations:
+      - name: getgroupalertalertconfigs
+        method: GET
+        description: Return All Alert Configurations Set for One Alert
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: alertId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the alert.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-alert-configurations-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Alert Configurations. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/alertconfigs/matchers/fieldnames
+      name: api-atlas-v2-alertconfigs-matchers-fieldnames
+      description: REST surface for api-atlas-v2-alertConfigs-matchers-fieldNames.
+      operations:
+      - method: GET
+        name: listalertconfigmatcherfieldnames
+        description: Return All Alert Configuration Matchers Field Names
+        call: atlas-alert-configurations.listalertconfigmatcherfieldnames
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/alertconfigs
+      name: api-atlas-v2-groups-groupid-alertconfigs
+      description: REST surface for api-atlas-v2-groups-groupId-alertConfigs.
+      operations:
+      - method: GET
+        name: listgroupalertconfigs
+        description: Return All Alert Configurations in One Project
+        call: atlas-alert-configurations.listgroupalertconfigs
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupalertconfig
+        description: Create One Alert Configuration in One Project
+        call: atlas-alert-configurations.creategroupalertconfig
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/alertconfigs/{alertconfigid}
+      name: api-atlas-v2-groups-groupid-alertconfigs-alertconfigid
+      description: REST surface for api-atlas-v2-groups-groupId-alertConfigs-alertConfigId.
+      operations:
+      - method: DELETE
+        name: deletegroupalertconfig
+        description: Remove One Alert Configuration from One Project
+        call: atlas-alert-configurations.deletegroupalertconfig
+        with:
+          alertConfigId: rest.alertConfigId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupalertconfig
+        description: Return One Alert Configuration from One Project
+        call: atlas-alert-configurations.getgroupalertconfig
+        with:
+          alertConfigId: rest.alertConfigId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: togglegroupalertconfig
+        description: Toggle State of One Alert Configuration in One Project
+        call: atlas-alert-configurations.togglegroupalertconfig
+        with:
+          alertConfigId: rest.alertConfigId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updategroupalertconfig
+        description: Update One Alert Configuration in One Project
+        call: atlas-alert-configurations.updategroupalertconfig
+        with:
+          alertConfigId: rest.alertConfigId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/alerts/{alertid}/alertconfigs
+      name: api-atlas-v2-groups-groupid-alerts-alertid-alertconfigs
+      description: REST surface for api-atlas-v2-groups-groupId-alerts-alertId-alertConfigs.
+      operations:
+      - method: GET
+        name: getgroupalertalertconfigs
+        description: Return All Alert Configurations Set for One Alert
+        call: atlas-alert-configurations.getgroupalertalertconfigs
+        with:
+          alertId: rest.alertId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-alert-configurations-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Alert Configurations. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-alert-configuration-matchers
+      description: Return All Alert Configuration Matchers Field Names
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-alert-configurations.listalertconfigmatcherfieldnames
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-alert-configurations-one
+      description: Return All Alert Configurations in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-alert-configurations.listgroupalertconfigs
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-alert-configuration-one
+      description: Create One Alert Configuration in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-alert-configurations.creategroupalertconfig
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-alert-configuration-one
+      description: Remove One Alert Configuration from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-alert-configurations.deletegroupalertconfig
+      with:
+        alertConfigId: tools.alertConfigId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-alert-configuration-one
+      description: Return One Alert Configuration from One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-alert-configurations.getgroupalertconfig
+      with:
+        alertConfigId: tools.alertConfigId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: toggle-state-one-alert-configuration
+      description: Toggle State of One Alert Configuration in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-alert-configurations.togglegroupalertconfig
+      with:
+        alertConfigId: tools.alertConfigId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-alert-configuration-one
+      description: Update One Alert Configuration in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-alert-configurations.updategroupalertconfig
+      with:
+        alertConfigId: tools.alertConfigId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-alert-configurations-set
+      description: Return All Alert Configurations Set for One Alert
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-alert-configurations.getgroupalertalertconfigs
+      with:
+        alertId: tools.alertId
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,533 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Network Peering
+  description: 'MongoDB Atlas Administration API — Network Peering. 13 operations. Lead operation: Return All Network Peering
+    Containers in One Project for One Cloud Provider. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Network Peering
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-network-peering
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Network Peering business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-containers
+      path: /api/atlas/v2/groups/{groupId}/containers
+      operations:
+      - name: listgroupcontainers
+        method: GET
+        description: Return All Network Peering Containers in One Project for One Cloud Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: providerName
+          in: query
+          type: string
+          description: Cloud service provider that serves the desired network peering containers.
+          required: true
+      - name: creategroupcontainer
+        method: POST
+        description: Create One Network Peering Container
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-containers-all
+      path: /api/atlas/v2/groups/{groupId}/containers/all
+      operations:
+      - name: listgroupcontainerall
+        method: GET
+        description: Return All Network Peering Containers in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-containers-containerId
+      path: /api/atlas/v2/groups/{groupId}/containers/{containerId}
+      operations:
+      - name: deletegroupcontainer
+        method: DELETE
+        description: Remove One Network Peering Container
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: containerId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that you want
+            to remove.
+          required: true
+      - name: getgroupcontainer
+        method: GET
+        description: Return One Network Peering Container
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: containerId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container.
+          required: true
+      - name: updategroupcontainer
+        method: PATCH
+        description: Update One Network Peering Container
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: containerId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that you want
+            to remove.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-peers
+      path: /api/atlas/v2/groups/{groupId}/peers
+      operations:
+      - name: listgrouppeers
+        method: GET
+        description: Return All Network Peering Connections in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: providerName
+          in: query
+          type: string
+          description: Cloud service provider to use for this VPC peering connection.
+      - name: creategrouppeer
+        method: POST
+        description: Create One Network Peering Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-peers-peerId
+      path: /api/atlas/v2/groups/{groupId}/peers/{peerId}
+      operations:
+      - name: deletegrouppeer
+        method: DELETE
+        description: Remove One Network Peering Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: peerId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the network peering connection that you want to
+            delete.
+          required: true
+      - name: getgrouppeer
+        method: GET
+        description: Return One Network Peering Connection in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: peerId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the network peering connection that you want to
+            retrieve.
+          required: true
+      - name: updategrouppeer
+        method: PATCH
+        description: Update One Network Peering Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: peerId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the network peering connection that you want to
+            update.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateIpMode
+      path: /api/atlas/v2/groups/{groupId}/privateIpMode
+      operations:
+      - name: verifygroupprivateipmode
+        method: GET
+        description: Verify Connect via Peering-Only Mode for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: disablegroupprivateipmodepeering
+        method: PATCH
+        description: Disable Connect via Peering-Only Mode for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-network-peering-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Network Peering. One Spectral-compliant resource per
+      consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/containers
+      name: api-atlas-v2-groups-groupid-containers
+      description: REST surface for api-atlas-v2-groups-groupId-containers.
+      operations:
+      - method: GET
+        name: listgroupcontainers
+        description: Return All Network Peering Containers in One Project for One Cloud Provider
+        call: atlas-network-peering.listgroupcontainers
+        with:
+          providerName: rest.providerName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupcontainer
+        description: Create One Network Peering Container
+        call: atlas-network-peering.creategroupcontainer
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/containers/all
+      name: api-atlas-v2-groups-groupid-containers-all
+      description: REST surface for api-atlas-v2-groups-groupId-containers-all.
+      operations:
+      - method: GET
+        name: listgroupcontainerall
+        description: Return All Network Peering Containers in One Project
+        call: atlas-network-peering.listgroupcontainerall
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/containers/{containerid}
+      name: api-atlas-v2-groups-groupid-containers-containerid
+      description: REST surface for api-atlas-v2-groups-groupId-containers-containerId.
+      operations:
+      - method: DELETE
+        name: deletegroupcontainer
+        description: Remove One Network Peering Container
+        call: atlas-network-peering.deletegroupcontainer
+        with:
+          containerId: rest.containerId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupcontainer
+        description: Return One Network Peering Container
+        call: atlas-network-peering.getgroupcontainer
+        with:
+          containerId: rest.containerId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupcontainer
+        description: Update One Network Peering Container
+        call: atlas-network-peering.updategroupcontainer
+        with:
+          containerId: rest.containerId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/peers
+      name: api-atlas-v2-groups-groupid-peers
+      description: REST surface for api-atlas-v2-groups-groupId-peers.
+      operations:
+      - method: GET
+        name: listgrouppeers
+        description: Return All Network Peering Connections in One Project
+        call: atlas-network-peering.listgrouppeers
+        with:
+          providerName: rest.providerName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategrouppeer
+        description: Create One Network Peering Connection
+        call: atlas-network-peering.creategrouppeer
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/peers/{peerid}
+      name: api-atlas-v2-groups-groupid-peers-peerid
+      description: REST surface for api-atlas-v2-groups-groupId-peers-peerId.
+      operations:
+      - method: DELETE
+        name: deletegrouppeer
+        description: Remove One Network Peering Connection
+        call: atlas-network-peering.deletegrouppeer
+        with:
+          peerId: rest.peerId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgrouppeer
+        description: Return One Network Peering Connection in One Project
+        call: atlas-network-peering.getgrouppeer
+        with:
+          peerId: rest.peerId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategrouppeer
+        description: Update One Network Peering Connection
+        call: atlas-network-peering.updategrouppeer
+        with:
+          peerId: rest.peerId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateipmode
+      name: api-atlas-v2-groups-groupid-privateipmode
+      description: REST surface for api-atlas-v2-groups-groupId-privateIpMode.
+      operations:
+      - method: GET
+        name: verifygroupprivateipmode
+        description: Verify Connect via Peering-Only Mode for One Project
+        call: atlas-network-peering.verifygroupprivateipmode
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: disablegroupprivateipmodepeering
+        description: Disable Connect via Peering-Only Mode for One Project
+        call: atlas-network-peering.disablegroupprivateipmodepeering
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-network-peering-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Network Peering. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-network-peering-containers
+      description: Return All Network Peering Containers in One Project for One Cloud Provider
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.listgroupcontainers
+      with:
+        providerName: tools.providerName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-network-peering-container
+      description: Create One Network Peering Container
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-network-peering.creategroupcontainer
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-network-peering-containers-2
+      description: Return All Network Peering Containers in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.listgroupcontainerall
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-network-peering-container
+      description: Remove One Network Peering Container
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-network-peering.deletegroupcontainer
+      with:
+        containerId: tools.containerId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-network-peering-container
+      description: Return One Network Peering Container
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.getgroupcontainer
+      with:
+        containerId: tools.containerId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-network-peering-container
+      description: Update One Network Peering Container
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.updategroupcontainer
+      with:
+        containerId: tools.containerId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-network-peering-connections
+      description: Return All Network Peering Connections in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.listgrouppeers
+      with:
+        providerName: tools.providerName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-network-peering-connection
+      description: Create One Network Peering Connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-network-peering.creategrouppeer
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-network-peering-connection
+      description: Remove One Network Peering Connection
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-network-peering.deletegrouppeer
+      with:
+        peerId: tools.peerId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-network-peering-connection
+      description: Return One Network Peering Connection in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.getgrouppeer
+      with:
+        peerId: tools.peerId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-network-peering-connection
+      description: Update One Network Peering Connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.updategrouppeer
+      with:
+        peerId: tools.peerId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: verify-connect-peering-only-mode
+      description: Verify Connect via Peering-Only Mode for One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.verifygroupprivateipmode
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: disable-connect-peering-only-mode
+      description: Disable Connect via Peering-Only Mode for One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-network-peering.disablegroupprivateipmodepeering
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

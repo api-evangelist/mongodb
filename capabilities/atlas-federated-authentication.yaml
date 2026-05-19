@@ -1,0 +1,717 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Federated Authentication
+  description: 'MongoDB Atlas Administration API — Federated Authentication. 18 operations. Lead operation: Delete One Federation
+    Settings Instance. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Federated Authentication
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-federated-authentication
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Federated Authentication business capability. Self-contained, no shared
+      references.
+    resources:
+    - name: api-atlas-v2-federationSettings-federationSettingsId
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}
+      operations:
+      - name: deletefederationsetting
+        method: DELETE
+        description: Delete One Federation Settings Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs
+      operations:
+      - name: listfederationsettingconnectedorgconfigs
+        method: GET
+        description: Return All Organization Configurations from One Federation
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs-orgId
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}
+      operations:
+      - name: removefederationsettingconnectedorgconfig
+        method: DELETE
+        description: Remove One Organization Configuration from One Federation
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: orgId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the connected organization configuration to remove.
+          required: true
+      - name: getfederationsettingconnectedorgconfig
+        method: GET
+        description: Return One Organization Configuration from One Federation
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: orgId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the connected organization configuration to return.
+          required: true
+      - name: updatefederationsettingconnectedorgconfig
+        method: PATCH
+        description: Update One Organization Configuration in One Federation
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: orgId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the connected organization configuration to update.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs-orgId-r
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings
+      operations:
+      - name: listfederationsettingconnectedorgconfigrolemappings
+        method: GET
+        description: Return All Role Mappings from One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createfederationsettingconnectedorgconfigrolemapping
+        method: POST
+        description: Create One Role Mapping in One Organization Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs-orgId-r
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}
+      operations:
+      - name: deletefederationsettingconnectedorgconfigrolemapping
+        method: DELETE
+        description: Remove One Role Mapping from One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the role mapping that you want to remove.
+          required: true
+      - name: getfederationsettingconnectedorgconfigrolemapping
+        method: GET
+        description: Return One Role Mapping from One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the role mapping that you want to return.
+          required: true
+      - name: updatefederationsettingconnectedorgconfigrolemapping
+        method: PUT
+        description: Update One Role Mapping in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the role mapping that you want to update.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-federationSettings-federationSettingsId-identityProviders
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders
+      operations:
+      - name: listfederationsettingidentityproviders
+        method: GET
+        description: Return All Identity Providers in One Federation
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: protocol
+          in: query
+          type: array
+          description: The protocols of the target identity providers.
+        - name: idpType
+          in: query
+          type: array
+          description: The types of the target identity providers.
+      - name: createfederationsettingidentityprovider
+        method: POST
+        description: Create One Identity Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-federationSettings-federationSettingsId-identityProviders-identityP
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}
+      operations:
+      - name: deletefederationsettingidentityprovider
+        method: DELETE
+        description: Delete One Identity Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identityProviderId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the identity provider to connect.
+          required: true
+      - name: getfederationsettingidentityprovider
+        method: GET
+        description: Return One Identity Provider by ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identityProviderId
+          in: path
+          type: string
+          description: Unique string that identifies the identity provider to connect. If using an API version before 11-15-2023,
+            use the legacy 20-hexadecimal digit id. This id can b
+          required: true
+      - name: updatefederationsettingidentityprovider
+        method: PATCH
+        description: Update One Identity Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identityProviderId
+          in: path
+          type: string
+          description: Unique string that identifies the identity provider to connect. If using an API version before 11-15-2023,
+            use the legacy 20-hexadecimal digit id. This id can b
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-federationSettings-federationSettingsId-identityProviders-identityP
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/jwks
+      operations:
+      - name: revokefederationsettingidentityproviderjwks
+        method: DELETE
+        description: Revoke JWKS from One OIDC Identity Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identityProviderId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the identity provider to connect.
+          required: true
+    - name: api-atlas-v2-federationSettings-federationSettingsId-identityProviders-identityP
+      path: /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/metadata.xml
+      operations:
+      - name: getfederationsettingidentityprovidermetadata
+        method: GET
+        description: Return Metadata of One Identity Provider
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-orgs-orgId-federationSettings
+      path: /api/atlas/v2/orgs/{orgId}/federationSettings
+      operations:
+      - name: getorgfederationsettings
+        method: GET
+        description: Return Federation Settings for One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-federated-authentication-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Federated Authentication. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}
+      name: api-atlas-v2-federationsettings-federationsettingsid
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId.
+      operations:
+      - method: DELETE
+        name: deletefederationsetting
+        description: Delete One Federation Settings Instance
+        call: atlas-federated-authentication.deletefederationsetting
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/connectedorgconfigs
+      name: api-atlas-v2-federationsettings-federationsettingsid-connectedorgconfigs
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs.
+      operations:
+      - method: GET
+        name: listfederationsettingconnectedorgconfigs
+        description: Return All Organization Configurations from One Federation
+        call: atlas-federated-authentication.listfederationsettingconnectedorgconfigs
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/connectedorgconfigs/{orgid}
+      name: api-atlas-v2-federationsettings-federationsettingsid-connectedorgconfigs-orgid
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs-orgId.
+      operations:
+      - method: DELETE
+        name: removefederationsettingconnectedorgconfig
+        description: Remove One Organization Configuration from One Federation
+        call: atlas-federated-authentication.removefederationsettingconnectedorgconfig
+        with:
+          orgId: rest.orgId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getfederationsettingconnectedorgconfig
+        description: Return One Organization Configuration from One Federation
+        call: atlas-federated-authentication.getfederationsettingconnectedorgconfig
+        with:
+          orgId: rest.orgId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatefederationsettingconnectedorgconfig
+        description: Update One Organization Configuration in One Federation
+        call: atlas-federated-authentication.updatefederationsettingconnectedorgconfig
+        with:
+          orgId: rest.orgId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/connectedorgconfigs/{orgid}/rolemappings
+      name: api-atlas-v2-federationsettings-federationsettingsid-connectedorgconfigs-orgid-r
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs-orgId-r.
+      operations:
+      - method: GET
+        name: listfederationsettingconnectedorgconfigrolemappings
+        description: Return All Role Mappings from One Organization
+        call: atlas-federated-authentication.listfederationsettingconnectedorgconfigrolemappings
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createfederationsettingconnectedorgconfigrolemapping
+        description: Create One Role Mapping in One Organization Configuration
+        call: atlas-federated-authentication.createfederationsettingconnectedorgconfigrolemapping
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/connectedorgconfigs/{orgid}/rolemappings/{id}
+      name: api-atlas-v2-federationsettings-federationsettingsid-connectedorgconfigs-orgid-r
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-connectedOrgConfigs-orgId-r.
+      operations:
+      - method: DELETE
+        name: deletefederationsettingconnectedorgconfigrolemapping
+        description: Remove One Role Mapping from One Organization
+        call: atlas-federated-authentication.deletefederationsettingconnectedorgconfigrolemapping
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getfederationsettingconnectedorgconfigrolemapping
+        description: Return One Role Mapping from One Organization
+        call: atlas-federated-authentication.getfederationsettingconnectedorgconfigrolemapping
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updatefederationsettingconnectedorgconfigrolemapping
+        description: Update One Role Mapping in One Organization
+        call: atlas-federated-authentication.updatefederationsettingconnectedorgconfigrolemapping
+        with:
+          id: rest.id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/identityproviders
+      name: api-atlas-v2-federationsettings-federationsettingsid-identityproviders
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-identityProviders.
+      operations:
+      - method: GET
+        name: listfederationsettingidentityproviders
+        description: Return All Identity Providers in One Federation
+        call: atlas-federated-authentication.listfederationsettingidentityproviders
+        with:
+          protocol: rest.protocol
+          idpType: rest.idpType
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createfederationsettingidentityprovider
+        description: Create One Identity Provider
+        call: atlas-federated-authentication.createfederationsettingidentityprovider
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/identityproviders/{identityproviderid}
+      name: api-atlas-v2-federationsettings-federationsettingsid-identityproviders-identityp
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-identityProviders-identityP.
+      operations:
+      - method: DELETE
+        name: deletefederationsettingidentityprovider
+        description: Delete One Identity Provider
+        call: atlas-federated-authentication.deletefederationsettingidentityprovider
+        with:
+          identityProviderId: rest.identityProviderId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getfederationsettingidentityprovider
+        description: Return One Identity Provider by ID
+        call: atlas-federated-authentication.getfederationsettingidentityprovider
+        with:
+          identityProviderId: rest.identityProviderId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatefederationsettingidentityprovider
+        description: Update One Identity Provider
+        call: atlas-federated-authentication.updatefederationsettingidentityprovider
+        with:
+          identityProviderId: rest.identityProviderId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/identityproviders/{identityproviderid}/jwks
+      name: api-atlas-v2-federationsettings-federationsettingsid-identityproviders-identityp
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-identityProviders-identityP.
+      operations:
+      - method: DELETE
+        name: revokefederationsettingidentityproviderjwks
+        description: Revoke JWKS from One OIDC Identity Provider
+        call: atlas-federated-authentication.revokefederationsettingidentityproviderjwks
+        with:
+          identityProviderId: rest.identityProviderId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/federationsettings/{federationsettingsid}/identityproviders/{identityproviderid}/metadata-xml
+      name: api-atlas-v2-federationsettings-federationsettingsid-identityproviders-identityp
+      description: REST surface for api-atlas-v2-federationSettings-federationSettingsId-identityProviders-identityP.
+      operations:
+      - method: GET
+        name: getfederationsettingidentityprovidermetadata
+        description: Return Metadata of One Identity Provider
+        call: atlas-federated-authentication.getfederationsettingidentityprovidermetadata
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/federationsettings
+      name: api-atlas-v2-orgs-orgid-federationsettings
+      description: REST surface for api-atlas-v2-orgs-orgId-federationSettings.
+      operations:
+      - method: GET
+        name: getorgfederationsettings
+        description: Return Federation Settings for One Organization
+        call: atlas-federated-authentication.getorgfederationsettings
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-federated-authentication-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Federated Authentication. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: delete-one-federation-settings-instance
+      description: Delete One Federation Settings Instance
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-federated-authentication.deletefederationsetting
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-organization-configurations-one
+      description: Return All Organization Configurations from One Federation
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.listfederationsettingconnectedorgconfigs
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-organization-configuration-one
+      description: Remove One Organization Configuration from One Federation
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-federated-authentication.removefederationsettingconnectedorgconfig
+      with:
+        orgId: tools.orgId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-organization-configuration-one
+      description: Return One Organization Configuration from One Federation
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.getfederationsettingconnectedorgconfig
+      with:
+        orgId: tools.orgId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-organization-configuration-one
+      description: Update One Organization Configuration in One Federation
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.updatefederationsettingconnectedorgconfig
+      with:
+        orgId: tools.orgId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-role-mappings-one
+      description: Return All Role Mappings from One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.listfederationsettingconnectedorgconfigrolemappings
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-role-mapping-one
+      description: Create One Role Mapping in One Organization Configuration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-federated-authentication.createfederationsettingconnectedorgconfigrolemapping
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-role-mapping-one
+      description: Remove One Role Mapping from One Organization
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-federated-authentication.deletefederationsettingconnectedorgconfigrolemapping
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-role-mapping-one
+      description: Return One Role Mapping from One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.getfederationsettingconnectedorgconfigrolemapping
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-role-mapping-one
+      description: Update One Role Mapping in One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.updatefederationsettingconnectedorgconfigrolemapping
+      with:
+        id: tools.id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-identity-providers-one
+      description: Return All Identity Providers in One Federation
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.listfederationsettingidentityproviders
+      with:
+        protocol: tools.protocol
+        idpType: tools.idpType
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-identity-provider
+      description: Create One Identity Provider
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-federated-authentication.createfederationsettingidentityprovider
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-identity-provider
+      description: Delete One Identity Provider
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-federated-authentication.deletefederationsettingidentityprovider
+      with:
+        identityProviderId: tools.identityProviderId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-identity-provider-id
+      description: Return One Identity Provider by ID
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.getfederationsettingidentityprovider
+      with:
+        identityProviderId: tools.identityProviderId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-identity-provider
+      description: Update One Identity Provider
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.updatefederationsettingidentityprovider
+      with:
+        identityProviderId: tools.identityProviderId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: revoke-jwks-one-oidc-identity
+      description: Revoke JWKS from One OIDC Identity Provider
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-federated-authentication.revokefederationsettingidentityproviderjwks
+      with:
+        identityProviderId: tools.identityProviderId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-metadata-one-identity-provider
+      description: Return Metadata of One Identity Provider
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.getfederationsettingidentityprovidermetadata
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-federation-settings-one-organization
+      description: Return Federation Settings for One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-federated-authentication.getorgfederationsettings
+      outputParameters:
+      - type: object
+        mapping: $.

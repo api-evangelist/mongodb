@@ -1,0 +1,554 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Teams
+  description: 'MongoDB Atlas Administration API — Teams. 13 operations. Lead operation: Return All Teams in One Project.
+    Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Teams
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-teams
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Teams business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-teams
+      path: /api/atlas/v2/groups/{groupId}/teams
+      operations:
+      - name: listgroupteams
+        method: GET
+        description: Return All Teams in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: addgroupteams
+        method: POST
+        description: Add Multiple Teams to One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-teams-teamId
+      path: /api/atlas/v2/groups/{groupId}/teams/{teamId}
+      operations:
+      - name: removegroupteam
+        method: DELETE
+        description: Remove One Team from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team that you want to remove from the specified
+            project.
+          required: true
+      - name: getgroupteam
+        method: GET
+        description: Return One Team in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team for which you want to get.
+          required: true
+      - name: updategroupteam
+        method: PATCH
+        description: Update Team Roles in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team for which you want to update roles.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-teams
+      path: /api/atlas/v2/orgs/{orgId}/teams
+      operations:
+      - name: listorgteams
+        method: GET
+        description: Return All Teams in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createorgteam
+        method: POST
+        description: Create One Team in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-teams-byName-teamName
+      path: /api/atlas/v2/orgs/{orgId}/teams/byName/{teamName}
+      operations:
+      - name: getorgteambyname
+        method: GET
+        description: Return One Team by Name
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamName
+          in: path
+          type: string
+          description: Name of the team whose information you want to return.
+          required: true
+    - name: api-atlas-v2-orgs-orgId-teams-teamId
+      path: /api/atlas/v2/orgs/{orgId}/teams/{teamId}
+      operations:
+      - name: deleteorgteam
+        method: DELETE
+        description: Remove One Team from One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team that you want to delete.
+          required: true
+      - name: getorgteam
+        method: GET
+        description: Return One Team by ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team whose information you want to return.
+          required: true
+      - name: renameorgteam
+        method: PATCH
+        description: Rename One Team
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team that you want to rename.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-teams-teamId-users
+      path: /api/atlas/v2/orgs/{orgId}/teams/{teamId}/users
+      operations:
+      - name: addorgteamusers
+        method: POST
+        description: Assign MongoDB Cloud Users in One Organization to One Team
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal character string that identifies the team to which you want to add MongoDB Cloud
+            users.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-teams-teamId-users-userId
+      path: /api/atlas/v2/orgs/{orgId}/teams/{teamId}/users/{userId}
+      operations:
+      - name: removeorgteamuserfromteam
+        method: DELETE
+        description: Remove One MongoDB Cloud User from One Team
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team from which you want to remove one database
+            application user.
+          required: true
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies MongoDB Cloud user that you want to remove from
+            the specified team.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-teams-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Teams. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/teams
+      name: api-atlas-v2-groups-groupid-teams
+      description: REST surface for api-atlas-v2-groups-groupId-teams.
+      operations:
+      - method: GET
+        name: listgroupteams
+        description: Return All Teams in One Project
+        call: atlas-teams.listgroupteams
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: addgroupteams
+        description: Add Multiple Teams to One Project
+        call: atlas-teams.addgroupteams
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/teams/{teamid}
+      name: api-atlas-v2-groups-groupid-teams-teamid
+      description: REST surface for api-atlas-v2-groups-groupId-teams-teamId.
+      operations:
+      - method: DELETE
+        name: removegroupteam
+        description: Remove One Team from One Project
+        call: atlas-teams.removegroupteam
+        with:
+          teamId: rest.teamId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupteam
+        description: Return One Team in One Project
+        call: atlas-teams.getgroupteam
+        with:
+          teamId: rest.teamId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupteam
+        description: Update Team Roles in One Project
+        call: atlas-teams.updategroupteam
+        with:
+          teamId: rest.teamId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams
+      name: api-atlas-v2-orgs-orgid-teams
+      description: REST surface for api-atlas-v2-orgs-orgId-teams.
+      operations:
+      - method: GET
+        name: listorgteams
+        description: Return All Teams in One Organization
+        call: atlas-teams.listorgteams
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createorgteam
+        description: Create One Team in One Organization
+        call: atlas-teams.createorgteam
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams/byname/{teamname}
+      name: api-atlas-v2-orgs-orgid-teams-byname-teamname
+      description: REST surface for api-atlas-v2-orgs-orgId-teams-byName-teamName.
+      operations:
+      - method: GET
+        name: getorgteambyname
+        description: Return One Team by Name
+        call: atlas-teams.getorgteambyname
+        with:
+          teamName: rest.teamName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams/{teamid}
+      name: api-atlas-v2-orgs-orgid-teams-teamid
+      description: REST surface for api-atlas-v2-orgs-orgId-teams-teamId.
+      operations:
+      - method: DELETE
+        name: deleteorgteam
+        description: Remove One Team from One Organization
+        call: atlas-teams.deleteorgteam
+        with:
+          teamId: rest.teamId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getorgteam
+        description: Return One Team by ID
+        call: atlas-teams.getorgteam
+        with:
+          teamId: rest.teamId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: renameorgteam
+        description: Rename One Team
+        call: atlas-teams.renameorgteam
+        with:
+          teamId: rest.teamId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams/{teamid}/users
+      name: api-atlas-v2-orgs-orgid-teams-teamid-users
+      description: REST surface for api-atlas-v2-orgs-orgId-teams-teamId-users.
+      operations:
+      - method: POST
+        name: addorgteamusers
+        description: Assign MongoDB Cloud Users in One Organization to One Team
+        call: atlas-teams.addorgteamusers
+        with:
+          teamId: rest.teamId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams/{teamid}/users/{userid}
+      name: api-atlas-v2-orgs-orgid-teams-teamid-users-userid
+      description: REST surface for api-atlas-v2-orgs-orgId-teams-teamId-users-userId.
+      operations:
+      - method: DELETE
+        name: removeorgteamuserfromteam
+        description: Remove One MongoDB Cloud User from One Team
+        call: atlas-teams.removeorgteamuserfromteam
+        with:
+          teamId: rest.teamId
+          userId: rest.userId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-teams-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Teams. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: return-all-teams-one-project
+      description: Return All Teams in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-teams.listgroupteams
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-multiple-teams-one-project
+      description: Add Multiple Teams to One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-teams.addgroupteams
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-team-one-project
+      description: Remove One Team from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-teams.removegroupteam
+      with:
+        teamId: tools.teamId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-team-one-project
+      description: Return One Team in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-teams.getgroupteam
+      with:
+        teamId: tools.teamId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-team-roles-one-project
+      description: Update Team Roles in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-teams.updategroupteam
+      with:
+        teamId: tools.teamId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-teams-one-organization
+      description: Return All Teams in One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-teams.listorgteams
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-team-one-organization
+      description: Create One Team in One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-teams.createorgteam
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-team-name
+      description: Return One Team by Name
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-teams.getorgteambyname
+      with:
+        teamName: tools.teamName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-team-one-organization
+      description: Remove One Team from One Organization
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-teams.deleteorgteam
+      with:
+        teamId: tools.teamId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-team-id
+      description: Return One Team by ID
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-teams.getorgteam
+      with:
+        teamId: tools.teamId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: rename-one-team
+      description: Rename One Team
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-teams.renameorgteam
+      with:
+        teamId: tools.teamId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: assign-mongodb-cloud-users-one
+      description: Assign MongoDB Cloud Users in One Organization to One Team
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-teams.addorgteamusers
+      with:
+        teamId: tools.teamId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-mongodb-cloud-user
+      description: Remove One MongoDB Cloud User from One Team
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-teams.removeorgteamuserfromteam
+      with:
+        teamId: tools.teamId
+        userId: tools.userId
+      outputParameters:
+      - type: object
+        mapping: $.

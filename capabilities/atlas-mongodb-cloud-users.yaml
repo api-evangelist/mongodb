@@ -1,0 +1,905 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — MongoDB Cloud Users
+  description: 'MongoDB Atlas Administration API — MongoDB Cloud Users. 19 operations. Lead operation: Return All MongoDB
+    Cloud Users in One Project. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - MongoDB Cloud Users
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-mongodb-cloud-users
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — MongoDB Cloud Users business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-users
+      path: /api/atlas/v2/groups/{groupId}/users
+      operations:
+      - name: listgroupusers
+        method: GET
+        description: Return All MongoDB Cloud Users in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: flattenTeams
+          in: query
+          type: boolean
+          description: 'Flag that indicates whether the returned list should include users who belong to a team with a role
+            in this project. You might not have assigned the individual '
+        - name: includeOrgUsers
+          in: query
+          type: boolean
+          description: Flag that indicates whether the returned list should include users with implicit access to the project,
+            the Organization Owner or Organization Read Only role. Y
+        - name: orgMembershipStatus
+          in: query
+          type: string
+          description: Flag that indicates whether to filter the returned list by users organization membership status. If
+            you exclude this parameter, this resource returns both pendi
+        - name: username
+          in: query
+          type: string
+          description: Email address to filter users by. Not supported in deprecated versions.
+      - name: addgroupusers
+        method: POST
+        description: Add One MongoDB Cloud User to One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-users-userId
+      path: /api/atlas/v2/groups/{groupId}/users/{userId}
+      operations:
+      - name: removegroupuser
+        method: DELETE
+        description: Remove One MongoDB Cloud User from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: 'Unique 24-hexadecimal digit string that identifies the pending or active user in the project. If you
+            need to lookup a user''s `userId` or verify a user''s status '
+          required: true
+      - name: getgroupuser
+        method: GET
+        description: Return One MongoDB Cloud User in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: 'Unique 24-hexadecimal digit string that identifies the pending or active user in the project. If you
+            need to lookup a user''s `userId` or verify a user''s status '
+          required: true
+    - name: api-atlas-v2-groups-groupId-users-userId}:addRole
+      path: /api/atlas/v2/groups/{groupId}/users/{userId}:addRole
+      operations:
+      - name: addgroupuserrole
+        method: POST
+        description: Add One Project Role to One MongoDB Cloud User
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: 'Unique 24-hexadecimal digit string that identifies the pending or active user in the project. If you
+            need to lookup a user''s `userId` or verify a user''s status '
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-users-userId}:removeRole
+      path: /api/atlas/v2/groups/{groupId}/users/{userId}:removeRole
+      operations:
+      - name: removegroupuserrole
+        method: POST
+        description: Remove One Project Role from One MongoDB Cloud User
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: 'Unique 24-hexadecimal digit string that identifies the pending or active user in the project. If you
+            need to lookup a user''s `userId` or verify a user''s status '
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-teams-teamId-users
+      path: /api/atlas/v2/orgs/{orgId}/teams/{teamId}/users
+      operations:
+      - name: listorgteamusers
+        method: GET
+        description: Return All MongoDB Cloud Users Assigned to One Team
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team whose application users you want to return.
+          required: true
+        - name: username
+          in: query
+          type: string
+          description: Email address to filter users by. Not supported in deprecated versions.
+        - name: orgMembershipStatus
+          in: query
+          type: string
+          description: Organization membership status to filter users by. If you exclude this parameter, this resource returns
+            both pending and active users. Not supported in deprecat
+        - name: userId
+          in: query
+          type: string
+          description: Unique 24-hexadecimal digit string to filter users by. Not supported in deprecated versions.
+    - name: api-atlas-v2-orgs-orgId-teams-teamId}:addUser
+      path: /api/atlas/v2/orgs/{orgId}/teams/{teamId}:addUser
+      operations:
+      - name: addorgteamuser
+        method: POST
+        description: Add One MongoDB Cloud User to One Team
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team to add the MongoDB Cloud user to.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-teams-teamId}:removeUser
+      path: /api/atlas/v2/orgs/{orgId}/teams/{teamId}:removeUser
+      operations:
+      - name: removeorgteamuser
+        method: POST
+        description: Remove One MongoDB Cloud User from One Team
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: teamId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the team to remove the MongoDB user from.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-users
+      path: /api/atlas/v2/orgs/{orgId}/users
+      operations:
+      - name: listorgusers
+        method: GET
+        description: Return All MongoDB Cloud Users in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: username
+          in: query
+          type: string
+          description: Email address to filter users by. Not supported in deprecated versions.
+        - name: orgMembershipStatus
+          in: query
+          type: string
+          description: Organization membership status to filter users by. If you exclude this parameter, this resource returns
+            both pending and active users. Not supported in deprecat
+      - name: createorguser
+        method: POST
+        description: Add One MongoDB Cloud User to One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-users-userId
+      path: /api/atlas/v2/orgs/{orgId}/users/{userId}
+      operations:
+      - name: removeorguser
+        method: DELETE
+        description: Remove One MongoDB Cloud User from One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the pending or active user in the organization.
+            If you need to lookup a user's `userId` or verify a user's st
+          required: true
+      - name: getorguser
+        method: GET
+        description: Return One MongoDB Cloud User in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the pending or active user in the organization.
+            If you need to lookup a user's `userId` or verify a user's st
+          required: true
+      - name: updateorguser
+        method: PATCH
+        description: Update One MongoDB Cloud User in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the pending or active user in the organization.
+            If you need to lookup a user's `userId` or verify a user's st
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-users-userId}:addRole
+      path: /api/atlas/v2/orgs/{orgId}/users/{userId}:addRole
+      operations:
+      - name: addorguserrole
+        method: POST
+        description: Add One Organization Role to One MongoDB Cloud User
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the pending or active user in the organization.
+            If you need to lookup a user's `userId` or verify a user's st
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-users-userId}:removeRole
+      path: /api/atlas/v2/orgs/{orgId}/users/{userId}:removeRole
+      operations:
+      - name: removeorguserrole
+        method: POST
+        description: Remove One Organization Role from One MongoDB Cloud User
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the pending or active user in the organization.
+            If you need to lookup a user's `userId` or verify a user's st
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-users
+      path: /api/atlas/v2/users
+      operations:
+      - name: createuser
+        method: POST
+        description: Create One MongoDB Cloud User
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-users-byName-userName
+      path: /api/atlas/v2/users/byName/{userName}
+      operations:
+      - name: getuserbyname
+        method: GET
+        description: Return One MongoDB Cloud User by Username
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userName
+          in: path
+          type: string
+          description: Email address that belongs to the MongoDB Cloud user account. You cannot modify this address after
+            creating the user.
+          required: true
+    - name: api-atlas-v2-users-userId
+      path: /api/atlas/v2/users/{userId}
+      operations:
+      - name: getuser
+        method: GET
+        description: Return One MongoDB Cloud User by ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies this user.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-mongodb-cloud-users-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — MongoDB Cloud Users. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/users
+      name: api-atlas-v2-groups-groupid-users
+      description: REST surface for api-atlas-v2-groups-groupId-users.
+      operations:
+      - method: GET
+        name: listgroupusers
+        description: Return All MongoDB Cloud Users in One Project
+        call: atlas-mongodb-cloud-users.listgroupusers
+        with:
+          flattenTeams: rest.flattenTeams
+          includeOrgUsers: rest.includeOrgUsers
+          orgMembershipStatus: rest.orgMembershipStatus
+          username: rest.username
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: addgroupusers
+        description: Add One MongoDB Cloud User to One Project
+        call: atlas-mongodb-cloud-users.addgroupusers
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/users/{userid}
+      name: api-atlas-v2-groups-groupid-users-userid
+      description: REST surface for api-atlas-v2-groups-groupId-users-userId.
+      operations:
+      - method: DELETE
+        name: removegroupuser
+        description: Remove One MongoDB Cloud User from One Project
+        call: atlas-mongodb-cloud-users.removegroupuser
+        with:
+          userId: rest.userId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupuser
+        description: Return One MongoDB Cloud User in One Project
+        call: atlas-mongodb-cloud-users.getgroupuser
+        with:
+          userId: rest.userId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/users/userid-addrole
+      name: api-atlas-v2-groups-groupid-users-userid-addrole
+      description: REST surface for api-atlas-v2-groups-groupId-users-userId}:addRole.
+      operations:
+      - method: POST
+        name: addgroupuserrole
+        description: Add One Project Role to One MongoDB Cloud User
+        call: atlas-mongodb-cloud-users.addgroupuserrole
+        with:
+          userId: rest.userId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/users/userid-removerole
+      name: api-atlas-v2-groups-groupid-users-userid-removerole
+      description: REST surface for api-atlas-v2-groups-groupId-users-userId}:removeRole.
+      operations:
+      - method: POST
+        name: removegroupuserrole
+        description: Remove One Project Role from One MongoDB Cloud User
+        call: atlas-mongodb-cloud-users.removegroupuserrole
+        with:
+          userId: rest.userId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams/{teamid}/users
+      name: api-atlas-v2-orgs-orgid-teams-teamid-users
+      description: REST surface for api-atlas-v2-orgs-orgId-teams-teamId-users.
+      operations:
+      - method: GET
+        name: listorgteamusers
+        description: Return All MongoDB Cloud Users Assigned to One Team
+        call: atlas-mongodb-cloud-users.listorgteamusers
+        with:
+          teamId: rest.teamId
+          username: rest.username
+          orgMembershipStatus: rest.orgMembershipStatus
+          userId: rest.userId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams/teamid-adduser
+      name: api-atlas-v2-orgs-orgid-teams-teamid-adduser
+      description: REST surface for api-atlas-v2-orgs-orgId-teams-teamId}:addUser.
+      operations:
+      - method: POST
+        name: addorgteamuser
+        description: Add One MongoDB Cloud User to One Team
+        call: atlas-mongodb-cloud-users.addorgteamuser
+        with:
+          teamId: rest.teamId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/teams/teamid-removeuser
+      name: api-atlas-v2-orgs-orgid-teams-teamid-removeuser
+      description: REST surface for api-atlas-v2-orgs-orgId-teams-teamId}:removeUser.
+      operations:
+      - method: POST
+        name: removeorgteamuser
+        description: Remove One MongoDB Cloud User from One Team
+        call: atlas-mongodb-cloud-users.removeorgteamuser
+        with:
+          teamId: rest.teamId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/users
+      name: api-atlas-v2-orgs-orgid-users
+      description: REST surface for api-atlas-v2-orgs-orgId-users.
+      operations:
+      - method: GET
+        name: listorgusers
+        description: Return All MongoDB Cloud Users in One Organization
+        call: atlas-mongodb-cloud-users.listorgusers
+        with:
+          username: rest.username
+          orgMembershipStatus: rest.orgMembershipStatus
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createorguser
+        description: Add One MongoDB Cloud User to One Organization
+        call: atlas-mongodb-cloud-users.createorguser
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/users/{userid}
+      name: api-atlas-v2-orgs-orgid-users-userid
+      description: REST surface for api-atlas-v2-orgs-orgId-users-userId.
+      operations:
+      - method: DELETE
+        name: removeorguser
+        description: Remove One MongoDB Cloud User from One Organization
+        call: atlas-mongodb-cloud-users.removeorguser
+        with:
+          userId: rest.userId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getorguser
+        description: Return One MongoDB Cloud User in One Organization
+        call: atlas-mongodb-cloud-users.getorguser
+        with:
+          userId: rest.userId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateorguser
+        description: Update One MongoDB Cloud User in One Organization
+        call: atlas-mongodb-cloud-users.updateorguser
+        with:
+          userId: rest.userId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/users/userid-addrole
+      name: api-atlas-v2-orgs-orgid-users-userid-addrole
+      description: REST surface for api-atlas-v2-orgs-orgId-users-userId}:addRole.
+      operations:
+      - method: POST
+        name: addorguserrole
+        description: Add One Organization Role to One MongoDB Cloud User
+        call: atlas-mongodb-cloud-users.addorguserrole
+        with:
+          userId: rest.userId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/users/userid-removerole
+      name: api-atlas-v2-orgs-orgid-users-userid-removerole
+      description: REST surface for api-atlas-v2-orgs-orgId-users-userId}:removeRole.
+      operations:
+      - method: POST
+        name: removeorguserrole
+        description: Remove One Organization Role from One MongoDB Cloud User
+        call: atlas-mongodb-cloud-users.removeorguserrole
+        with:
+          userId: rest.userId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/users
+      name: api-atlas-v2-users
+      description: REST surface for api-atlas-v2-users.
+      operations:
+      - method: POST
+        name: createuser
+        description: Create One MongoDB Cloud User
+        call: atlas-mongodb-cloud-users.createuser
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/users/byname/{username}
+      name: api-atlas-v2-users-byname-username
+      description: REST surface for api-atlas-v2-users-byName-userName.
+      operations:
+      - method: GET
+        name: getuserbyname
+        description: Return One MongoDB Cloud User by Username
+        call: atlas-mongodb-cloud-users.getuserbyname
+        with:
+          userName: rest.userName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/users/{userid}
+      name: api-atlas-v2-users-userid
+      description: REST surface for api-atlas-v2-users-userId.
+      operations:
+      - method: GET
+        name: getuser
+        description: Return One MongoDB Cloud User by ID
+        call: atlas-mongodb-cloud-users.getuser
+        with:
+          userId: rest.userId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-mongodb-cloud-users-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — MongoDB Cloud Users. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-mongodb-cloud-users
+      description: Return All MongoDB Cloud Users in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.listgroupusers
+      with:
+        flattenTeams: tools.flattenTeams
+        includeOrgUsers: tools.includeOrgUsers
+        orgMembershipStatus: tools.orgMembershipStatus
+        username: tools.username
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-one-mongodb-cloud-user
+      description: Add One MongoDB Cloud User to One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.addgroupusers
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-mongodb-cloud-user
+      description: Remove One MongoDB Cloud User from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-mongodb-cloud-users.removegroupuser
+      with:
+        userId: tools.userId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-mongodb-cloud-user
+      description: Return One MongoDB Cloud User in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.getgroupuser
+      with:
+        userId: tools.userId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-one-project-role-one
+      description: Add One Project Role to One MongoDB Cloud User
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.addgroupuserrole
+      with:
+        userId: tools.userId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-project-role-one
+      description: Remove One Project Role from One MongoDB Cloud User
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.removegroupuserrole
+      with:
+        userId: tools.userId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-mongodb-cloud-users-2
+      description: Return All MongoDB Cloud Users Assigned to One Team
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.listorgteamusers
+      with:
+        teamId: tools.teamId
+        username: tools.username
+        orgMembershipStatus: tools.orgMembershipStatus
+        userId: tools.userId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-one-mongodb-cloud-user-2
+      description: Add One MongoDB Cloud User to One Team
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.addorgteamuser
+      with:
+        teamId: tools.teamId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-mongodb-cloud-user-2
+      description: Remove One MongoDB Cloud User from One Team
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.removeorgteamuser
+      with:
+        teamId: tools.teamId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-mongodb-cloud-users-3
+      description: Return All MongoDB Cloud Users in One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.listorgusers
+      with:
+        username: tools.username
+        orgMembershipStatus: tools.orgMembershipStatus
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-one-mongodb-cloud-user-3
+      description: Add One MongoDB Cloud User to One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.createorguser
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-mongodb-cloud-user-3
+      description: Remove One MongoDB Cloud User from One Organization
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-mongodb-cloud-users.removeorguser
+      with:
+        userId: tools.userId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-mongodb-cloud-user-2
+      description: Return One MongoDB Cloud User in One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.getorguser
+      with:
+        userId: tools.userId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-mongodb-cloud-user
+      description: Update One MongoDB Cloud User in One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.updateorguser
+      with:
+        userId: tools.userId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-one-organization-role-one
+      description: Add One Organization Role to One MongoDB Cloud User
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.addorguserrole
+      with:
+        userId: tools.userId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-organization-role-one
+      description: Remove One Organization Role from One MongoDB Cloud User
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.removeorguserrole
+      with:
+        userId: tools.userId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-mongodb-cloud-user
+      description: Create One MongoDB Cloud User
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-mongodb-cloud-users.createuser
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-mongodb-cloud-user-3
+      description: Return One MongoDB Cloud User by Username
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.getuserbyname
+      with:
+        userName: tools.userName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-mongodb-cloud-user-4
+      description: Return One MongoDB Cloud User by ID
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-mongodb-cloud-users.getuser
+      with:
+        userId: tools.userId
+      outputParameters:
+      - type: object
+        mapping: $.

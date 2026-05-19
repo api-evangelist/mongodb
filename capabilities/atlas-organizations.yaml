@@ -1,0 +1,596 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Organizations
+  description: 'MongoDB Atlas Administration API — Organizations. 15 operations. Lead operation: Return All Organizations.
+    Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Organizations
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-organizations
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Organizations business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-orgs
+      path: /api/atlas/v2/orgs
+      operations:
+      - name: listorgs
+        method: GET
+        description: Return All Organizations
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: query
+          type: string
+          description: Human-readable label of the organization to use to filter the returned list. Performs a case-insensitive
+            search for an organization that starts with the specifi
+      - name: createorg
+        method: POST
+        description: Create One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId
+      path: /api/atlas/v2/orgs/{orgId}
+      operations:
+      - name: deleteorg
+        method: DELETE
+        description: Remove One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: getorg
+        method: GET
+        description: Return One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updateorg
+        method: PATCH
+        description: Update One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-groups
+      path: /api/atlas/v2/orgs/{orgId}/groups
+      operations:
+      - name: getorggroups
+        method: GET
+        description: Return All Projects in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: query
+          type: string
+          description: Human-readable label of the project to use to filter the returned list. Performs a case-insensitive
+            search for a project within the organization which is prefix
+    - name: api-atlas-v2-orgs-orgId-invites
+      path: /api/atlas/v2/orgs/{orgId}/invites
+      operations:
+      - name: listorginvites
+        method: GET
+        description: Return All Invitations in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: username
+          in: query
+          type: string
+          description: Email address of the user account invited to this organization. If you exclude this parameter, this
+            resource returns all pending invitations.
+      - name: updateorginvites
+        method: PATCH
+        description: Update One Invitation in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: createorginvite
+        method: POST
+        description: Create Invitation for One MongoDB Cloud User in One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-invites-invitationId
+      path: /api/atlas/v2/orgs/{orgId}/invites/{invitationId}
+      operations:
+      - name: deleteorginvite
+        method: DELETE
+        description: Remove One Invitation from One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: invitationId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the invitation.
+          required: true
+      - name: getorginvite
+        method: GET
+        description: Return One Invitation in One Organization by Invitation ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: invitationId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the invitation.
+          required: true
+      - name: updateorginvitebyid
+        method: PATCH
+        description: Update One Invitation in One Organization by Invitation ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: invitationId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the invitation.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-settings
+      path: /api/atlas/v2/orgs/{orgId}/settings
+      operations:
+      - name: getorgsettings
+        method: GET
+        description: Return Settings for One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updateorgsettings
+        method: PATCH
+        description: Update Settings for One Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-users-userId-roles
+      path: /api/atlas/v2/orgs/{orgId}/users/{userId}/roles
+      operations:
+      - name: updateorguserroles
+        method: PUT
+        description: Update Organization Roles for One MongoDB Cloud User
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the user to modify.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-organizations-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Organizations. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/orgs
+      name: api-atlas-v2-orgs
+      description: REST surface for api-atlas-v2-orgs.
+      operations:
+      - method: GET
+        name: listorgs
+        description: Return All Organizations
+        call: atlas-organizations.listorgs
+        with:
+          name: rest.name
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createorg
+        description: Create One Organization
+        call: atlas-organizations.createorg
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}
+      name: api-atlas-v2-orgs-orgid
+      description: REST surface for api-atlas-v2-orgs-orgId.
+      operations:
+      - method: DELETE
+        name: deleteorg
+        description: Remove One Organization
+        call: atlas-organizations.deleteorg
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getorg
+        description: Return One Organization
+        call: atlas-organizations.getorg
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateorg
+        description: Update One Organization
+        call: atlas-organizations.updateorg
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/groups
+      name: api-atlas-v2-orgs-orgid-groups
+      description: REST surface for api-atlas-v2-orgs-orgId-groups.
+      operations:
+      - method: GET
+        name: getorggroups
+        description: Return All Projects in One Organization
+        call: atlas-organizations.getorggroups
+        with:
+          name: rest.name
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/invites
+      name: api-atlas-v2-orgs-orgid-invites
+      description: REST surface for api-atlas-v2-orgs-orgId-invites.
+      operations:
+      - method: GET
+        name: listorginvites
+        description: Return All Invitations in One Organization
+        call: atlas-organizations.listorginvites
+        with:
+          username: rest.username
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateorginvites
+        description: Update One Invitation in One Organization
+        call: atlas-organizations.updateorginvites
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createorginvite
+        description: Create Invitation for One MongoDB Cloud User in One Organization
+        call: atlas-organizations.createorginvite
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/invites/{invitationid}
+      name: api-atlas-v2-orgs-orgid-invites-invitationid
+      description: REST surface for api-atlas-v2-orgs-orgId-invites-invitationId.
+      operations:
+      - method: DELETE
+        name: deleteorginvite
+        description: Remove One Invitation from One Organization
+        call: atlas-organizations.deleteorginvite
+        with:
+          invitationId: rest.invitationId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getorginvite
+        description: Return One Invitation in One Organization by Invitation ID
+        call: atlas-organizations.getorginvite
+        with:
+          invitationId: rest.invitationId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateorginvitebyid
+        description: Update One Invitation in One Organization by Invitation ID
+        call: atlas-organizations.updateorginvitebyid
+        with:
+          invitationId: rest.invitationId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/settings
+      name: api-atlas-v2-orgs-orgid-settings
+      description: REST surface for api-atlas-v2-orgs-orgId-settings.
+      operations:
+      - method: GET
+        name: getorgsettings
+        description: Return Settings for One Organization
+        call: atlas-organizations.getorgsettings
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateorgsettings
+        description: Update Settings for One Organization
+        call: atlas-organizations.updateorgsettings
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/users/{userid}/roles
+      name: api-atlas-v2-orgs-orgid-users-userid-roles
+      description: REST surface for api-atlas-v2-orgs-orgId-users-userId-roles.
+      operations:
+      - method: PUT
+        name: updateorguserroles
+        description: Update Organization Roles for One MongoDB Cloud User
+        call: atlas-organizations.updateorguserroles
+        with:
+          userId: rest.userId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-organizations-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Organizations. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-organizations
+      description: Return All Organizations
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.listorgs
+      with:
+        name: tools.name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-organization
+      description: Create One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-organizations.createorg
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-organization
+      description: Remove One Organization
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-organizations.deleteorg
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-organization
+      description: Return One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.getorg
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-organization
+      description: Update One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.updateorg
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-projects-one-organization
+      description: Return All Projects in One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.getorggroups
+      with:
+        name: tools.name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-invitations-one-organization
+      description: Return All Invitations in One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.listorginvites
+      with:
+        username: tools.username
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-invitation-one-organization
+      description: Update One Invitation in One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.updateorginvites
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-invitation-one-mongodb-cloud
+      description: Create Invitation for One MongoDB Cloud User in One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-organizations.createorginvite
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-invitation-one-organization
+      description: Remove One Invitation from One Organization
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-organizations.deleteorginvite
+      with:
+        invitationId: tools.invitationId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-invitation-one-organization
+      description: Return One Invitation in One Organization by Invitation ID
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.getorginvite
+      with:
+        invitationId: tools.invitationId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-invitation-one-organization-2
+      description: Update One Invitation in One Organization by Invitation ID
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.updateorginvitebyid
+      with:
+        invitationId: tools.invitationId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-settings-one-organization
+      description: Return Settings for One Organization
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.getorgsettings
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-settings-one-organization
+      description: Update Settings for One Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.updateorgsettings
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-organization-roles-one-mongodb
+      description: Update Organization Roles for One MongoDB Cloud User
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-organizations.updateorguserroles
+      with:
+        userId: tools.userId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

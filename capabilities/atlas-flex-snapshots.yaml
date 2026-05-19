@@ -1,0 +1,178 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Flex Snapshots
+  description: 'MongoDB Atlas Administration API — Flex Snapshots. 3 operations. Lead operation: Download One Flex Cluster
+    Snapshot. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Flex Snapshots
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-flex-snapshots
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Flex Snapshots business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-flexClusters-name-backup-download
+      path: /api/atlas/v2/groups/{groupId}/flexClusters/{name}/backup/download
+      operations:
+      - name: downloadgroupflexclusterbackup
+        method: POST
+        description: Download One Flex Cluster Snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-flexClusters-name-backup-snapshots
+      path: /api/atlas/v2/groups/{groupId}/flexClusters/{name}/backup/snapshots
+      operations:
+      - name: listgroupflexclusterbackupsnapshots
+        method: GET
+        description: Return All Snapshots for One Flex Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+    - name: api-atlas-v2-groups-groupId-flexClusters-name-backup-snapshots-snapshotId
+      path: /api/atlas/v2/groups/{groupId}/flexClusters/{name}/backup/snapshots/{snapshotId}
+      operations:
+      - name: getgroupflexclusterbackupsnapshot
+        method: GET
+        description: Return One Snapshot for One Flex Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-flex-snapshots-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Flex Snapshots. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters/{name}/backup/download
+      name: api-atlas-v2-groups-groupid-flexclusters-name-backup-download
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters-name-backup-download.
+      operations:
+      - method: POST
+        name: downloadgroupflexclusterbackup
+        description: Download One Flex Cluster Snapshot
+        call: atlas-flex-snapshots.downloadgroupflexclusterbackup
+        with:
+          name: rest.name
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters/{name}/backup/snapshots
+      name: api-atlas-v2-groups-groupid-flexclusters-name-backup-snapshots
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters-name-backup-snapshots.
+      operations:
+      - method: GET
+        name: listgroupflexclusterbackupsnapshots
+        description: Return All Snapshots for One Flex Cluster
+        call: atlas-flex-snapshots.listgroupflexclusterbackupsnapshots
+        with:
+          name: rest.name
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters/{name}/backup/snapshots/{snapshotid}
+      name: api-atlas-v2-groups-groupid-flexclusters-name-backup-snapshots-snapshotid
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters-name-backup-snapshots-snapshotId.
+      operations:
+      - method: GET
+        name: getgroupflexclusterbackupsnapshot
+        description: Return One Snapshot for One Flex Cluster
+        call: atlas-flex-snapshots.getgroupflexclusterbackupsnapshot
+        with:
+          name: rest.name
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-flex-snapshots-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Flex Snapshots. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: download-one-flex-cluster-snapshot
+      description: Download One Flex Cluster Snapshot
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-flex-snapshots.downloadgroupflexclusterbackup
+      with:
+        name: tools.name
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-snapshots-one-flex
+      description: Return All Snapshots for One Flex Cluster
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-flex-snapshots.listgroupflexclusterbackupsnapshots
+      with:
+        name: tools.name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-snapshot-one-flex
+      description: Return One Snapshot for One Flex Cluster
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-flex-snapshots.getgroupflexclusterbackupsnapshot
+      with:
+        name: tools.name
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.

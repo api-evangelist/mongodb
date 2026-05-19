@@ -1,0 +1,232 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Third-Party Integrations
+  description: 'MongoDB Atlas Administration API — Third-Party Integrations. 5 operations. Lead operation: Return All Active
+    Third-Party Service Integrations. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Third-Party Integrations
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-third-party-integrations
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Third-Party Integrations business capability. Self-contained, no shared
+      references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-integrations
+      path: /api/atlas/v2/groups/{groupId}/integrations
+      operations:
+      - name: listgroupintegrations
+        method: GET
+        description: Return All Active Third-Party Service Integrations
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-integrations-integrationType
+      path: /api/atlas/v2/groups/{groupId}/integrations/{integrationType}
+      operations:
+      - name: deletegroupintegration
+        method: DELETE
+        description: Remove One Third-Party Service Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: integrationType
+          in: path
+          type: string
+          description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+          required: true
+      - name: getgroupintegration
+        method: GET
+        description: Return One Third-Party Service Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: integrationType
+          in: path
+          type: string
+          description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+          required: true
+      - name: creategroupintegration
+        method: POST
+        description: Create One Third-Party Service Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: integrationType
+          in: path
+          type: string
+          description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: updategroupintegration
+        method: PUT
+        description: Update One Third-Party Service Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: integrationType
+          in: path
+          type: string
+          description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-third-party-integrations-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Third-Party Integrations. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/integrations
+      name: api-atlas-v2-groups-groupid-integrations
+      description: REST surface for api-atlas-v2-groups-groupId-integrations.
+      operations:
+      - method: GET
+        name: listgroupintegrations
+        description: Return All Active Third-Party Service Integrations
+        call: atlas-third-party-integrations.listgroupintegrations
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/integrations/{integrationtype}
+      name: api-atlas-v2-groups-groupid-integrations-integrationtype
+      description: REST surface for api-atlas-v2-groups-groupId-integrations-integrationType.
+      operations:
+      - method: DELETE
+        name: deletegroupintegration
+        description: Remove One Third-Party Service Integration
+        call: atlas-third-party-integrations.deletegroupintegration
+        with:
+          integrationType: rest.integrationType
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupintegration
+        description: Return One Third-Party Service Integration
+        call: atlas-third-party-integrations.getgroupintegration
+        with:
+          integrationType: rest.integrationType
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupintegration
+        description: Create One Third-Party Service Integration
+        call: atlas-third-party-integrations.creategroupintegration
+        with:
+          integrationType: rest.integrationType
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updategroupintegration
+        description: Update One Third-Party Service Integration
+        call: atlas-third-party-integrations.updategroupintegration
+        with:
+          integrationType: rest.integrationType
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-third-party-integrations-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Third-Party Integrations. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-active-third-party
+      description: Return All Active Third-Party Service Integrations
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-third-party-integrations.listgroupintegrations
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-third-party-service
+      description: Remove One Third-Party Service Integration
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-third-party-integrations.deletegroupintegration
+      with:
+        integrationType: tools.integrationType
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-third-party-service
+      description: Return One Third-Party Service Integration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-third-party-integrations.getgroupintegration
+      with:
+        integrationType: tools.integrationType
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-third-party-service
+      description: Create One Third-Party Service Integration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-third-party-integrations.creategroupintegration
+      with:
+        integrationType: tools.integrationType
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-third-party-service
+      description: Update One Third-Party Service Integration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-third-party-integrations.updategroupintegration
+      with:
+        integrationType: tools.integrationType
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

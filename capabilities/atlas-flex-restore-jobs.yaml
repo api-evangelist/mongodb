@@ -1,0 +1,171 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Flex Restore Jobs
+  description: 'MongoDB Atlas Administration API — Flex Restore Jobs. 3 operations. Lead operation: Return All Restore Jobs
+    for One Flex Cluster. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Flex Restore Jobs
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-flex-restore-jobs
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Flex Restore Jobs business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-flexClusters-name-backup-restoreJobs
+      path: /api/atlas/v2/groups/{groupId}/flexClusters/{name}/backup/restoreJobs
+      operations:
+      - name: listgroupflexclusterbackuprestorejobs
+        method: GET
+        description: Return All Restore Jobs for One Flex Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+      - name: creategroupflexclusterbackuprestorejob
+        method: POST
+        description: Create One Restore Job for One Flex Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster whose snapshot you want to restore.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-flexClusters-name-backup-restoreJobs-restoreJobId
+      path: /api/atlas/v2/groups/{groupId}/flexClusters/{name}/backup/restoreJobs/{restoreJobId}
+      operations:
+      - name: getgroupflexclusterbackuprestorejob
+        method: GET
+        description: Return One Restore Job for One Flex Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name
+          in: path
+          type: string
+          description: Human-readable label that identifies the flex cluster.
+          required: true
+        - name: restoreJobId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the restore job to return.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-flex-restore-jobs-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Flex Restore Jobs. One Spectral-compliant resource per
+      consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters/{name}/backup/restorejobs
+      name: api-atlas-v2-groups-groupid-flexclusters-name-backup-restorejobs
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters-name-backup-restoreJobs.
+      operations:
+      - method: GET
+        name: listgroupflexclusterbackuprestorejobs
+        description: Return All Restore Jobs for One Flex Cluster
+        call: atlas-flex-restore-jobs.listgroupflexclusterbackuprestorejobs
+        with:
+          name: rest.name
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupflexclusterbackuprestorejob
+        description: Create One Restore Job for One Flex Cluster
+        call: atlas-flex-restore-jobs.creategroupflexclusterbackuprestorejob
+        with:
+          name: rest.name
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/flexclusters/{name}/backup/restorejobs/{restorejobid}
+      name: api-atlas-v2-groups-groupid-flexclusters-name-backup-restorejobs-restorejobid
+      description: REST surface for api-atlas-v2-groups-groupId-flexClusters-name-backup-restoreJobs-restoreJobId.
+      operations:
+      - method: GET
+        name: getgroupflexclusterbackuprestorejob
+        description: Return One Restore Job for One Flex Cluster
+        call: atlas-flex-restore-jobs.getgroupflexclusterbackuprestorejob
+        with:
+          name: rest.name
+          restoreJobId: rest.restoreJobId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-flex-restore-jobs-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Flex Restore Jobs. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-restore-jobs-one
+      description: Return All Restore Jobs for One Flex Cluster
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-flex-restore-jobs.listgroupflexclusterbackuprestorejobs
+      with:
+        name: tools.name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-restore-job-one
+      description: Create One Restore Job for One Flex Cluster
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-flex-restore-jobs.creategroupflexclusterbackuprestorejob
+      with:
+        name: tools.name
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-restore-job-one
+      description: Return One Restore Job for One Flex Cluster
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-flex-restore-jobs.getgroupflexclusterbackuprestorejob
+      with:
+        name: tools.name
+        restoreJobId: tools.restoreJobId
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,1407 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Streams
+  description: 'MongoDB Atlas Administration API — Streams. 31 operations. Lead operation: Return All Stream Workspaces in
+    One Project. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Streams
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-streams
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Streams business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-streams
+      path: /api/atlas/v2/groups/{groupId}/streams
+      operations:
+      - name: listgroupstreamworkspaces
+        method: GET
+        description: Return All Stream Workspaces in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupstreamworkspace
+        method: POST
+        description: Create One Stream Workspace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-accountDetails
+      path: /api/atlas/v2/groups/{groupId}/streams/accountDetails
+      operations:
+      - name: getgroupstreamaccountdetails
+        method: GET
+        description: Return Account ID and VPC ID for One Project and Region
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: query
+          type: string
+          description: One of "aws", "azure" or "gcp".
+          required: true
+        - name: regionName
+          in: query
+          type: string
+          description: The cloud provider specific region name, i.e. "US_EAST_1" for cloud provider "aws".
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-activeVpcPeeringConnections
+      path: /api/atlas/v2/groups/{groupId}/streams/activeVpcPeeringConnections
+      operations:
+      - name: listgroupstreamactivevpcpeeringconnections
+        method: GET
+        description: Return All Active Incoming VPC Peering Connections
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-streams-privateLinkConnections
+      path: /api/atlas/v2/groups/{groupId}/streams/privateLinkConnections
+      operations:
+      - name: listgroupstreamprivatelinkconnections
+        method: GET
+        description: Return All Private Link Connections
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupstreamprivatelinkconnection
+        method: POST
+        description: Create One Private Link Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-privateLinkConnections-connectionId
+      path: /api/atlas/v2/groups/{groupId}/streams/privateLinkConnections/{connectionId}
+      operations:
+      - name: deletegroupstreamprivatelinkconnection
+        method: DELETE
+        description: Delete One Private Link Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: connectionId
+          in: path
+          type: string
+          description: Unique ID that identifies the Private Link connection.
+          required: true
+      - name: getgroupstreamprivatelinkconnection
+        method: GET
+        description: Return One Private Link Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: connectionId
+          in: path
+          type: string
+          description: Unique ID that identifies the Private Link connection.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-vpcPeeringConnections
+      path: /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections
+      operations:
+      - name: listgroupstreamvpcpeeringconnections
+        method: GET
+        description: Return All VPC Peering Connections
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: requesterAccountId
+          in: query
+          type: string
+          description: The Account ID of the VPC Peering connection/s.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-vpcPeeringConnections-id
+      path: /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}
+      operations:
+      - name: deletegroupstreamvpcpeeringconnection
+        method: DELETE
+        description: Delete One VPC Peering Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: The VPC Peering Connection id.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-vpcPeeringConnections-id}:accept
+      path: /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:accept
+      operations:
+      - name: acceptgroupstreamvpcpeeringconnection
+        method: POST
+        description: Accept One Incoming VPC Peering Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: The VPC Peering Connection id.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-vpcPeeringConnections-id}:reject
+      path: /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:reject
+      operations:
+      - name: rejectgroupstreamvpcpeeringconnection
+        method: POST
+        description: Reject One Incoming VPC Peering Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: The VPC Peering Connection id.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}
+      operations:
+      - name: deletegroupstreamworkspace
+        method: DELETE
+        description: Delete One Stream Workspace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace to delete.
+          required: true
+      - name: getgroupstreamworkspace
+        method: GET
+        description: Return One Stream Workspace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace to return.
+          required: true
+        - name: includeConnections
+          in: query
+          type: boolean
+          description: Flag to indicate whether connections information should be included in the stream workspace.
+      - name: updategroupstreamworkspace
+        method: PATCH
+        description: Update One Stream Workspace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace to update.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-auditLogs
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/auditLogs
+      operations:
+      - name: downloadgroupstreamauditlogs
+        method: GET
+        description: Download Audit Logs for One Atlas Stream Processing Workspace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: endDate
+          in: query
+          type: integer
+          description: Timestamp that specifies the end point for the range of log messages to download.  MongoDB Cloud expresses
+            this timestamp in the number of seconds that have ela
+        - name: startDate
+          in: query
+          type: integer
+          description: Timestamp that specifies the starting point for the range of log messages to download. MongoDB Cloud
+            expresses this timestamp in the number of seconds that have
+        - name: spName
+          in: query
+          type: string
+          description: Name of the stream processor to download logs for. An empty string will download logs for all stream
+            processors in the workspace.
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-connections
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections
+      operations:
+      - name: listgroupstreamconnections
+        method: GET
+        description: Return All Connections of the Stream Workspaces
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+      - name: creategroupstreamconnection
+        method: POST
+        description: Create One Stream Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-connections-connectionName
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}
+      operations:
+      - name: deletegroupstreamconnection
+        method: DELETE
+        description: Delete One Stream Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: connectionName
+          in: path
+          type: string
+          description: Label that identifies the stream connection.
+          required: true
+      - name: getgroupstreamconnection
+        method: GET
+        description: Return One Stream Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace to return.
+          required: true
+        - name: connectionName
+          in: path
+          type: string
+          description: Label that identifies the stream connection to return.
+          required: true
+      - name: updategroupstreamconnection
+        method: PATCH
+        description: Update One Stream Connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: connectionName
+          in: path
+          type: string
+          description: Label that identifies the stream connection.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-processor
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor
+      operations:
+      - name: creategroupstreamprocessor
+        method: POST
+        description: Create One Stream Processor
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}
+      operations:
+      - name: deletegroupstreamprocessor
+        method: DELETE
+        description: Delete One Stream Processor
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: processorName
+          in: path
+          type: string
+          description: Label that identifies the stream processor.
+          required: true
+      - name: getgroupstreamprocessor
+        method: GET
+        description: Return One Stream Processor
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: processorName
+          in: path
+          type: string
+          description: Label that identifies the stream processor.
+          required: true
+      - name: updategroupstreamprocessor
+        method: PATCH
+        description: Update One Stream Processor
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: processorName
+          in: path
+          type: string
+          description: Label that identifies the stream processor.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName}:start
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:start
+      operations:
+      - name: startgroupstreamprocessor
+        method: POST
+        description: Start One Stream Processor
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: processorName
+          in: path
+          type: string
+          description: Label that identifies the stream processor.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName}:startWit
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:startWith
+      operations:
+      - name: startgroupstreamprocessorwith
+        method: POST
+        description: Start One Stream Processor With Options
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: processorName
+          in: path
+          type: string
+          description: Label that identifies the stream processor.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName}:stop
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:stop
+      operations:
+      - name: stopgroupstreamprocessor
+        method: POST
+        description: Stop One Stream Processor
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+        - name: processorName
+          in: path
+          type: string
+          description: Label that identifies the stream processor.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName-processors
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processors
+      operations:
+      - name: getgroupstreamprocessors
+        method: GET
+        description: Return All Stream Processors in One Stream Workspace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams-tenantName}:downloadOperationalLogs
+      path: /api/atlas/v2/groups/{groupId}/streams/{tenantName}:downloadOperationalLogs
+      operations:
+      - name: downloadgroupstreamoperationallogs
+        method: GET
+        description: Download Operational Logs for One Atlas Stream Processing Workspace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: endDate
+          in: query
+          type: integer
+          description: Timestamp that specifies the end point for the range of log messages to download.  MongoDB Cloud expresses
+            this timestamp in the number of seconds that have ela
+        - name: startDate
+          in: query
+          type: integer
+          description: Timestamp that specifies the starting point for the range of log messages to download. MongoDB Cloud
+            expresses this timestamp in the number of seconds that have
+        - name: spName
+          in: query
+          type: string
+          description: Name of the stream processor to download logs for. An empty string will download logs for all stream
+            processors in the workspace.
+        - name: tenantName
+          in: path
+          type: string
+          description: Label that identifies the stream workspace.
+          required: true
+    - name: api-atlas-v2-groups-groupId-streams:withSampleConnections
+      path: /api/atlas/v2/groups/{groupId}/streams:withSampleConnections
+      operations:
+      - name: withgroupstreamsampleconnections
+        method: POST
+        description: Create One Stream Workspace with Sample Connections
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-streams-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Streams. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams
+      name: api-atlas-v2-groups-groupid-streams
+      description: REST surface for api-atlas-v2-groups-groupId-streams.
+      operations:
+      - method: GET
+        name: listgroupstreamworkspaces
+        description: Return All Stream Workspaces in One Project
+        call: atlas-streams.listgroupstreamworkspaces
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupstreamworkspace
+        description: Create One Stream Workspace
+        call: atlas-streams.creategroupstreamworkspace
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/accountdetails
+      name: api-atlas-v2-groups-groupid-streams-accountdetails
+      description: REST surface for api-atlas-v2-groups-groupId-streams-accountDetails.
+      operations:
+      - method: GET
+        name: getgroupstreamaccountdetails
+        description: Return Account ID and VPC ID for One Project and Region
+        call: atlas-streams.getgroupstreamaccountdetails
+        with:
+          cloudProvider: rest.cloudProvider
+          regionName: rest.regionName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/activevpcpeeringconnections
+      name: api-atlas-v2-groups-groupid-streams-activevpcpeeringconnections
+      description: REST surface for api-atlas-v2-groups-groupId-streams-activeVpcPeeringConnections.
+      operations:
+      - method: GET
+        name: listgroupstreamactivevpcpeeringconnections
+        description: Return All Active Incoming VPC Peering Connections
+        call: atlas-streams.listgroupstreamactivevpcpeeringconnections
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/privatelinkconnections
+      name: api-atlas-v2-groups-groupid-streams-privatelinkconnections
+      description: REST surface for api-atlas-v2-groups-groupId-streams-privateLinkConnections.
+      operations:
+      - method: GET
+        name: listgroupstreamprivatelinkconnections
+        description: Return All Private Link Connections
+        call: atlas-streams.listgroupstreamprivatelinkconnections
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupstreamprivatelinkconnection
+        description: Create One Private Link Connection
+        call: atlas-streams.creategroupstreamprivatelinkconnection
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/privatelinkconnections/{connectionid}
+      name: api-atlas-v2-groups-groupid-streams-privatelinkconnections-connectionid
+      description: REST surface for api-atlas-v2-groups-groupId-streams-privateLinkConnections-connectionId.
+      operations:
+      - method: DELETE
+        name: deletegroupstreamprivatelinkconnection
+        description: Delete One Private Link Connection
+        call: atlas-streams.deletegroupstreamprivatelinkconnection
+        with:
+          connectionId: rest.connectionId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupstreamprivatelinkconnection
+        description: Return One Private Link Connection
+        call: atlas-streams.getgroupstreamprivatelinkconnection
+        with:
+          connectionId: rest.connectionId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/vpcpeeringconnections
+      name: api-atlas-v2-groups-groupid-streams-vpcpeeringconnections
+      description: REST surface for api-atlas-v2-groups-groupId-streams-vpcPeeringConnections.
+      operations:
+      - method: GET
+        name: listgroupstreamvpcpeeringconnections
+        description: Return All VPC Peering Connections
+        call: atlas-streams.listgroupstreamvpcpeeringconnections
+        with:
+          requesterAccountId: rest.requesterAccountId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/vpcpeeringconnections/{id}
+      name: api-atlas-v2-groups-groupid-streams-vpcpeeringconnections-id
+      description: REST surface for api-atlas-v2-groups-groupId-streams-vpcPeeringConnections-id.
+      operations:
+      - method: DELETE
+        name: deletegroupstreamvpcpeeringconnection
+        description: Delete One VPC Peering Connection
+        call: atlas-streams.deletegroupstreamvpcpeeringconnection
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/vpcpeeringconnections/id-accept
+      name: api-atlas-v2-groups-groupid-streams-vpcpeeringconnections-id-accept
+      description: REST surface for api-atlas-v2-groups-groupId-streams-vpcPeeringConnections-id}:accept.
+      operations:
+      - method: POST
+        name: acceptgroupstreamvpcpeeringconnection
+        description: Accept One Incoming VPC Peering Connection
+        call: atlas-streams.acceptgroupstreamvpcpeeringconnection
+        with:
+          id: rest.id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/vpcpeeringconnections/id-reject
+      name: api-atlas-v2-groups-groupid-streams-vpcpeeringconnections-id-reject
+      description: REST surface for api-atlas-v2-groups-groupId-streams-vpcPeeringConnections-id}:reject.
+      operations:
+      - method: POST
+        name: rejectgroupstreamvpcpeeringconnection
+        description: Reject One Incoming VPC Peering Connection
+        call: atlas-streams.rejectgroupstreamvpcpeeringconnection
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}
+      name: api-atlas-v2-groups-groupid-streams-tenantname
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName.
+      operations:
+      - method: DELETE
+        name: deletegroupstreamworkspace
+        description: Delete One Stream Workspace
+        call: atlas-streams.deletegroupstreamworkspace
+        with:
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupstreamworkspace
+        description: Return One Stream Workspace
+        call: atlas-streams.getgroupstreamworkspace
+        with:
+          tenantName: rest.tenantName
+          includeConnections: rest.includeConnections
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupstreamworkspace
+        description: Update One Stream Workspace
+        call: atlas-streams.updategroupstreamworkspace
+        with:
+          tenantName: rest.tenantName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/auditlogs
+      name: api-atlas-v2-groups-groupid-streams-tenantname-auditlogs
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-auditLogs.
+      operations:
+      - method: GET
+        name: downloadgroupstreamauditlogs
+        description: Download Audit Logs for One Atlas Stream Processing Workspace
+        call: atlas-streams.downloadgroupstreamauditlogs
+        with:
+          endDate: rest.endDate
+          startDate: rest.startDate
+          spName: rest.spName
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/connections
+      name: api-atlas-v2-groups-groupid-streams-tenantname-connections
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-connections.
+      operations:
+      - method: GET
+        name: listgroupstreamconnections
+        description: Return All Connections of the Stream Workspaces
+        call: atlas-streams.listgroupstreamconnections
+        with:
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupstreamconnection
+        description: Create One Stream Connection
+        call: atlas-streams.creategroupstreamconnection
+        with:
+          tenantName: rest.tenantName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/connections/{connectionname}
+      name: api-atlas-v2-groups-groupid-streams-tenantname-connections-connectionname
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-connections-connectionName.
+      operations:
+      - method: DELETE
+        name: deletegroupstreamconnection
+        description: Delete One Stream Connection
+        call: atlas-streams.deletegroupstreamconnection
+        with:
+          tenantName: rest.tenantName
+          connectionName: rest.connectionName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupstreamconnection
+        description: Return One Stream Connection
+        call: atlas-streams.getgroupstreamconnection
+        with:
+          tenantName: rest.tenantName
+          connectionName: rest.connectionName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupstreamconnection
+        description: Update One Stream Connection
+        call: atlas-streams.updategroupstreamconnection
+        with:
+          tenantName: rest.tenantName
+          connectionName: rest.connectionName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/processor
+      name: api-atlas-v2-groups-groupid-streams-tenantname-processor
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-processor.
+      operations:
+      - method: POST
+        name: creategroupstreamprocessor
+        description: Create One Stream Processor
+        call: atlas-streams.creategroupstreamprocessor
+        with:
+          tenantName: rest.tenantName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/processor/{processorname}
+      name: api-atlas-v2-groups-groupid-streams-tenantname-processor-processorname
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName.
+      operations:
+      - method: DELETE
+        name: deletegroupstreamprocessor
+        description: Delete One Stream Processor
+        call: atlas-streams.deletegroupstreamprocessor
+        with:
+          tenantName: rest.tenantName
+          processorName: rest.processorName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupstreamprocessor
+        description: Return One Stream Processor
+        call: atlas-streams.getgroupstreamprocessor
+        with:
+          tenantName: rest.tenantName
+          processorName: rest.processorName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupstreamprocessor
+        description: Update One Stream Processor
+        call: atlas-streams.updategroupstreamprocessor
+        with:
+          tenantName: rest.tenantName
+          processorName: rest.processorName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/processor/processorname-start
+      name: api-atlas-v2-groups-groupid-streams-tenantname-processor-processorname-start
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName}:start.
+      operations:
+      - method: POST
+        name: startgroupstreamprocessor
+        description: Start One Stream Processor
+        call: atlas-streams.startgroupstreamprocessor
+        with:
+          tenantName: rest.tenantName
+          processorName: rest.processorName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/processor/processorname-startwith
+      name: api-atlas-v2-groups-groupid-streams-tenantname-processor-processorname-startwit
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName}:startWit.
+      operations:
+      - method: POST
+        name: startgroupstreamprocessorwith
+        description: Start One Stream Processor With Options
+        call: atlas-streams.startgroupstreamprocessorwith
+        with:
+          tenantName: rest.tenantName
+          processorName: rest.processorName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/processor/processorname-stop
+      name: api-atlas-v2-groups-groupid-streams-tenantname-processor-processorname-stop
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-processor-processorName}:stop.
+      operations:
+      - method: POST
+        name: stopgroupstreamprocessor
+        description: Stop One Stream Processor
+        call: atlas-streams.stopgroupstreamprocessor
+        with:
+          tenantName: rest.tenantName
+          processorName: rest.processorName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/{tenantname}/processors
+      name: api-atlas-v2-groups-groupid-streams-tenantname-processors
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName-processors.
+      operations:
+      - method: GET
+        name: getgroupstreamprocessors
+        description: Return All Stream Processors in One Stream Workspace
+        call: atlas-streams.getgroupstreamprocessors
+        with:
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams/tenantname-downloadoperationallogs
+      name: api-atlas-v2-groups-groupid-streams-tenantname-downloadoperationallogs
+      description: REST surface for api-atlas-v2-groups-groupId-streams-tenantName}:downloadOperationalLogs.
+      operations:
+      - method: GET
+        name: downloadgroupstreamoperationallogs
+        description: Download Operational Logs for One Atlas Stream Processing Workspace
+        call: atlas-streams.downloadgroupstreamoperationallogs
+        with:
+          endDate: rest.endDate
+          startDate: rest.startDate
+          spName: rest.spName
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/streams-withsampleconnections
+      name: api-atlas-v2-groups-groupid-streams-withsampleconnections
+      description: REST surface for api-atlas-v2-groups-groupId-streams:withSampleConnections.
+      operations:
+      - method: POST
+        name: withgroupstreamsampleconnections
+        description: Create One Stream Workspace with Sample Connections
+        call: atlas-streams.withgroupstreamsampleconnections
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-streams-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Streams. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: return-all-stream-workspaces-one
+      description: Return All Stream Workspaces in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.listgroupstreamworkspaces
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-stream-workspace
+      description: Create One Stream Workspace
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.creategroupstreamworkspace
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-account-id-and-vpc
+      description: Return Account ID and VPC ID for One Project and Region
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.getgroupstreamaccountdetails
+      with:
+        cloudProvider: tools.cloudProvider
+        regionName: tools.regionName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-active-incoming-vpc
+      description: Return All Active Incoming VPC Peering Connections
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.listgroupstreamactivevpcpeeringconnections
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-private-link-connections
+      description: Return All Private Link Connections
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.listgroupstreamprivatelinkconnections
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-private-link-connection
+      description: Create One Private Link Connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.creategroupstreamprivatelinkconnection
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-private-link-connection
+      description: Delete One Private Link Connection
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-streams.deletegroupstreamprivatelinkconnection
+      with:
+        connectionId: tools.connectionId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-private-link-connection
+      description: Return One Private Link Connection
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.getgroupstreamprivatelinkconnection
+      with:
+        connectionId: tools.connectionId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-vpc-peering-connections
+      description: Return All VPC Peering Connections
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.listgroupstreamvpcpeeringconnections
+      with:
+        requesterAccountId: tools.requesterAccountId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-vpc-peering-connection
+      description: Delete One VPC Peering Connection
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-streams.deletegroupstreamvpcpeeringconnection
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: accept-one-incoming-vpc-peering
+      description: Accept One Incoming VPC Peering Connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.acceptgroupstreamvpcpeeringconnection
+      with:
+        id: tools.id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: reject-one-incoming-vpc-peering
+      description: Reject One Incoming VPC Peering Connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.rejectgroupstreamvpcpeeringconnection
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-stream-workspace
+      description: Delete One Stream Workspace
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-streams.deletegroupstreamworkspace
+      with:
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-stream-workspace
+      description: Return One Stream Workspace
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.getgroupstreamworkspace
+      with:
+        tenantName: tools.tenantName
+        includeConnections: tools.includeConnections
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-stream-workspace
+      description: Update One Stream Workspace
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-streams.updategroupstreamworkspace
+      with:
+        tenantName: tools.tenantName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: download-audit-logs-one-atlas
+      description: Download Audit Logs for One Atlas Stream Processing Workspace
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.downloadgroupstreamauditlogs
+      with:
+        endDate: tools.endDate
+        startDate: tools.startDate
+        spName: tools.spName
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-connections-stream-workspaces
+      description: Return All Connections of the Stream Workspaces
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.listgroupstreamconnections
+      with:
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-stream-connection
+      description: Create One Stream Connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.creategroupstreamconnection
+      with:
+        tenantName: tools.tenantName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-stream-connection
+      description: Delete One Stream Connection
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-streams.deletegroupstreamconnection
+      with:
+        tenantName: tools.tenantName
+        connectionName: tools.connectionName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-stream-connection
+      description: Return One Stream Connection
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.getgroupstreamconnection
+      with:
+        tenantName: tools.tenantName
+        connectionName: tools.connectionName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-stream-connection
+      description: Update One Stream Connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-streams.updategroupstreamconnection
+      with:
+        tenantName: tools.tenantName
+        connectionName: tools.connectionName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-stream-processor
+      description: Create One Stream Processor
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.creategroupstreamprocessor
+      with:
+        tenantName: tools.tenantName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-stream-processor
+      description: Delete One Stream Processor
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-streams.deletegroupstreamprocessor
+      with:
+        tenantName: tools.tenantName
+        processorName: tools.processorName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-stream-processor
+      description: Return One Stream Processor
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.getgroupstreamprocessor
+      with:
+        tenantName: tools.tenantName
+        processorName: tools.processorName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-stream-processor
+      description: Update One Stream Processor
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-streams.updategroupstreamprocessor
+      with:
+        tenantName: tools.tenantName
+        processorName: tools.processorName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: start-one-stream-processor
+      description: Start One Stream Processor
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.startgroupstreamprocessor
+      with:
+        tenantName: tools.tenantName
+        processorName: tools.processorName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: start-one-stream-processor-options
+      description: Start One Stream Processor With Options
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.startgroupstreamprocessorwith
+      with:
+        tenantName: tools.tenantName
+        processorName: tools.processorName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: stop-one-stream-processor
+      description: Stop One Stream Processor
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.stopgroupstreamprocessor
+      with:
+        tenantName: tools.tenantName
+        processorName: tools.processorName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-stream-processors-one
+      description: Return All Stream Processors in One Stream Workspace
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.getgroupstreamprocessors
+      with:
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: download-operational-logs-one-atlas
+      description: Download Operational Logs for One Atlas Stream Processing Workspace
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-streams.downloadgroupstreamoperationallogs
+      with:
+        endDate: tools.endDate
+        startDate: tools.startDate
+        spName: tools.spName
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-stream-workspace-sample
+      description: Create One Stream Workspace with Sample Connections
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-streams.withgroupstreamsampleconnections
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

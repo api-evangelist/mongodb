@@ -1,0 +1,918 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Projects
+  description: 'MongoDB Atlas Administration API — Projects. 23 operations. Lead operation: Return All Projects. Self-contained
+    Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Projects
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-projects
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Projects business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups
+      path: /api/atlas/v2/groups
+      operations:
+      - name: listgroups
+        method: GET
+        description: Return All Projects
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroup
+        method: POST
+        description: Create One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: projectOwnerId
+          in: query
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud user to whom to grant the Project
+            Owner role on the specified project. If you set this para
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-byName-groupName
+      path: /api/atlas/v2/groups/byName/{groupName}
+      operations:
+      - name: getgroupbyname
+        method: GET
+        description: Return One Project by Name
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: groupName
+          in: path
+          type: string
+          description: Human-readable label that identifies this project.
+          required: true
+    - name: api-atlas-v2-groups-groupId
+      path: /api/atlas/v2/groups/{groupId}
+      operations:
+      - name: deletegroup
+        method: DELETE
+        description: Remove One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: getgroup
+        method: GET
+        description: Return One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updategroup
+        method: PATCH
+        description: Update One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-access
+      path: /api/atlas/v2/groups/{groupId}/access
+      operations:
+      - name: addgroupaccessuser
+        method: POST
+        description: Add One MongoDB Cloud User to One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-invites
+      path: /api/atlas/v2/groups/{groupId}/invites
+      operations:
+      - name: listgroupinvites
+        method: GET
+        description: Return All Invitations in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: username
+          in: query
+          type: string
+          description: Email address of the user account invited to this project.
+      - name: updategroupinvites
+        method: PATCH
+        description: Update One Invitation in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: creategroupinvite
+        method: POST
+        description: Create Invitation for One MongoDB Cloud User in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-invites-invitationId
+      path: /api/atlas/v2/groups/{groupId}/invites/{invitationId}
+      operations:
+      - name: deletegroupinvite
+        method: DELETE
+        description: Remove One Invitation from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: invitationId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the invitation.
+          required: true
+      - name: getgroupinvite
+        method: GET
+        description: Return One Invitation in One Project by Invitation ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: invitationId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the invitation.
+          required: true
+      - name: updategroupinvitebyid
+        method: PATCH
+        description: Update One Invitation in One Project by Invitation ID
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: invitationId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the invitation.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-ipAddresses
+      path: /api/atlas/v2/groups/{groupId}/ipAddresses
+      operations:
+      - name: getgroupipaddresses
+        method: GET
+        description: Return All IP Addresses for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-limits
+      path: /api/atlas/v2/groups/{groupId}/limits
+      operations:
+      - name: listgrouplimits
+        method: GET
+        description: Return All Limits for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-limits-limitName
+      path: /api/atlas/v2/groups/{groupId}/limits/{limitName}
+      operations:
+      - name: deletegrouplimit
+        method: DELETE
+        description: Remove One Project Limit
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: limitName
+          in: path
+          type: string
+          description: Human-readable label that identifies this project limit.
+          required: true
+      - name: getgrouplimit
+        method: GET
+        description: Return One Limit for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: limitName
+          in: path
+          type: string
+          description: Human-readable label that identifies this project limit.
+          required: true
+      - name: setgrouplimit
+        method: PATCH
+        description: Set One Project Limit
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: limitName
+          in: path
+          type: string
+          description: Human-readable label that identifies this project limit.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-mongoDBVersions
+      path: /api/atlas/v2/groups/{groupId}/mongoDBVersions
+      operations:
+      - name: getgroupmongodbversions
+        method: GET
+        description: Return All Available MongoDB LTS Versions for Clusters in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: query
+          type: string
+          description: Filter results to only one cloud provider.
+        - name: instanceSize
+          in: query
+          type: string
+          description: Filter results to only one instance size.
+        - name: defaultStatus
+          in: query
+          type: string
+          description: Filter results to only the default values per tier. This value must be DEFAULT.
+        - name: itemsPerPage
+          in: query
+          type: integer
+          description: Number of items that the response returns per page.
+    - name: api-atlas-v2-groups-groupId-settings
+      path: /api/atlas/v2/groups/{groupId}/settings
+      operations:
+      - name: getgroupsettings
+        method: GET
+        description: Return Project Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updategroupsettings
+        method: PATCH
+        description: Update Project Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-users-userId-roles
+      path: /api/atlas/v2/groups/{groupId}/users/{userId}/roles
+      operations:
+      - name: updategroupuserroles
+        method: PUT
+        description: Update Project Roles for One MongoDB Cloud User
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: userId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the user to modify.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId}:migrate
+      path: /api/atlas/v2/groups/{groupId}:migrate
+      operations:
+      - name: migrategroup
+        method: POST
+        description: Migrate One Project to Another Organization
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-projects-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Projects. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups
+      name: api-atlas-v2-groups
+      description: REST surface for api-atlas-v2-groups.
+      operations:
+      - method: GET
+        name: listgroups
+        description: Return All Projects
+        call: atlas-projects.listgroups
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroup
+        description: Create One Project
+        call: atlas-projects.creategroup
+        with:
+          projectOwnerId: rest.projectOwnerId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/byname/{groupname}
+      name: api-atlas-v2-groups-byname-groupname
+      description: REST surface for api-atlas-v2-groups-byName-groupName.
+      operations:
+      - method: GET
+        name: getgroupbyname
+        description: Return One Project by Name
+        call: atlas-projects.getgroupbyname
+        with:
+          groupName: rest.groupName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}
+      name: api-atlas-v2-groups-groupid
+      description: REST surface for api-atlas-v2-groups-groupId.
+      operations:
+      - method: DELETE
+        name: deletegroup
+        description: Remove One Project
+        call: atlas-projects.deletegroup
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroup
+        description: Return One Project
+        call: atlas-projects.getgroup
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroup
+        description: Update One Project
+        call: atlas-projects.updategroup
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/access
+      name: api-atlas-v2-groups-groupid-access
+      description: REST surface for api-atlas-v2-groups-groupId-access.
+      operations:
+      - method: POST
+        name: addgroupaccessuser
+        description: Add One MongoDB Cloud User to One Project
+        call: atlas-projects.addgroupaccessuser
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/invites
+      name: api-atlas-v2-groups-groupid-invites
+      description: REST surface for api-atlas-v2-groups-groupId-invites.
+      operations:
+      - method: GET
+        name: listgroupinvites
+        description: Return All Invitations in One Project
+        call: atlas-projects.listgroupinvites
+        with:
+          username: rest.username
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupinvites
+        description: Update One Invitation in One Project
+        call: atlas-projects.updategroupinvites
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupinvite
+        description: Create Invitation for One MongoDB Cloud User in One Project
+        call: atlas-projects.creategroupinvite
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/invites/{invitationid}
+      name: api-atlas-v2-groups-groupid-invites-invitationid
+      description: REST surface for api-atlas-v2-groups-groupId-invites-invitationId.
+      operations:
+      - method: DELETE
+        name: deletegroupinvite
+        description: Remove One Invitation from One Project
+        call: atlas-projects.deletegroupinvite
+        with:
+          invitationId: rest.invitationId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupinvite
+        description: Return One Invitation in One Project by Invitation ID
+        call: atlas-projects.getgroupinvite
+        with:
+          invitationId: rest.invitationId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupinvitebyid
+        description: Update One Invitation in One Project by Invitation ID
+        call: atlas-projects.updategroupinvitebyid
+        with:
+          invitationId: rest.invitationId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/ipaddresses
+      name: api-atlas-v2-groups-groupid-ipaddresses
+      description: REST surface for api-atlas-v2-groups-groupId-ipAddresses.
+      operations:
+      - method: GET
+        name: getgroupipaddresses
+        description: Return All IP Addresses for One Project
+        call: atlas-projects.getgroupipaddresses
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/limits
+      name: api-atlas-v2-groups-groupid-limits
+      description: REST surface for api-atlas-v2-groups-groupId-limits.
+      operations:
+      - method: GET
+        name: listgrouplimits
+        description: Return All Limits for One Project
+        call: atlas-projects.listgrouplimits
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/limits/{limitname}
+      name: api-atlas-v2-groups-groupid-limits-limitname
+      description: REST surface for api-atlas-v2-groups-groupId-limits-limitName.
+      operations:
+      - method: DELETE
+        name: deletegrouplimit
+        description: Remove One Project Limit
+        call: atlas-projects.deletegrouplimit
+        with:
+          limitName: rest.limitName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgrouplimit
+        description: Return One Limit for One Project
+        call: atlas-projects.getgrouplimit
+        with:
+          limitName: rest.limitName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: setgrouplimit
+        description: Set One Project Limit
+        call: atlas-projects.setgrouplimit
+        with:
+          limitName: rest.limitName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/mongodbversions
+      name: api-atlas-v2-groups-groupid-mongodbversions
+      description: REST surface for api-atlas-v2-groups-groupId-mongoDBVersions.
+      operations:
+      - method: GET
+        name: getgroupmongodbversions
+        description: Return All Available MongoDB LTS Versions for Clusters in One Project
+        call: atlas-projects.getgroupmongodbversions
+        with:
+          cloudProvider: rest.cloudProvider
+          instanceSize: rest.instanceSize
+          defaultStatus: rest.defaultStatus
+          itemsPerPage: rest.itemsPerPage
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/settings
+      name: api-atlas-v2-groups-groupid-settings
+      description: REST surface for api-atlas-v2-groups-groupId-settings.
+      operations:
+      - method: GET
+        name: getgroupsettings
+        description: Return Project Settings
+        call: atlas-projects.getgroupsettings
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupsettings
+        description: Update Project Settings
+        call: atlas-projects.updategroupsettings
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/users/{userid}/roles
+      name: api-atlas-v2-groups-groupid-users-userid-roles
+      description: REST surface for api-atlas-v2-groups-groupId-users-userId-roles.
+      operations:
+      - method: PUT
+        name: updategroupuserroles
+        description: Update Project Roles for One MongoDB Cloud User
+        call: atlas-projects.updategroupuserroles
+        with:
+          userId: rest.userId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/groupid-migrate
+      name: api-atlas-v2-groups-groupid-migrate
+      description: REST surface for api-atlas-v2-groups-groupId}:migrate.
+      operations:
+      - method: POST
+        name: migrategroup
+        description: Migrate One Project to Another Organization
+        call: atlas-projects.migrategroup
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-projects-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Projects. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: return-all-projects
+      description: Return All Projects
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.listgroups
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-project
+      description: Create One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-projects.creategroup
+      with:
+        projectOwnerId: tools.projectOwnerId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-project-name
+      description: Return One Project by Name
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.getgroupbyname
+      with:
+        groupName: tools.groupName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-project
+      description: Remove One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-projects.deletegroup
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-project
+      description: Return One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.getgroup
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-project
+      description: Update One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-projects.updategroup
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-one-mongodb-cloud-user
+      description: Add One MongoDB Cloud User to One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-projects.addgroupaccessuser
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-invitations-one-project
+      description: Return All Invitations in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.listgroupinvites
+      with:
+        username: tools.username
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-invitation-one-project
+      description: Update One Invitation in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-projects.updategroupinvites
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-invitation-one-mongodb-cloud
+      description: Create Invitation for One MongoDB Cloud User in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-projects.creategroupinvite
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-invitation-one-project
+      description: Remove One Invitation from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-projects.deletegroupinvite
+      with:
+        invitationId: tools.invitationId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-invitation-one-project
+      description: Return One Invitation in One Project by Invitation ID
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.getgroupinvite
+      with:
+        invitationId: tools.invitationId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-invitation-one-project-2
+      description: Update One Invitation in One Project by Invitation ID
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-projects.updategroupinvitebyid
+      with:
+        invitationId: tools.invitationId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-ip-addresses-one
+      description: Return All IP Addresses for One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.getgroupipaddresses
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-limits-one-project
+      description: Return All Limits for One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.listgrouplimits
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-project-limit
+      description: Remove One Project Limit
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-projects.deletegrouplimit
+      with:
+        limitName: tools.limitName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-limit-one-project
+      description: Return One Limit for One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.getgrouplimit
+      with:
+        limitName: tools.limitName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: set-one-project-limit
+      description: Set One Project Limit
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-projects.setgrouplimit
+      with:
+        limitName: tools.limitName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-available-mongodb-lts
+      description: Return All Available MongoDB LTS Versions for Clusters in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.getgroupmongodbversions
+      with:
+        cloudProvider: tools.cloudProvider
+        instanceSize: tools.instanceSize
+        defaultStatus: tools.defaultStatus
+        itemsPerPage: tools.itemsPerPage
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-project-settings
+      description: Return Project Settings
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-projects.getgroupsettings
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-project-settings
+      description: Update Project Settings
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-projects.updategroupsettings
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-project-roles-one-mongodb
+      description: Update Project Roles for One MongoDB Cloud User
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-projects.updategroupuserroles
+      with:
+        userId: tools.userId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: migrate-one-project-another-organization
+      description: Migrate One Project to Another Organization
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-projects.migrategroup
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

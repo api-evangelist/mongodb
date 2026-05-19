@@ -1,0 +1,1527 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Cloud Backups
+  description: 'MongoDB Atlas Administration API — Cloud Backups. 35 operations. Lead operation: Return All Snapshot Export
+    Buckets. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Cloud Backups
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-cloud-backups
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Cloud Backups business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-backup-exportBuckets
+      path: /api/atlas/v2/groups/{groupId}/backup/exportBuckets
+      operations:
+      - name: listgroupbackupexportbuckets
+        method: GET
+        description: Return All Snapshot Export Buckets
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupbackupexportbucket
+        method: POST
+        description: Create One Snapshot Export Bucket
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-backup-exportBuckets-exportBucketId
+      path: /api/atlas/v2/groups/{groupId}/backup/exportBuckets/{exportBucketId}
+      operations:
+      - name: deletegroupbackupexportbucket
+        method: DELETE
+        description: Delete One Snapshot Export Bucket
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: exportBucketId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
+          required: true
+      - name: getgroupbackupexportbucket
+        method: GET
+        description: Return One Snapshot Export Bucket
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: exportBucketId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
+          required: true
+      - name: updategroupbackupexportbucket
+        method: PATCH
+        description: Update One Export Bucket Private Networking Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: exportBucketId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal character string that identifies the snapshot export bucket.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-backup-cloudProvider-privateEndpoints
+      path: /api/atlas/v2/groups/{groupId}/backup/{cloudProvider}/privateEndpoints
+      operations:
+      - name: listgroupbackupprivateendpoints
+        method: GET
+        description: Return Object Storage Private Endpoints for Cloud Backups for One Cloud Provider in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Human-readable label that identifies the cloud provider for the private endpoints to return.
+          required: true
+      - name: creategroupbackupprivateendpoint
+        method: POST
+        description: Create One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Human-readable label that identifies the cloud provider for the private endpoint to create.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-backup-cloudProvider-privateEndpoints-endpointId
+      path: /api/atlas/v2/groups/{groupId}/backup/{cloudProvider}/privateEndpoints/{endpointId}
+      operations:
+      - name: deletegroupbackupprivateendpoint
+        method: DELETE
+        description: Delete One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Human-readable label that identifies the cloud provider of the private endpoint to delete.
+          required: true
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint to delete.
+          required: true
+      - name: getgroupbackupprivateendpoint
+        method: GET
+        description: Return One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cloudProvider
+          in: path
+          type: string
+          description: Human-readable label that identifies the cloud provider of the private endpoint.
+          required: true
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
+          required: true
+    - name: api-atlas-v2-groups-groupId-backupCompliancePolicy
+      path: /api/atlas/v2/groups/{groupId}/backupCompliancePolicy
+      operations:
+      - name: disablegroupbackupcompliancepolicy
+        method: DELETE
+        description: Disable Backup Compliance Policy Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: getgroupbackupcompliancepolicy
+        method: GET
+        description: Return Backup Compliance Policy Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updategroupbackupcompliancepolicy
+        method: PUT
+        description: Update Backup Compliance Policy Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: overwriteBackupPolicies
+          in: query
+          type: boolean
+          description: Flag that indicates whether to overwrite non complying backup policies with the new data protection
+            settings or not.
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-exports
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/exports
+      operations:
+      - name: listgroupclusterbackupexports
+        method: GET
+        description: Return All Snapshot Export Jobs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+      - name: creategroupclusterbackupexport
+        method: POST
+        description: Create One Snapshot Export Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-exports-exportId
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/exports/{exportId}
+      operations:
+      - name: getgroupclusterbackupexport
+        method: GET
+        description: Return One Snapshot Export Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: exportId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal character string that identifies the Export Job.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-restoreJobs
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/restoreJobs
+      operations:
+      - name: listgroupclusterbackuprestorejobs
+        method: GET
+        description: Return All Restore Jobs for One Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster with the restore jobs you want to return.
+          required: true
+      - name: creategroupclusterbackuprestorejob
+        method: POST
+        description: Create One Restore Job of One Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-restoreJobs-restoreJobId
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/restoreJobs/{restoreJobId}
+      operations:
+      - name: cancelgroupclusterbackuprestorejob
+        method: DELETE
+        description: Cancel One Restore Job for One Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: restoreJobId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the restore job to remove.
+          required: true
+      - name: getgroupclusterbackuprestorejob
+        method: GET
+        description: Return One Restore Job for One Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster with the restore jobs you want to return.
+          required: true
+        - name: restoreJobId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the restore job to return.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-schedule
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/schedule
+      operations:
+      - name: deletegroupclusterbackupschedule
+        method: DELETE
+        description: Remove All Cloud Backup Schedules
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+      - name: getgroupclusterbackupschedule
+        method: GET
+        description: Return One Cloud Backup Schedule
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+      - name: updategroupclusterbackupschedule
+        method: PATCH
+        description: Update Cloud Backup Schedule for One Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/snapshots
+      operations:
+      - name: listgroupclusterbackupsnapshots
+        method: GET
+        description: Return All Replica Set Cloud Backups
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: pointInTimeUtcSeconds
+          in: query
+          type: integer
+          description: Desired point in time, expressed as the number of seconds that have elapsed since the UNIX epoch. If
+            specified, returns the closest snapshot created before that
+        - name: oplogTs
+          in: query
+          type: integer
+          description: Oplog timestamp that represents the desired point in time. This is the first part of an Oplog timestamp.
+            Must be used with `oplogInc`. Mutually exclusive with `
+        - name: oplogInc
+          in: query
+          type: integer
+          description: Oplog operation number that represents the desired point in time. This is the second part of an Oplog
+            timestamp. Must be used with `oplogTs`. Mutually exclusive
+      - name: takegroupclusterbackupsnapshots
+        method: POST
+        description: Take One On-Demand Snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots-shardedCluster
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/snapshots/shardedCluster/{snapshotId}
+      operations:
+      - name: deletegroupclusterbackupsnapshotshardedcluster
+        method: DELETE
+        description: Remove One Sharded Cluster Cloud Backup
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+      - name: getgroupclusterbackupsnapshotshardedcluster
+        method: GET
+        description: Return One Sharded Cluster Cloud Backup
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots-shardedCluster
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/snapshots/shardedClusters
+      operations:
+      - name: listgroupclusterbackupsnapshotshardedclusters
+        method: GET
+        description: Return All Sharded Cluster Cloud Backups
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots-snapshotId
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backup/snapshots/{snapshotId}
+      operations:
+      - name: deletegroupclusterbackupsnapshot
+        method: DELETE
+        description: Remove One Replica Set Cloud Backup
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+      - name: getgroupclusterbackupsnapshot
+        method: GET
+        description: Return One Replica Set Cloud Backup
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+      - name: updategroupclusterbackupsnapshot
+        method: PATCH
+        description: Update Expiration Date for One Cloud Backup
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-serverless-clusterName-backup-restoreJobs
+      path: /api/atlas/v2/groups/{groupId}/serverless/{clusterName}/backup/restoreJobs
+      operations:
+      - name: listgroupserverlessbackuprestorejobs
+        method: GET
+        description: Return All Restore Jobs for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance.
+          required: true
+      - name: creategroupserverlessbackuprestorejob
+        method: POST
+        description: Create One Restore Job for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance whose snapshot you want to restore.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-serverless-clusterName-backup-restoreJobs-restoreJob
+      path: /api/atlas/v2/groups/{groupId}/serverless/{clusterName}/backup/restoreJobs/{restoreJobId}
+      operations:
+      - name: getgroupserverlessbackuprestorejob
+        method: GET
+        description: Return One Restore Job for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance.
+          required: true
+        - name: restoreJobId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the restore job to return.
+          required: true
+    - name: api-atlas-v2-groups-groupId-serverless-clusterName-backup-snapshots
+      path: /api/atlas/v2/groups/{groupId}/serverless/{clusterName}/backup/snapshots
+      operations:
+      - name: listgroupserverlessbackupsnapshots
+        method: GET
+        description: Return All Snapshots of One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance.
+          required: true
+    - name: api-atlas-v2-groups-groupId-serverless-clusterName-backup-snapshots-snapshotId
+      path: /api/atlas/v2/groups/{groupId}/serverless/{clusterName}/backup/snapshots/{snapshotId}
+      operations:
+      - name: getgroupserverlessbackupsnapshot
+        method: GET
+        description: Return One Snapshot of One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance.
+          required: true
+        - name: snapshotId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-cloud-backups-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Cloud Backups. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/backup/exportbuckets
+      name: api-atlas-v2-groups-groupid-backup-exportbuckets
+      description: REST surface for api-atlas-v2-groups-groupId-backup-exportBuckets.
+      operations:
+      - method: GET
+        name: listgroupbackupexportbuckets
+        description: Return All Snapshot Export Buckets
+        call: atlas-cloud-backups.listgroupbackupexportbuckets
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupbackupexportbucket
+        description: Create One Snapshot Export Bucket
+        call: atlas-cloud-backups.creategroupbackupexportbucket
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/backup/exportbuckets/{exportbucketid}
+      name: api-atlas-v2-groups-groupid-backup-exportbuckets-exportbucketid
+      description: REST surface for api-atlas-v2-groups-groupId-backup-exportBuckets-exportBucketId.
+      operations:
+      - method: DELETE
+        name: deletegroupbackupexportbucket
+        description: Delete One Snapshot Export Bucket
+        call: atlas-cloud-backups.deletegroupbackupexportbucket
+        with:
+          exportBucketId: rest.exportBucketId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupbackupexportbucket
+        description: Return One Snapshot Export Bucket
+        call: atlas-cloud-backups.getgroupbackupexportbucket
+        with:
+          exportBucketId: rest.exportBucketId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupbackupexportbucket
+        description: Update One Export Bucket Private Networking Settings
+        call: atlas-cloud-backups.updategroupbackupexportbucket
+        with:
+          exportBucketId: rest.exportBucketId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/backup/{cloudprovider}/privateendpoints
+      name: api-atlas-v2-groups-groupid-backup-cloudprovider-privateendpoints
+      description: REST surface for api-atlas-v2-groups-groupId-backup-cloudProvider-privateEndpoints.
+      operations:
+      - method: GET
+        name: listgroupbackupprivateendpoints
+        description: Return Object Storage Private Endpoints for Cloud Backups for One Cloud Provider in One Project
+        call: atlas-cloud-backups.listgroupbackupprivateendpoints
+        with:
+          cloudProvider: rest.cloudProvider
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupbackupprivateendpoint
+        description: Create One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+        call: atlas-cloud-backups.creategroupbackupprivateendpoint
+        with:
+          cloudProvider: rest.cloudProvider
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/backup/{cloudprovider}/privateendpoints/{endpointid}
+      name: api-atlas-v2-groups-groupid-backup-cloudprovider-privateendpoints-endpointid
+      description: REST surface for api-atlas-v2-groups-groupId-backup-cloudProvider-privateEndpoints-endpointId.
+      operations:
+      - method: DELETE
+        name: deletegroupbackupprivateendpoint
+        description: Delete One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider from One Project
+        call: atlas-cloud-backups.deletegroupbackupprivateendpoint
+        with:
+          cloudProvider: rest.cloudProvider
+          endpointId: rest.endpointId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupbackupprivateendpoint
+        description: Return One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+        call: atlas-cloud-backups.getgroupbackupprivateendpoint
+        with:
+          cloudProvider: rest.cloudProvider
+          endpointId: rest.endpointId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/backupcompliancepolicy
+      name: api-atlas-v2-groups-groupid-backupcompliancepolicy
+      description: REST surface for api-atlas-v2-groups-groupId-backupCompliancePolicy.
+      operations:
+      - method: DELETE
+        name: disablegroupbackupcompliancepolicy
+        description: Disable Backup Compliance Policy Settings
+        call: atlas-cloud-backups.disablegroupbackupcompliancepolicy
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupbackupcompliancepolicy
+        description: Return Backup Compliance Policy Settings
+        call: atlas-cloud-backups.getgroupbackupcompliancepolicy
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updategroupbackupcompliancepolicy
+        description: Update Backup Compliance Policy Settings
+        call: atlas-cloud-backups.updategroupbackupcompliancepolicy
+        with:
+          overwriteBackupPolicies: rest.overwriteBackupPolicies
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/exports
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-exports
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-exports.
+      operations:
+      - method: GET
+        name: listgroupclusterbackupexports
+        description: Return All Snapshot Export Jobs
+        call: atlas-cloud-backups.listgroupclusterbackupexports
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupclusterbackupexport
+        description: Create One Snapshot Export Job
+        call: atlas-cloud-backups.creategroupclusterbackupexport
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/exports/{exportid}
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-exports-exportid
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-exports-exportId.
+      operations:
+      - method: GET
+        name: getgroupclusterbackupexport
+        description: Return One Snapshot Export Job
+        call: atlas-cloud-backups.getgroupclusterbackupexport
+        with:
+          clusterName: rest.clusterName
+          exportId: rest.exportId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/restorejobs
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-restorejobs
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-restoreJobs.
+      operations:
+      - method: GET
+        name: listgroupclusterbackuprestorejobs
+        description: Return All Restore Jobs for One Cluster
+        call: atlas-cloud-backups.listgroupclusterbackuprestorejobs
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupclusterbackuprestorejob
+        description: Create One Restore Job of One Cluster
+        call: atlas-cloud-backups.creategroupclusterbackuprestorejob
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/restorejobs/{restorejobid}
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-restorejobs-restorejobid
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-restoreJobs-restoreJobId.
+      operations:
+      - method: DELETE
+        name: cancelgroupclusterbackuprestorejob
+        description: Cancel One Restore Job for One Cluster
+        call: atlas-cloud-backups.cancelgroupclusterbackuprestorejob
+        with:
+          clusterName: rest.clusterName
+          restoreJobId: rest.restoreJobId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupclusterbackuprestorejob
+        description: Return One Restore Job for One Cluster
+        call: atlas-cloud-backups.getgroupclusterbackuprestorejob
+        with:
+          clusterName: rest.clusterName
+          restoreJobId: rest.restoreJobId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/schedule
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-schedule
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-schedule.
+      operations:
+      - method: DELETE
+        name: deletegroupclusterbackupschedule
+        description: Remove All Cloud Backup Schedules
+        call: atlas-cloud-backups.deletegroupclusterbackupschedule
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupclusterbackupschedule
+        description: Return One Cloud Backup Schedule
+        call: atlas-cloud-backups.getgroupclusterbackupschedule
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupclusterbackupschedule
+        description: Update Cloud Backup Schedule for One Cluster
+        call: atlas-cloud-backups.updategroupclusterbackupschedule
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/snapshots
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-snapshots
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots.
+      operations:
+      - method: GET
+        name: listgroupclusterbackupsnapshots
+        description: Return All Replica Set Cloud Backups
+        call: atlas-cloud-backups.listgroupclusterbackupsnapshots
+        with:
+          clusterName: rest.clusterName
+          pointInTimeUtcSeconds: rest.pointInTimeUtcSeconds
+          oplogTs: rest.oplogTs
+          oplogInc: rest.oplogInc
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: takegroupclusterbackupsnapshots
+        description: Take One On-Demand Snapshot
+        call: atlas-cloud-backups.takegroupclusterbackupsnapshots
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/snapshots/shardedcluster/{snapshotid}
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-snapshots-shardedcluster
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots-shardedCluster.
+      operations:
+      - method: DELETE
+        name: deletegroupclusterbackupsnapshotshardedcluster
+        description: Remove One Sharded Cluster Cloud Backup
+        call: atlas-cloud-backups.deletegroupclusterbackupsnapshotshardedcluster
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupclusterbackupsnapshotshardedcluster
+        description: Return One Sharded Cluster Cloud Backup
+        call: atlas-cloud-backups.getgroupclusterbackupsnapshotshardedcluster
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/snapshots/shardedclusters
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-snapshots-shardedcluster
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots-shardedCluster.
+      operations:
+      - method: GET
+        name: listgroupclusterbackupsnapshotshardedclusters
+        description: Return All Sharded Cluster Cloud Backups
+        call: atlas-cloud-backups.listgroupclusterbackupsnapshotshardedclusters
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/backup/snapshots/{snapshotid}
+      name: api-atlas-v2-groups-groupid-clusters-clustername-backup-snapshots-snapshotid
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-backup-snapshots-snapshotId.
+      operations:
+      - method: DELETE
+        name: deletegroupclusterbackupsnapshot
+        description: Remove One Replica Set Cloud Backup
+        call: atlas-cloud-backups.deletegroupclusterbackupsnapshot
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupclusterbackupsnapshot
+        description: Return One Replica Set Cloud Backup
+        call: atlas-cloud-backups.getgroupclusterbackupsnapshot
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupclusterbackupsnapshot
+        description: Update Expiration Date for One Cloud Backup
+        call: atlas-cloud-backups.updategroupclusterbackupsnapshot
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/serverless/{clustername}/backup/restorejobs
+      name: api-atlas-v2-groups-groupid-serverless-clustername-backup-restorejobs
+      description: REST surface for api-atlas-v2-groups-groupId-serverless-clusterName-backup-restoreJobs.
+      operations:
+      - method: GET
+        name: listgroupserverlessbackuprestorejobs
+        description: Return All Restore Jobs for One Serverless Instance
+        call: atlas-cloud-backups.listgroupserverlessbackuprestorejobs
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupserverlessbackuprestorejob
+        description: Create One Restore Job for One Serverless Instance
+        call: atlas-cloud-backups.creategroupserverlessbackuprestorejob
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/serverless/{clustername}/backup/restorejobs/{restorejobid}
+      name: api-atlas-v2-groups-groupid-serverless-clustername-backup-restorejobs-restorejob
+      description: REST surface for api-atlas-v2-groups-groupId-serverless-clusterName-backup-restoreJobs-restoreJob.
+      operations:
+      - method: GET
+        name: getgroupserverlessbackuprestorejob
+        description: Return One Restore Job for One Serverless Instance
+        call: atlas-cloud-backups.getgroupserverlessbackuprestorejob
+        with:
+          clusterName: rest.clusterName
+          restoreJobId: rest.restoreJobId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/serverless/{clustername}/backup/snapshots
+      name: api-atlas-v2-groups-groupid-serverless-clustername-backup-snapshots
+      description: REST surface for api-atlas-v2-groups-groupId-serverless-clusterName-backup-snapshots.
+      operations:
+      - method: GET
+        name: listgroupserverlessbackupsnapshots
+        description: Return All Snapshots of One Serverless Instance
+        call: atlas-cloud-backups.listgroupserverlessbackupsnapshots
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/serverless/{clustername}/backup/snapshots/{snapshotid}
+      name: api-atlas-v2-groups-groupid-serverless-clustername-backup-snapshots-snapshotid
+      description: REST surface for api-atlas-v2-groups-groupId-serverless-clusterName-backup-snapshots-snapshotId.
+      operations:
+      - method: GET
+        name: getgroupserverlessbackupsnapshot
+        description: Return One Snapshot of One Serverless Instance
+        call: atlas-cloud-backups.getgroupserverlessbackupsnapshot
+        with:
+          clusterName: rest.clusterName
+          snapshotId: rest.snapshotId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-cloud-backups-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Cloud Backups. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-snapshot-export-buckets
+      description: Return All Snapshot Export Buckets
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupbackupexportbuckets
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-snapshot-export-bucket
+      description: Create One Snapshot Export Bucket
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-backups.creategroupbackupexportbucket
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-snapshot-export-bucket
+      description: Delete One Snapshot Export Bucket
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-backups.deletegroupbackupexportbucket
+      with:
+        exportBucketId: tools.exportBucketId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-snapshot-export-bucket
+      description: Return One Snapshot Export Bucket
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupbackupexportbucket
+      with:
+        exportBucketId: tools.exportBucketId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-export-bucket-private
+      description: Update One Export Bucket Private Networking Settings
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.updategroupbackupexportbucket
+      with:
+        exportBucketId: tools.exportBucketId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-object-storage-private-endpoints
+      description: Return Object Storage Private Endpoints for Cloud Backups for One Cloud Provider in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupbackupprivateendpoints
+      with:
+        cloudProvider: tools.cloudProvider
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-object-storage-private
+      description: Create One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-backups.creategroupbackupprivateendpoint
+      with:
+        cloudProvider: tools.cloudProvider
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-object-storage-private
+      description: Delete One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-backups.deletegroupbackupprivateendpoint
+      with:
+        cloudProvider: tools.cloudProvider
+        endpointId: tools.endpointId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-object-storage-private
+      description: Return One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupbackupprivateendpoint
+      with:
+        cloudProvider: tools.cloudProvider
+        endpointId: tools.endpointId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: disable-backup-compliance-policy-settings
+      description: Disable Backup Compliance Policy Settings
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-backups.disablegroupbackupcompliancepolicy
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-backup-compliance-policy-settings
+      description: Return Backup Compliance Policy Settings
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupbackupcompliancepolicy
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-backup-compliance-policy-settings
+      description: Update Backup Compliance Policy Settings
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.updategroupbackupcompliancepolicy
+      with:
+        overwriteBackupPolicies: tools.overwriteBackupPolicies
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-snapshot-export-jobs
+      description: Return All Snapshot Export Jobs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupclusterbackupexports
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-snapshot-export-job
+      description: Create One Snapshot Export Job
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-backups.creategroupclusterbackupexport
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-snapshot-export-job
+      description: Return One Snapshot Export Job
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupclusterbackupexport
+      with:
+        clusterName: tools.clusterName
+        exportId: tools.exportId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-restore-jobs-one
+      description: Return All Restore Jobs for One Cluster
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupclusterbackuprestorejobs
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-restore-job-one
+      description: Create One Restore Job of One Cluster
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-backups.creategroupclusterbackuprestorejob
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cancel-one-restore-job-one
+      description: Cancel One Restore Job for One Cluster
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-backups.cancelgroupclusterbackuprestorejob
+      with:
+        clusterName: tools.clusterName
+        restoreJobId: tools.restoreJobId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-restore-job-one
+      description: Return One Restore Job for One Cluster
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupclusterbackuprestorejob
+      with:
+        clusterName: tools.clusterName
+        restoreJobId: tools.restoreJobId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-all-cloud-backup-schedules
+      description: Remove All Cloud Backup Schedules
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-backups.deletegroupclusterbackupschedule
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-cloud-backup-schedule
+      description: Return One Cloud Backup Schedule
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupclusterbackupschedule
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-cloud-backup-schedule-one
+      description: Update Cloud Backup Schedule for One Cluster
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.updategroupclusterbackupschedule
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-replica-set-cloud
+      description: Return All Replica Set Cloud Backups
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupclusterbackupsnapshots
+      with:
+        clusterName: tools.clusterName
+        pointInTimeUtcSeconds: tools.pointInTimeUtcSeconds
+        oplogTs: tools.oplogTs
+        oplogInc: tools.oplogInc
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: take-one-demand-snapshot
+      description: Take One On-Demand Snapshot
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-backups.takegroupclusterbackupsnapshots
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-sharded-cluster-cloud
+      description: Remove One Sharded Cluster Cloud Backup
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-backups.deletegroupclusterbackupsnapshotshardedcluster
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-sharded-cluster-cloud
+      description: Return One Sharded Cluster Cloud Backup
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupclusterbackupsnapshotshardedcluster
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-sharded-cluster-cloud
+      description: Return All Sharded Cluster Cloud Backups
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupclusterbackupsnapshotshardedclusters
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-replica-set-cloud
+      description: Remove One Replica Set Cloud Backup
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-backups.deletegroupclusterbackupsnapshot
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-replica-set-cloud
+      description: Return One Replica Set Cloud Backup
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupclusterbackupsnapshot
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-expiration-date-one-cloud
+      description: Update Expiration Date for One Cloud Backup
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.updategroupclusterbackupsnapshot
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-restore-jobs-one-2
+      description: Return All Restore Jobs for One Serverless Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupserverlessbackuprestorejobs
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-restore-job-one-2
+      description: Create One Restore Job for One Serverless Instance
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-backups.creategroupserverlessbackuprestorejob
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-restore-job-one-2
+      description: Return One Restore Job for One Serverless Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupserverlessbackuprestorejob
+      with:
+        clusterName: tools.clusterName
+        restoreJobId: tools.restoreJobId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-snapshots-one-serverless
+      description: Return All Snapshots of One Serverless Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.listgroupserverlessbackupsnapshots
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-snapshot-one-serverless
+      description: Return One Snapshot of One Serverless Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-backups.getgroupserverlessbackupsnapshot
+      with:
+        clusterName: tools.clusterName
+        snapshotId: tools.snapshotId
+      outputParameters:
+      - type: object
+        mapping: $.

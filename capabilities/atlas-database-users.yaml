@@ -1,0 +1,251 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Database Users
+  description: 'MongoDB Atlas Administration API — Database Users. 5 operations. Lead operation: Return All Database Users
+    in One Project. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Database Users
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-database-users
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Database Users business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-databaseUsers
+      path: /api/atlas/v2/groups/{groupId}/databaseUsers
+      operations:
+      - name: listgroupdatabaseusers
+        method: GET
+        description: Return All Database Users in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupdatabaseuser
+        method: POST
+        description: Create One Database User in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-databaseUsers-databaseName-username
+      path: /api/atlas/v2/groups/{groupId}/databaseUsers/{databaseName}/{username}
+      operations:
+      - name: deletegroupdatabaseuser
+        method: DELETE
+        description: Remove One Database User from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: databaseName
+          in: path
+          type: string
+          description: 'The database against which the database user authenticates. Database users must provide both a username
+            and authentication database to log into MongoDB. If the '
+          required: true
+        - name: username
+          in: path
+          type: string
+          description: 'Human-readable label that represents the user that authenticates to MongoDB. The format of this label
+            depends on the method of authentication:'
+          required: true
+      - name: getgroupdatabaseuser
+        method: GET
+        description: Return One Database User from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: databaseName
+          in: path
+          type: string
+          description: 'The database against which the database user authenticates. Database users must provide both a username
+            and authentication database to log into MongoDB. If the '
+          required: true
+        - name: username
+          in: path
+          type: string
+          description: 'Human-readable label that represents the user that authenticates to MongoDB. The format of this label
+            depends on the method of authentication:'
+          required: true
+      - name: updategroupdatabaseuser
+        method: PATCH
+        description: Update One Database User in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: databaseName
+          in: path
+          type: string
+          description: 'The database against which the database user authenticates. Database users must provide both a username
+            and authentication database to log into MongoDB. If the '
+          required: true
+        - name: username
+          in: path
+          type: string
+          description: 'Human-readable label that represents the user that authenticates to MongoDB. The format of this label
+            depends on the method of authentication:'
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-database-users-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Database Users. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/databaseusers
+      name: api-atlas-v2-groups-groupid-databaseusers
+      description: REST surface for api-atlas-v2-groups-groupId-databaseUsers.
+      operations:
+      - method: GET
+        name: listgroupdatabaseusers
+        description: Return All Database Users in One Project
+        call: atlas-database-users.listgroupdatabaseusers
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupdatabaseuser
+        description: Create One Database User in One Project
+        call: atlas-database-users.creategroupdatabaseuser
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/databaseusers/{databasename}/{username}
+      name: api-atlas-v2-groups-groupid-databaseusers-databasename-username
+      description: REST surface for api-atlas-v2-groups-groupId-databaseUsers-databaseName-username.
+      operations:
+      - method: DELETE
+        name: deletegroupdatabaseuser
+        description: Remove One Database User from One Project
+        call: atlas-database-users.deletegroupdatabaseuser
+        with:
+          databaseName: rest.databaseName
+          username: rest.username
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupdatabaseuser
+        description: Return One Database User from One Project
+        call: atlas-database-users.getgroupdatabaseuser
+        with:
+          databaseName: rest.databaseName
+          username: rest.username
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupdatabaseuser
+        description: Update One Database User in One Project
+        call: atlas-database-users.updategroupdatabaseuser
+        with:
+          databaseName: rest.databaseName
+          username: rest.username
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-database-users-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Database Users. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-database-users-one
+      description: Return All Database Users in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-database-users.listgroupdatabaseusers
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-database-user-one
+      description: Create One Database User in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-database-users.creategroupdatabaseuser
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-database-user-one
+      description: Remove One Database User from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-database-users.deletegroupdatabaseuser
+      with:
+        databaseName: tools.databaseName
+        username: tools.username
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-database-user-one
+      description: Return One Database User from One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-database-users.getgroupdatabaseuser
+      with:
+        databaseName: tools.databaseName
+        username: tools.username
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-database-user-one
+      description: Update One Database User in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-database-users.updategroupdatabaseuser
+      with:
+        databaseName: tools.databaseName
+        username: tools.username
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

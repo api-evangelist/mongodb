@@ -1,0 +1,87 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Rolling Index
+  description: 'MongoDB Atlas Administration API — Rolling Index. 1 operations. Lead operation: Create One Rolling Index.
+    Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Rolling Index
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-rolling-index
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Rolling Index business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-index
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/index
+      operations:
+      - name: creategroupclusterindexrollingindex
+        method: POST
+        description: Create One Rolling Index
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster on which MongoDB Cloud creates an index.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-rolling-index-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Rolling Index. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/index
+      name: api-atlas-v2-groups-groupid-clusters-clustername-index
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-index.
+      operations:
+      - method: POST
+        name: creategroupclusterindexrollingindex
+        description: Create One Rolling Index
+        call: atlas-rolling-index.creategroupclusterindexrollingindex
+        with:
+          clusterName: rest.clusterName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-rolling-index-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Rolling Index. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: create-one-rolling-index
+      description: Create One Rolling Index
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-rolling-index.creategroupclusterindexrollingindex
+      with:
+        clusterName: tools.clusterName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

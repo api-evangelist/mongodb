@@ -1,0 +1,634 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Data Federation
+  description: 'MongoDB Atlas Administration API — Data Federation. 14 operations. Lead operation: Return All Federated Database
+    Instances in One Project. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Data Federation
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-data-federation
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Data Federation business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-dataFederation
+      path: /api/atlas/v2/groups/{groupId}/dataFederation
+      operations:
+      - name: listgroupdatafederation
+        method: GET
+        description: Return All Federated Database Instances in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: type
+          in: query
+          type: string
+          description: Type of Federated Database Instances to return.
+      - name: creategroupdatafederation
+        method: POST
+        description: Create One Federated Database Instance in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: skipRoleValidation
+          in: query
+          type: boolean
+          description: Flag that indicates whether this request should check if the requesting IAM role can read from the
+            S3 bucket. AWS checks if the role can list the objects in the
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-dataFederation-tenantName
+      path: /api/atlas/v2/groups/{groupId}/dataFederation/{tenantName}
+      operations:
+      - name: deletegroupdatafederation
+        method: DELETE
+        description: Remove One Federated Database Instance from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the federated database instance to remove.
+          required: true
+      - name: getgroupdatafederation
+        method: GET
+        description: Return One Federated Database Instance in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Federated Database to return.
+          required: true
+      - name: updategroupdatafederation
+        method: PATCH
+        description: Update One Federated Database Instance in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the federated database instance to update.
+          required: true
+        - name: skipRoleValidation
+          in: query
+          type: boolean
+          description: Flag that indicates whether this request should check if the requesting IAM role can read from the
+            S3 bucket. AWS checks if the role can list the objects in the
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-dataFederation-tenantName-limits
+      path: /api/atlas/v2/groups/{groupId}/dataFederation/{tenantName}/limits
+      operations:
+      - name: listgroupdatafederationlimits
+        method: GET
+        description: Return All Query Limits for One Federated Database Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the federated database instance for which you want to retrieve
+            query limits.
+          required: true
+    - name: api-atlas-v2-groups-groupId-dataFederation-tenantName-limits-limitName
+      path: /api/atlas/v2/groups/{groupId}/dataFederation/{tenantName}/limits/{limitName}
+      operations:
+      - name: deletegroupdatafederationlimit
+        method: DELETE
+        description: Delete One Query Limit for One Federated Database Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the federated database instance to which the query limit applies.
+          required: true
+        - name: limitName
+          in: path
+          type: string
+          description: Human-readable label that identifies this data federation instance limit.
+          required: true
+      - name: getgroupdatafederationlimit
+        method: GET
+        description: Return One Federated Database Instance Query Limit for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the federated database instance to which the query limit applies.
+          required: true
+        - name: limitName
+          in: path
+          type: string
+          description: Human-readable label that identifies this data federation instance limit.
+          required: true
+      - name: setgroupdatafederationlimit
+        method: PATCH
+        description: Configure One Query Limit for One Federated Database Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the federated database instance to which the query limit applies.
+          required: true
+        - name: limitName
+          in: path
+          type: string
+          description: Human-readable label that identifies this data federation instance limit.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-dataFederation-tenantName-queryLogs.gz
+      path: /api/atlas/v2/groups/{groupId}/dataFederation/{tenantName}/queryLogs.gz
+      operations:
+      - name: downloadgroupdatafederationquerylogs
+        method: GET
+        description: Download Query Logs for One Federated Database Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: endDate
+          in: query
+          type: integer
+          description: Timestamp that specifies the end point for the range of log messages to download.  MongoDB Cloud expresses
+            this timestamp in the number of seconds that have ela
+        - name: startDate
+          in: query
+          type: integer
+          description: Timestamp that specifies the starting point for the range of log messages to download. MongoDB Cloud
+            expresses this timestamp in the number of seconds that have
+        - name: tenantName
+          in: path
+          type: string
+          description: Human-readable label that identifies the federated database instance for which you want to download
+            query logs.
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateNetworkSettings-endpointIds
+      path: /api/atlas/v2/groups/{groupId}/privateNetworkSettings/endpointIds
+      operations:
+      - name: listgroupprivatenetworksettingendpointids
+        method: GET
+        description: Return All Federated Database Instance and Online Archive Private Endpoints in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupprivatenetworksettingendpointid
+        method: POST
+        description: Create One Federated Database Instance and Online Archive Private Endpoint for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateNetworkSettings-endpointIds-endpointId
+      path: /api/atlas/v2/groups/{groupId}/privateNetworkSettings/endpointIds/{endpointId}
+      operations:
+      - name: deletegroupprivatenetworksettingendpointid
+        method: DELETE
+        description: Remove One Federated Database Instance and Online Archive Private Endpoint from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique 22-character alphanumeric string that identifies the private endpoint to remove. Atlas Data
+            Federation supports AWS private endpoints using the AWS Priva
+          required: true
+      - name: getgroupprivatenetworksettingendpointid
+        method: GET
+        description: Return One Federated Database Instance and Online Archive Private Endpoint in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique 22-character alphanumeric string that identifies the private endpoint to return. Atlas Data
+            Federation supports AWS private endpoints using the AWS Priva
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-data-federation-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Data Federation. One Spectral-compliant resource per
+      consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/datafederation
+      name: api-atlas-v2-groups-groupid-datafederation
+      description: REST surface for api-atlas-v2-groups-groupId-dataFederation.
+      operations:
+      - method: GET
+        name: listgroupdatafederation
+        description: Return All Federated Database Instances in One Project
+        call: atlas-data-federation.listgroupdatafederation
+        with:
+          type: rest.type
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupdatafederation
+        description: Create One Federated Database Instance in One Project
+        call: atlas-data-federation.creategroupdatafederation
+        with:
+          skipRoleValidation: rest.skipRoleValidation
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/datafederation/{tenantname}
+      name: api-atlas-v2-groups-groupid-datafederation-tenantname
+      description: REST surface for api-atlas-v2-groups-groupId-dataFederation-tenantName.
+      operations:
+      - method: DELETE
+        name: deletegroupdatafederation
+        description: Remove One Federated Database Instance from One Project
+        call: atlas-data-federation.deletegroupdatafederation
+        with:
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupdatafederation
+        description: Return One Federated Database Instance in One Project
+        call: atlas-data-federation.getgroupdatafederation
+        with:
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupdatafederation
+        description: Update One Federated Database Instance in One Project
+        call: atlas-data-federation.updategroupdatafederation
+        with:
+          tenantName: rest.tenantName
+          skipRoleValidation: rest.skipRoleValidation
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/datafederation/{tenantname}/limits
+      name: api-atlas-v2-groups-groupid-datafederation-tenantname-limits
+      description: REST surface for api-atlas-v2-groups-groupId-dataFederation-tenantName-limits.
+      operations:
+      - method: GET
+        name: listgroupdatafederationlimits
+        description: Return All Query Limits for One Federated Database Instance
+        call: atlas-data-federation.listgroupdatafederationlimits
+        with:
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/datafederation/{tenantname}/limits/{limitname}
+      name: api-atlas-v2-groups-groupid-datafederation-tenantname-limits-limitname
+      description: REST surface for api-atlas-v2-groups-groupId-dataFederation-tenantName-limits-limitName.
+      operations:
+      - method: DELETE
+        name: deletegroupdatafederationlimit
+        description: Delete One Query Limit for One Federated Database Instance
+        call: atlas-data-federation.deletegroupdatafederationlimit
+        with:
+          tenantName: rest.tenantName
+          limitName: rest.limitName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupdatafederationlimit
+        description: Return One Federated Database Instance Query Limit for One Project
+        call: atlas-data-federation.getgroupdatafederationlimit
+        with:
+          tenantName: rest.tenantName
+          limitName: rest.limitName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: setgroupdatafederationlimit
+        description: Configure One Query Limit for One Federated Database Instance
+        call: atlas-data-federation.setgroupdatafederationlimit
+        with:
+          tenantName: rest.tenantName
+          limitName: rest.limitName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/datafederation/{tenantname}/querylogs-gz
+      name: api-atlas-v2-groups-groupid-datafederation-tenantname-querylogs-gz
+      description: REST surface for api-atlas-v2-groups-groupId-dataFederation-tenantName-queryLogs.gz.
+      operations:
+      - method: GET
+        name: downloadgroupdatafederationquerylogs
+        description: Download Query Logs for One Federated Database Instance
+        call: atlas-data-federation.downloadgroupdatafederationquerylogs
+        with:
+          endDate: rest.endDate
+          startDate: rest.startDate
+          tenantName: rest.tenantName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privatenetworksettings/endpointids
+      name: api-atlas-v2-groups-groupid-privatenetworksettings-endpointids
+      description: REST surface for api-atlas-v2-groups-groupId-privateNetworkSettings-endpointIds.
+      operations:
+      - method: GET
+        name: listgroupprivatenetworksettingendpointids
+        description: Return All Federated Database Instance and Online Archive Private Endpoints in One Project
+        call: atlas-data-federation.listgroupprivatenetworksettingendpointids
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupprivatenetworksettingendpointid
+        description: Create One Federated Database Instance and Online Archive Private Endpoint for One Project
+        call: atlas-data-federation.creategroupprivatenetworksettingendpointid
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privatenetworksettings/endpointids/{endpointid}
+      name: api-atlas-v2-groups-groupid-privatenetworksettings-endpointids-endpointid
+      description: REST surface for api-atlas-v2-groups-groupId-privateNetworkSettings-endpointIds-endpointId.
+      operations:
+      - method: DELETE
+        name: deletegroupprivatenetworksettingendpointid
+        description: Remove One Federated Database Instance and Online Archive Private Endpoint from One Project
+        call: atlas-data-federation.deletegroupprivatenetworksettingendpointid
+        with:
+          endpointId: rest.endpointId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupprivatenetworksettingendpointid
+        description: Return One Federated Database Instance and Online Archive Private Endpoint in One Project
+        call: atlas-data-federation.getgroupprivatenetworksettingendpointid
+        with:
+          endpointId: rest.endpointId
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-data-federation-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Data Federation. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-federated-database-instances
+      description: Return All Federated Database Instances in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.listgroupdatafederation
+      with:
+        type: tools.type
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-federated-database-instance
+      description: Create One Federated Database Instance in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-data-federation.creategroupdatafederation
+      with:
+        skipRoleValidation: tools.skipRoleValidation
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-federated-database-instance
+      description: Remove One Federated Database Instance from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-data-federation.deletegroupdatafederation
+      with:
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-federated-database-instance
+      description: Return One Federated Database Instance in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.getgroupdatafederation
+      with:
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-federated-database-instance
+      description: Update One Federated Database Instance in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.updategroupdatafederation
+      with:
+        tenantName: tools.tenantName
+        skipRoleValidation: tools.skipRoleValidation
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-query-limits-one
+      description: Return All Query Limits for One Federated Database Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.listgroupdatafederationlimits
+      with:
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-query-limit-one
+      description: Delete One Query Limit for One Federated Database Instance
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-data-federation.deletegroupdatafederationlimit
+      with:
+        tenantName: tools.tenantName
+        limitName: tools.limitName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-federated-database-instance-2
+      description: Return One Federated Database Instance Query Limit for One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.getgroupdatafederationlimit
+      with:
+        tenantName: tools.tenantName
+        limitName: tools.limitName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: configure-one-query-limit-one
+      description: Configure One Query Limit for One Federated Database Instance
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.setgroupdatafederationlimit
+      with:
+        tenantName: tools.tenantName
+        limitName: tools.limitName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: download-query-logs-one-federated
+      description: Download Query Logs for One Federated Database Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.downloadgroupdatafederationquerylogs
+      with:
+        endDate: tools.endDate
+        startDate: tools.startDate
+        tenantName: tools.tenantName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-federated-database-instance
+      description: Return All Federated Database Instance and Online Archive Private Endpoints in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.listgroupprivatenetworksettingendpointids
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-federated-database-instance-2
+      description: Create One Federated Database Instance and Online Archive Private Endpoint for One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-data-federation.creategroupprivatenetworksettingendpointid
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-federated-database-instance-2
+      description: Remove One Federated Database Instance and Online Archive Private Endpoint from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-data-federation.deletegroupprivatenetworksettingendpointid
+      with:
+        endpointId: tools.endpointId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-federated-database-instance-3
+      description: Return One Federated Database Instance and Online Archive Private Endpoint in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-federation.getgroupprivatenetworksettingendpointid
+      with:
+        endpointId: tools.endpointId
+      outputParameters:
+      - type: object
+        mapping: $.

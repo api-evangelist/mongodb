@@ -1,0 +1,360 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Push-Based Log Export
+  description: 'MongoDB Atlas Administration API — Push-Based Log Export. 9 operations. Lead operation: Return All Active
+    Log Integrations. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Push-Based Log Export
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-push-based-log-export
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Push-Based Log Export business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-logIntegrations
+      path: /api/atlas/v2/groups/{groupId}/logIntegrations
+      operations:
+      - name: listgrouplogintegrations
+        method: GET
+        description: Return All Active Log Integrations
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: integrationType
+          in: query
+          type: string
+          description: Optional filter by integration type (e.g., `S3_LOG_EXPORT`).
+      - name: creategrouplogintegration
+        method: POST
+        description: Create One Log Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-logIntegrations-id
+      path: /api/atlas/v2/groups/{groupId}/logIntegrations/{id}
+      operations:
+      - name: deletegrouplogintegration
+        method: DELETE
+        description: Remove One Log Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: Unique identifier of the log integration configuration.
+          required: true
+      - name: getgrouplogintegration
+        method: GET
+        description: Return One Log Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: Unique identifier of the log integration configuration.
+          required: true
+      - name: updategrouplogintegration
+        method: PUT
+        description: Update One Log Integration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          description: Unique identifier of the log integration configuration.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-pushBasedLogExport
+      path: /api/atlas/v2/groups/{groupId}/pushBasedLogExport
+      operations:
+      - name: deletegrouppushbasedlogexport
+        method: DELETE
+        description: Disable Push-Based Log Export for One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: getgrouppushbasedlogexport
+        method: GET
+        description: Return One Push-Based Log Export Configuration in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updategrouppushbasedlogexport
+        method: PATCH
+        description: Update One Push-Based Log Export Configuration in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: creategrouppushbasedlogexport
+        method: POST
+        description: Create One Push-Based Log Export Configuration in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-push-based-log-export-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Push-Based Log Export. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/logintegrations
+      name: api-atlas-v2-groups-groupid-logintegrations
+      description: REST surface for api-atlas-v2-groups-groupId-logIntegrations.
+      operations:
+      - method: GET
+        name: listgrouplogintegrations
+        description: Return All Active Log Integrations
+        call: atlas-push-based-log-export.listgrouplogintegrations
+        with:
+          integrationType: rest.integrationType
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategrouplogintegration
+        description: Create One Log Integration
+        call: atlas-push-based-log-export.creategrouplogintegration
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/logintegrations/{id}
+      name: api-atlas-v2-groups-groupid-logintegrations-id
+      description: REST surface for api-atlas-v2-groups-groupId-logIntegrations-id.
+      operations:
+      - method: DELETE
+        name: deletegrouplogintegration
+        description: Remove One Log Integration
+        call: atlas-push-based-log-export.deletegrouplogintegration
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgrouplogintegration
+        description: Return One Log Integration
+        call: atlas-push-based-log-export.getgrouplogintegration
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updategrouplogintegration
+        description: Update One Log Integration
+        call: atlas-push-based-log-export.updategrouplogintegration
+        with:
+          id: rest.id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pushbasedlogexport
+      name: api-atlas-v2-groups-groupid-pushbasedlogexport
+      description: REST surface for api-atlas-v2-groups-groupId-pushBasedLogExport.
+      operations:
+      - method: DELETE
+        name: deletegrouppushbasedlogexport
+        description: Disable Push-Based Log Export for One Project
+        call: atlas-push-based-log-export.deletegrouppushbasedlogexport
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgrouppushbasedlogexport
+        description: Return One Push-Based Log Export Configuration in One Project
+        call: atlas-push-based-log-export.getgrouppushbasedlogexport
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategrouppushbasedlogexport
+        description: Update One Push-Based Log Export Configuration in One Project
+        call: atlas-push-based-log-export.updategrouppushbasedlogexport
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategrouppushbasedlogexport
+        description: Create One Push-Based Log Export Configuration in One Project
+        call: atlas-push-based-log-export.creategrouppushbasedlogexport
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-push-based-log-export-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Push-Based Log Export. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-active-log-integrations
+      description: Return All Active Log Integrations
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-push-based-log-export.listgrouplogintegrations
+      with:
+        integrationType: tools.integrationType
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-log-integration
+      description: Create One Log Integration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-push-based-log-export.creategrouplogintegration
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-log-integration
+      description: Remove One Log Integration
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-push-based-log-export.deletegrouplogintegration
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-log-integration
+      description: Return One Log Integration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-push-based-log-export.getgrouplogintegration
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-log-integration
+      description: Update One Log Integration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-push-based-log-export.updategrouplogintegration
+      with:
+        id: tools.id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: disable-push-based-log-export
+      description: Disable Push-Based Log Export for One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-push-based-log-export.deletegrouppushbasedlogexport
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-push-based-log
+      description: Return One Push-Based Log Export Configuration in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-push-based-log-export.getgrouppushbasedlogexport
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-push-based-log
+      description: Update One Push-Based Log Export Configuration in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-push-based-log-export.updategrouppushbasedlogexport
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-push-based-log
+      description: Create One Push-Based Log Export Configuration in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-push-based-log-export.creategrouppushbasedlogexport
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,266 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Serverless Private Endpoints
+  description: 'MongoDB Atlas Administration API — Serverless Private Endpoints. 5 operations. Lead operation: Return All
+    Private Endpoints for One Serverless Instance. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Serverless Private Endpoints
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-serverless-private-endpoints
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Serverless Private Endpoints business capability. Self-contained, no shared
+      references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-serverless-instance-instanceName-end
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint
+      operations:
+      - name: listgroupprivateendpointserverlessinstanceendpoint
+        method: GET
+        description: Return All Private Endpoints for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: instanceName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance associated with the tenant endpoint.
+          required: true
+      - name: creategroupprivateendpointserverlessinstanceendpoint
+        method: POST
+        description: Create One Private Endpoint for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: instanceName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance for which the tenant endpoint will be
+            created.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-privateEndpoint-serverless-instance-instanceName-end
+      path: /api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}
+      operations:
+      - name: deletegroupprivateendpointserverlessinstanceendpoint
+        method: DELETE
+        description: Remove One Private Endpoint for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: instanceName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance from which the tenant endpoint will be
+            removed.
+          required: true
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the tenant endpoint which will be removed.
+          required: true
+      - name: getgroupprivateendpointserverlessinstanceendpoint
+        method: GET
+        description: Return One Private Endpoint for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: instanceName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance associated with the tenant endpoint.
+          required: true
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the tenant endpoint.
+          required: true
+      - name: updategroupprivateendpointserverlessinstanceendpoint
+        method: PATCH
+        description: Update One Private Endpoint for One Serverless Instance
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: instanceName
+          in: path
+          type: string
+          description: Human-readable label that identifies the serverless instance associated with the tenant endpoint that
+            will be updated.
+          required: true
+        - name: endpointId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the tenant endpoint which will be updated.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-serverless-private-endpoints-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Serverless Private Endpoints. One Spectral-compliant
+      resource per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/serverless/instance/{instancename}/endpoint
+      name: api-atlas-v2-groups-groupid-privateendpoint-serverless-instance-instancename-end
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-serverless-instance-instanceName-end.
+      operations:
+      - method: GET
+        name: listgroupprivateendpointserverlessinstanceendpoint
+        description: Return All Private Endpoints for One Serverless Instance
+        call: atlas-serverless-private-endpoints.listgroupprivateendpointserverlessinstanceendpoint
+        with:
+          instanceName: rest.instanceName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupprivateendpointserverlessinstanceendpoint
+        description: Create One Private Endpoint for One Serverless Instance
+        call: atlas-serverless-private-endpoints.creategroupprivateendpointserverlessinstanceendpoint
+        with:
+          instanceName: rest.instanceName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/privateendpoint/serverless/instance/{instancename}/endpoint/{endpointid}
+      name: api-atlas-v2-groups-groupid-privateendpoint-serverless-instance-instancename-end
+      description: REST surface for api-atlas-v2-groups-groupId-privateEndpoint-serverless-instance-instanceName-end.
+      operations:
+      - method: DELETE
+        name: deletegroupprivateendpointserverlessinstanceendpoint
+        description: Remove One Private Endpoint for One Serverless Instance
+        call: atlas-serverless-private-endpoints.deletegroupprivateendpointserverlessinstanceendpoint
+        with:
+          instanceName: rest.instanceName
+          endpointId: rest.endpointId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupprivateendpointserverlessinstanceendpoint
+        description: Return One Private Endpoint for One Serverless Instance
+        call: atlas-serverless-private-endpoints.getgroupprivateendpointserverlessinstanceendpoint
+        with:
+          instanceName: rest.instanceName
+          endpointId: rest.endpointId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupprivateendpointserverlessinstanceendpoint
+        description: Update One Private Endpoint for One Serverless Instance
+        call: atlas-serverless-private-endpoints.updategroupprivateendpointserverlessinstanceendpoint
+        with:
+          instanceName: rest.instanceName
+          endpointId: rest.endpointId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-serverless-private-endpoints-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Serverless Private Endpoints. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-private-endpoints-one
+      description: Return All Private Endpoints for One Serverless Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-serverless-private-endpoints.listgroupprivateendpointserverlessinstanceendpoint
+      with:
+        instanceName: tools.instanceName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-private-endpoint-one
+      description: Create One Private Endpoint for One Serverless Instance
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-serverless-private-endpoints.creategroupprivateendpointserverlessinstanceendpoint
+      with:
+        instanceName: tools.instanceName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-private-endpoint-one
+      description: Remove One Private Endpoint for One Serverless Instance
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-serverless-private-endpoints.deletegroupprivateendpointserverlessinstanceendpoint
+      with:
+        instanceName: tools.instanceName
+        endpointId: tools.endpointId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-private-endpoint-one
+      description: Return One Private Endpoint for One Serverless Instance
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-serverless-private-endpoints.getgroupprivateendpointserverlessinstanceendpoint
+      with:
+        instanceName: tools.instanceName
+        endpointId: tools.endpointId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-private-endpoint-one
+      description: Update One Private Endpoint for One Serverless Instance
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-serverless-private-endpoints.updategroupprivateendpointserverlessinstanceendpoint
+      with:
+        instanceName: tools.instanceName
+        endpointId: tools.endpointId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

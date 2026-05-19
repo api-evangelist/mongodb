@@ -1,0 +1,328 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Cloud Migration Service
+  description: 'MongoDB Atlas Administration API — Cloud Migration Service. 8 operations. Lead operation: Create One Migration
+    for One Local Managed Cluster to MongoDB Atlas. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Cloud Migration Service
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-cloud-migration-service
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Cloud Migration Service business capability. Self-contained, no shared
+      references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-liveMigrations
+      path: /api/atlas/v2/groups/{groupId}/liveMigrations
+      operations:
+      - name: creategrouplivemigration
+        method: POST
+        description: Create One Migration for One Local Managed Cluster to MongoDB Atlas
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-liveMigrations-validate
+      path: /api/atlas/v2/groups/{groupId}/liveMigrations/validate
+      operations:
+      - name: validategrouplivemigrations
+        method: POST
+        description: Validate One Migration Request
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-liveMigrations-validate-validationId
+      path: /api/atlas/v2/groups/{groupId}/liveMigrations/validate/{validationId}
+      operations:
+      - name: getgrouplivemigrationvalidatestatus
+        method: GET
+        description: Return One Migration Validation Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: validationId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies the validation job.
+          required: true
+    - name: api-atlas-v2-groups-groupId-liveMigrations-liveMigrationId
+      path: /api/atlas/v2/groups/{groupId}/liveMigrations/{liveMigrationId}
+      operations:
+      - name: getgrouplivemigration
+        method: GET
+        description: Return One Migration Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-liveMigrations-liveMigrationId-cutover
+      path: /api/atlas/v2/groups/{groupId}/liveMigrations/{liveMigrationId}/cutover
+      operations:
+      - name: cutovergrouplivemigration
+        method: PUT
+        description: Cut Over One Migrated Cluster
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-orgs-orgId-liveMigrations-availableProjects
+      path: /api/atlas/v2/orgs/{orgId}/liveMigrations/availableProjects
+      operations:
+      - name: listorglivemigrationavailableprojects
+        method: GET
+        description: Return All Projects Available for Migration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-orgs-orgId-liveMigrations-linkTokens
+      path: /api/atlas/v2/orgs/{orgId}/liveMigrations/linkTokens
+      operations:
+      - name: deleteorglivemigrationlinktokens
+        method: DELETE
+        description: Remove One Link-Token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createorglivemigrationlinktoken
+        method: POST
+        description: Create One Link-Token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-cloud-migration-service-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Cloud Migration Service. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/livemigrations
+      name: api-atlas-v2-groups-groupid-livemigrations
+      description: REST surface for api-atlas-v2-groups-groupId-liveMigrations.
+      operations:
+      - method: POST
+        name: creategrouplivemigration
+        description: Create One Migration for One Local Managed Cluster to MongoDB Atlas
+        call: atlas-cloud-migration-service.creategrouplivemigration
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/livemigrations/validate
+      name: api-atlas-v2-groups-groupid-livemigrations-validate
+      description: REST surface for api-atlas-v2-groups-groupId-liveMigrations-validate.
+      operations:
+      - method: POST
+        name: validategrouplivemigrations
+        description: Validate One Migration Request
+        call: atlas-cloud-migration-service.validategrouplivemigrations
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/livemigrations/validate/{validationid}
+      name: api-atlas-v2-groups-groupid-livemigrations-validate-validationid
+      description: REST surface for api-atlas-v2-groups-groupId-liveMigrations-validate-validationId.
+      operations:
+      - method: GET
+        name: getgrouplivemigrationvalidatestatus
+        description: Return One Migration Validation Job
+        call: atlas-cloud-migration-service.getgrouplivemigrationvalidatestatus
+        with:
+          validationId: rest.validationId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/livemigrations/{livemigrationid}
+      name: api-atlas-v2-groups-groupid-livemigrations-livemigrationid
+      description: REST surface for api-atlas-v2-groups-groupId-liveMigrations-liveMigrationId.
+      operations:
+      - method: GET
+        name: getgrouplivemigration
+        description: Return One Migration Job
+        call: atlas-cloud-migration-service.getgrouplivemigration
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/livemigrations/{livemigrationid}/cutover
+      name: api-atlas-v2-groups-groupid-livemigrations-livemigrationid-cutover
+      description: REST surface for api-atlas-v2-groups-groupId-liveMigrations-liveMigrationId-cutover.
+      operations:
+      - method: PUT
+        name: cutovergrouplivemigration
+        description: Cut Over One Migrated Cluster
+        call: atlas-cloud-migration-service.cutovergrouplivemigration
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/livemigrations/availableprojects
+      name: api-atlas-v2-orgs-orgid-livemigrations-availableprojects
+      description: REST surface for api-atlas-v2-orgs-orgId-liveMigrations-availableProjects.
+      operations:
+      - method: GET
+        name: listorglivemigrationavailableprojects
+        description: Return All Projects Available for Migration
+        call: atlas-cloud-migration-service.listorglivemigrationavailableprojects
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/livemigrations/linktokens
+      name: api-atlas-v2-orgs-orgid-livemigrations-linktokens
+      description: REST surface for api-atlas-v2-orgs-orgId-liveMigrations-linkTokens.
+      operations:
+      - method: DELETE
+        name: deleteorglivemigrationlinktokens
+        description: Remove One Link-Token
+        call: atlas-cloud-migration-service.deleteorglivemigrationlinktokens
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createorglivemigrationlinktoken
+        description: Create One Link-Token
+        call: atlas-cloud-migration-service.createorglivemigrationlinktoken
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-cloud-migration-service-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Cloud Migration Service. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: create-one-migration-one-local
+      description: Create One Migration for One Local Managed Cluster to MongoDB Atlas
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-migration-service.creategrouplivemigration
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: validate-one-migration-request
+      description: Validate One Migration Request
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-migration-service.validategrouplivemigrations
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-migration-validation-job
+      description: Return One Migration Validation Job
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-migration-service.getgrouplivemigrationvalidatestatus
+      with:
+        validationId: tools.validationId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-migration-job
+      description: Return One Migration Job
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-migration-service.getgrouplivemigration
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cut-over-one-migrated-cluster
+      description: Cut Over One Migrated Cluster
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-migration-service.cutovergrouplivemigration
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-projects-available-migration
+      description: Return All Projects Available for Migration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-cloud-migration-service.listorglivemigrationavailableprojects
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-link-token
+      description: Remove One Link-Token
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-cloud-migration-service.deleteorglivemigrationlinktokens
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-link-token
+      description: Create One Link-Token
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-cloud-migration-service.createorglivemigrationlinktoken
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

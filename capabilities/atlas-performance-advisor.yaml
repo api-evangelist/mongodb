@@ -1,0 +1,595 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Performance Advisor
+  description: 'MongoDB Atlas Administration API — Performance Advisor. 11 operations. Lead operation: Return All Suggested
+    Indexes to Drop. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Performance Advisor
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-performance-advisor
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Performance Advisor business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-performanceAdvisor-dropIndexSug
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/dropIndexSuggestions
+      operations:
+      - name: listgroupclusterperformanceadvisordropindexsuggestions
+        method: GET
+        description: Return All Suggested Indexes to Drop
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-performanceAdvisor-schemaAdvice
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/schemaAdvice
+      operations:
+      - name: listgroupclusterperformanceadvisorschemaadvice
+        method: GET
+        description: Return Schema Advice
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+    - name: api-atlas-v2-groups-groupId-clusters-clusterName-performanceAdvisor-suggestedInd
+      path: /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/suggestedIndexes
+      operations:
+      - name: listgroupclusterperformanceadvisorsuggestedindexes
+        method: GET
+        description: Return All Suggested Indexes
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: processIds
+          in: query
+          type: array
+          description: Process IDs from which to retrieve suggested indexes. A `processId` is a combination of host and port
+            that serves the MongoDB process. The host must be the host
+        - name: namespaces
+          in: query
+          type: array
+          description: 'Namespaces from which to retrieve suggested indexes. A namespace consists of one database and one
+            collection resource written as `.`: `<database>.<collection>`.'
+        - name: since
+          in: query
+          type: integer
+          description: Date and time from which the query retrieves the suggested indexes. This parameter expresses its value
+            in the number of milliseconds that have elapsed since the
+        - name: until
+          in: query
+          type: integer
+          description: Date and time up until which the query retrieves the suggested indexes. This parameter expresses its
+            value in the number of milliseconds that have elapsed since
+    - name: api-atlas-v2-groups-groupId-managedSlowMs
+      path: /api/atlas/v2/groups/{groupId}/managedSlowMs
+      operations:
+      - name: getgroupmanagedslowms
+        method: GET
+        description: Return Managed Slow Operation Threshold Status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-managedSlowMs-disable
+      path: /api/atlas/v2/groups/{groupId}/managedSlowMs/disable
+      operations:
+      - name: disablegroupmanagedslowms
+        method: DELETE
+        description: Disable Managed Slow Operation Threshold
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-managedSlowMs-enable
+      path: /api/atlas/v2/groups/{groupId}/managedSlowMs/enable
+      operations:
+      - name: enablegroupmanagedslowms
+        method: POST
+        description: Enable Managed Slow Operation Threshold
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-groups-groupId-processes-processId-performanceAdvisor-namespaces
+      path: /api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/namespaces
+      operations:
+      - name: listgroupprocessperformanceadvisornamespaces
+        method: GET
+        description: Return All Namespaces for One Host
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: duration
+          in: query
+          type: integer
+          description: Length of time expressed during which the query finds suggested indexes among the managed namespaces
+            in the cluster. This parameter expresses its value in milli
+        - name: processId
+          in: path
+          type: string
+          description: Combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN,
+            IPv4 address, or IPv6 address of the host that runs the Mongo
+          required: true
+        - name: since
+          in: query
+          type: integer
+          description: Date and time from which the query retrieves the suggested indexes. This parameter expresses its value
+            in the number of milliseconds that have elapsed since the
+    - name: api-atlas-v2-groups-groupId-processes-processId-performanceAdvisor-slowQueryLogs
+      path: /api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/slowQueryLogs
+      operations:
+      - name: listgroupprocessperformanceadvisorslowquerylogs
+        method: GET
+        description: Return Slow Queries
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: duration
+          in: query
+          type: integer
+          description: Length of time expressed during which the query finds slow queries among the managed namespaces in
+            the cluster. This parameter expresses its value in millisecon
+        - name: namespaces
+          in: query
+          type: array
+          description: 'Namespaces from which to retrieve slow queries. A namespace consists of one database and one collection
+            resource written as `.`: `<database>.<collection>`. To i'
+        - name: nLogs
+          in: query
+          type: integer
+          description: Maximum number of lines from the log to return.
+        - name: processId
+          in: path
+          type: string
+          description: Combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN,
+            IPv4 address, or IPv6 address of the host that runs the Mongo
+          required: true
+        - name: since
+          in: query
+          type: integer
+          description: Date and time from which the query retrieves the slow queries. This parameter expresses its value in
+            the number of milliseconds that have elapsed since the [UNI
+        - name: includeMetrics
+          in: query
+          type: boolean
+          description: Whether or not to include metrics extracted from the slow query log as separate fields.
+        - name: includeReplicaState
+          in: query
+          type: boolean
+          description: Whether or not to include the replica state of the host when the slow query log was generated as a
+            separate field.
+        - name: includeOpType
+          in: query
+          type: boolean
+          description: Whether or not to include the operation type (read/write/command) extracted from the slow query log
+            as a separate field.
+    - name: api-atlas-v2-groups-groupId-processes-processId-performanceAdvisor-suggestedInde
+      path: /api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/suggestedIndexes
+      operations:
+      - name: listgroupprocessperformanceadvisorsuggestedindexes
+        method: GET
+        description: Return All Suggested Indexes
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: duration
+          in: query
+          type: integer
+          description: Length of time expressed during which the query finds suggested indexes among the managed namespaces
+            in the cluster. This parameter expresses its value in milli
+        - name: namespaces
+          in: query
+          type: array
+          description: 'Namespaces from which to retrieve suggested indexes. A namespace consists of one database and one
+            collection resource written as `.`: `<database>.<collection>`.'
+        - name: nExamples
+          in: query
+          type: integer
+          description: Maximum number of example queries that benefit from the suggested index.
+        - name: nIndexes
+          in: query
+          type: integer
+          description: Number that indicates the maximum indexes to suggest.
+        - name: processId
+          in: path
+          type: string
+          description: Combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN,
+            IPv4 address, or IPv6 address of the host that runs the Mongo
+          required: true
+        - name: since
+          in: query
+          type: integer
+          description: Date and time from which the query retrieves the suggested indexes. This parameter expresses its value
+            in the number of milliseconds that have elapsed since the
+    - name: api-atlas-v2-groups-groupId-serverless-clusterName-performanceAdvisor-autoIndexi
+      path: /api/atlas/v2/groups/{groupId}/serverless/{clusterName}/performanceAdvisor/autoIndexing
+      operations:
+      - name: getgroupserverlessperformanceadvisorautoindexing
+        method: GET
+        description: Return Serverless Auto-Indexing Status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+      - name: setgroupserverlessperformanceadvisorautoindexing
+        method: POST
+        description: Set Serverless Auto-Indexing Status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: clusterName
+          in: path
+          type: string
+          description: Human-readable label that identifies the cluster.
+          required: true
+        - name: enable
+          in: query
+          type: boolean
+          description: Value that we want to set for the Serverless Auto Indexing toggle.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-performance-advisor-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Performance Advisor. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/performanceadvisor/dropindexsuggestions
+      name: api-atlas-v2-groups-groupid-clusters-clustername-performanceadvisor-dropindexsug
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-performanceAdvisor-dropIndexSug.
+      operations:
+      - method: GET
+        name: listgroupclusterperformanceadvisordropindexsuggestions
+        description: Return All Suggested Indexes to Drop
+        call: atlas-performance-advisor.listgroupclusterperformanceadvisordropindexsuggestions
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/performanceadvisor/schemaadvice
+      name: api-atlas-v2-groups-groupid-clusters-clustername-performanceadvisor-schemaadvice
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-performanceAdvisor-schemaAdvice.
+      operations:
+      - method: GET
+        name: listgroupclusterperformanceadvisorschemaadvice
+        description: Return Schema Advice
+        call: atlas-performance-advisor.listgroupclusterperformanceadvisorschemaadvice
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/clusters/{clustername}/performanceadvisor/suggestedindexes
+      name: api-atlas-v2-groups-groupid-clusters-clustername-performanceadvisor-suggestedind
+      description: REST surface for api-atlas-v2-groups-groupId-clusters-clusterName-performanceAdvisor-suggestedInd.
+      operations:
+      - method: GET
+        name: listgroupclusterperformanceadvisorsuggestedindexes
+        description: Return All Suggested Indexes
+        call: atlas-performance-advisor.listgroupclusterperformanceadvisorsuggestedindexes
+        with:
+          clusterName: rest.clusterName
+          processIds: rest.processIds
+          namespaces: rest.namespaces
+          since: rest.since
+          until: rest.until
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/managedslowms
+      name: api-atlas-v2-groups-groupid-managedslowms
+      description: REST surface for api-atlas-v2-groups-groupId-managedSlowMs.
+      operations:
+      - method: GET
+        name: getgroupmanagedslowms
+        description: Return Managed Slow Operation Threshold Status
+        call: atlas-performance-advisor.getgroupmanagedslowms
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/managedslowms/disable
+      name: api-atlas-v2-groups-groupid-managedslowms-disable
+      description: REST surface for api-atlas-v2-groups-groupId-managedSlowMs-disable.
+      operations:
+      - method: DELETE
+        name: disablegroupmanagedslowms
+        description: Disable Managed Slow Operation Threshold
+        call: atlas-performance-advisor.disablegroupmanagedslowms
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/managedslowms/enable
+      name: api-atlas-v2-groups-groupid-managedslowms-enable
+      description: REST surface for api-atlas-v2-groups-groupId-managedSlowMs-enable.
+      operations:
+      - method: POST
+        name: enablegroupmanagedslowms
+        description: Enable Managed Slow Operation Threshold
+        call: atlas-performance-advisor.enablegroupmanagedslowms
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/processes/{processid}/performanceadvisor/namespaces
+      name: api-atlas-v2-groups-groupid-processes-processid-performanceadvisor-namespaces
+      description: REST surface for api-atlas-v2-groups-groupId-processes-processId-performanceAdvisor-namespaces.
+      operations:
+      - method: GET
+        name: listgroupprocessperformanceadvisornamespaces
+        description: Return All Namespaces for One Host
+        call: atlas-performance-advisor.listgroupprocessperformanceadvisornamespaces
+        with:
+          duration: rest.duration
+          processId: rest.processId
+          since: rest.since
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/processes/{processid}/performanceadvisor/slowquerylogs
+      name: api-atlas-v2-groups-groupid-processes-processid-performanceadvisor-slowquerylogs
+      description: REST surface for api-atlas-v2-groups-groupId-processes-processId-performanceAdvisor-slowQueryLogs.
+      operations:
+      - method: GET
+        name: listgroupprocessperformanceadvisorslowquerylogs
+        description: Return Slow Queries
+        call: atlas-performance-advisor.listgroupprocessperformanceadvisorslowquerylogs
+        with:
+          duration: rest.duration
+          namespaces: rest.namespaces
+          nLogs: rest.nLogs
+          processId: rest.processId
+          since: rest.since
+          includeMetrics: rest.includeMetrics
+          includeReplicaState: rest.includeReplicaState
+          includeOpType: rest.includeOpType
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/processes/{processid}/performanceadvisor/suggestedindexes
+      name: api-atlas-v2-groups-groupid-processes-processid-performanceadvisor-suggestedinde
+      description: REST surface for api-atlas-v2-groups-groupId-processes-processId-performanceAdvisor-suggestedInde.
+      operations:
+      - method: GET
+        name: listgroupprocessperformanceadvisorsuggestedindexes
+        description: Return All Suggested Indexes
+        call: atlas-performance-advisor.listgroupprocessperformanceadvisorsuggestedindexes
+        with:
+          duration: rest.duration
+          namespaces: rest.namespaces
+          nExamples: rest.nExamples
+          nIndexes: rest.nIndexes
+          processId: rest.processId
+          since: rest.since
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/serverless/{clustername}/performanceadvisor/autoindexing
+      name: api-atlas-v2-groups-groupid-serverless-clustername-performanceadvisor-autoindexi
+      description: REST surface for api-atlas-v2-groups-groupId-serverless-clusterName-performanceAdvisor-autoIndexi.
+      operations:
+      - method: GET
+        name: getgroupserverlessperformanceadvisorautoindexing
+        description: Return Serverless Auto-Indexing Status
+        call: atlas-performance-advisor.getgroupserverlessperformanceadvisorautoindexing
+        with:
+          clusterName: rest.clusterName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: setgroupserverlessperformanceadvisorautoindexing
+        description: Set Serverless Auto-Indexing Status
+        call: atlas-performance-advisor.setgroupserverlessperformanceadvisorautoindexing
+        with:
+          clusterName: rest.clusterName
+          enable: rest.enable
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-performance-advisor-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Performance Advisor. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-suggested-indexes-drop
+      description: Return All Suggested Indexes to Drop
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.listgroupclusterperformanceadvisordropindexsuggestions
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-schema-advice
+      description: Return Schema Advice
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.listgroupclusterperformanceadvisorschemaadvice
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-suggested-indexes
+      description: Return All Suggested Indexes
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.listgroupclusterperformanceadvisorsuggestedindexes
+      with:
+        clusterName: tools.clusterName
+        processIds: tools.processIds
+        namespaces: tools.namespaces
+        since: tools.since
+        until: tools.until
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-managed-slow-operation-threshold
+      description: Return Managed Slow Operation Threshold Status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.getgroupmanagedslowms
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: disable-managed-slow-operation-threshold
+      description: Disable Managed Slow Operation Threshold
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-performance-advisor.disablegroupmanagedslowms
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: enable-managed-slow-operation-threshold
+      description: Enable Managed Slow Operation Threshold
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-performance-advisor.enablegroupmanagedslowms
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-namespaces-one-host
+      description: Return All Namespaces for One Host
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.listgroupprocessperformanceadvisornamespaces
+      with:
+        duration: tools.duration
+        processId: tools.processId
+        since: tools.since
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-slow-queries
+      description: Return Slow Queries
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.listgroupprocessperformanceadvisorslowquerylogs
+      with:
+        duration: tools.duration
+        namespaces: tools.namespaces
+        nLogs: tools.nLogs
+        processId: tools.processId
+        since: tools.since
+        includeMetrics: tools.includeMetrics
+        includeReplicaState: tools.includeReplicaState
+        includeOpType: tools.includeOpType
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-suggested-indexes-2
+      description: Return All Suggested Indexes
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.listgroupprocessperformanceadvisorsuggestedindexes
+      with:
+        duration: tools.duration
+        namespaces: tools.namespaces
+        nExamples: tools.nExamples
+        nIndexes: tools.nIndexes
+        processId: tools.processId
+        since: tools.since
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-serverless-auto-indexing-status
+      description: Return Serverless Auto-Indexing Status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-performance-advisor.getgroupserverlessperformanceadvisorautoindexing
+      with:
+        clusterName: tools.clusterName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: set-serverless-auto-indexing-status
+      description: Set Serverless Auto-Indexing Status
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-performance-advisor.setgroupserverlessperformanceadvisorautoindexing
+      with:
+        clusterName: tools.clusterName
+        enable: tools.enable
+      outputParameters:
+      - type: object
+        mapping: $.

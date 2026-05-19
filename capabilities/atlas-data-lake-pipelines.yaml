@@ -1,0 +1,587 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Data Lake Pipelines
+  description: 'MongoDB Atlas Administration API — Data Lake Pipelines. 13 operations. Lead operation: Return All Data Lake
+    Pipelines in One Project. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Data Lake Pipelines
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-data-lake-pipelines
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Data Lake Pipelines business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-pipelines
+      path: /api/atlas/v2/groups/{groupId}/pipelines
+      operations:
+      - name: listgrouppipelines
+        method: GET
+        description: Return All Data Lake Pipelines in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategrouppipeline
+        method: POST
+        description: Create One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}
+      operations:
+      - name: deletegrouppipeline
+        method: DELETE
+        description: Remove One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+      - name: getgrouppipeline
+        method: GET
+        description: Return One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+      - name: updategrouppipeline
+        method: PATCH
+        description: Update One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName-availableSchedules
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}/availableSchedules
+      operations:
+      - name: getgrouppipelineavailableschedules
+        method: GET
+        description: Return All Ingestion Schedules for One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName-availableSnapshots
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}/availableSnapshots
+      operations:
+      - name: getgrouppipelineavailablesnapshots
+        method: GET
+        description: Return All Backup Snapshots for One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: completedAfter
+          in: query
+          type: string
+          description: Date and time after which MongoDB Cloud created the snapshot. If specified, MongoDB Cloud returns available
+            backup snapshots created after this time and date on
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName-pause
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}/pause
+      operations:
+      - name: pausegrouppipeline
+        method: POST
+        description: Pause One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName-resume
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}/resume
+      operations:
+      - name: resumegrouppipeline
+        method: POST
+        description: Resume One Data Lake Pipeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName-runs
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}/runs
+      operations:
+      - name: listgrouppipelineruns
+        method: GET
+        description: Return All Data Lake Pipeline Runs in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: createdBefore
+          in: query
+          type: string
+          description: If specified, Atlas returns only Data Lake Pipeline runs initiated before this time and date.
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName-runs-pipelineRunId
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}/runs/{pipelineRunId}
+      operations:
+      - name: deletegrouppipelinerun
+        method: DELETE
+        description: Delete One Pipeline Run Dataset
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+        - name: pipelineRunId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal character string that identifies a Data Lake Pipeline run.
+          required: true
+      - name: getgrouppipelinerun
+        method: GET
+        description: Return One Data Lake Pipeline Run
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+        - name: pipelineRunId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal character string that identifies a Data Lake Pipeline run.
+          required: true
+    - name: api-atlas-v2-groups-groupId-pipelines-pipelineName-trigger
+      path: /api/atlas/v2/groups/{groupId}/pipelines/{pipelineName}/trigger
+      operations:
+      - name: triggergrouppipeline
+        method: POST
+        description: Trigger On-Demand Snapshot Ingestion
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: pipelineName
+          in: path
+          type: string
+          description: Human-readable label that identifies the Data Lake Pipeline.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-data-lake-pipelines-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Data Lake Pipelines. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines
+      name: api-atlas-v2-groups-groupid-pipelines
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines.
+      operations:
+      - method: GET
+        name: listgrouppipelines
+        description: Return All Data Lake Pipelines in One Project
+        call: atlas-data-lake-pipelines.listgrouppipelines
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategrouppipeline
+        description: Create One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.creategrouppipeline
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName.
+      operations:
+      - method: DELETE
+        name: deletegrouppipeline
+        description: Remove One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.deletegrouppipeline
+        with:
+          pipelineName: rest.pipelineName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgrouppipeline
+        description: Return One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.getgrouppipeline
+        with:
+          pipelineName: rest.pipelineName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategrouppipeline
+        description: Update One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.updategrouppipeline
+        with:
+          pipelineName: rest.pipelineName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}/availableschedules
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename-availableschedules
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName-availableSchedules.
+      operations:
+      - method: GET
+        name: getgrouppipelineavailableschedules
+        description: Return All Ingestion Schedules for One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.getgrouppipelineavailableschedules
+        with:
+          pipelineName: rest.pipelineName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}/availablesnapshots
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename-availablesnapshots
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName-availableSnapshots.
+      operations:
+      - method: GET
+        name: getgrouppipelineavailablesnapshots
+        description: Return All Backup Snapshots for One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.getgrouppipelineavailablesnapshots
+        with:
+          completedAfter: rest.completedAfter
+          pipelineName: rest.pipelineName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}/pause
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename-pause
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName-pause.
+      operations:
+      - method: POST
+        name: pausegrouppipeline
+        description: Pause One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.pausegrouppipeline
+        with:
+          pipelineName: rest.pipelineName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}/resume
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename-resume
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName-resume.
+      operations:
+      - method: POST
+        name: resumegrouppipeline
+        description: Resume One Data Lake Pipeline
+        call: atlas-data-lake-pipelines.resumegrouppipeline
+        with:
+          pipelineName: rest.pipelineName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}/runs
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename-runs
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName-runs.
+      operations:
+      - method: GET
+        name: listgrouppipelineruns
+        description: Return All Data Lake Pipeline Runs in One Project
+        call: atlas-data-lake-pipelines.listgrouppipelineruns
+        with:
+          createdBefore: rest.createdBefore
+          pipelineName: rest.pipelineName
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}/runs/{pipelinerunid}
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename-runs-pipelinerunid
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName-runs-pipelineRunId.
+      operations:
+      - method: DELETE
+        name: deletegrouppipelinerun
+        description: Delete One Pipeline Run Dataset
+        call: atlas-data-lake-pipelines.deletegrouppipelinerun
+        with:
+          pipelineName: rest.pipelineName
+          pipelineRunId: rest.pipelineRunId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgrouppipelinerun
+        description: Return One Data Lake Pipeline Run
+        call: atlas-data-lake-pipelines.getgrouppipelinerun
+        with:
+          pipelineName: rest.pipelineName
+          pipelineRunId: rest.pipelineRunId
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/pipelines/{pipelinename}/trigger
+      name: api-atlas-v2-groups-groupid-pipelines-pipelinename-trigger
+      description: REST surface for api-atlas-v2-groups-groupId-pipelines-pipelineName-trigger.
+      operations:
+      - method: POST
+        name: triggergrouppipeline
+        description: Trigger On-Demand Snapshot Ingestion
+        call: atlas-data-lake-pipelines.triggergrouppipeline
+        with:
+          pipelineName: rest.pipelineName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-data-lake-pipelines-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Data Lake Pipelines. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-data-lake-pipelines
+      description: Return All Data Lake Pipelines in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-lake-pipelines.listgrouppipelines
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-data-lake-pipeline
+      description: Create One Data Lake Pipeline
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-data-lake-pipelines.creategrouppipeline
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-data-lake-pipeline
+      description: Remove One Data Lake Pipeline
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-data-lake-pipelines.deletegrouppipeline
+      with:
+        pipelineName: tools.pipelineName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-data-lake-pipeline
+      description: Return One Data Lake Pipeline
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-lake-pipelines.getgrouppipeline
+      with:
+        pipelineName: tools.pipelineName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-data-lake-pipeline
+      description: Update One Data Lake Pipeline
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-data-lake-pipelines.updategrouppipeline
+      with:
+        pipelineName: tools.pipelineName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-ingestion-schedules-one
+      description: Return All Ingestion Schedules for One Data Lake Pipeline
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-lake-pipelines.getgrouppipelineavailableschedules
+      with:
+        pipelineName: tools.pipelineName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-backup-snapshots-one
+      description: Return All Backup Snapshots for One Data Lake Pipeline
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-lake-pipelines.getgrouppipelineavailablesnapshots
+      with:
+        completedAfter: tools.completedAfter
+        pipelineName: tools.pipelineName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: pause-one-data-lake-pipeline
+      description: Pause One Data Lake Pipeline
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-data-lake-pipelines.pausegrouppipeline
+      with:
+        pipelineName: tools.pipelineName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: resume-one-data-lake-pipeline
+      description: Resume One Data Lake Pipeline
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-data-lake-pipelines.resumegrouppipeline
+      with:
+        pipelineName: tools.pipelineName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-data-lake-pipeline
+      description: Return All Data Lake Pipeline Runs in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-lake-pipelines.listgrouppipelineruns
+      with:
+        createdBefore: tools.createdBefore
+        pipelineName: tools.pipelineName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-pipeline-run-dataset
+      description: Delete One Pipeline Run Dataset
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-data-lake-pipelines.deletegrouppipelinerun
+      with:
+        pipelineName: tools.pipelineName
+        pipelineRunId: tools.pipelineRunId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-data-lake-pipeline-2
+      description: Return One Data Lake Pipeline Run
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-data-lake-pipelines.getgrouppipelinerun
+      with:
+        pipelineName: tools.pipelineName
+        pipelineRunId: tools.pipelineRunId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: trigger-demand-snapshot-ingestion
+      description: Trigger On-Demand Snapshot Ingestion
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-data-lake-pipelines.triggergrouppipeline
+      with:
+        pipelineName: tools.pipelineName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

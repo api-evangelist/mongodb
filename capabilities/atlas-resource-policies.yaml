@@ -1,0 +1,298 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Resource Policies
+  description: 'MongoDB Atlas Administration API — Resource Policies. 7 operations. Lead operation: Return All Non-Compliant
+    Resources. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Resource Policies
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-resource-policies
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Resource Policies business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-orgs-orgId-nonCompliantResources
+      path: /api/atlas/v2/orgs/{orgId}/nonCompliantResources
+      operations:
+      - name: getorgnoncompliantresources
+        method: GET
+        description: Return All Non-Compliant Resources
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: api-atlas-v2-orgs-orgId-resourcePolicies
+      path: /api/atlas/v2/orgs/{orgId}/resourcePolicies
+      operations:
+      - name: listorgresourcepolicies
+        method: GET
+        description: Return All Atlas Resource Policies
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createorgresourcepolicy
+        method: POST
+        description: Create One Atlas Resource Policy
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-resourcePolicies-resourcePolicyId
+      path: /api/atlas/v2/orgs/{orgId}/resourcePolicies/{resourcePolicyId}
+      operations:
+      - name: deleteorgresourcepolicy
+        method: DELETE
+        description: Delete One Atlas Resource Policy
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: resourcePolicyId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies an atlas resource policy.
+          required: true
+      - name: getorgresourcepolicy
+        method: GET
+        description: Return One Atlas Resource Policy
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: resourcePolicyId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies an atlas resource policy.
+          required: true
+      - name: updateorgresourcepolicy
+        method: PATCH
+        description: Update One Atlas Resource Policy
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: resourcePolicyId
+          in: path
+          type: string
+          description: Unique 24-hexadecimal digit string that identifies an atlas resource policy.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-orgs-orgId-resourcePolicies:validate
+      path: /api/atlas/v2/orgs/{orgId}/resourcePolicies:validate
+      operations:
+      - name: validateorgresourcepolicies
+        method: POST
+        description: Validate One Atlas Resource Policy
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-resource-policies-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Resource Policies. One Spectral-compliant resource per
+      consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/orgs/{orgid}/noncompliantresources
+      name: api-atlas-v2-orgs-orgid-noncompliantresources
+      description: REST surface for api-atlas-v2-orgs-orgId-nonCompliantResources.
+      operations:
+      - method: GET
+        name: getorgnoncompliantresources
+        description: Return All Non-Compliant Resources
+        call: atlas-resource-policies.getorgnoncompliantresources
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/resourcepolicies
+      name: api-atlas-v2-orgs-orgid-resourcepolicies
+      description: REST surface for api-atlas-v2-orgs-orgId-resourcePolicies.
+      operations:
+      - method: GET
+        name: listorgresourcepolicies
+        description: Return All Atlas Resource Policies
+        call: atlas-resource-policies.listorgresourcepolicies
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createorgresourcepolicy
+        description: Create One Atlas Resource Policy
+        call: atlas-resource-policies.createorgresourcepolicy
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/resourcepolicies/{resourcepolicyid}
+      name: api-atlas-v2-orgs-orgid-resourcepolicies-resourcepolicyid
+      description: REST surface for api-atlas-v2-orgs-orgId-resourcePolicies-resourcePolicyId.
+      operations:
+      - method: DELETE
+        name: deleteorgresourcepolicy
+        description: Delete One Atlas Resource Policy
+        call: atlas-resource-policies.deleteorgresourcepolicy
+        with:
+          resourcePolicyId: rest.resourcePolicyId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getorgresourcepolicy
+        description: Return One Atlas Resource Policy
+        call: atlas-resource-policies.getorgresourcepolicy
+        with:
+          resourcePolicyId: rest.resourcePolicyId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateorgresourcepolicy
+        description: Update One Atlas Resource Policy
+        call: atlas-resource-policies.updateorgresourcepolicy
+        with:
+          resourcePolicyId: rest.resourcePolicyId
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/orgs/{orgid}/resourcepolicies-validate
+      name: api-atlas-v2-orgs-orgid-resourcepolicies-validate
+      description: REST surface for api-atlas-v2-orgs-orgId-resourcePolicies:validate.
+      operations:
+      - method: POST
+        name: validateorgresourcepolicies
+        description: Validate One Atlas Resource Policy
+        call: atlas-resource-policies.validateorgresourcepolicies
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-resource-policies-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Resource Policies. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: return-all-non-compliant-resources
+      description: Return All Non-Compliant Resources
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-resource-policies.getorgnoncompliantresources
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-all-atlas-resource-policies
+      description: Return All Atlas Resource Policies
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-resource-policies.listorgresourcepolicies
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-atlas-resource-policy
+      description: Create One Atlas Resource Policy
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-resource-policies.createorgresourcepolicy
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-one-atlas-resource-policy
+      description: Delete One Atlas Resource Policy
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-resource-policies.deleteorgresourcepolicy
+      with:
+        resourcePolicyId: tools.resourcePolicyId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-atlas-resource-policy
+      description: Return One Atlas Resource Policy
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-resource-policies.getorgresourcepolicy
+      with:
+        resourcePolicyId: tools.resourcePolicyId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-atlas-resource-policy
+      description: Update One Atlas Resource Policy
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-resource-policies.updateorgresourcepolicy
+      with:
+        resourcePolicyId: tools.resourcePolicyId
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: validate-one-atlas-resource-policy
+      description: Validate One Atlas Resource Policy
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: atlas-resource-policies.validateorgresourcepolicies
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

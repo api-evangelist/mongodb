@@ -1,0 +1,228 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Project IP Access List
+  description: 'MongoDB Atlas Administration API — Project IP Access List. 5 operations. Lead operation: Return All Project
+    IP Access List Entries. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Project IP Access List
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-project-ip-access-list
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Project IP Access List business capability. Self-contained, no shared
+      references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-accessList
+      path: /api/atlas/v2/groups/{groupId}/accessList
+      operations:
+      - name: listgroupaccesslistentries
+        method: GET
+        description: Return All Project IP Access List Entries
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupaccesslistentry
+        method: POST
+        description: Add Entries to Project IP Access List
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-accessList-entryValue
+      path: /api/atlas/v2/groups/{groupId}/accessList/{entryValue}
+      operations:
+      - name: deletegroupaccesslistentry
+        method: DELETE
+        description: Remove One Entry from One Project IP Access List
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: entryValue
+          in: path
+          type: string
+          description: 'Access list entry that you want to remove from the project''s IP access list. This value can use one
+            of the following: one AWS security group ID, one IP address,'
+          required: true
+      - name: getgroupaccesslistentry
+        method: GET
+        description: Return One Project IP Access List Entry
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: entryValue
+          in: path
+          type: string
+          description: 'Access list entry that you want to return from the project''s IP access list. This value can use one
+            of the following: one AWS security group ID, one IP address,'
+          required: true
+    - name: api-atlas-v2-groups-groupId-accessList-entryValue-status
+      path: /api/atlas/v2/groups/{groupId}/accessList/{entryValue}/status
+      operations:
+      - name: getgroupaccessliststatus
+        method: GET
+        description: Return Status of One Project IP Access List Entry
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: entryValue
+          in: path
+          type: string
+          description: Network address or cloud provider security construct that identifies which project access list entry
+            to be verified.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-project-ip-access-list-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Project IP Access List. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/accesslist
+      name: api-atlas-v2-groups-groupid-accesslist
+      description: REST surface for api-atlas-v2-groups-groupId-accessList.
+      operations:
+      - method: GET
+        name: listgroupaccesslistentries
+        description: Return All Project IP Access List Entries
+        call: atlas-project-ip-access-list.listgroupaccesslistentries
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupaccesslistentry
+        description: Add Entries to Project IP Access List
+        call: atlas-project-ip-access-list.creategroupaccesslistentry
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/accesslist/{entryvalue}
+      name: api-atlas-v2-groups-groupid-accesslist-entryvalue
+      description: REST surface for api-atlas-v2-groups-groupId-accessList-entryValue.
+      operations:
+      - method: DELETE
+        name: deletegroupaccesslistentry
+        description: Remove One Entry from One Project IP Access List
+        call: atlas-project-ip-access-list.deletegroupaccesslistentry
+        with:
+          entryValue: rest.entryValue
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupaccesslistentry
+        description: Return One Project IP Access List Entry
+        call: atlas-project-ip-access-list.getgroupaccesslistentry
+        with:
+          entryValue: rest.entryValue
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/accesslist/{entryvalue}/status
+      name: api-atlas-v2-groups-groupid-accesslist-entryvalue-status
+      description: REST surface for api-atlas-v2-groups-groupId-accessList-entryValue-status.
+      operations:
+      - method: GET
+        name: getgroupaccessliststatus
+        description: Return Status of One Project IP Access List Entry
+        call: atlas-project-ip-access-list.getgroupaccessliststatus
+        with:
+          entryValue: rest.entryValue
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-project-ip-access-list-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Project IP Access List. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-project-ip-access
+      description: Return All Project IP Access List Entries
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-project-ip-access-list.listgroupaccesslistentries
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-entries-project-ip-access
+      description: Add Entries to Project IP Access List
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-project-ip-access-list.creategroupaccesslistentry
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-entry-one-project
+      description: Remove One Entry from One Project IP Access List
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-project-ip-access-list.deletegroupaccesslistentry
+      with:
+        entryValue: tools.entryValue
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-project-ip-access
+      description: Return One Project IP Access List Entry
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-project-ip-access-list.getgroupaccesslistentry
+      with:
+        entryValue: tools.entryValue
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-status-one-project-ip
+      description: Return Status of One Project IP Access List Entry
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-project-ip-access-list.getgroupaccessliststatus
+      with:
+        entryValue: tools.entryValue
+      outputParameters:
+      - type: object
+        mapping: $.

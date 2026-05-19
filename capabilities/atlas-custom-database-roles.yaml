@@ -1,0 +1,227 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: MongoDB Atlas Administration API — Custom Database Roles
+  description: 'MongoDB Atlas Administration API — Custom Database Roles. 5 operations. Lead operation: Return All Custom
+    Roles in One Project. Self-contained Naftiko capability covering one Mongodb business surface.'
+  tags:
+  - Mongodb
+  - Custom Database Roles
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MONGODB_API_KEY: MONGODB_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: atlas-custom-database-roles
+    baseUri: https://cloud.mongodb.com
+    description: MongoDB Atlas Administration API — Custom Database Roles business capability. Self-contained, no shared references.
+    resources:
+    - name: api-atlas-v2-groups-groupId-customDBRoles-roles
+      path: /api/atlas/v2/groups/{groupId}/customDBRoles/roles
+      operations:
+      - name: listgroupcustomdbroleroles
+        method: GET
+        description: Return All Custom Roles in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: creategroupcustomdbrolerole
+        method: POST
+        description: Create One Custom Role
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: api-atlas-v2-groups-groupId-customDBRoles-roles-roleName
+      path: /api/atlas/v2/groups/{groupId}/customDBRoles/roles/{roleName}
+      operations:
+      - name: deletegroupcustomdbrolerole
+        method: DELETE
+        description: Remove One Custom Role from One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: roleName
+          in: path
+          type: string
+          description: Human-readable label that identifies the role for the request. This name must be unique for this custom
+            role in this project.
+          required: true
+      - name: getgroupcustomdbrolerole
+        method: GET
+        description: Return One Custom Role in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: roleName
+          in: path
+          type: string
+          description: Human-readable label that identifies the role for the request. This name must be unique for this custom
+            role in this project.
+          required: true
+      - name: updategroupcustomdbrolerole
+        method: PATCH
+        description: Update One Custom Role in One Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: roleName
+          in: path
+          type: string
+          description: Human-readable label that identifies the role for the request. This name must be unique for this custom
+            role in this project.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MONGODB_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: atlas-custom-database-roles-rest
+    port: 8080
+    description: REST adapter for MongoDB Atlas Administration API — Custom Database Roles. One Spectral-compliant resource
+      per consumed operation, prefixed with /v1.
+    resources:
+    - path: /v1/api/atlas/v2/groups/{groupid}/customdbroles/roles
+      name: api-atlas-v2-groups-groupid-customdbroles-roles
+      description: REST surface for api-atlas-v2-groups-groupId-customDBRoles-roles.
+      operations:
+      - method: GET
+        name: listgroupcustomdbroleroles
+        description: Return All Custom Roles in One Project
+        call: atlas-custom-database-roles.listgroupcustomdbroleroles
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creategroupcustomdbrolerole
+        description: Create One Custom Role
+        call: atlas-custom-database-roles.creategroupcustomdbrolerole
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/api/atlas/v2/groups/{groupid}/customdbroles/roles/{rolename}
+      name: api-atlas-v2-groups-groupid-customdbroles-roles-rolename
+      description: REST surface for api-atlas-v2-groups-groupId-customDBRoles-roles-roleName.
+      operations:
+      - method: DELETE
+        name: deletegroupcustomdbrolerole
+        description: Remove One Custom Role from One Project
+        call: atlas-custom-database-roles.deletegroupcustomdbrolerole
+        with:
+          roleName: rest.roleName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getgroupcustomdbrolerole
+        description: Return One Custom Role in One Project
+        call: atlas-custom-database-roles.getgroupcustomdbrolerole
+        with:
+          roleName: rest.roleName
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updategroupcustomdbrolerole
+        description: Update One Custom Role in One Project
+        call: atlas-custom-database-roles.updategroupcustomdbrolerole
+        with:
+          roleName: rest.roleName
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: atlas-custom-database-roles-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for MongoDB Atlas Administration API — Custom Database Roles. One tool per consumed operation,
+      routed inline through this capability's consumes block.
+    tools:
+    - name: return-all-custom-roles-one
+      description: Return All Custom Roles in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-custom-database-roles.listgroupcustomdbroleroles
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-one-custom-role
+      description: Create One Custom Role
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: atlas-custom-database-roles.creategroupcustomdbrolerole
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-one-custom-role-one
+      description: Remove One Custom Role from One Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: atlas-custom-database-roles.deletegroupcustomdbrolerole
+      with:
+        roleName: tools.roleName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: return-one-custom-role-one
+      description: Return One Custom Role in One Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: atlas-custom-database-roles.getgroupcustomdbrolerole
+      with:
+        roleName: tools.roleName
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-one-custom-role-one
+      description: Update One Custom Role in One Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: atlas-custom-database-roles.updategroupcustomdbrolerole
+      with:
+        roleName: tools.roleName
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
