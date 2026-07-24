@@ -1,0 +1,540 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Maintenance Windows API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns, edits, and removes maintenance windows. The maintenance procedure that MongoDB Cloud performs requires at least one replica set election during the maintenance window per replica set. You can defer a scheduled maintenance event for a project up to two times. Deferred maintenance events occur during your preferred maintenance window exactly one week after the previously scheduled date and time.
+  name: Maintenance Windows
+paths:
+  /api/atlas/v2/groups/{groupId}/maintenanceWindow:
+    delete:
+      description: Resets the maintenance window for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role. Urgent maintenance activities such as security patches can't wait for your chosen window. MongoDB Cloud starts those maintenance activities when needed. After you schedule maintenance for your cluster, you can't change your maintenance window until the current maintenance efforts complete. The maintenance procedure that MongoDB Cloud performs requires at least one replica set election during the maintenance window per replica set. Maintenance always begins as close to the scheduled hour as possible, but in-progress cluster updates or unexpected system issues could delay the start time. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+      operationId: resetGroupMaintenanceWindow
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Reset One Maintenance Window for One Project
+      tags:
+      - Maintenance Windows
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api maintenanceWindows resetMaintenanceWindow --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ResetGroupMaintenanceWindowApiParams{}\n\thttpResp, err := client.MaintenanceWindowsApi.\n\t\tResetGroupMaintenanceWindowWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Maintenance-Windows/operation/resetGroupMaintenanceWindow
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: reset
+      x-xgen-operation-id-override: resetMaintenanceWindow
+    get:
+      description: Returns the maintenance window for the specified project. MongoDB Cloud starts those maintenance activities when needed. You can't change your maintenance window until the current maintenance efforts complete. The maintenance procedure that MongoDB Cloud performs requires at least one replica set election during the maintenance window per replica set. Maintenance always begins as close to the scheduled hour as possible, but in-progress cluster updates or unexpected system issues could delay the start time. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+      operationId: getGroupMaintenanceWindow
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/GroupMaintenanceWindow'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Maintenance Window for One Project
+      tags:
+      - Maintenance Windows
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api maintenanceWindows getMaintenanceWindow --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupMaintenanceWindowApiParams{}\n\tsdkResp, httpResp, err := client.MaintenanceWindowsApi.\n\t\tGetGroupMaintenanceWindowWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Maintenance-Windows/operation/getGroupMaintenanceWindow
+      x-xgen-operation-id-override: getMaintenanceWindow
+    patch:
+      description: Updates the maintenance window for the specified project. Urgent maintenance activities such as security patches can't wait for your chosen window. MongoDB Cloud starts those maintenance activities when needed. After you schedule maintenance for your cluster, you can't change your maintenance window until the current maintenance efforts complete. The maintenance procedure that MongoDB Cloud performs requires at least one replica set election during the maintenance window per replica set. Maintenance always begins as close to the scheduled hour as possible, but in-progress cluster updates or unexpected system issues could delay the start time. Updating the maintenance window will reset any maintenance deferrals for this project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+      operationId: updateGroupMaintenanceWindow
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/GroupMaintenanceWindow'
+        description: Updates the maintenance window for the specified project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Maintenance Window for One Project
+      tags:
+      - Maintenance Windows
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api maintenanceWindows updateMaintenanceWindow --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupMaintenanceWindowApiParams{}\n\tsdkResp, httpResp, err := client.MaintenanceWindowsApi.\n\t\tUpdateGroupMaintenanceWindowWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Maintenance-Windows/operation/updateGroupMaintenanceWindow
+      x-xgen-operation-id-override: updateMaintenanceWindow
+  /api/atlas/v2/groups/{groupId}/maintenanceWindow/autoDefer:
+    post:
+      description: Toggles automatic deferral of the maintenance window for the specified project. When automatic deferral is enabled, all maintenance windows are deferred for one week. This endpoint controls the same underlying feature as the `autoDeferOnceEnabled` field in the PATCH `/maintenanceWindow` endpoint. The difference is that this endpoint toggles the current value (switches from enabled to disabled or vice versa), while the `autoDeferOnceEnabled` field allows you to set a specific value. For most use cases, the PATCH endpoint with `autoDeferOnceEnabled` is recommended because it allows setting an explicit value rather than toggling. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+      operationId: toggleGroupMaintenanceWindowAutoDefer
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Toggle Automatic Deferral of Maintenance for One Project
+      tags:
+      - Maintenance Windows
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api maintenanceWindows toggleMaintenanceAutoDefer --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ToggleGroupMaintenanceWindowAutoDeferApiParams{}\n\tsdkResp, httpResp, err := client.MaintenanceWindowsApi.\n\t\tToggleGroupMaintenanceWindowAutoDeferWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow/autoDefer\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow/autoDefer\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Maintenance-Windows/operation/toggleGroupMaintenanceWindowAutoDefer
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: toggle
+      x-xgen-operation-id-override: toggleMaintenanceAutoDefer
+  /api/atlas/v2/groups/{groupId}/maintenanceWindow/defer:
+    post:
+      description: Defers the maintenance window for the specified project. Urgent maintenance activities such as security patches can't wait for your chosen window. MongoDB Cloud starts those maintenance activities when needed. After you schedule maintenance for your cluster, you can't change your maintenance window until the current maintenance efforts complete. The maintenance procedure that MongoDB Cloud performs requires at least one replica set election during the maintenance window per replica set. Maintenance always begins as close to the scheduled hour as possible, but in-progress cluster updates or unexpected system issues could delay the start time. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+      operationId: deferGroupMaintenanceWindow
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Defer One Maintenance Window for One Project
+      tags:
+      - Maintenance Windows
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api maintenanceWindows deferMaintenanceWindow --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeferGroupMaintenanceWindowApiParams{}\n\tsdkResp, httpResp, err := client.MaintenanceWindowsApi.\n\t\tDeferGroupMaintenanceWindowWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow/defer\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/maintenanceWindow/defer\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Maintenance-Windows/operation/deferGroupMaintenanceWindow
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+      x-xgen-operation-id-override: deferMaintenanceWindow
+components:
+  schemas:
+    GroupMaintenanceWindow:
+      properties:
+        autoDeferOnceEnabled:
+          description: Flag that indicates whether MongoDB Cloud should defer all maintenance windows for one week after you enable them. This setting controls the same underlying auto-deferral feature as the `/maintenanceWindow/autoDefer` endpoint. Use either this field (to set a specific value) or that endpoint (to toggle the current value). For most use cases, this field in the PATCH request is preferred because it allows setting an explicit value rather than toggling.
+          type: boolean
+        dayOfWeek:
+          description: 'One-based integer that represents the day of the week that the maintenance window starts.
+
+
+            - `1`: Sunday.
+
+            - `2`: Monday.
+
+            - `3`: Tuesday.
+
+            - `4`: Wednesday.
+
+            - `5`: Thursday.
+
+            - `6`: Friday.
+
+            - `7`: Saturday.'
+          format: int32
+          maximum: 7
+          minimum: 1
+          type: integer
+        hourOfDay:
+          description: Zero-based integer that represents the hour of the of the day that the maintenance window starts according to a 24-hour clock. Use `0` for midnight and `12` for noon.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+        numberOfDeferrals:
+          description: Number of times the current maintenance event for this project has been deferred.
+          format: int32
+          readOnly: true
+          type: integer
+        protectedHours:
+          $ref: '#/components/schemas/ProtectedHours'
+        startASAP:
+          description: Flag that indicates whether MongoDB Cloud starts the maintenance window immediately upon receiving this request. To start the maintenance window immediately for your project, MongoDB Cloud must have maintenance scheduled and you must set a maintenance window. This flag resets to `false` after MongoDB Cloud completes maintenance.
+          type: boolean
+        timeZoneId:
+          description: Identifier for the current time zone of the maintenance window. This can only be updated via the Project Settings UI.
+          readOnly: true
+          type: string
+      required:
+      - dayOfWeek
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    ProtectedHours:
+      description: Defines the a window where maintenance will not begin within.
+      properties:
+        endHourOfDay:
+          description: Zero-based integer that represents the end hour of the of the day that the maintenance will not begin in.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+        startHourOfDay:
+          description: Zero-based integer that represents the beginning hour of the of the day that the maintenance will not begin in.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+      type: object
+  headers:
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  responses:
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+  parameters:
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

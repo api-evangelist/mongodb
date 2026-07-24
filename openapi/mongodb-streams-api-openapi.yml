@@ -1,0 +1,3611 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Streams API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns, adds, edits, and removes Streams Workspaces. This resource requires your project ID.
+  name: Streams
+paths:
+  /api/atlas/v2/groups/{groupId}/streams:
+    get:
+      description: Returns all stream workspaces for the specified project.
+      operationId: listGroupStreamWorkspaces
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiStreamsTenantView'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Stream Workspaces in One Project
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams listStreamWorkspaces --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupStreamWorkspacesApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tListGroupStreamWorkspacesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/listGroupStreamWorkspaces
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: listWorkspaces
+      x-xgen-operation-id-override: listStreamWorkspaces
+    post:
+      description: Creates one stream workspace in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role, Project Owner role or Project Stream Processing Owner role.
+      operationId: createGroupStreamWorkspace
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-02-01+json:
+            schema:
+              $ref: '#/components/schemas/StreamsTenant'
+        description: Details to create one streams workspace in the specified project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsTenant'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Stream Workspace
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams createStreamWorkspace --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupStreamWorkspaceApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tCreateGroupStreamWorkspaceWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/createGroupStreamWorkspace
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: createWorkspace
+      x-xgen-operation-id-override: createStreamWorkspace
+  /api/atlas/v2/groups/{groupId}/streams/accountDetails:
+    get:
+      description: Returns the Account ID, and the VPC ID for the group and region specified.
+      operationId: getGroupStreamAccountDetails
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/envelope'
+      - description: One of "aws", "azure" or "gcp".
+        in: query
+        name: cloudProvider
+        required: true
+        schema:
+          type: string
+      - description: The cloud provider specific region name, i.e. "US_EAST_1" for cloud provider "aws".
+        in: query
+        name: regionName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-11-13+json:
+              schema:
+                $ref: '#/components/schemas/AccountDetails'
+              x-xgen-version: '2024-11-13'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Account ID and VPC ID for One Project and Region
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams getAccountDetails --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupStreamAccountDetailsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tGetGroupStreamAccountDetailsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/accountDetails?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/accountDetails?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/getGroupStreamAccountDetails
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: get
+      x-xgen-operation-id-override: getAccountDetails
+  /api/atlas/v2/groups/{groupId}/streams/activeVpcPeeringConnections:
+    get:
+      description: Returns a list of active incoming VPC Peering Connections.
+      operationId: listGroupStreamActiveVpcPeeringConnections
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-11-13+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiStreamsVPCPeeringConnectionView'
+              x-xgen-version: '2024-11-13'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Active Incoming VPC Peering Connections
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams listActivePeeringConnections --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupStreamActiveVpcPeeringConnectionsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tListGroupStreamActiveVpcPeeringConnectionsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/activeVpcPeeringConnections?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/activeVpcPeeringConnections?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/listGroupStreamActiveVpcPeeringConnections
+      x-xgen-operation-id-override: listActivePeeringConnections
+  /api/atlas/v2/groups/{groupId}/streams/privateLinkConnections:
+    get:
+      description: Returns all Private Link connections for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role, Project Data Access roles, Project Owner role or Project Stream Processing Owner role.
+      operationId: listGroupStreamPrivateLinkConnections
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiStreamsPrivateLinkView'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Private Link Connections
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams listPrivateLinkConnections --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupStreamPrivateLinkConnectionsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tListGroupStreamPrivateLinkConnectionsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-changelog:
+        '2024-10-02': The MongoDB Atlas Streams Processing Private Link API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/listGroupStreamPrivateLinkConnections
+      x-xgen-operation-id-override: listPrivateLinkConnections
+    post:
+      description: Creates one Private Link in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner or Project Stream Processing Owner role.
+      operationId: createGroupStreamPrivateLinkConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-02-01+json:
+            schema:
+              $ref: '#/components/schemas/StreamsPrivateLinkConnection'
+        description: Details to create one Private Link connection for a project. project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsPrivateLinkConnection'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/unauthorized'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Private Link Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams createPrivateLinkConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupStreamPrivateLinkConnectionApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tCreateGroupStreamPrivateLinkConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2024-10-02': The MongoDB Atlas Streams Processing Private Link API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/createGroupStreamPrivateLinkConnection
+      x-xgen-operation-id-override: createPrivateLinkConnection
+  /api/atlas/v2/groups/{groupId}/streams/privateLinkConnections/{connectionId}:
+    delete:
+      description: Deletes one Private Link in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner or Project Stream Processing Owner role.
+      operationId: deleteGroupStreamPrivateLinkConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Unique ID that identifies the Private Link connection.
+        in: path
+        name: connectionId
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              x-xgen-version: '2023-02-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete One Private Link Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams deletePrivateLinkConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupStreamPrivateLinkConnectionApiParams{}\n\thttpResp, err := client.StreamsApi.\n\t\tDeleteGroupStreamPrivateLinkConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections/{connectionId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections/{connectionId}\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2024-10-02': The MongoDB Atlas Streams Processing Private Link API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/deleteGroupStreamPrivateLinkConnection
+      x-xgen-operation-id-override: deletePrivateLinkConnection
+    get:
+      description: Returns the details of one Private Link connection within the project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupStreamPrivateLinkConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Unique ID that identifies the Private Link connection.
+        in: path
+        name: connectionId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsPrivateLinkConnection'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Private Link Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams getPrivateLinkConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupStreamPrivateLinkConnectionApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tGetGroupStreamPrivateLinkConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections/{connectionId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/privateLinkConnections/{connectionId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-changelog:
+        '2024-10-02': The MongoDB Atlas Streams Processing Private Link API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/getGroupStreamPrivateLinkConnection
+      x-xgen-operation-id-override: getPrivateLinkConnection
+  /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections:
+    get:
+      description: Returns a list of incoming VPC Peering Connections.
+      operationId: listGroupStreamVpcPeeringConnections
+      parameters:
+      - description: The Account ID of the VPC Peering connection/s.
+        in: query
+        name: requesterAccountId
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiStreamsVPCPeeringConnectionView'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All VPC Peering Connections
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams listVpcPeeringConnections --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupStreamVpcPeeringConnectionsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tListGroupStreamVpcPeeringConnectionsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/listGroupStreamVpcPeeringConnections
+      x-xgen-operation-id-override: listVpcPeeringConnections
+  /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:
+    delete:
+      description: Deletes an incoming VPC Peering connection.
+      operationId: deleteGroupStreamVpcPeeringConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: The VPC Peering Connection id.
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              x-xgen-version: '2023-02-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete One VPC Peering Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams deleteVpcPeeringConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupStreamVpcPeeringConnectionApiParams{}\n\thttpResp, err := client.StreamsApi.\n\t\tDeleteGroupStreamVpcPeeringConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/deleteGroupStreamVpcPeeringConnection
+      x-xgen-operation-id-override: deleteVpcPeeringConnection
+  /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:accept:
+    post:
+      description: Requests the acceptance of an incoming VPC Peering connection.
+      operationId: acceptGroupStreamVpcPeeringConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: The VPC Peering Connection id.
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-02-01+json:
+            schema:
+              $ref: '#/components/schemas/VPCPeeringActionChallenge'
+        description: Challenge values for VPC Peering requester account ID, and requester VPC ID.
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              x-xgen-version: '2023-02-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Accept One Incoming VPC Peering Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams acceptVpcPeeringConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.AcceptGroupStreamVpcPeeringConnectionApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tAcceptGroupStreamVpcPeeringConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:accept\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:accept\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/acceptGroupStreamVpcPeeringConnection
+      x-xgen-operation-id-override: acceptVpcPeeringConnection
+  /api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:reject:
+    post:
+      description: Requests the rejection of an incoming VPC Peering connection.
+      operationId: rejectGroupStreamVpcPeeringConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: The VPC Peering Connection id.
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              x-xgen-version: '2023-02-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Reject One Incoming VPC Peering Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams rejectVpcPeeringConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.RejectGroupStreamVpcPeeringConnectionApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tRejectGroupStreamVpcPeeringConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:reject\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/vpcPeeringConnections/{id}:reject\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/rejectGroupStreamVpcPeeringConnection
+      x-xgen-operation-id-override: rejectVpcPeeringConnection
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}:
+    delete:
+      description: Delete one stream workspace in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role, Project Owner role or Project Stream Processing Owner role.
+      operationId: deleteGroupStreamWorkspace
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace to delete.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              x-xgen-version: '2023-02-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete One Stream Workspace
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams deleteStreamWorkspace --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupStreamWorkspaceApiParams{}\n\thttpResp, err := client.StreamsApi.\n\t\tDeleteGroupStreamWorkspaceWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/deleteGroupStreamWorkspace
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: deleteWorkspace
+      x-xgen-operation-id-override: deleteStreamWorkspace
+    get:
+      description: Returns the details of one stream workspace within the specified project. To use this resource, the requesting Service Account or API Key must have the Project Data Access roles, Project Owner role or Project Stream Processing Owner role.
+      operationId: getGroupStreamWorkspace
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace to return.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Flag to indicate whether connections information should be included in the stream workspace.
+        in: query
+        name: includeConnections
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsTenant'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Stream Workspace
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams getStreamWorkspace --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupStreamWorkspaceApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tGetGroupStreamWorkspaceWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/getGroupStreamWorkspace
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: getWorkspace
+      x-xgen-operation-id-override: getStreamWorkspace
+    patch:
+      description: Update one stream workspace in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role, Project Owner role or Project Stream Processing Owner role.
+      operationId: updateGroupStreamWorkspace
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace to update.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-02-01+json:
+            schema:
+              $ref: '#/components/schemas/StreamsTenantUpdateRequest'
+        description: Details to update in the streams workspace.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsTenant'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Stream Workspace
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams updateStreamWorkspace --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupStreamWorkspaceApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tUpdateGroupStreamWorkspaceWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/updateGroupStreamWorkspace
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: updateWorkspace
+      x-xgen-operation-id-override: updateStreamWorkspace
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/auditLogs:
+    get:
+      description: 'Downloads the audit logs for the specified Atlas Streams Processing workspace or stream processor. By default, logs cover periods of 30 days. To use this resource, the requesting Service Account or API Key must have the Project Data Access roles, Project Owner role or Project Stream Processing Owner role. The API does not support direct calls with the json response schema. You must request a gzip response schema using an accept header of the format: `Accept: application/vnd.atlas.YYYY-MM-DD+gzip`.'
+      operationId: downloadGroupStreamAuditLogs
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Timestamp that specifies the end point for the range of log messages to download.  MongoDB Cloud expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch.
+        in: query
+        name: endDate
+        schema:
+          example: 1636481348
+          format: int64
+          pattern: '1199145600'
+          type: integer
+      - description: Timestamp that specifies the starting point for the range of log messages to download. MongoDB Cloud expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch.
+        in: query
+        name: startDate
+        schema:
+          example: 1636466948
+          format: int64
+          pattern: '1199145600'
+          type: integer
+      - description: Name of the stream processor to download logs for. An empty string will download logs for all stream processors in the workspace.
+        in: query
+        name: spName
+        schema:
+          type: string
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+gzip:
+              schema:
+                description: Compressed archive containing `[tenantName]_[spName]_[startTime]_[endTime]_audit.log` downloads
+                format: binary
+                type: string
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Download Audit Logs for One Atlas Stream Processing Workspace
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams downloadAuditLogs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DownloadGroupStreamAuditLogsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tDownloadGroupStreamAuditLogsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+gzip\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/auditLogs\" \\\n  --output \"file_name.gz\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+gzip\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/auditLogs\" \\\n  --output \"file_name.gz\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/downloadGroupStreamAuditLogs
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: download
+      x-xgen-operation-id-override: downloadAuditLogs
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections:
+    get:
+      description: Returns all connections of the stream workspace for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Data Access roles, Project Owner role or Project Stream Processing Owner role.
+      operationId: listGroupStreamConnections
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiStreamsConnectionView'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Connections of the Stream Workspaces
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams listStreamConnections --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupStreamConnectionsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tListGroupStreamConnectionsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections?pretty=true\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/listGroupStreamConnections
+      x-xgen-operation-id-override: listStreamConnections
+    post:
+      description: Creates one connection for a stream workspace in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner or Project Stream Processing Owner role.
+      operationId: createGroupStreamConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-02-01+json:
+            schema:
+              $ref: '#/components/schemas/StreamsConnection'
+        description: Details to create one connection for a streams workspace in the specified project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsConnection'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/unauthorized'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Stream Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams createStreamConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupStreamConnectionApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tCreateGroupStreamConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/createGroupStreamConnection
+      x-xgen-operation-id-override: createStreamConnection
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}:
+    delete:
+      description: Delete one connection of the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: deleteGroupStreamConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream connection.
+        in: path
+        name: connectionName
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              x-xgen-version: '2023-02-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete One Stream Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams deleteStreamConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupStreamConnectionApiParams{}\n\thttpResp, err := client.StreamsApi.\n\t\tDeleteGroupStreamConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/deleteGroupStreamConnection
+      x-xgen-operation-id-override: deleteStreamConnection
+    get:
+      description: Returns the details of one stream connection within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupStreamConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace to return.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream connection to return.
+        in: path
+        name: connectionName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsConnection'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Stream Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams getStreamConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupStreamConnectionApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tGetGroupStreamConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/getGroupStreamConnection
+      x-xgen-operation-id-override: getStreamConnection
+    patch:
+      description: Update one connection for the specified stream workspace in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: updateGroupStreamConnection
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream connection.
+        in: path
+        name: connectionName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-02-01+json:
+            schema:
+              $ref: '#/components/schemas/StreamsConnection'
+        description: Details to update one connection for a streams workspace in the specified project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+json:
+              schema:
+                $ref: '#/components/schemas/StreamsConnection'
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Stream Connection
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams updateStreamConnection --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupStreamConnectionApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tUpdateGroupStreamConnectionWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/connections/{connectionName}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-changelog:
+        '2023-09-11': The MongoDB Atlas Streams Processing API is now exposed as part of private preview, but is subject to change until GA.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/updateGroupStreamConnection
+      x-xgen-operation-id-override: updateStreamConnection
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor:
+    post:
+      description: Create one Stream Processor within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: createGroupStreamProcessor
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-05-30+json:
+            schema:
+              $ref: '#/components/schemas/StreamsProcessor'
+        description: Details to create an Atlas Streams Processor.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/StreamsProcessor'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/unauthorized'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Stream Processor
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams createStreamProcessor --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupStreamProcessorApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tCreateGroupStreamProcessorWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/createGroupStreamProcessor
+      x-xgen-operation-id-override: createStreamProcessor
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:
+    delete:
+      description: Delete a Stream Processor within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: deleteGroupStreamProcessor
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream processor.
+        in: path
+        name: processorName
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              x-xgen-version: '2024-05-30'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete One Stream Processor
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams deleteStreamProcessor --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupStreamProcessorApiParams{}\n\thttpResp, err := client.StreamsApi.\n\t\tDeleteGroupStreamProcessorWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/deleteGroupStreamProcessor
+      x-xgen-operation-id-override: deleteStreamProcessor
+    get:
+      description: Get one Stream Processor within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: getGroupStreamProcessor
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream processor.
+        in: path
+        name: processorName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/StreamsProcessorWithStats'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Stream Processor
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams getStreamProcessor --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupStreamProcessorApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tGetGroupStreamProcessorWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/getGroupStreamProcessor
+      x-xgen-operation-id-override: getStreamProcessor
+    patch:
+      description: Modify one existing Stream Processor within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: updateGroupStreamProcessor
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream processor.
+        in: path
+        name: processorName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-05-30+json:
+            schema:
+              $ref: '#/components/schemas/StreamsModifyStreamProcessor'
+        description: Modifications to apply to the stream processor.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/StreamsProcessorWithStats'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Stream Processor
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams updateStreamProcessor --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupStreamProcessorApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tUpdateGroupStreamProcessorWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/updateGroupStreamProcessor
+      x-xgen-operation-id-override: updateStreamProcessor
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:start:
+    post:
+      description: Start a Stream Processor within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: startGroupStreamProcessor
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream processor.
+        in: path
+        name: processorName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Start One Stream Processor
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams startStreamProcessor --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.StartGroupStreamProcessorApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tStartGroupStreamProcessorWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:start\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:start\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/startGroupStreamProcessor
+      x-xgen-operation-id-override: startStreamProcessor
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:startWith:
+    post:
+      description: Start a Stream Processor within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: startGroupStreamProcessorWith
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream processor.
+        in: path
+        name: processorName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2025-03-12+json:
+            schema:
+              $ref: '#/components/schemas/StreamsStartStreamProcessorWith'
+            x-xgen-version: '2025-03-12'
+        description: Options for starting a stream processor.
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Start One Stream Processor With Options
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams startStreamProcessorWith --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.StartGroupStreamProcessorWithApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tStartGroupStreamProcessorWithWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:startWith\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:startWith\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/startGroupStreamProcessorWith
+      x-xgen-operation-id-override: startStreamProcessorWith
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:stop:
+    post:
+      description: Stop a Stream Processor within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: stopGroupStreamProcessor
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the stream processor.
+        in: path
+        name: processorName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Stop One Stream Processor
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams stopStreamProcessor --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.StopGroupStreamProcessorApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tStopGroupStreamProcessorWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:stop\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processor/{processorName}:stop\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/stopGroupStreamProcessor
+      x-xgen-operation-id-override: stopStreamProcessor
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}/processors:
+    get:
+      description: Returns all Stream Processors within the specified stream workspace. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Stream Processing Owner role.
+      operationId: getGroupStreamProcessors
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/includeCount'
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiStreamsStreamProcessorWithStatsView'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Stream Processors in One Stream Workspace
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams getStreamProcessors --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupStreamProcessorsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tGetGroupStreamProcessorsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processors?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}/processors?pretty=true\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/getGroupStreamProcessors
+      x-xgen-operation-id-override: getStreamProcessors
+  /api/atlas/v2/groups/{groupId}/streams/{tenantName}:downloadOperationalLogs:
+    get:
+      description: 'Downloads the operational logs for the specified Atlas Streams Processing workspace or stream processor. By default, logs cover periods of 30 days. To use this resource, the requesting Service Account or API Key must have the Project Data Access roles, Project Owner role or Project Stream Processing Owner role. The API does not support direct calls with the json response schema. You must request a gzip response schema using an accept header of the format: "Accept: application/vnd.atlas.2025-03-12+gzip".'
+      operationId: downloadGroupStreamOperationalLogs
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Timestamp that specifies the end point for the range of log messages to download.  MongoDB Cloud expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch.
+        in: query
+        name: endDate
+        schema:
+          example: 1636481348
+          format: int64
+          pattern: '1199145600'
+          type: integer
+      - description: Timestamp that specifies the starting point for the range of log messages to download. MongoDB Cloud expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch.
+        in: query
+        name: startDate
+        schema:
+          example: 1636466948
+          format: int64
+          pattern: '1199145600'
+          type: integer
+      - description: Name of the stream processor to download logs for. An empty string will download logs for all stream processors in the workspace.
+        in: query
+        name: spName
+        schema:
+          type: string
+      - description: Label that identifies the stream workspace.
+        in: path
+        name: tenantName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+gzip:
+              schema:
+                description: Compressed archive labeled `[tenantName]_[spName]_[startTime]_[endTime]_queries.gz` downloads
+                format: binary
+                readOnly: true
+                type: string
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Download Operational Logs for One Atlas Stream Processing Workspace
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams downloadOperationalLogs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DownloadGroupStreamOperationalLogsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tDownloadGroupStreamOperationalLogsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+gzip\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}:downloadOperationalLogs\" \\\n  --output \"file_name.gz\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+gzip\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams/{tenantName}:downloadOperationalLogs\" \\\n  --output \"file_name.gz\""
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/downloadGroupStreamOperationalLogs
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: download
+      x-xgen-operation-id-override: downloadOperationalLogs
+  /api/atlas/v2/groups/{groupId}/streams:withSampleConnections:
+    post:
+      description: Creates one stream workspace in the specified project with sample connections. To use this resource the requesting Service Account or API Key must have the Project Data Access Admin role, Project Owner role or Project Stream Processing Owner role.
+      operationId: withGroupStreamSampleConnections
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      requestBody:
+        content:
+          application/vnd.atlas.2024-08-05+json:
+            schema:
+              $ref: '#/components/schemas/TenantWithSampleConnections'
+        description: Details to create one streams workspace in the specified project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              schema:
+                $ref: '#/components/schemas/StreamsTenant'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Stream Workspace with Sample Connections
+      tags:
+      - Streams
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api streams withStreamSampleConnections --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.WithGroupStreamSampleConnectionsApiParams{}\n\tsdkResp, httpResp, err := client.StreamsApi.\n\t\tWithGroupStreamSampleConnectionsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams:withSampleConnections\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/streams:withSampleConnections\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Stream Processing Admin
+      - Project Data Access Admin
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Streams/operation/withGroupStreamSampleConnections
+      x-xgen-operation-id-override: withStreamSampleConnections
+components:
+  schemas:
+    Document:
+      additionalProperties:
+        type: object
+      type: object
+    PaginatedApiStreamsTenantView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/StreamsTenant'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    ConfluentUserInfoAuthentication:
+      allOf:
+      - $ref: '#/components/schemas/SchemaRegistryAuthentication'
+      - properties:
+          password:
+            description: Password or Private Key for authentication.
+            type: string
+            writeOnly: true
+          username:
+            description: Username or Public Key for authentication.
+            type: string
+        type: object
+      description: Authentication details for type `USER_INFO` with username and password for Confluent Schema Registry.
+      required:
+      - password
+      - type
+      - username
+      type: object
+    AzureAccountDetails:
+      properties:
+        azureSubscriptionId:
+          description: The Azure Subscription ID.
+          type: string
+        cidrBlock:
+          description: The VPC CIDR Block.
+          type: string
+        cloudProvider:
+          description: Cloud provider.
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        virtualNetworkName:
+          description: The name of the virtual network.
+          type: string
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    StreamsGCPPubSubConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          gcp:
+            $ref: '#/components/schemas/StreamsGCPConnectionConfig'
+          publicPrivateNetworking:
+            $ref: '#/components/schemas/StreamsPublicPrivateLinkNetworking'
+        type: object
+      description: The configuration for GCP Pub/Sub connections.
+      type: object
+    StreamsAWSConnectionConfig:
+      description: AWS configurations for AWS-based connection types.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        roleArn:
+          description: Amazon Resource Name (ARN) that identifies the Amazon Web Services (AWS) Identity and Access Management (IAM) role that MongoDB Cloud assumes when it accesses resources in your AWS account.
+          type: string
+        testBucket:
+          description: The name of an S3 bucket used to check authorization of the passed-in IAM role ARN.
+          type: string
+      type: object
+    StreamsProcessor:
+      description: An atlas stream processor.
+      properties:
+        _id:
+          description: Unique 24-hexadecimal character string that identifies the stream processor.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable name of the stream processor.
+          type: string
+        options:
+          $ref: '#/components/schemas/StreamsOptions'
+        pipeline:
+          description: Stream aggregation pipeline you want to apply to your streaming data.
+          externalDocs:
+            description: Supported Aggregation Pipeline Stages
+            url: https://www.mongodb.com/docs/atlas/atlas-stream-processing/stream-aggregation/#std-label-stream-aggregation
+          items:
+            $ref: '#/components/schemas/Document'
+          type: array
+        tier:
+          description: Selected tier for the Stream Workspace. Configures Memory / VCPU allowances.
+          enum:
+          - SP50
+          - SP30
+          - SP10
+          - SP5
+          - SP2
+          title: Stream Workspace Tier
+          type: string
+      type: object
+    StreamsGCPConnectionConfig:
+      description: GCP-specific configuration for the connection.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        serviceAccountId:
+          description: Email address of the Google Cloud Platform (GCP) service account that Atlas Streams uses to connect to the GCP Pub/Sub resources.
+          type: string
+      type: object
+    TenantWithSampleConnections:
+      type: object
+    StreamsKafkaNetworkingAccess:
+      description: Information about networking access.
+      properties:
+        connectionId:
+          description: Reserved. Will be used by `PRIVATE_LINK` connection type.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: Reserved. Will be used by `PRIVATE_LINK` connection type.
+          type: string
+        tgwRouteId:
+          description: Reserved. Will be used by `TRANSIT_GATEWAY` connection type.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        type:
+          description: Selected networking type. Either `PUBLIC`, `VPC`, `PRIVATE_LINK`, or `TRANSIT_GATEWAY`. Defaults to `PUBLIC`. For VPC, ensure that VPC peering exists and connectivity has been established between Atlas VPC and the VPC where Kafka cluster is hosted for the connection to function properly. `TRANSIT_GATEWAY` support is coming soon.
+          enum:
+          - PUBLIC
+          - VPC
+          - PRIVATE_LINK
+          - TRANSIT_GATEWAY
+          title: Networking Access Type
+          type: string
+      type: object
+    ApiStreamsAWSRegionView:
+      description: Atlas Streams AWS Regions.
+      enum:
+      - SYDNEY_AUS
+      - MUMBAI_IND
+      - FRANKFURT_DEU
+      - DUBLIN_IRL
+      - LONDON_GBR
+      - VIRGINIA_USA
+      - OHIO_USA
+      - OREGON_USA
+      - SAOPAULO_BRA
+      - MONTREAL_CAN
+      - TOKYO_JPN
+      - SINGAPORE_SGP
+      type: string
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    SchemaRegistryAuthentication:
+      description: Authentication configuration for Schema Registry.
+      discriminator:
+        mapping:
+          SASL_INHERIT: '#/components/schemas/ConfluentSaslInheritAuthentication'
+          USER_INFO: '#/components/schemas/ConfluentUserInfoAuthentication'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/ConfluentUserInfoAuthentication'
+      - $ref: '#/components/schemas/ConfluentSaslInheritAuthentication'
+      properties:
+        type:
+          description: Authentication type discriminator. Specifies the authentication mechanism for Confluent Schema Registry.
+          enum:
+          - USER_INFO
+          - SASL_INHERIT
+          type: string
+      required:
+      - type
+      type: object
+    StreamsKafkaConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          authentication:
+            $ref: '#/components/schemas/StreamsKafkaAuthentication'
+          bootstrapServers:
+            description: Comma separated list of server addresses.
+            type: string
+          config:
+            additionalProperties:
+              description: A map of Kafka key-value pairs for optional configuration. This is a flat object, and keys can have '.' characters.
+              example: '{"group.protocol.type":"consumer","debug":"queue, msg, protocol"}'
+              type: string
+            description: A map of Kafka key-value pairs for optional configuration. This is a flat object, and keys can have '.' characters.
+            example:
+              debug: queue, msg, protocol
+              group.protocol.type: consumer
+            type: object
+          networking:
+            $ref: '#/components/schemas/StreamsKafkaNetworking'
+          security:
+            $ref: '#/components/schemas/StreamsKafkaSecurity'
+        type: object
+      type: object
+    StreamsKafkaSecurity:
+      description: Properties for the secure transport connection to Kafka. For SSL, this can include the trusted certificate to use.
+      properties:
+        brokerPublicCertificate:
+          description: A trusted, public x509 certificate for connecting to Kafka over SSL.
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        protocol:
+          description: Describes the transport type. Can be either `SASL_PLAINTEXT`, `SASL_SSL`, or `SSL`.
+          type: string
+      type: object
+    DBRoleToExecute:
+      description: The name of a Built in or Custom DB Role to connect to an Atlas Cluster.
+      externalDocs:
+        description: Built-in Roles
+        url: https://www.mongodb.com/docs/atlas/mongodb-users-roles-and-privileges/#mongodb-atlasrole-atlasAdmin
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        role:
+          description: The name of the role to use. Can be a built in role or a custom role.
+          type: string
+        type:
+          description: Type of the DB role. Can be either Built In or Custom.
+          enum:
+          - BUILT_IN
+          - CUSTOM
+          title: DB Role Type
+          type: string
+      type: object
+    StreamsS3Connection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          aws:
+            $ref: '#/components/schemas/StreamsAWSConnectionConfig'
+          networking:
+            $ref: '#/components/schemas/StreamsKafkaNetworking'
+        type: object
+      description: The configuration for S3 connections.
+      type: object
+    StreamsKafkaAuthentication:
+      description: User credentials required to connect to a Kafka Cluster. Includes the authentication type, as well as the parameters for that authentication mode.
+      properties:
+        clientId:
+          description: OIDC client identifier for authentication to the Kafka cluster.
+          type: string
+        clientSecret:
+          description: OIDC client secret for authentication to the Kafka cluster.
+          format: password
+          type: string
+          writeOnly: true
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        mechanism:
+          description: Style of authentication. Can be one of PLAIN, SCRAM-256, SCRAM-512, or OAUTHBEARER.
+          type: string
+        method:
+          description: SASL OAUTHBEARER authentication method. Can only be OIDC currently.
+          type: string
+        password:
+          description: Password of the account to connect to the Kafka cluster.
+          format: password
+          type: string
+          writeOnly: true
+        saslOauthbearerExtensions:
+          description: SASL OAUTHBEARER extensions parameter for additional OAuth2 configuration.
+          type: string
+        scope:
+          description: OIDC scope parameter defining the access permissions requested.
+          type: string
+        sslCertificate:
+          description: SSL certificate for client authentication to Kafka.
+          type: string
+        sslKey:
+          description: SSL key for client authentication to Kafka.
+          type: string
+          writeOnly: true
+        sslKeyPassword:
+          description: Password for the SSL key, if it is password protected.
+          type: string
+          writeOnly: true
+        tokenEndpointUrl:
+          description: OIDC token endpoint URL for obtaining access tokens.
+          type: string
+        username:
+          description: Username of the account to connect to the Kafka cluster.
+          type: string
+      type: object
+    StreamsDLQ:
+      description: Dead letter queue for the stream processor.
+      externalDocs:
+        url: https://www.mongodb.com/docs/atlas/reference/glossary/#std-term-dead-letter-queue
+      properties:
+        coll:
+          description: Name of the collection to use for the DLQ.
+          type: string
+        connectionName:
+          description: Name of the connection to write DLQ messages to. Must be an Atlas connection.
+          type: string
+        db:
+          description: Name of the database to use for the DLQ.
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      type: object
+    AzureConnection:
+      description: Azure-specific configuration for the connection.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        region:
+          description: Azure region where the storage account is located.
+          type: string
+        servicePrincipalId:
+          description: Unique ID of the Azure Service Principal that has access to the storage account.
+          type: string
+        storageAccountName:
+          description: Name of the Azure Storage Account to connect to.
+          type: string
+      type: object
+    PaginatedApiStreamsConnectionView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/StreamsConnection'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    GCPAccountDetails:
+      properties:
+        cidrBlock:
+          description: The VPC CIDR Block.
+          type: string
+        cloudProvider:
+          description: Cloud provider.
+          type: string
+        gcpProjectId:
+          description: The GCP Project ID.
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        vpcNetworkName:
+          description: The name of the VPC network.
+          type: string
+      type: object
+    StreamsProcessorWithStats:
+      description: An atlas stream processor with optional stats.
+      properties:
+        _id:
+          description: Unique 24-hexadecimal character string that identifies the stream processor.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable name of the stream processor.
+          readOnly: true
+          type: string
+        options:
+          $ref: '#/components/schemas/StreamsOptions'
+        pipeline:
+          description: Stream aggregation pipeline you want to apply to your streaming data.
+          items:
+            additionalProperties:
+              readOnly: true
+              type: object
+            readOnly: true
+            type: object
+          readOnly: true
+          type: array
+        state:
+          description: The state of the stream processor. Commonly occurring states are 'CREATED', 'STARTED', 'STOPPED' and 'FAILED'.
+          readOnly: true
+          type: string
+        stats:
+          additionalProperties:
+            description: The stats associated with the stream processor.
+            externalDocs:
+              url: https://www.mongodb.com/docs/atlas/atlas-stream-processing/manage-stream-processor/#view-statistics-of-a-stream-processor
+            readOnly: true
+            type: object
+          description: The stats associated with the stream processor.
+          externalDocs:
+            url: https://www.mongodb.com/docs/atlas/atlas-stream-processing/manage-stream-processor/#view-statistics-of-a-stream-processor
+          readOnly: true
+          type: object
+        tier:
+          description: Selected tier for the Stream Workspace. Configures Memory / VCPU allowances.
+          enum:
+          - SP50
+          - SP30
+          - SP10
+          - SP5
+          - SP2
+          title: Stream Workspace Tier
+          type: string
+      required:
+      - _id
+      - name
+      - pipeline
+      - state
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    AWSAccountDetails:
+      properties:
+        awsAccountId:
+          description: The AWS Account ID.
+          type: string
+        cidrBlock:
+          description: The VPC CIDR Block.
+          type: string
+        cloudProvider:
+          description: Cloud provider.
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        vpcId:
+          description: The VPC ID.
+          type: string
+      type: object
+    PaginatedApiStreamsVPCPeeringConnectionView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/VPCPeeringConnection'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    StreamsKafkaNetworking:
+      description: Networking configuration for Streams connections.
+      properties:
+        access:
+          $ref: '#/components/schemas/StreamsKafkaNetworkingAccess'
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      type: object
+    VPCPeeringActionChallenge:
+      description: Container for elements used to challenge the user before taking certain actions on VPC Peering connections.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        requesterAccountId:
+          description: The AWS requester account ID.
+          type: string
+        requesterVpcId:
+          description: The AWS requester VPC ID.
+          type: string
+      type: object
+    StreamsDataProcessRegion:
+      description: Information about the cloud provider region in which MongoDB Cloud processes the stream.
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider.
+          enum:
+          - AWS
+          - GCP
+          - AZURE
+          - TENANT
+          - SERVERLESS
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        region:
+          $ref: '#/components/schemas/BaseStreamsRegion'
+      required:
+      - cloudProvider
+      - region
+      type: object
+    StreamsModifyStreamProcessor:
+      description: A request to modify an existing stream processor.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: New name for the stream processor.
+          type: string
+        options:
+          $ref: '#/components/schemas/StreamsModifyStreamProcessorOptions'
+        pipeline:
+          description: New pipeline for the stream processor.
+          externalDocs:
+            description: Supported Aggregation Pipeline Stages
+            url: https://www.mongodb.com/docs/atlas/atlas-stream-processing/stream-aggregation/#std-label-stream-aggregation
+          items:
+            $ref: '#/components/schemas/Document'
+          type: array
+      type: object
+    StreamsAzureBlobStorageConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          azure:
+            $ref: '#/components/schemas/AzureConnection'
+          publicPrivateNetworking:
+            $ref: '#/components/schemas/StreamsPublicPrivateLinkNetworking'
+        type: object
+      description: The configuration for Azure Blob Storage connections.
+      type: object
+    StreamsClusterConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          clusterGroupId:
+            description: Unique 24-hexadecimal digit string that identifies the project that contains the configured cluster. Required if the ID does not match the project containing the streams workspace. You must first enable the organization setting.
+            type: string
+          clusterName:
+            description: Name of the cluster configured for this connection.
+            type: string
+          dbRoleToExecute:
+            $ref: '#/components/schemas/DBRoleToExecute'
+        type: object
+      type: object
+    StreamsStartStreamProcessorWith:
+      description: A request to start a stream processor.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        resumeFromCheckpoint:
+          description: When true or not specified, the stream processor resumes from its last checkpoint. When false, the stream processor starts fresh.
+          type: boolean
+        startAtOperationTime:
+          description: The operation time after which the change stream source should begin reporting. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+        tier:
+          description: Selected tier for the Stream Workspace. Configures Memory / VCPU allowances.
+          enum:
+          - SP50
+          - SP30
+          - SP10
+          - SP5
+          - SP2
+          title: Stream Workspace Tier
+          type: string
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    ApiStreamsGCPRegionView:
+      description: Atlas Streams GCP Regions.
+      enum:
+      - US_CENTRAL1
+      - EUROPE_WEST1
+      - US_EAST4
+      type: string
+    StreamsPublicPrivateLinkNetworking:
+      description: Networking configuration for connections that support `PUBLIC` and `PRIVATE_LINK` access types. For GCP connections, use `PRIVATE_LINK` for GCP Private Service Connect (PSC).
+      properties:
+        access:
+          $ref: '#/components/schemas/StreamsPublicPrivateLinkNetworkingAccess'
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      type: object
+    StreamsAWSLambdaConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          aws:
+            $ref: '#/components/schemas/StreamsAWSConnectionConfig'
+        type: object
+      description: The configuration for AWS Lambda connections.
+      type: object
+    StreamsOptions:
+      description: Optional configuration for the stream processor.
+      properties:
+        dlq:
+          $ref: '#/components/schemas/StreamsDLQ'
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      type: object
+    StreamsTenant:
+      properties:
+        _id:
+          description: Unique 24-hexadecimal character string that identifies the project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        connections:
+          description: List of connections configured in the stream workspace.
+          items:
+            $ref: '#/components/schemas/StreamsConnection'
+          readOnly: true
+          type: array
+        dataProcessRegion:
+          $ref: '#/components/schemas/StreamsDataProcessRegion'
+        groupId:
+          description: Unique 24-hexadecimal character string that identifies the project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hostnames:
+          description: List that contains the hostnames assigned to the stream workspace.
+          items:
+            description: Unique hostname assigned to the stream workspace.
+            readOnly: true
+            type: string
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: Label that identifies the stream workspace.
+          type: string
+        sampleConnections:
+          $ref: '#/components/schemas/StreamsSampleConnections'
+        streamConfig:
+          $ref: '#/components/schemas/StreamConfig'
+      type: object
+    StreamsModifyStreamProcessorOptions:
+      description: Additional options for modifying a stream processor.
+      properties:
+        dlq:
+          $ref: '#/components/schemas/StreamsDLQ'
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        resumeFromCheckpoint:
+          description: When true, the modified stream processor resumes from its last checkpoint.
+          type: boolean
+      type: object
+    StreamsPrivateLinkConnection:
+      description: Container for metadata needed to create a Private Link connection.
+      properties:
+        _id:
+          description: The ID of the Private Link connection.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        arn:
+          description: Amazon Resource Name (ARN). Required for AWS Provider and MSK vendor.
+          pattern: ^arn:aws:kafka
+          type: string
+        azureResourceIds:
+          description: Azure Resource IDs of each availability zone for the Azure Confluent cluster.
+          items:
+            type: string
+          type: array
+        dnsDomain:
+          description: 'The domain hostname. Required for the following provider and vendor combinations:
+
+            - AWS provider with CONFLUENT vendor.
+
+            - AZURE provider with EVENTHUB or CONFLUENT vendor.'
+          type: string
+        dnsSubDomain:
+          description: Sub-Domain name of Confluent cluster. These are typically your availability zones. Required for AWS Provider and CONFLUENT vendor, if your AWS CONFLUENT cluster doesn't use subdomains, you must set this to the empty array [].
+          items:
+            type: string
+          type: array
+        errorMessage:
+          description: Error message if the state is FAILED.
+          readOnly: true
+          type: string
+        gcpConnectionIds:
+          description: List of GCP Private Service Connect connection IDs.
+          items:
+            type: string
+          maxItems: 3
+          type: array
+          uniqueItems: true
+        gcpServiceAttachmentUris:
+          description: Service Attachment URIs of each availability zone for the GCP Confluent cluster.
+          items:
+            type: string
+          maxItems: 3
+          type: array
+          uniqueItems: true
+        interfaceEndpointId:
+          description: Interface endpoint ID that is created from the service endpoint ID provided.
+          readOnly: true
+          type: string
+        interfaceEndpointName:
+          description: Interface endpoint name that is created from the service endpoint ID provided.
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        provider:
+          description: Provider where the Kafka cluster is deployed. Valid values are AWS and AZURE.
+          type: string
+        providerAccountId:
+          description: Account ID from the cloud provider.
+          readOnly: true
+          type: string
+        region:
+          description: The region of the Provider’s cluster. See [AZURE](https://www.mongodb.com/docs/atlas/reference/microsoft-azure/#stream-processing-instances) and [AWS](https://www.mongodb.com/docs/atlas/reference/amazon-aws/#stream-processing-instances) supported regions.
+          type: string
+        serviceEndpointId:
+          description: For AZURE EVENTHUB, this is the [namespace endpoint ID](https://learn.microsoft.com/en-us/rest/api/eventhub/namespaces/get). For AWS CONFLUENT cluster, this is the [VPC Endpoint service name](https://docs.confluent.io/cloud/current/networking/private-links/aws-privatelink.html).
+          type: string
+        state:
+          description: State the connection is in.
+          readOnly: true
+          type: string
+        vendor:
+          description: 'Vendor that manages the cloud service. The list of supported vendor values is:
+
+            - AWS
+
+            -- `MSK` for AWS MSK Kafka clusters
+
+            -- `CONFLUENT` for Confluent Kafka clusters on AWS
+
+            -- `KINESIS` for AWS Kinesis Data Streams
+
+
+            - Azure
+
+            -- `EVENTHUB` for Azure EventHub.
+
+            -- `CONFLUENT` for Confluent Kafka clusters on Azure
+
+            -- `AZURE_BLOB_STORAGE` for Azure Blob Storage
+
+
+            - GCP
+
+            -- `CONFLUENT` for Confluent Kafka clusters on GCP
+
+            -- `PUBSUB` for Google Cloud Pub/Sub
+
+
+            **NOTE** Omitting the vendor field will default to using the GENERIC vendor.'
+          type: string
+      required:
+      - provider
+      type: object
+    StreamsPublicPrivateLinkNetworkingAccess:
+      description: Information about networking access.
+      properties:
+        connectionId:
+          description: The ID of the Private Link connection. Required for `PRIVATE_LINK` type. For GCP connections using Private Service Connect (PSC), this is the PSC connection ID.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        type:
+          description: Selected networking type. Either `PUBLIC` or `PRIVATE_LINK`. Defaults to `PUBLIC`. For AWS, Azure, and GCP connections, use `PRIVATE_LINK` for AWS PrivateLink, Azure Private Link, or GCP Private Service Connect (PSC) respectively.
+          enum:
+          - PUBLIC
+          - PRIVATE_LINK
+          title: Networking Access Type
+          type: string
+      type: object
+    BaseStreamsRegion:
+      description: Name of the cloud provider region hosting Atlas Stream Processing.
+      oneOf:
+      - $ref: '#/components/schemas/ApiStreamsAWSRegionView'
+      - $ref: '#/components/schemas/ApiStreamsAzureRegionView'
+      - $ref: '#/components/schemas/ApiStreamsGCPRegionView'
+      type: object
+    StreamsAWSKinesisDataStreamsConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          aws:
+            $ref: '#/components/schemas/StreamsAWSConnectionConfig'
+          networking:
+            $ref: '#/components/schemas/StreamsKafkaNetworking'
+        type: object
+      description: The configuration for AWS Kinesis Data Stream connections.
+      type: object
+    StreamsTenantUpdateRequest:
+      description: Details to update a stream tenant.
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider.
+          enum:
+          - AWS
+          - GCP
+          - AZURE
+          - TENANT
+          - SERVERLESS
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        region:
+          $ref: '#/components/schemas/BaseStreamsRegion'
+        streamConfig:
+          $ref: '#/components/schemas/StreamConfig'
+      type: object
+    PaginatedApiStreamsStreamProcessorWithStatsView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/StreamsProcessorWithStats'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    VPCPeeringConnection:
+      description: Represents a VPC Peering connection on AWS.
+      properties:
+        _id:
+          description: Internal VPC Peering Connection ID.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        accepterAccountId:
+          description: The account ID responsible for accepting the request.
+          type: string
+        accepterCidr:
+          description: The CIDR block for the accepter VPC.
+          type: string
+        accepterVpcId:
+          description: The VPC ID accepting the request.
+          type: string
+        cloudStatus:
+          description: The status in the cloud provider for this connection.
+          type: string
+        expirationTime:
+          description: The time when the VPC Peering Connection request expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+        groupId:
+          description: The internal project ID.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        localStatus:
+          description: The local status of the VPC Peering Connection.
+          enum:
+          - NONE
+          - SCAN_FAILED
+          - UPDATE_FAILED
+          - REQUEST_ACCEPT
+          - ACCEPT_REQUESTED
+          - REQUEST_REJECT
+          - REJECT_REQUESTED
+          - REQUEST_DELETE
+          - DELETE_REQUESTED
+          - ACTIVE
+          type: string
+        name:
+          description: Unique VPC Peering Connection name.
+          type: string
+        requesterAccountId:
+          description: The account ID requesting the VPC Peering connection.
+          type: string
+        requesterCidr:
+          description: The CIDR block for the requesting VPC.
+          type: string
+        requesterVpcId:
+          description: The VPC ID requesting the VPC Peering connection.
+          type: string
+        statusMessage:
+          description: A status message.
+          type: string
+      type: object
+    StreamsConnection:
+      description: Settings that define a connection to an external data store.
+      discriminator:
+        mapping:
+          AWSKinesisDataStreams: '#/components/schemas/StreamsAWSKinesisDataStreamsConnection'
+          AWSLambda: '#/components/schemas/StreamsAWSLambdaConnection'
+          AzureBlobStorage: '#/components/schemas/StreamsAzureBlobStorageConnection'
+          Cluster: '#/components/schemas/StreamsClusterConnection'
+          GCPPubSub: '#/components/schemas/StreamsGCPPubSubConnection'
+          Https: '#/components/schemas/StreamsHttpsConnection'
+          Kafka: '#/components/schemas/StreamsKafkaConnection'
+          S3: '#/components/schemas/StreamsS3Connection'
+          Sample: '#/components/schemas/StreamsSampleConnection'
+          SchemaRegistry: '#/components/schemas/StreamsSchemaRegistryConnection'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/StreamsSampleConnection'
+      - $ref: '#/components/schemas/StreamsClusterConnection'
+      - $ref: '#/components/schemas/StreamsKafkaConnection'
+      - $ref: '#/components/schemas/StreamsHttpsConnection'
+      - $ref: '#/components/schemas/StreamsAWSLambdaConnection'
+      - $ref: '#/components/schemas/StreamsS3Connection'
+      - $ref: '#/components/schemas/StreamsAWSKinesisDataStreamsConnection'
+      - $ref: '#/components/schemas/StreamsSchemaRegistryConnection'
+      - $ref: '#/components/schemas/StreamsAzureBlobStorageConnection'
+      - $ref: '#/components/schemas/StreamsGCPPubSubConnection'
+      properties:
+        id:
+          description: Unique identifier of the connection.
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable label that identifies the stream connection. In the case of the Sample type, this is the name of the sample source.
+          type: string
+        region:
+          description: The connection's region.
+          type: string
+        state:
+          description: The state of the connection.
+          enum:
+          - PENDING
+          - READY
+          - DELETING
+          - FAILED
+          readOnly: true
+          type: string
+        type:
+          description: Type of the connection.
+          enum:
+          - Kafka
+          - Cluster
+          - Sample
+          - Https
+          - AzureBlobStorage
+          - AWSLambda
+          - AWSKinesisDataStreams
+          - SchemaRegistry
+          - GCPPubSub
+          type: string
+      type: object
+    StreamsHttpsConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          headers:
+            additionalProperties:
+              description: A map of key-value pairs that will be passed as headers for the request.
+              type: string
+            description: A map of key-value pairs that will be passed as headers for the request.
+            type: object
+          url:
+            description: The URL to be used for the request.
+            type: string
+        type: object
+      type: object
+    StreamConfig:
+      description: Configuration options for an Atlas Stream Processing Workspace.
+      nullable: true
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        maxTierSize:
+          description: Max tier size for the Stream Workspace. Configures Memory / VCPU allowances.
+          enum:
+          - SP50
+          - SP30
+          - SP10
+          - SP5
+          - SP2
+          title: Stream Workspace Max Tier Size
+          type: string
+        tier:
+          description: Selected tier for the Stream Workspace. Configures Memory / VCPU allowances.
+          enum:
+          - SP50
+          - SP30
+          - SP10
+          - SP5
+          - SP2
+          title: Stream Workspace Tier
+          type: string
+      type: object
+    AccountDetails:
+      description: Account details for the group, region, and provider.
+      discriminator:
+        mapping:
+          aws: '#/components/schemas/AWSAccountDetails'
+          azure: '#/components/schemas/AzureAccountDetails'
+          gcp: '#/components/schemas/GCPAccountDetails'
+        propertyName: cloudProvider
+      oneOf:
+      - $ref: '#/components/schemas/AWSAccountDetails'
+      - $ref: '#/components/schemas/AzureAccountDetails'
+      - $ref: '#/components/schemas/GCPAccountDetails'
+      type: object
+    StreamsSampleConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      type: object
+    StreamsSampleConnections:
+      description: Sample connections to add to SPI.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        solar:
+          default: false
+          description: Flag that indicates whether to add a `sample_stream_solar` connection.
+          type: boolean
+      type: object
+    ConfluentSaslInheritAuthentication:
+      allOf:
+      - $ref: '#/components/schemas/SchemaRegistryAuthentication'
+      description: Inherits the authentication configuration from Kafka for the Confluent Schema Registry.
+      required:
+      - type
+      type: object
+    PaginatedApiStreamsPrivateLinkView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/StreamsPrivateLinkConnection'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    ApiStreamsAzureRegionView:
+      description: Atlas Streams Azure Regions.
+      enum:
+      - eastus
+      - westus
+      - eastus2
+      - westeurope
+      type: string
+    StreamsSchemaRegistryConnection:
+      allOf:
+      - $ref: '#/components/schemas/StreamsConnection'
+      - properties:
+          provider:
+            description: The Schema Registry provider.
+            enum:
+            - CONFLUENT
+            type: string
+          schemaRegistryAuthentication:
+            $ref: '#/components/schemas/SchemaRegistryAuthentication'
+          schemaRegistryUrls:
+            description: List of Schema Registry endpoint URLs used by this connection. Each URL must use the http or https scheme and specify a valid host and optional port.
+            items:
+              description: Schema Registry URL.
+              format: uri
+              type: string
+            maxItems: 10
+            type: array
+            uniqueItems: true
+        type: object
+      description: The configuration for Schema Registry connections.
+      required:
+      - provider
+      - schemaRegistryAuthentication
+      - schemaRegistryUrls
+      type: object
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

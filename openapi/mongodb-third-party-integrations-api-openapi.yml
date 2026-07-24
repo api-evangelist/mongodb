@@ -1,0 +1,1044 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Third-Party Integrations API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: 'Returns, adds, edits, and removes third-party service integration configurations. MongoDB Cloud sends alerts to each third-party service that you configure.
+
+
+    **IMPORTANT**: Each project can only have one configuration per `integrationType`.'
+  name: Third-Party Integrations
+paths:
+  /api/atlas/v2/groups/{groupId}/integrations:
+    get:
+      description: Returns the settings that permit integrations with all configured third-party services. These settings apply to all databases managed in one MongoDB Cloud project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupIntegrations
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedIntegrationView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Active Third-Party Service Integrations
+      tags:
+      - Third-Party Integrations
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api thirdPartyIntegrations listGroupIntegrations --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupIntegrationsApiParams{}\n\tsdkResp, httpResp, err := client.Third - PartyIntegrationsApi.\n\t\tListGroupIntegrationsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Third-Party-Integrations/operation/listGroupIntegrations
+  /api/atlas/v2/groups/{groupId}/integrations/{integrationType}:
+    delete:
+      description: Removes the settings that permit configuring one third-party service integration. These settings apply to all databases managed in one MongoDB Cloud project. If you delete an integration from a project, you remove that integration configuration only for that project. This action doesn't affect any other project or organization's configured `{INTEGRATION-TYPE}` integrations. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: deleteGroupIntegration
+      parameters:
+      - description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+        in: path
+        name: integrationType
+        required: true
+        schema:
+          enum:
+          - PAGER_DUTY
+          - SLACK
+          - DATADOG
+          - NEW_RELIC
+          - OPS_GENIE
+          - VICTOR_OPS
+          - WEBHOOK
+          - HIP_CHAT
+          - PROMETHEUS
+          - MICROSOFT_TEAMS
+          title: Integration Type
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Third-Party Service Integration
+      tags:
+      - Third-Party Integrations
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api thirdPartyIntegrations deleteGroupIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupIntegrationApiParams{}\n\thttpResp, err := client.Third - PartyIntegrationsApi.\n\t\tDeleteGroupIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-changelog:
+        '2026-01-07': Log export to S3, Splunk, and Datadog is not supported by this API.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Third-Party-Integrations/operation/deleteGroupIntegration
+    get:
+      description: Returns the settings for configuring integration with one third-party service. These settings apply to all databases managed in one MongoDB Cloud project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+        in: path
+        name: integrationType
+        required: true
+        schema:
+          enum:
+          - PAGER_DUTY
+          - SLACK
+          - DATADOG
+          - NEW_RELIC
+          - OPS_GENIE
+          - VICTOR_OPS
+          - WEBHOOK
+          - HIP_CHAT
+          - PROMETHEUS
+          - MICROSOFT_TEAMS
+          title: Integration Type
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ThirdPartyIntegration'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Third-Party Service Integration
+      tags:
+      - Third-Party Integrations
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api thirdPartyIntegrations getGroupIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.Third - PartyIntegrationsApi.\n\t\tGetGroupIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-changelog:
+        '2026-01-07': Log export to S3, Splunk, and Datadog is not supported by this API.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Third-Party-Integrations/operation/getGroupIntegration
+    post:
+      description: Adds the settings for configuring one third-party service integration. These settings apply to all databases managed in the specified MongoDB Cloud project. Each project can have only one configuration per `{INTEGRATION-TYPE}`. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: createGroupIntegration
+      parameters:
+      - description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+        in: path
+        name: integrationType
+        required: true
+        schema:
+          enum:
+          - PAGER_DUTY
+          - SLACK
+          - DATADOG
+          - NEW_RELIC
+          - OPS_GENIE
+          - VICTOR_OPS
+          - WEBHOOK
+          - HIP_CHAT
+          - PROMETHEUS
+          - MICROSOFT_TEAMS
+          title: Integration Type
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ThirdPartyIntegration'
+        description: Third-party integration that you want to configure for your project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedIntegrationView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Third-Party Service Integration
+      tags:
+      - Third-Party Integrations
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api thirdPartyIntegrations createGroupIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.Third - PartyIntegrationsApi.\n\t\tCreateGroupIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-changelog:
+        '2026-01-07': Log export to S3, Splunk, and Datadog is not supported by this API.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Third-Party-Integrations/operation/createGroupIntegration
+    put:
+      description: Updates the settings for configuring integration with one third-party service. These settings apply to all databases managed in one MongoDB Cloud project. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: updateGroupIntegration
+      parameters:
+      - description: Human-readable label that identifies the service which you want to integrate with MongoDB Cloud.
+        in: path
+        name: integrationType
+        required: true
+        schema:
+          enum:
+          - PAGER_DUTY
+          - SLACK
+          - DATADOG
+          - NEW_RELIC
+          - OPS_GENIE
+          - VICTOR_OPS
+          - WEBHOOK
+          - HIP_CHAT
+          - PROMETHEUS
+          - MICROSOFT_TEAMS
+          title: Integration Type
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ThirdPartyIntegration'
+        description: Third-party integration that you want to configure for your project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedIntegrationView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Third-Party Service Integration
+      tags:
+      - Third-Party Integrations
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api thirdPartyIntegrations updateGroupIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.Third - PartyIntegrationsApi.\n\t\tUpdateGroupIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/integrations/{integrationType}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-changelog:
+        '2026-01-07': Log export to S3, Splunk, and Datadog is not supported by this API.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Third-Party-Integrations/operation/updateGroupIntegration
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  schemas:
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    NewRelic:
+      description: 'Details to integrate one New Relic account with one MongoDB Cloud project.
+
+
+        ***IMPORTANT**: Effective Wednesday, June 16th, 2021, New Relic no longer supports the plugin-based integration with MongoDB. We do not recommend that you sign up for the plugin-based integration.
+
+
+        Consider configuring an alternative monitoring integration before June 16th to maintain visibility into your MongoDB deployments.'
+      externalDocs:
+        description: New Relic Plugin EOL Statement
+        url: https://discuss.newrelic.com/t/new-relic-plugin-eol-wednesday-june-16th-2021/127267
+      properties:
+        accountId:
+          description: Unique 40-hexadecimal digit string that identifies your New Relic account.
+          example: bcc3c81b344a6030a3935c2527e2216535af7718
+          pattern: ^([0-9a-f]){40}$
+          type: string
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        licenseKey:
+          description: 'Unique 40-hexadecimal digit string that identifies your New Relic license.
+
+
+            **IMPORTANT**: Effective Wednesday, June 16th, 2021, New Relic no longer supports the plugin-based integration with MongoDB. We do not recommend that you sign up for the plugin-based integration.
+
+            Consider configuring an alternative monitoring integration before June 16th to maintain visibility into your MongoDB deployments.'
+          example: bc3768f44193c282b2688ab39e00f8e4fc8d75ea
+          externalDocs:
+            description: New Relic Plugin EOL Statement
+            url: https://discuss.newrelic.com/t/new-relic-plugin-eol-wednesday-june-16th-2021/127267
+          pattern: ^([0-9a-f]){40}$
+          type: string
+        readToken:
+          description: Query key used to access your New Relic account.
+          example: 193c96aee4a3ac640b98634562e2631f17ae0a69
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - NEW_RELIC
+          type: string
+        writeToken:
+          description: Insert key associated with your New Relic account.
+          example: a67b10e5cd7f8fb6a34b501136c409f373edc218
+          type: string
+      required:
+      - accountId
+      - licenseKey
+      - readToken
+      - writeToken
+      title: NEW_RELIC
+      type: object
+    Datadog:
+      description: Details to integrate one Datadog account with one MongoDB Cloud project.
+      properties:
+        apiKey:
+          description: 'Key that allows MongoDB Cloud to access your Datadog account.
+
+
+            **NOTE**: After you create a notification which requires an API or integration key, the key appears partially redacted when you:
+
+
+            * View or edit the alert through the Atlas UI.
+
+
+            * Query the alert for the notification through the Atlas Administration API.'
+          example: '****************************a23c'
+          type: string
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        region:
+          description: Two-letter code that indicates which regional URL MongoDB uses to access the Datadog API.
+          enum:
+          - US
+          - EU
+          - US3
+          - US5
+          - AP1
+          - US1_FED
+          externalDocs:
+            description: Datadog regions
+            url: https://docs.datadoghq.com/getting_started/site/
+          type: string
+        sendCollectionLatencyMetrics:
+          default: false
+          description: Toggle sending collection latency metrics that includes database names and collection names and latency metrics on reads, writes, commands, and transactions.
+          type: boolean
+        sendDatabaseMetrics:
+          default: false
+          description: Toggle sending database metrics that includes database names and metrics on the number of collections, storage size, and index size.
+          type: boolean
+        sendQueryStatsMetrics:
+          default: false
+          description: Toggle sending query shape metrics that includes query hash and metrics on latency, execution frequency, documents returned, and timestamps.
+          type: boolean
+        sendUserProvidedResourceTags:
+          default: false
+          description: Toggle sending user provided group and cluster resource tags with the Datadog metrics.
+          type: boolean
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - DATADOG
+          type: string
+      required:
+      - apiKey
+      title: DATADOG
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    VictorOps:
+      description: Details to integrate one Splunk On-Call account with one MongoDB Cloud project.
+      properties:
+        apiKey:
+          description: 'Key that allows MongoDB Cloud to access your VictorOps account.
+
+
+            **NOTE**: After you create a notification which requires an API or integration key, the key appears partially redacted when you:
+
+
+            * View or edit the alert through the Atlas UI.
+
+
+            * Query the alert for the notification through the Atlas Administration API.'
+          example: '********************************9abc'
+          type: string
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        routingKey:
+          description: Routing key associated with your Splunk On-Call account.
+          example: test routing
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - VICTOR_OPS
+          type: string
+      required:
+      - apiKey
+      title: VICTOR_OPS
+      type: object
+    Prometheus:
+      description: Details to integrate one Prometheus account with one MongoDB Cloud project.
+      properties:
+        enabled:
+          description: Flag that indicates whether someone has activated the Prometheus integration.
+          type: boolean
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        password:
+          description: Password needed to allow MongoDB Cloud to access your Prometheus account.
+          type: string
+          writeOnly: true
+        sendUserProvidedResourceTagsEnabled:
+          default: false
+          description: Toggle sending user provided group and cluster resource tags with the Prometheus metrics.
+          type: boolean
+        serviceDiscovery:
+          description: Desired method to discover the Prometheus service.
+          enum:
+          - http
+          - file
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - PROMETHEUS
+          type: string
+        username:
+          description: Human-readable label that identifies your Prometheus incoming webhook.
+          example: prom_user_618d48e05277a606ed2496fe
+          type: string
+      required:
+      - enabled
+      - serviceDiscovery
+      - username
+      title: PROMETHEUS
+      type: object
+    PaginatedIntegrationView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ThirdPartyIntegration'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PagerDuty:
+      description: Details to integrate one PagerDuty account with one MongoDB Cloud project.
+      properties:
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        region:
+          description: PagerDuty region that indicates the API Uniform Resource Locator (URL) to use.
+          enum:
+          - US
+          - EU
+          type: string
+        serviceKey:
+          description: 'Service key associated with your PagerDuty account.
+
+
+            **NOTE**: After you create a notification which requires an API or integration key, the key appears partially redacted when you:
+
+
+            * View or edit the alert through the Atlas UI.
+
+
+            * Query the alert for the notification through the Atlas Administration API.'
+          example: '****************************7890'
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - PAGER_DUTY
+          type: string
+      required:
+      - serviceKey
+      title: PAGER_DUTY
+      type: object
+    MicrosoftTeams:
+      description: Details to integrate one Microsoft Teams account with one MongoDB Cloud project.
+      properties:
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        microsoftTeamsWebhookUrl:
+          description: 'Endpoint web address of the Microsoft Teams webhook to which MongoDB Cloud sends notifications.
+
+
+            **NOTE**: When you view or edit the alert for a Microsoft Teams notification, the URL appears partially redacted.'
+          example: https://webhook.com/****
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - MICROSOFT_TEAMS
+          type: string
+      required:
+      - microsoftTeamsWebhookUrl
+      title: MICROSOFT_TEAMS
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    ThirdPartyIntegration:
+      description: Collection of settings that describe third-party integrations.
+      discriminator:
+        mapping:
+          DATADOG: '#/components/schemas/Datadog'
+          MICROSOFT_TEAMS: '#/components/schemas/MicrosoftTeams'
+          NEW_RELIC: '#/components/schemas/NewRelic'
+          OPS_GENIE: '#/components/schemas/OpsGenie'
+          PAGER_DUTY: '#/components/schemas/PagerDuty'
+          PROMETHEUS: '#/components/schemas/Prometheus'
+          SLACK: '#/components/schemas/Slack'
+          VICTOR_OPS: '#/components/schemas/VictorOps'
+          WEBHOOK: '#/components/schemas/Webhook'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/PagerDuty'
+      - $ref: '#/components/schemas/Slack'
+      - $ref: '#/components/schemas/Datadog'
+      - $ref: '#/components/schemas/NewRelic'
+      - $ref: '#/components/schemas/OpsGenie'
+      - $ref: '#/components/schemas/VictorOps'
+      - $ref: '#/components/schemas/Webhook'
+      - $ref: '#/components/schemas/Prometheus'
+      - $ref: '#/components/schemas/MicrosoftTeams'
+      properties:
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        type:
+          description: Integration type.
+          enum:
+          - PAGER_DUTY
+          - SLACK
+          - DATADOG
+          - NEW_RELIC
+          - OPS_GENIE
+          - VICTOR_OPS
+          - WEBHOOK
+          - HIP_CHAT
+          - PROMETHEUS
+          - MICROSOFT_TEAMS
+          title: Integration Type
+          type: string
+      title: Third-Party Integration
+      type: object
+    Slack:
+      description: Details to integrate one Slack account with one MongoDB Cloud project.
+      properties:
+        apiToken:
+          description: 'Key that allows MongoDB Cloud to access your Slack account.
+
+
+            **NOTE**: After you create a notification which requires an API or integration key, the key appears partially redacted when you:
+
+
+            * View or edit the alert through the Atlas UI.
+
+
+            * Query the alert for the notification through the Atlas Administration API.
+
+
+            **IMPORTANT**: Slack integrations now use the OAuth2 verification method and must  be initially configured, or updated from a legacy integration, through the Atlas  third-party service integrations page. Legacy tokens will soon no longer be  supported.'
+          example: '**********************************************************************abcd'
+          type: string
+        channelName:
+          description: Name of the Slack channel to which MongoDB Cloud sends alert notifications.
+          example: alerts
+          maxLength: 80
+          minLength: 1
+          nullable: true
+          type: string
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        teamName:
+          description: Human-readable label that identifies your Slack team. Set this parameter when you configure a legacy Slack integration.
+          example: MongoDB
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - SLACK
+          type: string
+      required:
+      - apiToken
+      - channelName
+      title: SLACK
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    Webhook:
+      description: Details to integrate one webhook with one MongoDB Cloud project.
+      properties:
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        secret:
+          description: 'An optional field returned if your webhook is configured with a secret.
+
+
+            **NOTE**: When you view or edit the alert for a webhook notification, the secret appears completely redacted.'
+          format: password
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - WEBHOOK
+          type: string
+        url:
+          description: 'Endpoint web address to which MongoDB Cloud sends notifications.
+
+
+            **NOTE**: When you view or edit the alert for a webhook notification, the URL appears partially redacted.'
+          example: https://webhook.com/****
+          type: string
+      required:
+      - url
+      title: WEBHOOK
+      type: object
+    OpsGenie:
+      description: Details to integrate one OpsGenie account with one MongoDB Cloud project.
+      properties:
+        apiKey:
+          description: 'Key that allows MongoDB Cloud to access your OpsGenie account.
+
+
+            **NOTE**: After you create a notification which requires an API or integration key, the key appears partially redacted when you:
+
+
+            * View or edit the alert through the Atlas UI.
+
+
+            * Query the alert for the notification through the Atlas Administration API.'
+          example: '********************************a111'
+          type: string
+        id:
+          description: Integration id.
+          nullable: true
+          type: string
+        region:
+          default: US
+          description: Two-letter code that indicates which regional URL MongoDB uses to access the OpsGenie API.
+          enum:
+          - US
+          - EU
+          type: string
+        type:
+          description: Human-readable label that identifies the service to which you want to integrate with MongoDB Cloud. The value must match the third-party service integration type.
+          enum:
+          - OPS_GENIE
+          type: string
+      required:
+      - apiKey
+      title: OPS_GENIE
+      type: object
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

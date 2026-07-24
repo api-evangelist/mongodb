@@ -1,0 +1,731 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Serverless Private Endpoints API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns, adds, edits, and removes private endpoints for serverless instances. To learn more, see the Atlas Administration API tab on the following tutorial.
+  externalDocs:
+    description: Set Up a Private Endpoint for a Serverless Instance Tutorial
+    url: https://dochub.mongodb.org/core/serverless-private-endpoint
+  name: Serverless Private Endpoints
+paths:
+  /api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint:
+    get:
+      deprecated: true
+      description: 'Returns all private endpoints for one serverless instance. You must have at least the Project Read Only role for the project to successfully call this resource.
+
+
+        This feature does not work for Flex clusters. To continue using Private Endpoints once Serverless is replaced by Flex, please use a Dedicated cluster instead. This endpoint will be sunset on January 22, 2026.'
+      operationId: listGroupPrivateEndpointServerlessInstanceEndpoint
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the serverless instance associated with the tenant endpoint.
+        in: path
+        name: instanceName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ServerlessTenantEndpoint'
+                type: array
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Private Endpoints for One Serverless Instance
+      tags:
+      - Serverless Private Endpoints
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api serverlessPrivateEndpoints listServerlessPrivateEndpoint --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupPrivateEndpointServerlessInstanceEndpointApiParams{}\n\tsdkResp, httpResp, err := client.ServerlessPrivateEndpointsApi.\n\t\tListGroupPrivateEndpointServerlessInstanceEndpointWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-sunset: '2026-01-22'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Private-Endpoints/operation/listGroupPrivateEndpointServerlessInstanceEndpoint
+      x-xgen-operation-id-override: listServerlessPrivateEndpoint
+    post:
+      deprecated: true
+      description: "Creates one private endpoint for one serverless instance. To use this resource, the requesting Service Account or API Key must have the Project Owner role.\n\n A new endpoint won't be immediately available after creation.  Read the steps in the linked tutorial for detailed guidance.\n\nThis feature does not work for Flex clusters. To continue using Private Endpoints once Serverless is replaced by Flex, please use a Dedicated cluster instead. This endpoint will be sunset on January 22, 2026."
+      externalDocs:
+        description: Set Up a Private Endpoint for a Serverless Instance Tutorial
+        url: https://dochub.mongodb.org/core/serverless-private-endpoint
+      operationId: createGroupPrivateEndpointServerlessInstanceEndpoint
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the serverless instance for which the tenant endpoint will be created.
+        in: path
+        name: instanceName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ServerlessTenantCreateRequest'
+        description: Information about the Private Endpoint to create for the Serverless Instance.
+        required: true
+      responses:
+        '201':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ServerlessTenantEndpoint'
+              x-xgen-version: '2023-01-01'
+          description: Created
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Private Endpoint for One Serverless Instance
+      tags:
+      - Serverless Private Endpoints
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api serverlessPrivateEndpoints createServerlessPrivateEndpoint --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupPrivateEndpointServerlessInstanceEndpointApiParams{}\n\tsdkResp, httpResp, err := client.ServerlessPrivateEndpointsApi.\n\t\tCreateGroupPrivateEndpointServerlessInstanceEndpointWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2026-01-22'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Private-Endpoints/operation/createGroupPrivateEndpointServerlessInstanceEndpoint
+      x-xgen-operation-id-override: createServerlessPrivateEndpoint
+  /api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}:
+    delete:
+      deprecated: true
+      description: 'Remove one private endpoint from one serverless instance. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+
+
+        This feature does not work for Flex clusters. To continue using Private Endpoints once Serverless is replaced by Flex, please use a Dedicated cluster instead. This endpoint will be sunset on January 22, 2026.'
+      operationId: deleteGroupPrivateEndpointServerlessInstanceEndpoint
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the serverless instance from which the tenant endpoint will be removed.
+        in: path
+        name: instanceName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the tenant endpoint which will be removed.
+        in: path
+        name: endpointId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Private Endpoint for One Serverless Instance
+      tags:
+      - Serverless Private Endpoints
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api serverlessPrivateEndpoints deleteServerlessPrivateEndpoint --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupPrivateEndpointServerlessInstanceEndpointApiParams{}\n\thttpResp, err := client.ServerlessPrivateEndpointsApi.\n\t\tDeleteGroupPrivateEndpointServerlessInstanceEndpointWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}\""
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2026-01-22'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Private-Endpoints/operation/deleteGroupPrivateEndpointServerlessInstanceEndpoint
+      x-xgen-operation-id-override: deleteServerlessPrivateEndpoint
+    get:
+      deprecated: true
+      description: 'Return one private endpoint for one serverless instance. Identify this endpoint using its unique ID. You must have at least the Project Read Only role for the project to successfully call this resource.
+
+
+        This feature does not work for Flex clusters. To continue using Private Endpoints once Serverless is replaced by Flex, please use a Dedicated cluster instead. This endpoint will be sunset on January 22, 2026.'
+      operationId: getGroupPrivateEndpointServerlessInstanceEndpoint
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the serverless instance associated with the tenant endpoint.
+        in: path
+        name: instanceName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the tenant endpoint.
+        in: path
+        name: endpointId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ServerlessTenantEndpoint'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Private Endpoint for One Serverless Instance
+      tags:
+      - Serverless Private Endpoints
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api serverlessPrivateEndpoints getServerlessPrivateEndpoint --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupPrivateEndpointServerlessInstanceEndpointApiParams{}\n\tsdkResp, httpResp, err := client.ServerlessPrivateEndpointsApi.\n\t\tGetGroupPrivateEndpointServerlessInstanceEndpointWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-sunset: '2026-01-22'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Private-Endpoints/operation/getGroupPrivateEndpointServerlessInstanceEndpoint
+      x-xgen-operation-id-override: getServerlessPrivateEndpoint
+    patch:
+      deprecated: true
+      description: 'Updates one private endpoint for one serverless instance. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+
+
+        This feature does not work for Flex clusters. To continue using Private Endpoints once Serverless is replaced by Flex, please use a Dedicated cluster instead. This endpoint will be sunset on January 22, 2026.'
+      operationId: updateGroupPrivateEndpointServerlessInstanceEndpoint
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the serverless instance associated with the tenant endpoint that will be updated.
+        in: path
+        name: instanceName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the tenant endpoint which will be updated.
+        in: path
+        name: endpointId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ServerlessTenantEndpointUpdate'
+        description: Object used for update.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ServerlessTenantEndpoint'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Private Endpoint for One Serverless Instance
+      tags:
+      - Serverless Private Endpoints
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api serverlessPrivateEndpoints updateServerlessPrivateEndpoint --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupPrivateEndpointServerlessInstanceEndpointApiParams{}\n\tsdkResp, httpResp, err := client.ServerlessPrivateEndpointsApi.\n\t\tUpdateGroupPrivateEndpointServerlessInstanceEndpointWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/privateEndpoint/serverless/instance/{instanceName}/endpoint/{endpointId}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2026-01-22'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Private-Endpoints/operation/updateGroupPrivateEndpointServerlessInstanceEndpoint
+      x-xgen-operation-id-override: updateServerlessPrivateEndpoint
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+  schemas:
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    ServerlessAzureTenantEndpoint:
+      description: View for a serverless Azure tenant endpoint.
+      properties:
+        _id:
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        cloudProviderEndpointId:
+          description: Unique string that identifies the Azure private endpoint's network interface that someone added to this private endpoint service.
+          pattern: ^/subscriptions/[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/resource[gG]roups/private[Ll]ink/providers/Microsoft\.Network/privateEndpoints/[-\w._()]+$
+          readOnly: true
+          type: string
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          readOnly: true
+          type: string
+        endpointServiceName:
+          description: Unique string that identifies the Azure private endpoint service. MongoDB Cloud returns null while it creates the endpoint service.
+          pattern: ^pls_[0-9a-f]{24}$
+          readOnly: true
+          type: string
+        errorMessage:
+          description: Human-readable error message that indicates error condition associated with establishing the private endpoint connection.
+          readOnly: true
+          type: string
+        privateEndpointIpAddress:
+          description: IPv4 address of the private endpoint in your Azure VNet that someone added to this private endpoint service.
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+          readOnly: true
+          type: string
+        privateLinkServiceResourceId:
+          description: Root-relative path that identifies the Azure Private Link Service that MongoDB Cloud manages. MongoDB Cloud returns null while it creates the endpoint service.
+          readOnly: true
+          type: string
+        providerName:
+          description: Human-readable label that identifies the cloud service provider.
+          enum:
+          - AZURE
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the current operating status of the private endpoint.
+          enum:
+          - RESERVATION_REQUESTED
+          - RESERVED
+          - INITIATING
+          - AVAILABLE
+          - FAILED
+          - DELETING
+          readOnly: true
+          type: string
+      title: Azure
+      type: object
+    ServerlessTenantCreateRequest:
+      properties:
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          type: string
+          writeOnly: true
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    ServerlessAWSTenantEndpoint:
+      description: View for a serverless AWS tenant endpoint.
+      properties:
+        _id:
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        cloudProviderEndpointId:
+          description: Unique string that identifies the private endpoint's network interface.
+          pattern: ^vpce-[0-9a-f]{17}$
+          readOnly: true
+          type: string
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          readOnly: true
+          type: string
+        endpointServiceName:
+          description: Unique string that identifies the Amazon Web Services (AWS) PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.
+          pattern: ^com\.amazonaws\.vpce\.[a-z-0-9]+\.vpce-svc-[0-9a-f]{17}
+          readOnly: true
+          type: string
+        errorMessage:
+          description: Human-readable error message that indicates error condition associated with establishing the private endpoint connection.
+          readOnly: true
+          type: string
+        providerName:
+          description: Human-readable label that identifies the cloud service provider.
+          enum:
+          - AWS
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the current operating status of the private endpoint.
+          enum:
+          - RESERVATION_REQUESTED
+          - RESERVED
+          - INITIATING
+          - AVAILABLE
+          - FAILED
+          - DELETING
+          readOnly: true
+          type: string
+      title: AWS
+      type: object
+    ServerlessTenantEndpointUpdate:
+      description: Update view for a serverless tenant endpoint.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/ServerlessAWSTenantEndpointUpdate'
+          AZURE: '#/components/schemas/ServerlessAzureTenantEndpointUpdate'
+        propertyName: providerName
+      properties:
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          type: string
+          writeOnly: true
+        providerName:
+          description: Human-readable label that identifies the cloud provider of the tenant endpoint.
+          enum:
+          - AWS
+          - AZURE
+          type: string
+          writeOnly: true
+      required:
+      - providerName
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    ServerlessTenantEndpoint:
+      oneOf:
+      - $ref: '#/components/schemas/ServerlessAWSTenantEndpoint'
+      - $ref: '#/components/schemas/ServerlessAzureTenantEndpoint'
+      properties:
+        _id:
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        cloudProviderEndpointId:
+          description: Unique string that identifies the private endpoint's network interface.
+          readOnly: true
+          type: string
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          readOnly: true
+          type: string
+        endpointServiceName:
+          description: Unique string that identifies the PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.
+          pattern: ^com\.amazonaws\.vpce\.[a-z-0-9]+\.vpce-svc-[0-9a-f]{17}|pls_[0-9a-f]{24}$
+          readOnly: true
+          type: string
+        errorMessage:
+          description: Human-readable error message that indicates error condition associated with establishing the private endpoint connection.
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the current operating status of the private endpoint.
+          enum:
+          - RESERVATION_REQUESTED
+          - RESERVED
+          - INITIATING
+          - AVAILABLE
+          - FAILED
+          - DELETING
+          readOnly: true
+          type: string
+      type: object
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

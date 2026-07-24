@@ -1,0 +1,1379 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Push-Based Log Export API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: You can continually export mongod, mongos, and audit logs to an AWS S3 bucket. The new `/logIntegrations` API provides 1-minute log export on a best-effort basis. The existing `/pushBasedLogExport` API provides 5-minute log export and will be deprecated in the future. The log export integrations are managed at the project level.
+  name: Push-Based Log Export
+paths:
+  /api/atlas/v2/groups/{groupId}/logIntegrations:
+    get:
+      description: Returns all log integration configurations for the project. Optionally filter by integration type. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: listGroupLogIntegrations
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Optional filter by integration type (e.g., `S3_LOG_EXPORT`).
+        in: query
+        name: integrationType
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Active Log Integrations
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport listGroupLogIntegrations --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupLogIntegrationsApiParams{}\n\tsdkResp, httpResp, err := client.Push - BasedLogExportApi.\n\t\tListGroupLogIntegrationsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations?pretty=true\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/listGroupLogIntegrations
+    post:
+      description: Creates a new log integration configuration identified by a unique ID. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: createGroupLogIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      requestBody:
+        content:
+          application/vnd.atlas.2025-03-12+json:
+            schema:
+              $ref: '#/components/schemas/LogIntegrationRequest'
+        description: Log integration configuration to create.
+        required: true
+      responses:
+        '201':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/LogIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: Created
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Log Integration
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport createGroupLogIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupLogIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.Push - BasedLogExportApi.\n\t\tCreateGroupLogIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/createGroupLogIntegration
+  /api/atlas/v2/groups/{groupId}/logIntegrations/{id}:
+    delete:
+      description: Removes the configuration for one log integration identified by its unique ID. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: deleteGroupLogIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique identifier of the log integration configuration.
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              x-xgen-version: '2025-03-12'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Log Integration
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport deleteGroupLogIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupLogIntegrationApiParams{}\n\thttpResp, err := client.Push - BasedLogExportApi.\n\t\tDeleteGroupLogIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations/{id}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations/{id}\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/deleteGroupLogIntegration
+    get:
+      description: Returns the configuration for one log integration identified by its unique ID. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: getGroupLogIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique identifier of the log integration configuration.
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/LogIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Log Integration
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport getGroupLogIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupLogIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.Push - BasedLogExportApi.\n\t\tGetGroupLogIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations/{id}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations/{id}?pretty=true\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/getGroupLogIntegration
+    put:
+      description: Updates the configuration for one log integration identified by its unique ID. To use this resource, the requesting Service Account or API Key must have the Organization Owner or Project Owner role.
+      operationId: updateGroupLogIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique identifier of the log integration configuration.
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2025-03-12+json:
+            schema:
+              $ref: '#/components/schemas/LogIntegrationRequest'
+        description: Updated log integration configuration.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/LogIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Log Integration
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport updateGroupLogIntegration --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupLogIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.Push - BasedLogExportApi.\n\t\tUpdateGroupLogIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations/{id}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/logIntegrations/{id}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/updateGroupLogIntegration
+  /api/atlas/v2/groups/{groupId}/pushBasedLogExport:
+    delete:
+      deprecated: true
+      description: Disables the push-based log export feature by resetting the project level settings to its default configuration.
+      operationId: deleteGroupPushBasedLogExport
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Disable Push-Based Log Export for One Project
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport deleteLogExport --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupPushBasedLogExportApiParams{}\n\thttpResp, err := client.Push - BasedLogExportApi.\n\t\tDeleteGroupPushBasedLogExportWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport\""
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2027-02-04'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/deleteGroupPushBasedLogExport
+      x-xgen-operation-id-override: deleteLogExport
+    get:
+      deprecated: true
+      description: Fetches the current project level settings for the push-based log export feature.
+      operationId: getGroupPushBasedLogExport
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PushBasedLogExportProject'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Push-Based Log Export Configuration in One Project
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport getLogExport --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupPushBasedLogExportApiParams{}\n\tsdkResp, httpResp, err := client.Push - BasedLogExportApi.\n\t\tGetGroupPushBasedLogExportWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport?pretty=true\""
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2027-02-04'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/getGroupPushBasedLogExport
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: get
+      x-xgen-operation-id-override: getLogExport
+    patch:
+      deprecated: true
+      description: Updates the project level settings for the push-based log export feature.
+      operationId: updateGroupPushBasedLogExport
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/PushBasedLogExportProject'
+            x-xgen-version: '2023-01-01'
+        description: The project configuration details. The S3 bucket name, IAM role ID, and prefix path fields are the only fields that may be specified. Fields left unspecified will not be modified.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Push-Based Log Export Configuration in One Project
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport updateLogExport --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupPushBasedLogExportApiParams{}\n\tsdkResp, httpResp, err := client.Push - BasedLogExportApi.\n\t\tUpdateGroupPushBasedLogExportWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2027-02-04'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/updateGroupPushBasedLogExport
+      x-xgen-operation-id-override: updateLogExport
+    post:
+      deprecated: true
+      description: Configures the project level settings for the push-based log export feature.
+      operationId: createGroupPushBasedLogExport
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/CreatePushBasedLogExportProjectRequest'
+            x-xgen-version: '2023-01-01'
+        description: The project configuration details. The S3 bucket name, IAM role ID, and prefix path fields are required.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Push-Based Log Export Configuration in One Project
+      tags:
+      - Push-Based Log Export
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api pushBasedLogExport createLogExport --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupPushBasedLogExportApiParams{}\n\tsdkResp, httpResp, err := client.Push - BasedLogExportApi.\n\t\tCreateGroupPushBasedLogExportWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/pushBasedLogExport\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2027-02-04'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Push-Based-Log-Export/operation/createGroupPushBasedLogExport
+      x-xgen-operation-id-override: createLogExport
+components:
+  schemas:
+    SplunkLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          hecToken:
+            description: HTTP Event Collector (HEC) token for authentication.
+            example: 12345678-1234-1234-1234-123456789012
+            format: password
+            type: string
+          hecUrl:
+            description: HTTP Event Collector (HEC) endpoint URL.
+            example: https://http-inputs-acme.splunkcloud.com:8088/services/collector/event
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - SPLUNK_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating a Splunk log export integration.
+      required:
+      - hecToken
+      - hecUrl
+      - logTypes
+      - type
+      title: Splunk Log Export Integration Request
+      type: object
+    GcsLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          bucketName:
+            description: Name of the bucket to store log files.
+            example: my-gcs-log-bucket
+            type: string
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: mongodb-logs/
+            type: string
+          roleId:
+            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - GCS_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating a Google Cloud Storage log export integration.
+      required:
+      - bucketName
+      - logTypes
+      - prefixPath
+      - roleId
+      - type
+      title: GCS Log Export Integration Request
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    SplunkLogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          hecToken:
+            description: HTTP Event Collector (HEC) token for authentication.
+            example: '****************************9012'
+            format: password
+            type: string
+          hecUrl:
+            description: HTTP Event Collector (HEC) endpoint URL.
+            example: https://http-inputs-acme.splunkcloud.com:8088/services/collector
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - SPLUNK_LOG_EXPORT
+            type: string
+        type: object
+      description: Details to integrate Splunk log export with one Atlas project.
+      required:
+      - hecToken
+      - hecUrl
+      - id
+      - logTypes
+      - type
+      title: Splunk Log Export Integration Response
+      type: object
+    LogIntegrationRequest:
+      description: Request schema for creating or updating a log integration.
+      discriminator:
+        mapping:
+          AZURE_LOG_EXPORT: '#/components/schemas/AzureLogIntegrationRequest'
+          DATADOG_LOG_EXPORT: '#/components/schemas/DatadogLogIntegrationRequest'
+          GCS_LOG_EXPORT: '#/components/schemas/GcsLogIntegrationRequest'
+          OTEL_LOG_EXPORT: '#/components/schemas/OtelLogIntegrationRequest'
+          S3_LOG_EXPORT: '#/components/schemas/S3LogIntegrationRequest'
+          SPLUNK_LOG_EXPORT: '#/components/schemas/SplunkLogIntegrationRequest'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/S3LogIntegrationRequest'
+      - $ref: '#/components/schemas/DatadogLogIntegrationRequest'
+      - $ref: '#/components/schemas/GcsLogIntegrationRequest'
+      - $ref: '#/components/schemas/OtelLogIntegrationRequest'
+      - $ref: '#/components/schemas/SplunkLogIntegrationRequest'
+      - $ref: '#/components/schemas/AzureLogIntegrationRequest'
+      properties:
+        logTypes:
+          description: Array of log types exported by this integration.
+          example:
+          - MONGOD
+          - MONGOS
+          items:
+            enum:
+            - MONGOD
+            - MONGOS
+            - MONGOD_AUDIT
+            - MONGOS_AUDIT
+            type: string
+          maxItems: 10
+          type: array
+          uniqueItems: true
+        type:
+          description: Type of log integration. Identifies which service will receive the exported logs. This value cannot be modified after the integration is created.
+          enum:
+          - S3_LOG_EXPORT
+          - DATADOG_LOG_EXPORT
+          - GCS_LOG_EXPORT
+          - OTEL_LOG_EXPORT
+          - SPLUNK_LOG_EXPORT
+          - AZURE_LOG_EXPORT
+          type: string
+      required:
+      - logTypes
+      - type
+      title: Log Export Integration Request
+      type: object
+    CreatePushBasedLogExportProjectRequest:
+      properties:
+        bucketName:
+          description: The name of the bucket to which the agent will send the logs to.
+          type: string
+        iamRoleId:
+          description: ID of the AWS IAM role that will be used to write to the S3 bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        prefixPath:
+          description: S3 directory in which vector will write to in order to store the logs. An empty string denotes the root directory.
+          type: string
+      required:
+      - bucketName
+      - iamRoleId
+      - prefixPath
+      type: object
+    PaginatedLogIntegrationResponse:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/LogIntegrationResponse'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    Header:
+      description: HTTP header with name and value.
+      properties:
+        name:
+          description: Header name.
+          example: Authorization
+          type: string
+        value:
+          description: Header value.
+          example: Bearer token123
+          format: password
+          type: string
+      required:
+      - name
+      - value
+      type: object
+    S3LogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          bucketName:
+            description: Name of the bucket to store log files.
+            example: my-log-bucket
+            type: string
+          iamRoleId:
+            description: Unique 24-character hexadecimal string that identifies the AWS IAM role that Atlas uses to access the S3 bucket.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          kmsKey:
+            description: AWS KMS key ID or ARN for server-side encryption (optional). If not provided, uses bucket default encryption settings.
+            example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+            nullable: true
+            type: string
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: mongo-logs/
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - S3_LOG_EXPORT
+            type: string
+          useLegacyPathStructure:
+            description: 'When true, uses the legacy daily-folder path structure compatible with Push-Based Log Export: `{prefix}/{cluster}/{hostname}/{logType}/{YYYY-MM-DD}/{timestamp}-{logType}.log`. When false (default), uses the flat timestamped structure: `{prefix}/{cluster}/{hostname}/{logType}/{timestamp}-{logType}.log`.'
+            nullable: true
+            type: boolean
+        type: object
+      description: Details to integrate S3 log export with one Atlas project.
+      required:
+      - bucketName
+      - iamRoleId
+      - id
+      - logTypes
+      - prefixPath
+      - type
+      title: S3 Log Export Integration Response
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    PushBasedLogExportProject:
+      properties:
+        bucketName:
+          description: The name of the bucket to which the agent will send the logs to.
+          type: string
+        createDate:
+          description: Date and time that this feature was enabled on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        iamRoleId:
+          description: ID of the AWS IAM role that will be used to write to the S3 bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        prefixPath:
+          description: S3 directory in which vector will write to in order to store the logs. An empty string denotes the root directory.
+          type: string
+        state:
+          description: Describes whether or not the feature is enabled and what status it is in.
+          enum:
+          - UNCONFIGURED
+          - INITIATING
+          - BUCKET_VERIFIED
+          - BUCKET_VERIFICATION_FAILED
+          - ASSUME_ROLE_FAILED
+          - ACTIVE
+          readOnly: true
+          type: string
+      type: object
+    S3LogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          bucketName:
+            description: Name of the bucket to store log files.
+            example: my-log-bucket
+            type: string
+          iamRoleId:
+            description: Unique 24-character hexadecimal string that identifies the AWS IAM role that Atlas uses to access the S3 bucket.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          kmsKey:
+            description: AWS KMS key ID or ARN for server-side encryption (optional). If not provided, uses bucket default encryption settings.
+            example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+            nullable: true
+            type: string
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: mongo-logs/
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - S3_LOG_EXPORT
+            type: string
+          useLegacyPathStructure:
+            description: 'When true, uses the legacy daily-folder path structure compatible with Push-Based Log Export: `{prefix}/{cluster}/{hostname}/{logType}/{YYYY-MM-DD}/{timestamp}-{logType}.log`. When false (default), uses the flat timestamped structure: `{prefix}/{cluster}/{hostname}/{logType}/{timestamp}-{logType}.log`.'
+            nullable: true
+            type: boolean
+        type: object
+      description: Request schema for creating or updating an S3 log export integration.
+      required:
+      - bucketName
+      - iamRoleId
+      - logTypes
+      - prefixPath
+      - type
+      title: S3 Log Export Integration Request
+      type: object
+    AzureLogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: logs/mongodb/
+            type: string
+          roleId:
+            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          storageAccountName:
+            description: Storage account name where logs will be stored.
+            example: mylogstorageaccount
+            type: string
+          storageContainerName:
+            description: Storage container name for log files.
+            example: mongodb-logs
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - AZURE_LOG_EXPORT
+            type: string
+        type: object
+      description: Details to integrate Azure Blob Storage log export with one Atlas project.
+      required:
+      - id
+      - logTypes
+      - prefixPath
+      - roleId
+      - storageAccountName
+      - storageContainerName
+      - type
+      title: Azure Log Export Integration Response
+      type: object
+    LogIntegrationResponse:
+      description: Response schema for log integration operations.
+      discriminator:
+        mapping:
+          AZURE_LOG_EXPORT: '#/components/schemas/AzureLogIntegrationResponse'
+          DATADOG_LOG_EXPORT: '#/components/schemas/DatadogLogIntegrationResponse'
+          GCS_LOG_EXPORT: '#/components/schemas/GcsLogIntegrationResponse'
+          OTEL_LOG_EXPORT: '#/components/schemas/OtelLogIntegrationResponse'
+          S3_LOG_EXPORT: '#/components/schemas/S3LogIntegrationResponse'
+          SPLUNK_LOG_EXPORT: '#/components/schemas/SplunkLogIntegrationResponse'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/S3LogIntegrationResponse'
+      - $ref: '#/components/schemas/DatadogLogIntegrationResponse'
+      - $ref: '#/components/schemas/GcsLogIntegrationResponse'
+      - $ref: '#/components/schemas/OtelLogIntegrationResponse'
+      - $ref: '#/components/schemas/SplunkLogIntegrationResponse'
+      - $ref: '#/components/schemas/AzureLogIntegrationResponse'
+      properties:
+        id:
+          description: Unique 24-character hexadecimal digit string that identifies the log integration configuration.
+          example: 507f1f77bcf86cd799439011
+          type: string
+        logTypes:
+          description: Array of log types exported by this integration.
+          example:
+          - MONGOD
+          - MONGOS
+          items:
+            enum:
+            - MONGOD
+            - MONGOS
+            - MONGOD_AUDIT
+            - MONGOS_AUDIT
+            type: string
+          maxItems: 10
+          type: array
+          uniqueItems: true
+        type:
+          description: Type of log integration. Identifies which service will receive the exported logs. This value cannot be modified after the integration is created.
+          enum:
+          - S3_LOG_EXPORT
+          - DATADOG_LOG_EXPORT
+          - GCS_LOG_EXPORT
+          - OTEL_LOG_EXPORT
+          - SPLUNK_LOG_EXPORT
+          - AZURE_LOG_EXPORT
+          type: string
+      required:
+      - id
+      - logTypes
+      - type
+      title: Log Integration Response
+      type: object
+    AzureLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: logs/mongodb/
+            type: string
+          roleId:
+            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          storageAccountName:
+            description: Storage account name where logs will be stored.
+            example: mylogstorageaccount
+            type: string
+          storageContainerName:
+            description: Storage container name for log files.
+            example: mongodb-logs
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - AZURE_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating an Azure Blob Storage log export integration.
+      required:
+      - logTypes
+      - prefixPath
+      - roleId
+      - storageAccountName
+      - storageContainerName
+      - type
+      title: Azure Log Export Integration Request
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    DatadogLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          apiKey:
+            description: API key for authentication.
+            example: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
+            format: password
+            type: string
+          region:
+            description: 'Datadog site/region for log ingestion. Valid values: US1, US3, US5, EU, AP1, AP2, US1_FED.'
+            enum:
+            - US1
+            - US3
+            - US5
+            - EU
+            - AP1
+            - AP2
+            - US1_FED
+            example: US1
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - DATADOG_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating a Datadog log export integration.
+      required:
+      - apiKey
+      - logTypes
+      - region
+      - type
+      title: Datadog Log Export Integration Request
+      type: object
+    DatadogLogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          apiKey:
+            description: API key for authentication.
+            example: '****************************o5p6'
+            format: password
+            type: string
+          region:
+            description: 'Datadog site/region for log ingestion. Valid values: US1, US3, US5, EU, AP1, AP2, US1_FED.'
+            enum:
+            - US1
+            - US3
+            - US5
+            - EU
+            - AP1
+            - AP2
+            - US1_FED
+            example: US1
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - DATADOG_LOG_EXPORT
+            type: string
+        type: object
+      description: Details to integrate Datadog log export with one Atlas project.
+      required:
+      - apiKey
+      - id
+      - logTypes
+      - region
+      - type
+      title: Datadog Log Export Integration Response
+      type: object
+    OtelLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          otelEndpoint:
+            description: OpenTelemetry collector endpoint URL. Must be HTTPS and not exceed 2048 characters.
+            example: https://otel-collector.example.com:4318/v1/logs
+            type: string
+          otelSuppliedHeaders:
+            description: HTTP headers for authentication and configuration. Maximum 10 headers, total size limit 2KB.
+            items:
+              $ref: '#/components/schemas/Header'
+            maxItems: 10
+            minItems: 1
+            type: array
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - OTEL_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating an OpenTelemetry log export integration.
+      required:
+      - logTypes
+      - otelEndpoint
+      - otelSuppliedHeaders
+      - type
+      title: OTel Log Export Integration Request
+      type: object
+    OtelLogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          otelEndpoint:
+            description: OpenTelemetry collector endpoint URL.
+            example: https://otel-collector.example.com:4318/v1/logs
+            type: string
+          otelSuppliedHeaders:
+            description: HTTP headers for authentication and configuration. Maximum 10 headers, total size limit 2KB.
+            items:
+              $ref: '#/components/schemas/Header'
+            maxItems: 10
+            minItems: 1
+            type: array
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - OTEL_LOG_EXPORT
+            type: string
+        type: object
+      description: Details to integrate OpenTelemetry log export with one Atlas project.
+      required:
+      - id
+      - logTypes
+      - otelEndpoint
+      - otelSuppliedHeaders
+      - type
+      title: OTel Log Export Integration Response
+      type: object
+    GcsLogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          bucketName:
+            description: Name of the bucket to store log files.
+            example: my-gcs-log-bucket
+            type: string
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: mongodb-logs/
+            type: string
+          roleId:
+            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - GCS_LOG_EXPORT
+            type: string
+        type: object
+      description: Details to integrate Google Cloud Storage log export with one Atlas project.
+      required:
+      - bucketName
+      - id
+      - logTypes
+      - prefixPath
+      - roleId
+      - type
+      title: GCS Log Export Integration Response
+      type: object
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

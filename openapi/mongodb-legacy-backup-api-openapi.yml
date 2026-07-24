@@ -1,0 +1,1704 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Legacy Backup API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Manages Legacy Backup snapshots, restore jobs, schedules and checkpoints.
+  name: Legacy Backup
+paths:
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints:
+    get:
+      deprecated: true
+      description: Returns all legacy backup checkpoints for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupClusterBackupCheckpoints
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster that contains the checkpoints that you want to return.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiAtlasCheckpointView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Legacy Backup Checkpoints
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup listClusterBackupCheckpoints --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterBackupCheckpointsApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tListGroupClusterBackupCheckpointsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/listGroupClusterBackupCheckpoints
+      x-xgen-operation-id-override: listClusterBackupCheckpoints
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints/{checkpointId}:
+    get:
+      deprecated: true
+      description: Returns one legacy backup checkpoint for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupClusterBackupCheckpoint
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique 24-hexadecimal digit string that identifies the checkpoint.
+        in: path
+        name: checkpointId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      - description: Human-readable label that identifies the cluster that contains the checkpoints that you want to return.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ApiAtlasCheckpointView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Legacy Backup Checkpoint
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup getClusterBackupCheckpoint --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterBackupCheckpointApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tGetGroupClusterBackupCheckpointWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints/{checkpointId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/backupCheckpoints/{checkpointId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/getGroupClusterBackupCheckpoint
+      x-xgen-operation-id-override: getClusterBackupCheckpoint
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs:
+    get:
+      deprecated: true
+      description: "Returns all legacy backup restore jobs for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.\n\n Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation. If you use the `BATCH-ID` query parameter, you can retrieve all restore jobs in the specified batch. When creating a restore job for a sharded cluster, MongoDB Cloud creates a separate job for each shard, plus another for the config server. Each of those jobs are part of a batch. However, a batch can't include a restore job for a replica set."
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: listGroupClusterRestoreJobs
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique 24-hexadecimal digit string that identifies the batch of restore jobs to return. Timestamp in ISO 8601 date and time format in UTC when creating a restore job for a sharded cluster, Application creates a separate job for each shard, plus another for the config host. Each of these jobs comprise one batch. A restore job for a replica set can't be part of a batch.
+        in: query
+        name: batchId
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      - description: Human-readable label that identifies the cluster with the snapshot you want to return.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRestoreJobView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Legacy Backup Restore Jobs
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup listClusterRestoreJobs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterRestoreJobsApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tListGroupClusterRestoreJobsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/listGroupClusterRestoreJobs
+      x-xgen-operation-id-override: listClusterRestoreJobs
+    post:
+      deprecated: true
+      description: Restores one legacy backup for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role. Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation. This endpoint doesn't support creating checkpoint restore jobs for sharded clusters, or creating restore jobs for queryable backup snapshots. If you create an automated restore job by specifying `delivery.methodName` of `AUTOMATED_RESTORE` in your request body, MongoDB Cloud removes all existing data on the target cluster prior to the restore.
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: createGroupClusterRestoreJob
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster with the snapshot you want to return.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/BackupRestoreJob'
+        description: Legacy backup to restore to one cluster in the specified project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRestoreJobView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Legacy Backup Restore Job
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup createClusterRestoreJob --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupClusterRestoreJobApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tCreateGroupClusterRestoreJobWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/createGroupClusterRestoreJob
+      x-xgen-operation-id-override: createClusterRestoreJob
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs/{jobId}:
+    get:
+      deprecated: true
+      description: "Returns one legacy backup restore job for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.\n\n Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation."
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: getGroupClusterRestoreJob
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster with the snapshot you want to return.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the restore job.
+        in: path
+        name: jobId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/BackupRestoreJob'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Legacy Backup Restore Job
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup getClusterRestoreJob --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterRestoreJobApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tGetGroupClusterRestoreJobWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs/{jobId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/restoreJobs/{jobId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/getGroupClusterRestoreJob
+      x-xgen-operation-id-override: getClusterRestoreJob
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshotSchedule:
+    get:
+      deprecated: true
+      description: "Returns the snapshot schedule for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.\n\n Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation."
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: getGroupClusterSnapshotSchedule
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster with the snapshot you want to return.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ApiAtlasSnapshotScheduleView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Snapshot Schedule
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup getClusterSnapshotSchedule --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterSnapshotScheduleApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tGetGroupClusterSnapshotScheduleWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshotSchedule?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshotSchedule?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/getGroupClusterSnapshotSchedule
+      x-xgen-operation-id-override: getClusterSnapshotSchedule
+    patch:
+      deprecated: true
+      description: "Updates the snapshot schedule for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.\n\n Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation."
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: updateGroupClusterSnapshotSchedule
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the cluster with the snapshot you want to return.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ApiAtlasSnapshotScheduleView'
+        description: Update the snapshot schedule for one cluster in the specified project.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ApiAtlasSnapshotScheduleView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update Snapshot Schedule for One Cluster
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup updateClusterSnapshotSchedule --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupClusterSnapshotScheduleApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tUpdateGroupClusterSnapshotScheduleWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshotSchedule\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshotSchedule\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/updateGroupClusterSnapshotSchedule
+      x-xgen-operation-id-override: updateClusterSnapshotSchedule
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots:
+    get:
+      deprecated: true
+      description: Returns all legacy backup snapshots for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role. Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation.
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: listGroupClusterSnapshots
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Human-readable label that specifies whether to return only completed, incomplete, or all snapshots. By default, MongoDB Cloud only returns completed snapshots.
+        in: query
+        name: completed
+        schema:
+          default: 'true'
+          enum:
+          - all
+          - 'true'
+          - 'false'
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSnapshotView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Legacy Backup Snapshots
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup listClusterSnapshots --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterSnapshotsApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tListGroupClusterSnapshotsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/listGroupClusterSnapshots
+      x-xgen-operation-id-override: listClusterSnapshots
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}:
+    delete:
+      deprecated: true
+      description: Removes one legacy backup snapshot for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role. Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation.
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: deleteGroupClusterSnapshot
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+        in: path
+        name: snapshotId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Legacy Backup Snapshot
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup deleteClusterSnapshot --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupClusterSnapshotApiParams{}\n\thttpResp, err := client.LegacyBackupApi.\n\t\tDeleteGroupClusterSnapshotWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/deleteGroupClusterSnapshot
+      x-xgen-operation-id-override: deleteClusterSnapshot
+    get:
+      deprecated: true
+      description: Returns one legacy backup snapshot for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role. Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation.
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: getGroupClusterSnapshot
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+        in: path
+        name: snapshotId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/BackupSnapshot'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Legacy Backup Snapshot
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup getClusterSnapshot --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterSnapshotApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tGetGroupClusterSnapshotWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/getGroupClusterSnapshot
+      x-xgen-operation-id-override: getClusterSnapshot
+    patch:
+      deprecated: true
+      description: Changes the expiration date for one legacy backup snapshot for one cluster in the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role. Effective 23 March 2020, all new clusters can use only Cloud Backups. When you upgrade to 4.2, your backup system upgrades to cloud backup if it is currently set to legacy backup. After this upgrade, all your existing legacy backup snapshots remain available. They expire over time in accordance with your retention policy. Your backup policy resets to the default schedule. If you had a custom backup policy in place with legacy backups, you must re-create it with the procedure outlined in the Cloud Backup documentation.
+      externalDocs:
+        description: Cloud Backup Documentation
+        url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/scheduling/#std-label-cloud-provider-backup-schedule
+      operationId: updateGroupClusterSnapshot
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the desired snapshot.
+        in: path
+        name: snapshotId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/BackupSnapshot'
+        description: Changes One Legacy Backup Snapshot Expiration.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/BackupSnapshot'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update Expiration Date for One Legacy Backup Snapshot
+      tags:
+      - Legacy Backup
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api legacyBackup updateClusterSnapshot --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupClusterSnapshotApiParams{}\n\tsdkResp, httpResp, err := client.LegacyBackupApi.\n\t\tUpdateGroupClusterSnapshotWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/snapshots/{snapshotId}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Legacy-Backup/operation/updateGroupClusterSnapshot
+      x-xgen-operation-id-override: updateClusterSnapshot
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  schemas:
+    BackupRestoreJobDelivery:
+      description: Method and details that indicate how to deliver the restored snapshot data.
+      properties:
+        authHeader:
+          description: 'Header name to use when downloading the restore, used with `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+        authValue:
+          description: 'Header value to use when downloading the restore, used with `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+        expirationHours:
+          description: 'Number of hours after the restore job completes that indicates when the Uniform Resource Locator (URL) for the snapshot download file expires. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          format: int32
+          minimum: 1
+          type: integer
+        expires:
+          description: 'Date and time when the Uniform Resource Locator (URL) for the snapshot download file expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          format: date-time
+          readOnly: true
+          type: string
+        maxDownloads:
+          description: 'Positive integer that indicates how many times you can use the Uniform Resource Locator (URL) for the snapshot download file. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          format: int32
+          minimum: 1
+          type: integer
+        methodName:
+          description: 'Human-readable label that identifies the means for delivering the data. If you set `"delivery.methodName" : "AUTOMATED_RESTORE"`, you must also set: `delivery.targetGroupId` and `delivery.targetClusterName` or `delivery.targetClusterId`. The response returns `"delivery.methodName" : "HTTP"` as an automated restore uses HyperText Transport Protocol (HTTP) to deliver the restore job to the target host.'
+          enum:
+          - CLIENT_PIT_HTTP
+          - QUERY
+          - AUTOMATED_RESTORE
+          - HTTP
+          - THIRD_PARTY_COPY
+          - CLIENT_PIT_SCP
+          - SCP
+          type: string
+        statusName:
+          description: State of the downloadable snapshot file when MongoDB Cloud received this request.
+          enum:
+          - NOT_STARTED
+          - IN_PROGRESS
+          - READY
+          - FAILED
+          - INTERRUPTED
+          - EXPIRED
+          - MAX_DOWNLOADS_EXCEEDED
+          - PENDING
+          readOnly: true
+          type: string
+        targetClusterId:
+          description: "Unique 24-hexadecimal digit string that identifies the target cluster. Use the `clusterId` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.\n\n If the target cluster doesn't have backup enabled, two resources return parameters with empty values:\n\n- **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements\n- **Get a Snapshot** endpoint doesn't return a `clusterId` parameter.\n\nTo return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster."
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        targetClusterName:
+          description: 'Human-readable label that identifies the target cluster. Use the `clusterName` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints.  This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
+
+
+            If the target cluster doesn''t have backup enabled, two resources return parameters with empty values:
+
+
+            - **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements
+
+            - **Get a Snapshot** endpoint doesn''t return a `clusterId` parameter.
+
+
+            To return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster.'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+        targetGroupId:
+          description: 'Unique 24-hexadecimal digit string that identifies the project that contains the destination cluster for the restore job. The resource returns this parameter when `"delivery.methodName" : "AUTOMATED_RESTORE"`.'
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        url:
+          deprecated: true
+          description: 'Uniform Resource Locator (URL) from which you can download the restored snapshot data. URL includes the verification key. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+        urlV2:
+          description: 'Uniform Resource Locator (URL) from which you can download the restored snapshot data. This should be preferred over `url`. The verification key must be sent as an HTTP header. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+      required:
+      - methodName
+      title: Restore Snapshot Delivery Metadata
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    PaginatedApiAtlasCheckpointView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ApiAtlasCheckpointView'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    RestoreJobFileHash:
+      description: Key and value pair that map one restore file to one hashed checksum. This parameter applies after you download the corresponding `delivery.url`.
+      properties:
+        fileName:
+          description: Human-readable label that identifies the hashed file.
+          readOnly: true
+          type: string
+        hash:
+          description: Hashed checksum that maps to the restore file.
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        typeName:
+          description: Human-readable label that identifies the hashing algorithm used to compute the hash value.
+          enum:
+          - SHA1
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    PaginatedSnapshotView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/BackupSnapshot'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    BackupRestoreJob:
+      properties:
+        batchId:
+          description: Unique 24-hexadecimal digit string that identifies the batch to which this restore job belongs. This parameter exists only for a sharded cluster restore.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        checkpointId:
+          description: 'Unique 24-hexadecimal digit string that identifies the sharded cluster checkpoint. The checkpoint represents the point in time back to which you want to restore you data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`. Use this parameter with sharded clusters only.
+
+
+            - If you set `checkpointId`, you can''t set `oplogInc`, `oplogTs`, `snapshotId`, or `pointInTimeUTCMillis`.
+
+            - If you provide this parameter, this endpoint restores all data up to this checkpoint to the database you specify in the `delivery` object.'
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+          writeOnly: true
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshot you want to return. This parameter returns for restore clusters.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        clusterName:
+          description: Human-readable label that identifies the cluster containing the snapshots you want to retrieve.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when someone requested this restore job. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        delivery:
+          $ref: '#/components/schemas/BackupRestoreJobDelivery'
+        deploymentJobId:
+          description: Unique 24-hexadecimal digit string that identifies the an imported deployment job. This parameter exists when restoring from an imported snapshot/cluster shot.
+          readOnly: true
+          type: string
+        encryptionEnabled:
+          description: Flag that indicates whether someone encrypted the data in the restored snapshot.
+          readOnly: true
+          type: boolean
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns the snapshots.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hashes:
+          description: 'List that contains documents mapping each restore file to a hashed checksum. This parameter applies after you download the corresponding `delivery.url`. If `"methodName" : "HTTP"`, this list contains one object that represents the hash of the `.tar.gz` file.'
+          items:
+            $ref: '#/components/schemas/RestoreJobFileHash'
+          readOnly: true
+          type: array
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the restore job.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        masterKeyUUID:
+          description: 'Universally Unique Identifier (UUID) that identifies the Key Management Interoperability (KMIP) master key used to encrypt the snapshot data. This parameter applies only when `"encryptionEnabled" : "true"`.'
+          format: uuid
+          readOnly: true
+          type: string
+        oplogInc:
+          description: 'Thirty-two-bit incrementing ordinal that represents operations within a given second. When paired with `oplogTs`, this represents the point in time to which MongoDB Cloud restores your data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
+
+
+            - If you set `oplogInc`, you must set `oplogTs`, and can''t set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.
+
+            - If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.'
+          format: int32
+          minimum: 1
+          type: integer
+          writeOnly: true
+        oplogTs:
+          description: 'Date and time from which you want to restore this snapshot. This parameter expresses its value in ISO 8601 format in UTC. This represents the first part of an Oplog timestamp. When paired with `oplogInc`, they represent the last database operation to which you want to restore your data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`. Run a query against `local.oplog.rs` on your replica set to find the desired timestamp.
+
+
+            - If you set `oplogTs`, you must set `oplogInc`, and you can''t set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.
+
+            - If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.'
+          pattern: ^(?:[1-9]\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,9})?(?:Z|[+-][01]\\d:[0-5]\\d)$
+          type: string
+          writeOnly: true
+        pointInTimeUTCMillis:
+          description: 'Timestamp from which you want to restore this snapshot. This parameter expresses its value in the number of milliseconds elapsed since the UNIX epoch. This timestamp must fall within the last 24 hours of the current time. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
+
+
+            - If you provide this parameter, this endpoint restores all data up to this point in time to the database you specified in the `delivery` object.
+
+            - If you set `pointInTimeUTCMillis`, you can''t set `oplogInc`, `oplogTs`, `snapshotId`, or `checkpointId`.'
+          externalDocs:
+            description: UNIX Epoch
+            url: https://en.wikipedia.org/wiki/Unix_time
+          format: int64
+          minimum: 1199145600000
+          type: integer
+          writeOnly: true
+        snapshotId:
+          description: Unique 24-hexadecimal digit string that identifies the snapshot to restore. If you set `snapshotId`, you can't set `oplogInc`, `oplogTs`, `pointInTimeUTCMillis`, or `checkpointId`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        statusName:
+          description: Human-readable label that identifies the status of the downloadable file at the time of the request.
+          enum:
+          - IN_PROGRESS
+          - BROKEN
+          - KILLED
+          - FINISHED
+          readOnly: true
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/ApiBSONTimestampView'
+      required:
+      - delivery
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    ApiBSONTimestampView:
+      description: BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.
+      properties:
+        date:
+          description: Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        increment:
+          description: Order of the database operation that the oplog recorded at specific date and time.
+          example: 1199145600
+          format: int32
+          minimum: 1199145600
+          readOnly: true
+          type: integer
+      readOnly: true
+      title: BSON Timestamp
+      type: object
+    ApiCheckpointPartView:
+      description: Metadata contained in one document that describes the complete snapshot taken for this node.
+      properties:
+        replicaSetName:
+          description: Human-readable label that identifies the replica set to which this checkpoint applies.
+          readOnly: true
+          type: string
+        shardName:
+          description: Human-readable label that identifies the shard to which this checkpoint applies.
+          readOnly: true
+          type: string
+        tokenDiscovered:
+          description: Flag that indicates whether the token exists.
+          readOnly: true
+          type: boolean
+        tokenTimestamp:
+          $ref: '#/components/schemas/ApiBSONTimestampView'
+        typeName:
+          description: Human-readable label that identifies the type of host that the part represents.
+          enum:
+          - REPLICA_SET
+          - CONFIG_SERVER
+          - CONFIG_SERVER_REPLICA_SET
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    ApiAtlasCheckpointView:
+      properties:
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster that contains the checkpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        completed:
+          description: Date and time when the checkpoint completed and the balancer restarted. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns the checkpoints.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies checkpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        parts:
+          description: 'Metadata that describes the complete snapshot.
+
+
+            - For a replica set, this array contains a single document.
+
+            - For a sharded cluster, this array contains one document for each shard plus one document for the config host.'
+          items:
+            $ref: '#/components/schemas/ApiCheckpointPartView'
+          readOnly: true
+          type: array
+        restorable:
+          description: Flag that indicates whether MongoDB Cloud can use the checkpoint for a restore.
+          readOnly: true
+          type: boolean
+        started:
+          description: Date and time when the balancer stopped and began the checkpoint. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        timestamp:
+          description: Date and time to which the checkpoint restores. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    ApiAtlasSnapshotScheduleView:
+      properties:
+        clusterCheckpointIntervalMin:
+          description: Quantity of time expressed in minutes between successive cluster checkpoints. This parameter applies only to sharded clusters. This number determines the granularity of continuous cloud backups for sharded clusters.
+          enum:
+          - 15
+          - 30
+          - 60
+          format: int32
+          type: integer
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshot you want to return.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        dailySnapshotRetentionDays:
+          description: Quantity of time to keep daily snapshots. MongoDB Cloud expresses this value in days. Set this value to `0` to disable daily snapshot retention.
+          enum:
+          - 0
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 15
+          - 30
+          - 60
+          - 90
+          - 120
+          - 180
+          - 360
+          format: int32
+          type: integer
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that contains the cluster.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        monthlySnapshotRetentionMonths:
+          description: Number of months that MongoDB Cloud must keep monthly snapshots. Set this value to `0` to disable monthly snapshot retention.
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 13
+          - 18
+          - 24
+          - 36
+          format: int32
+          type: integer
+        pointInTimeWindowHours:
+          description: Number of hours before the current time from which MongoDB Cloud can create a Continuous Cloud Backup snapshot.
+          format: int32
+          type: integer
+        snapshotIntervalHours:
+          description: Number of hours that must elapse before taking another snapshot.
+          enum:
+          - 6
+          - 8
+          - 12
+          - 24
+          format: int32
+          type: integer
+        snapshotRetentionDays:
+          description: Number of days that MongoDB Cloud must keep recent snapshots.
+          enum:
+          - 2
+          - 3
+          - 4
+          - 5
+          format: int32
+          type: integer
+        weeklySnapshotRetentionWeeks:
+          description: Number of weeks that MongoDB Cloud must keep weekly snapshots. Set this value to `0` to disable weekly snapshot retention.
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 12
+          - 16
+          - 20
+          - 24
+          - 52
+          format: int32
+          type: integer
+      required:
+      - clusterCheckpointIntervalMin
+      - clusterId
+      - dailySnapshotRetentionDays
+      - groupId
+      - monthlySnapshotRetentionMonths
+      - pointInTimeWindowHours
+      - snapshotIntervalHours
+      - snapshotRetentionDays
+      - weeklySnapshotRetentionWeeks
+      type: object
+    BackupSnapshotPart:
+      description: Characteristics that identify this snapshot.
+      properties:
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshots you want to return.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        completedTime:
+          description: Date and time when the snapshot completed. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        compressionSetting:
+          description: Human-readable label that identifies the method of compression for the snapshot.
+          enum:
+          - NONE
+          - GZIP
+          readOnly: true
+          type: string
+        dataSizeBytes:
+          description: Total size of the data stored on each node in the cluster. This parameter expresses its value in bytes.
+          format: int64
+          readOnly: true
+          type: integer
+        encryptionEnabled:
+          description: Flag that indicates whether someone encrypted this snapshot.
+          readOnly: true
+          type: boolean
+        fcv:
+          description: Number that indicates the feature compatibility version of MongoDB that the replica set primary ran when MongoDB Cloud created the snapshot.
+          readOnly: true
+          type: string
+        fileSizeBytes:
+          description: Number that indicates the total size of the data files in bytes.
+          format: int64
+          readOnly: true
+          type: integer
+        machineId:
+          description: Hostname and port that indicate the node on which MongoDB Cloud created the snapshot.
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        masterKeyUUID:
+          description: 'Unique string that identifies the Key Management Interoperability (KMIP) master key used to encrypt the snapshot data. The resource returns this parameter when `"parts.encryptionEnabled" : true`.'
+          format: uuid
+          readOnly: true
+          type: string
+        mongodVersion:
+          description: Number that indicates the version of MongoDB that the replica set primary ran when MongoDB Cloud created the snapshot.
+          pattern: ([\d]+\.[\d]+\.[\d]+)
+          readOnly: true
+          type: string
+        replicaSetName:
+          description: Human-readable label that identifies the replica set.
+          readOnly: true
+          type: string
+        replicaState:
+          description: The node's role at the time when snapshot process began.
+          readOnly: true
+          type: string
+        storageSizeBytes:
+          description: Number that indicates the total size of space allocated for document storage.
+          format: int64
+          readOnly: true
+          type: integer
+        typeName:
+          description: Human-readable label that identifies the type of server from which MongoDB Cloud took this snapshot.
+          enum:
+          - REPLICA_SET
+          - CONFIG_SERVER
+          - CONFIG_SERVER_REPLICA_SET
+          - CONFIG_SHARD_REPLICA_SET
+          readOnly: true
+          type: string
+      readOnly: true
+      title: Snapshot Components
+      type: object
+    PaginatedRestoreJobView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/BackupRestoreJob'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    BackupSnapshot:
+      properties:
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshots you want to return.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        clusterName:
+          description: Human-readable label that identifies the cluster.
+          readOnly: true
+          type: string
+        complete:
+          description: Flag that indicates whether the snapshot exists. This flag returns `false` while MongoDB Cloud creates the snapshot.
+          readOnly: true
+          type: boolean
+        created:
+          $ref: '#/components/schemas/ApiBSONTimestampView'
+        doNotDelete:
+          description: 'Flag that indicates whether someone can delete this snapshot. You can''t set `"doNotDelete" : true` and set a timestamp for **expires** in the same request.'
+          type: boolean
+        expires:
+          description: 'Date and time when MongoDB Cloud deletes the snapshot. If `"doNotDelete" : true`, MongoDB Cloud removes any value set for this parameter. This parameter expresses its value in the ISO 8601 timestamp format in UTC.'
+          format: date-time
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns the snapshots.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        incremental:
+          description: Flag indicating if this is an incremental or a full snapshot.
+          readOnly: true
+          type: boolean
+        lastOplogAppliedTimestamp:
+          $ref: '#/components/schemas/ApiBSONTimestampView'
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        parts:
+          description: 'Metadata that describes the complete snapshot.
+
+
+            - For a replica set, this array contains a single document.
+
+            - For a sharded cluster, this array contains one document for each shard plus one document for the config host.'
+          items:
+            $ref: '#/components/schemas/BackupSnapshotPart'
+          readOnly: true
+          type: array
+      type: object
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

@@ -1,0 +1,2078 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Monitoring and Logs API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns database deployment monitoring and logging data.
+  name: Monitoring and Logs
+paths:
+  /api/atlas/v2/groups/{groupId}/clusters/{hostName}/logs/{logName}.gz:
+    get:
+      description: 'Returns a compressed (.gz) log file that contains a range of log messages for the specified host for the specified project. MongoDB updates process and audit logs from the cluster backend infrastructure every five minutes. Logs are stored in chunks approximately five minutes in length, but this duration may vary. If you poll the API for log files, we recommend polling every five minutes even though consecutive polls could contain some overlapping logs. This feature isn''t available for `M0` free clusters, `M2`, `M5`, flex, or serverless clusters. To use this resource, the requesting Service Account or API Key must have the Project Cluster Log Viewer role or Project Data Access Read Only role. The API does not support direct calls with the json response schema. You must request a gzip response schema using an accept header of the format: `Accept: application/vnd.atlas.YYYY-MM-DD+gzip`. Deprecated versions: v2-{2023-01-01}'
+      operationId: downloadGroupClusterLog
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the host that stores the log files that you want to download.
+        in: path
+        name: hostName
+        required: true
+        schema:
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?$
+          type: string
+      - description: Human-readable label that identifies the log file that you want to return. To return audit logs, enable *Database Auditing* for the specified project.
+        in: path
+        name: logName
+        required: true
+        schema:
+          enum:
+          - mongodb
+          - mongos
+          - mongodb-audit-log
+          - mongos-audit-log
+          externalDocs:
+            description: Set up Database Auditing
+            url: https://docs.atlas.mongodb.com/database-auditing/
+          type: string
+      - description: Specifies the date and time for the ending point of the range of log messages to retrieve, in the number of seconds that have elapsed since the UNIX epoch. This value will default to 24 hours after the start date. If the start date is also unspecified, the value will default to the time of the request.
+        in: query
+        name: endDate
+        schema:
+          format: int64
+          minimum: 1199145600
+          type: integer
+      - description: Specifies the date and time for the starting point of the range of log messages to retrieve, in the number of seconds that have elapsed since the UNIX epoch. This value will default to 24 hours prior to the end date. If the end date is also unspecified, the value will default to 24 hours prior to the time of the request.
+        in: query
+        name: startDate
+        schema:
+          format: int64
+          minimum: 1199145600
+          type: integer
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-02-01+gzip:
+              schema:
+                description: Compressed (.gz) log file that contains a range of log messages for the specified host for the specified project
+                format: binary
+                type: string
+              x-xgen-version: '2023-02-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Download Logs for One Cluster Host in One Project
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs downloadClusterLog --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DownloadGroupClusterLogApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tDownloadGroupClusterLogWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+gzip\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{hostName}/logs/{logName}.gz\" \\\n  --output \"file_name.gz\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+gzip\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{hostName}/logs/{logName}.gz\" \\\n  --output \"file_name.gz\""
+      x-rolesRequirements:
+      - Project Cluster Log Viewer
+      - Project Data Access Admin
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/downloadGroupClusterLog
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: download
+      x-xgen-operation-id-override: downloadClusterLog
+  /api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics:
+    get:
+      description: Returns all Atlas Search metric types available for one process in the specified project. You must have the Project Read Only or higher role to view the Atlas Search metric types.
+      operationId: listGroupHostFtsMetrics
+      parameters:
+      - $ref: '#/components/parameters/processId'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/envelope'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/CloudSearchMetrics'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Atlas Search Metric Types for One Process
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs listHostFtsMetrics --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupHostFtsMetricsApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tListGroupHostFtsMetricsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/listGroupHostFtsMetrics
+      x-xgen-operation-id-override: listHostFtsMetrics
+  /api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/indexes/{databaseName}/{collectionName}/measurements:
+    get:
+      description: Returns the Atlas Search index metrics within the specified time range for one namespace in the specified process.
+      operationId: listGroupHostFtsMetricIndexMeasurements
+      parameters:
+      - $ref: '#/components/parameters/processId'
+      - $ref: '#/components/parameters/databaseName'
+      - $ref: '#/components/parameters/collectionName'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/granularity'
+      - $ref: '#/components/parameters/period'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/end'
+      - $ref: '#/components/parameters/envelope'
+      - description: List that contains the measurements that MongoDB Atlas reports for the associated data series.
+        in: query
+        name: metrics
+        required: true
+        schema:
+          description: List that contains the measurements that MongoDB Atlas reports for the associated data series.
+          items:
+            enum:
+            - INDEX_SIZE_ON_DISK
+            - NUMBER_OF_DELETES
+            - NUMBER_OF_ERROR_QUERIES
+            - NUMBER_OF_GETMORE_COMMANDS
+            - NUMBER_OF_INDEX_FIELDS
+            - NUMBER_OF_INSERTS
+            - NUMBER_OF_SUCCESS_QUERIES
+            - NUMBER_OF_UPDATES
+            - REPLICATION_LAG
+            - TOTAL_NUMBER_OF_QUERIES
+            type: string
+          maxItems: 10
+          type: array
+          uniqueItems: true
+        style: form
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/MeasurementsIndexes'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Atlas Search Index Metrics for One Namespace
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs listIndexMeasurements --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupHostFtsMetricIndexMeasurementsApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tListGroupHostFtsMetricIndexMeasurementsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/indexes/{databaseName}/{collectionName}/measurements?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/indexes/{databaseName}/{collectionName}/measurements?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/listGroupHostFtsMetricIndexMeasurements
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: list
+      x-xgen-operation-id-override: listIndexMeasurements
+  ? /api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/indexes/{databaseName}/{collectionName}/{indexName}/measurements
+  : get:
+      description: Returns the Atlas Search metrics data series within the provided time range for one namespace and index name on the specified process. You must have the Project Read Only or higher role to view the Atlas Search metric types.
+      operationId: getGroupHostFtsMetricIndexMeasurements
+      parameters:
+      - $ref: '#/components/parameters/processId'
+      - $ref: '#/components/parameters/indexName'
+      - $ref: '#/components/parameters/databaseName'
+      - $ref: '#/components/parameters/collectionName'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/granularity'
+      - $ref: '#/components/parameters/period'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/end'
+      - $ref: '#/components/parameters/envelope'
+      - description: List that contains the measurements that MongoDB Atlas reports for the associated data series.
+        in: query
+        name: metrics
+        required: true
+        schema:
+          description: List that contains the measurements that MongoDB Atlas reports for the associated data series.
+          items:
+            enum:
+            - INDEX_SIZE_ON_DISK
+            - NUMBER_OF_DELETES
+            - NUMBER_OF_ERROR_QUERIES
+            - NUMBER_OF_GETMORE_COMMANDS
+            - NUMBER_OF_INDEX_FIELDS
+            - NUMBER_OF_INSERTS
+            - NUMBER_OF_SUCCESS_QUERIES
+            - NUMBER_OF_UPDATES
+            - REPLICATION_LAG
+            - TOTAL_NUMBER_OF_QUERIES
+            type: string
+          maxItems: 10
+          type: array
+          uniqueItems: true
+        style: form
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/MeasurementsIndexes'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Atlas Search Metrics for One Index in One Namespace
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs getIndexMeasurements --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupHostFtsMetricIndexMeasurementsApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tGetGroupHostFtsMetricIndexMeasurementsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/indexes/{databaseName}/{collectionName}/{indexName}/measurements?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/indexes/{databaseName}/{collectionName}/{indexName}/measurements?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/getGroupHostFtsMetricIndexMeasurements
+      x-xgen-operation-id-override: getIndexMeasurements
+  /api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/measurements:
+    get:
+      description: Returns the Atlas Search hardware and status data series within the provided time range for one process in the specified project. You must have the Project Read Only or higher role to view the Atlas Search metric types.
+      operationId: listGroupHostFtsMetricMeasurements
+      parameters:
+      - $ref: '#/components/parameters/processId'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/granularity'
+      - $ref: '#/components/parameters/period'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/end'
+      - $ref: '#/components/parameters/envelope'
+      - description: List that contains the metrics that you want MongoDB Atlas to report for the associated data series. If you don't set this parameter, this resource returns all hardware and status metrics for the associated data series.
+        in: query
+        name: metrics
+        required: true
+        schema:
+          description: List that contains the metrics that you want MongoDB Atlas to report for the associated data series. If you don't set this parameter, this resource returns all hardware and status metrics for the associated data series.
+          items:
+            enum:
+            - FTS_DISK_USAGE
+            - FTS_PROCESS_CPU_KERNEL
+            - FTS_PROCESS_CPU_USER
+            - FTS_PROCESS_NORMALIZED_CPU_KERNEL
+            - FTS_PROCESS_NORMALIZED_CPU_USER
+            - FTS_PROCESS_RESIDENT_MEMORY
+            - FTS_PROCESS_SHARED_MEMORY
+            - FTS_PROCESS_VIRTUAL_MEMORY
+            - JVM_CURRENT_MEMORY
+            - JVM_MAX_MEMORY
+            - PAGE_FAULTS
+            type: string
+          maxItems: 10
+          type: array
+          uniqueItems: true
+        style: form
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/MeasurementsNonIndex'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Atlas Search Hardware and Status Metrics
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs listMeasurements --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupHostFtsMetricMeasurementsApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tListGroupHostFtsMetricMeasurementsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/measurements?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/hosts/{processId}/fts/metrics/measurements?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/listGroupHostFtsMetricMeasurements
+      x-xgen-operation-id-override: listMeasurements
+  /api/atlas/v2/groups/{groupId}/processes:
+    get:
+      description: Returns details of all processes for the specified project. A MongoDB process can be either a `mongod` or `mongos`. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupProcesses
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedHostView_Atlas'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All MongoDB Processes in One Project
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs listGroupProcesses --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupProcessesApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tListGroupProcessesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/listGroupProcesses
+  /api/atlas/v2/groups/{groupId}/processes/{processId}:
+    get:
+      description: Returns the processes for the specified host for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupProcess
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ApiHostView_Atlas'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One MongoDB Process by ID
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs getGroupProcess --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupProcessApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tGetGroupProcessWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/getGroupProcess
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/databases:
+    get:
+      description: Returns the list of databases running on the specified host for the specified project. `M0` free clusters, `M2`, `M5`, serverless, and Flex clusters have some operational limits. The MongoDB Cloud process must be a `mongod`. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      externalDocs:
+        description: Operational Limits
+        url: https://www.mongodb.com/docs/atlas/reference/limitations/
+      operationId: listGroupProcessDatabases
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatabaseView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Available Databases for One MongoDB Process
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs listDatabases --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupProcessDatabasesApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tListGroupProcessDatabasesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/databases?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/databases?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/listGroupProcessDatabases
+      x-xgen-operation-id-override: listDatabases
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/databases/{databaseName}:
+    get:
+      description: Returns one database running on the specified host for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupProcessDatabase
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the database that the specified MongoDB process serves.
+        in: path
+        name: databaseName
+        required: true
+        schema:
+          type: string
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/MesurementsDatabase'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Database for One MongoDB Process
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs getDatabase --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupProcessDatabaseApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tGetGroupProcessDatabaseWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/databases/{databaseName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/databases/{databaseName}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/getGroupProcessDatabase
+      x-xgen-operation-id-override: getDatabase
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/databases/{databaseName}/measurements:
+    get:
+      description: Returns the measurements of one database for the specified host for the specified project. Returns the database's on-disk storage space based on the MongoDB `dbStats` command output. To calculate some metric series, Atlas takes the rate between every two adjacent points. For these metric series, the first data point has a null value because Atlas can't calculate a rate for the first data point given the query time range. Atlas retrieves database metrics every 20 minutes but reduces frequency when necessary to optimize database performance. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupProcessDatabaseMeasurements
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the database that the specified MongoDB process serves.
+        in: path
+        name: databaseName
+        required: true
+        schema:
+          type: string
+      - description: One or more types of measurement to request for this MongoDB process. If omitted, the resource returns all measurements. To specify multiple values for `m`, repeat the `m` parameter for each value. Specify measurements that apply to the specified host. MongoDB Cloud returns an error if you specified any invalid measurements.
+        in: query
+        name: m
+        schema:
+          items:
+            description: One measurement requested for this MongoDB process.
+            enum:
+            - DATABASE_AVERAGE_OBJECT_SIZE
+            - DATABASE_COLLECTION_COUNT
+            - DATABASE_DATA_SIZE
+            - DATABASE_STORAGE_SIZE
+            - DATABASE_INDEX_SIZE
+            - DATABASE_INDEX_COUNT
+            - DATABASE_EXTENT_COUNT
+            - DATABASE_OBJECT_COUNT
+            - DATABASE_VIEW_COUNT
+            type: string
+          maxItems: 10
+          minItems: 1
+          type: array
+          uniqueItems: true
+        style: form
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      - $ref: '#/components/parameters/granularity'
+      - $ref: '#/components/parameters/period'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/end'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ApiMeasurementsGeneralView_Atlas'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Measurements for One Database in One MongoDB Process
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs getDatabaseMeasurements --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupProcessDatabaseMeasurementsApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tGetGroupProcessDatabaseMeasurementsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/databases/{databaseName}/measurements?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/databases/{databaseName}/measurements?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/getGroupProcessDatabaseMeasurements
+      x-xgen-operation-id-override: getDatabaseMeasurements
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/disks:
+    get:
+      description: Returns the list of disks or partitions for the specified host for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupProcessDisks
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDiskPartitionView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Available Disks for One MongoDB Process
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs listProcessDisks --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupProcessDisksApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tListGroupProcessDisksWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/disks?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/disks?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/listGroupProcessDisks
+      x-xgen-operation-id-override: listProcessDisks
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/disks/{partitionName}:
+    get:
+      description: Returns measurement details for one disk or partition for the specified host for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: getGroupProcessDisk
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - description: Human-readable label of the disk or partition to which the measurements apply.
+        in: path
+        name: partitionName
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/groupId'
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/MeasurementDiskPartition'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Measurements for One Disk
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs getProcessDisk --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupProcessDiskApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tGetGroupProcessDiskWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/disks/{partitionName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/disks/{partitionName}?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/getGroupProcessDisk
+      x-xgen-operation-id-override: getProcessDisk
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/disks/{partitionName}/measurements:
+    get:
+      description: 'Returns the measurements of one disk or partition for the specified host for the specified project. Returned value can be one of the following:
+
+        - Throughput of I/O operations for the disk partition used for the MongoDB process
+
+        - Percentage of time during which requests the partition issued and serviced
+
+        - Latency per operation type of the disk partition used for the MongoDB process
+
+        - Amount of free and used disk space on the disk partition used for the MongoDB process
+
+
+        To use this resource, the requesting Service Account or API Key must have the Project Read Only role.'
+      operationId: getGroupProcessDiskMeasurements
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: One or more types of measurement to request for this MongoDB process. If omitted, the resource returns all measurements. To specify multiple values for `m`, repeat the `m` parameter for each value. Specify measurements that apply to the specified host. MongoDB Cloud returns an error if you specified any invalid measurements.
+        in: query
+        name: m
+        schema:
+          items:
+            description: One measurement requested for this MongoDB process.
+            enum:
+            - DISK_PARTITION_IOPS_READ
+            - MAX_DISK_PARTITION_IOPS_READ
+            - DISK_PARTITION_IOPS_WRITE
+            - MAX_DISK_PARTITION_IOPS_WRITE
+            - DISK_PARTITION_IOPS_TOTAL
+            - MAX_DISK_PARTITION_IOPS_TOTAL
+            - DISK_PARTITION_LATENCY_READ
+            - MAX_DISK_PARTITION_LATENCY_READ
+            - DISK_PARTITION_LATENCY_WRITE
+            - MAX_DISK_PARTITION_LATENCY_WRITE
+            - DISK_PARTITION_SPACE_FREE
+            - MAX_DISK_PARTITION_SPACE_FREE
+            - DISK_PARTITION_SPACE_USED
+            - MAX_DISK_PARTITION_SPACE_USED
+            - DISK_PARTITION_SPACE_PERCENT_FREE
+            - MAX_DISK_PARTITION_SPACE_PERCENT_FREE
+            - DISK_PARTITION_SPACE_PERCENT_USED
+            - MAX_DISK_PARTITION_SPACE_PERCENT_USED
+            - DISK_PARTITION_THROUGHPUT_READ
+            - DISK_PARTITION_THROUGHPUT_WRITE
+            - DISK_QUEUE_DEPTH
+            type: string
+          maxItems: 10
+          minItems: 1
+          type: array
+          uniqueItems: true
+        style: form
+      - description: Human-readable label of the disk or partition to which the measurements apply.
+        in: path
+        name: partitionName
+        required: true
+        schema:
+          type: string
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      - $ref: '#/components/parameters/granularity'
+      - $ref: '#/components/parameters/period'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/end'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ApiMeasurementsGeneralView_Atlas'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Measurements of One Disk for One MongoDB Process
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs getProcessDiskMeasurements --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupProcessDiskMeasurementsApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tGetGroupProcessDiskMeasurementsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/disks/{partitionName}/measurements?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/disks/{partitionName}/measurements?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/getGroupProcessDiskMeasurements
+      x-xgen-operation-id-override: getProcessDiskMeasurements
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/measurements:
+    get:
+      description: 'Returns disk, partition, or host measurements per process for the specified host for the specified project. Returned value can be one of the following:
+
+        - Throughput of I/O operations for the disk partition used for the MongoDB process
+
+        - Percentage of time during which requests the partition issued and serviced
+
+        - Latency per operation type of the disk partition used for the MongoDB process
+
+        - Amount of free and used disk space on the disk partition used for the MongoDB process
+
+        - Measurements for the host, such as CPU usage or number of I/O operations
+
+
+        To use this resource, the requesting Service Account or API Key must have the Project Read Only role.'
+      operationId: getGroupProcessMeasurements
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: One or more types of measurement to request for this MongoDB process. If omitted, the resource returns all measurements. To specify multiple values for `m`, repeat the `m` parameter for each value. Specify measurements that apply to the specified host. MongoDB Cloud returns an error if you specified any invalid measurements.
+        in: query
+        name: m
+        schema:
+          items:
+            description: One measurement requested for this MongoDB process.
+            enum:
+            - ASSERT_MSG
+            - ASSERT_REGULAR
+            - ASSERT_USER
+            - ASSERT_WARNING
+            - BACKGROUND_FLUSH_AVG
+            - CACHE_BYTES_READ_INTO
+            - CACHE_BYTES_WRITTEN_FROM
+            - CACHE_DIRTY_BYTES
+            - CACHE_USED_BYTES
+            - CACHE_FILL_RATIO
+            - DIRTY_FILL_RATIO
+            - COMPUTED_MEMORY
+            - CONNECTIONS
+            - CURSORS_TOTAL_OPEN
+            - CURSORS_TOTAL_TIMED_OUT
+            - DB_DATA_SIZE_TOTAL
+            - DB_STORAGE_TOTAL
+            - DOCUMENT_METRICS_DELETED
+            - DOCUMENT_METRICS_INSERTED
+            - DOCUMENT_METRICS_RETURNED
+            - DOCUMENT_METRICS_UPDATED
+            - EXTRA_INFO_PAGE_FAULTS
+            - FTS_DISK_UTILIZATION
+            - FTS_MEMORY_MAPPED
+            - FTS_MEMORY_RESIDENT
+            - FTS_MEMORY_VIRTUAL
+            - FTS_PROCESS_CPU_KERNEL
+            - FTS_PROCESS_CPU_USER
+            - FTS_PROCESS_NORMALIZED_CPU_KERNEL
+            - FTS_PROCESS_NORMALIZED_CPU_USER
+            - GLOBAL_ACCESSES_NOT_IN_MEMORY
+            - GLOBAL_LOCK_CURRENT_QUEUE_READERS
+            - GLOBAL_LOCK_CURRENT_QUEUE_TOTAL
+            - GLOBAL_LOCK_CURRENT_QUEUE_WRITERS
+            - GLOBAL_PAGE_FAULT_EXCEPTIONS_THROWN
+            - INDEX_COUNTERS_BTREE_ACCESSES
+            - INDEX_COUNTERS_BTREE_HITS
+            - INDEX_COUNTERS_BTREE_MISS_RATIO
+            - INDEX_COUNTERS_BTREE_MISSES
+            - JOURNALING_COMMITS_IN_WRITE_LOCK
+            - JOURNALING_MB
+            - JOURNALING_WRITE_DATA_FILES_MB
+            - MAX_PROCESS_CPU_CHILDREN_KERNEL
+            - MAX_PROCESS_CPU_CHILDREN_USER
+            - MAX_PROCESS_CPU_KERNEL
+            - MAX_PROCESS_CPU_USER
+            - MAX_PROCESS_NORMALIZED_CPU_CHILDREN_KERNEL
+            - MAX_PROCESS_NORMALIZED_CPU_CHILDREN_USER
+            - MAX_PROCESS_NORMALIZED_CPU_KERNEL
+            - MAX_PROCESS_NORMALIZED_CPU_USER
+            - MAX_SWAP_USAGE_FREE
+            - MAX_SWAP_USAGE_USED
+            - MAX_SYSTEM_CPU_GUEST
+            - MAX_SYSTEM_CPU_IOWAIT
+            - MAX_SYSTEM_CPU_IRQ
+            - MAX_SYSTEM_CPU_KERNEL
+            - MAX_SYSTEM_CPU_SOFTIRQ
+            - MAX_SYSTEM_CPU_STEAL
+            - MAX_SYSTEM_CPU_USER
+            - MAX_SYSTEM_MEMORY_AVAILABLE
+            - MAX_SYSTEM_MEMORY_FREE
+            - MAX_SYSTEM_MEMORY_USED
+            - MAX_SYSTEM_NETWORK_IN
+            - MAX_SYSTEM_NETWORK_OUT
+            - MAX_SYSTEM_NORMALIZED_CPU_GUEST
+            - MAX_SYSTEM_NORMALIZED_CPU_IOWAIT
+            - MAX_SYSTEM_NORMALIZED_CPU_IRQ
+            - MAX_SYSTEM_NORMALIZED_CPU_KERNEL
+            - MAX_SYSTEM_NORMALIZED_CPU_NICE
+            - MAX_SYSTEM_NORMALIZED_CPU_SOFTIRQ
+            - MAX_SYSTEM_NORMALIZED_CPU_STEAL
+            - MAX_SYSTEM_NORMALIZED_CPU_USER
+            - MEMORY_MAPPED
+            - MEMORY_RESIDENT
+            - MEMORY_VIRTUAL
+            - NETWORK_BYTES_IN
+            - NETWORK_BYTES_OUT
+            - NETWORK_NUM_REQUESTS
+            - OP_EXECUTION_TIME_COMMANDS
+            - OP_EXECUTION_TIME_READS
+            - OP_EXECUTION_TIME_WRITES
+            - OPCOUNTER_CMD
+            - OPCOUNTER_DELETE
+            - OPCOUNTER_TTL_DELETED
+            - OPCOUNTER_GETMORE
+            - OPCOUNTER_INSERT
+            - OPCOUNTER_QUERY
+            - OPCOUNTER_REPL_CMD
+            - OPCOUNTER_REPL_DELETE
+            - OPCOUNTER_REPL_INSERT
+            - OPCOUNTER_REPL_UPDATE
+            - OPCOUNTER_UPDATE
+            - OPERATIONS_SCAN_AND_ORDER
+            - OPERATIONS_QUERIES_KILLED
+            - OPLOG_MASTER_LAG_TIME_DIFF
+            - OPLOG_MASTER_TIME
+            - OPLOG_RATE_GB_PER_HOUR
+            - OPLOG_SLAVE_LAG_MASTER_TIME
+            - OPLOG_REPLICATION_LAG
+            - PROCESS_CPU_CHILDREN_KERNEL
+            - PROCESS_CPU_CHILDREN_USER
+            - PROCESS_CPU_KERNEL
+            - PROCESS_CPU_USER
+            - PROCESS_NORMALIZED_CPU_CHILDREN_KERNEL
+            - PROCESS_NORMALIZED_CPU_CHILDREN_USER
+            - PROCESS_NORMALIZED_CPU_KERNEL
+            - PROCESS_NORMALIZED_CPU_USER
+            - QUERY_EXECUTOR_SCANNED
+            - QUERY_EXECUTOR_SCANNED_OBJECTS
+            - QUERY_TARGETING_SCANNED_OBJECTS_PER_RETURNED
+            - QUERY_TARGETING_SCANNED_PER_RETURNED
+            - RESTARTS_IN_LAST_HOUR
+            - SWAP_USAGE_FREE
+            - SWAP_USAGE_USED
+            - SYSTEM_CPU_GUEST
+            - SYSTEM_CPU_IOWAIT
+            - SYSTEM_CPU_IRQ
+            - SYSTEM_CPU_KERNEL
+            - SYSTEM_CPU_NICE
+            - SYSTEM_CPU_SOFTIRQ
+            - SYSTEM_CPU_STEAL
+            - SYSTEM_CPU_USER
+            - SYSTEM_MEMORY_AVAILABLE
+            - SYSTEM_MEMORY_FREE
+            - SYSTEM_MEMORY_USED
+            - SYSTEM_NETWORK_IN
+            - SYSTEM_NETWORK_OUT
+            - SYSTEM_NORMALIZED_CPU_GUEST
+            - SYSTEM_NORMALIZED_CPU_IOWAIT
+            - SYSTEM_NORMALIZED_CPU_IRQ
+            - SYSTEM_NORMALIZED_CPU_KERNEL
+            - SYSTEM_NORMALIZED_CPU_NICE
+            - SYSTEM_NORMALIZED_CPU_SOFTIRQ
+            - SYSTEM_NORMALIZED_CPU_STEAL
+            - SYSTEM_NORMALIZED_CPU_USER
+            - TICKETS_AVAILABLE_READS
+            - TICKETS_AVAILABLE_WRITE
+            - OPERATION_THROTTLING_REJECTED_OPERATIONS
+            - QUERY_SPILL_TO_DISK_DURING_SORT
+            type: string
+          maxItems: 10
+          minItems: 1
+          type: array
+          uniqueItems: true
+        style: form
+      - $ref: '#/components/parameters/period'
+      - description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      - $ref: '#/components/parameters/granularity'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/end'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ApiMeasurementsGeneralView_Atlas'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Measurements for One MongoDB Process
+      tags:
+      - Monitoring and Logs
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api monitoringAndLogs getProcessMeasurements --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupProcessMeasurementsApiParams{}\n\tsdkResp, httpResp, err := client.MonitoringandLogsApi.\n\t\tGetGroupProcessMeasurementsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/measurements?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/measurements?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Monitoring-and-Logs/operation/getGroupProcessMeasurements
+      x-xgen-operation-id-override: getProcessMeasurements
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  parameters:
+    indexName:
+      description: Human-readable label that identifies the index.
+      in: path
+      name: indexName
+      required: true
+      schema:
+        example: myindex
+        type: string
+    collectionName:
+      description: Human-readable label that identifies the collection.
+      in: path
+      name: collectionName
+      required: true
+      schema:
+        example: mycoll
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    start:
+      description: Date and time when MongoDB Cloud begins reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**.
+      in: query
+      name: start
+      schema:
+        format: date-time
+        type: string
+    databaseName:
+      description: Human-readable label that identifies the database.
+      in: path
+      name: databaseName
+      required: true
+      schema:
+        example: mydb
+        type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    granularity:
+      description: Duration that specifies the interval at which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC.
+      in: query
+      name: granularity
+      required: true
+      schema:
+        example: PT1M
+        type: string
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    processId:
+      description: Combination of hostname and IANA port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (mongod or mongos). The port must be the IANA port on which the MongoDB process listens for requests.
+      in: path
+      name: processId
+      required: true
+      schema:
+        example: my.host.name.com:27017
+        pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+        type: string
+    end:
+      description: Date and time when MongoDB Cloud stops reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**.
+      in: query
+      name: end
+      schema:
+        format: date-time
+        type: string
+    period:
+      description: Duration over which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC. Include this parameter when you do not set **start** and **end**.
+      in: query
+      name: period
+      schema:
+        example: PT10H
+        type: string
+  schemas:
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    MesurementsDatabase:
+      properties:
+        databaseName:
+          description: Human-readable label that identifies the database that the specified MongoDB process serves.
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      type: object
+    MetricDataPoint_Atlas:
+      description: Value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
+      properties:
+        timestamp:
+          description: Date and time when this data point occurred. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        value:
+          description: Value that comprises this data point.
+          readOnly: true
+          type: number
+      readOnly: true
+      type: object
+    MeasurementsIndexes:
+      properties:
+        collectionName:
+          description: Human-readable label that identifies the collection.
+          readOnly: true
+          type: string
+        databaseName:
+          description: Human-readable label that identifies the database that the specified MongoDB process serves.
+          readOnly: true
+          type: string
+        end:
+          description: Date and time that specifies when to stop retrieving measurements. If you set **end**, you must set **start**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        granularity:
+          description: Duration that specifies the interval between measurement data points. The parameter expresses its value in ISO 8601 timestamp format in UTC. If you set this parameter, you must set either **period** or **start** and **end**.
+          enum:
+          - PT1M
+          - PT5M
+          - PT1H
+          - P1D
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        indexIds:
+          description: List that contains the Atlas Search index identifiers.
+          items:
+            description: Unique 24-hexadecimal digit string that identifies the index.
+            type: string
+          readOnly: true
+          type: array
+        indexStatsMeasurements:
+          description: List that contains the Atlas Search index stats measurements.
+          items:
+            $ref: '#/components/schemas/MetricsMeasurement'
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        processId:
+          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        start:
+          description: Date and time that specifies when to start retrieving measurements. If you set **start**, you must set **end**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    PaginatedDatabaseView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/MesurementsDatabase'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PaginatedHostView_Atlas:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link_Atlas'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ApiHostView_Atlas'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    MetricDataPoint:
+      description: Value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
+      properties:
+        timestamp:
+          description: Date and time when this data point occurred. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        value:
+          description: Value that comprises this data point.
+          readOnly: true
+          type: number
+      readOnly: true
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    FTSMetric:
+      description: Measurement of one Atlas Search status when MongoDB Atlas received this request.
+      properties:
+        metricName:
+          description: Human-readable label that identifies this Atlas Search hardware, status, or index measurement.
+          enum:
+          - INDEX_SIZE_ON_DISK
+          - NUMBER_OF_DELETES
+          - NUMBER_OF_ERROR_QUERIES
+          - NUMBER_OF_GETMORE_COMMANDS
+          - NUMBER_OF_INDEX_FIELDS
+          - NUMBER_OF_INSERTS
+          - NUMBER_OF_SUCCESS_QUERIES
+          - NUMBER_OF_UPDATES
+          - REPLICATION_LAG
+          - TOTAL_NUMBER_OF_QUERIES
+          - FTS_DISK_USAGE
+          - FTS_PROCESS_CPU_KERNEL
+          - FTS_PROCESS_CPU_USER
+          - FTS_PROCESS_NORMALIZED_CPU_KERNEL
+          - FTS_PROCESS_NORMALIZED_CPU_USER
+          - FTS_PROCESS_RESIDENT_MEMORY
+          - FTS_PROCESS_SHARED_MEMORY
+          - FTS_PROCESS_VIRTUAL_MEMORY
+          - JVM_CURRENT_MEMORY
+          - JVM_MAX_MEMORY
+          - PAGE_FAULTS
+          readOnly: true
+          type: string
+        units:
+          description: Unit of measurement that applies to this Atlas Search metric.
+          enum:
+          - BYTES
+          - BYTES_PER_SECOND
+          - GIGABYTES
+          - GIGABYTES_PER_HOUR
+          - KILOBYTES
+          - MEGABYTES
+          - MEGABYTES_PER_SECOND
+          - MILLISECONDS
+          - MILLISECONDS_LOGSCALE
+          - PERCENT
+          - SCALAR
+          - SCALAR_PER_SECOND
+          - SECONDS
+          readOnly: true
+          type: string
+      readOnly: true
+      required:
+      - metricName
+      - units
+      type: object
+    Link_Atlas:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    ApiMeasurementsGeneralView_Atlas:
+      properties:
+        databaseName:
+          description: Human-readable label that identifies the database that the specified MongoDB process serves.
+          readOnly: true
+          type: string
+        end:
+          description: Date and time that specifies when to stop retrieving measurements. If you set **end**, you must set **start**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        granularity:
+          description: Duration that specifies the interval between measurement data points. The parameter expresses its value in ISO 8601 timestamp format in UTC. If you set this parameter, you must set either **period** or **start** and **end**.
+          enum:
+          - PT1M
+          - PT5M
+          - PT1H
+          - P1D
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hostId:
+          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link_Atlas'
+          readOnly: true
+          type: array
+        measurements:
+          description: List that contains measurements and their data points.
+          items:
+            $ref: '#/components/schemas/MetricsMeasurement_Atlas'
+          readOnly: true
+          type: array
+        partitionName:
+          description: Human-readable label of the disk or partition to which the measurements apply.
+          readOnly: true
+          type: string
+        processId:
+          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        start:
+          description: Date and time that specifies when to start retrieving measurements. If you set **start**, you must set **end**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    MeasurementsNonIndex:
+      properties:
+        end:
+          description: Date and time that specifies when to stop retrieving measurements. If you set **end**, you must set **start**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        granularity:
+          description: Duration that specifies the interval between measurement data points. The parameter expresses its value in ISO 8601 timestamp format in UTC. If you set this parameter, you must set either **period** or **start** and **end**.
+          enum:
+          - PT1M
+          - PT5M
+          - PT1H
+          - P1D
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hardwareMeasurements:
+          description: List that contains the Atlas Search hardware measurements.
+          items:
+            $ref: '#/components/schemas/MetricsMeasurement'
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        processId:
+          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        start:
+          description: Date and time that specifies when to start retrieving measurements. If you set **start**, you must set **end**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        statusMeasurements:
+          description: List that contains the Atlas Search status measurements.
+          items:
+            $ref: '#/components/schemas/MetricsMeasurement'
+          readOnly: true
+          type: array
+      type: object
+    PaginatedDiskPartitionView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/MeasurementDiskPartition'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    MetricsMeasurement:
+      properties:
+        dataPoints:
+          description: List that contains the value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
+          items:
+            $ref: '#/components/schemas/MetricDataPoint'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable label of the measurement that this data point covers.
+          readOnly: true
+          type: string
+        units:
+          description: Element used to quantify the measurement. The resource returns units of throughput, storage, and time.
+          enum:
+          - BYTES
+          - BYTES_PER_SECOND
+          - GIGABYTES
+          - GIGABYTES_PER_HOUR
+          - MEGABYTES_PER_SECOND
+          - MICROSECONDS
+          - MILLISECONDS
+          - PERCENT
+          - SCALAR
+          - SCALAR_PER_SECOND
+          readOnly: true
+          type: string
+      type: object
+    MeasurementDiskPartition:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        partitionName:
+          description: Human-readable label of the disk or partition to which the measurements apply.
+          readOnly: true
+          type: string
+      type: object
+    MetricsMeasurement_Atlas:
+      properties:
+        dataPoints:
+          description: List that contains the value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
+          items:
+            $ref: '#/components/schemas/MetricDataPoint_Atlas'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable label of the measurement that this data point covers.
+          readOnly: true
+          type: string
+        units:
+          description: Element used to quantify the measurement. The resource returns units of throughput, storage, and time.
+          enum:
+          - BYTES
+          - BYTES_PER_SECOND
+          - GIGABYTES
+          - GIGABYTES_PER_HOUR
+          - MEGABYTES_PER_SECOND
+          - MICROSECONDS
+          - MILLISECONDS
+          - PERCENT
+          - SCALAR
+          - SCALAR_PER_SECOND
+          readOnly: true
+          type: string
+      type: object
+    ApiHostView_Atlas:
+      properties:
+        created:
+          description: Date and time when MongoDB Cloud created this MongoDB process. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hostname:
+          description: Hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`).
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?$
+          readOnly: true
+          type: string
+        id:
+          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        lastPing:
+          description: Date and time when MongoDB Cloud received the last ping for this MongoDB process. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link_Atlas'
+          readOnly: true
+          type: array
+        port:
+          description: Internet Assigned Numbers Authority (IANA) port on which the MongoDB process listens for requests.
+          format: int32
+          readOnly: true
+          type: integer
+        replicaSetName:
+          description: Human-readable label that identifies the replica set that contains this process. This resource returns this parameter if this process belongs to a replica set.
+          readOnly: true
+          type: string
+        shardName:
+          description: Human-readable label that identifies the shard that contains this process. This resource returns this value only if this process belongs to a sharded cluster.
+          readOnly: true
+          type: string
+        typeName:
+          description: Type of MongoDB process that MongoDB Cloud tracks. MongoDB Cloud returns new processes as `NO_DATA` until MongoDB Cloud completes deploying the process.
+          enum:
+          - REPLICA_PRIMARY
+          - REPLICA_SECONDARY
+          - RECOVERING
+          - SHARD_MONGOS
+          - SHARD_CONFIG
+          - SHARD_STANDALONE
+          - SHARD_PRIMARY
+          - SHARD_SECONDARY
+          - NO_DATA
+          readOnly: true
+          type: string
+        userAlias:
+          description: Human-readable label that identifies the cluster node. MongoDB Cloud sets this hostname usually to the standard hostname for the cluster node. It appears in the connection string for a cluster instead of the value of the hostname parameter.
+          readOnly: true
+          type: string
+        version:
+          description: Version of MongoDB that this process runs.
+          pattern: ([\d]+\.[\d]+\.[\d]+)
+          readOnly: true
+          type: string
+      type: object
+    CloudSearchMetrics:
+      properties:
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hardwareMetrics:
+          description: List that contains all host compute, memory, and storage utilization dedicated to Atlas Search when MongoDB Atlas received this request.
+          items:
+            $ref: '#/components/schemas/FTSMetric'
+          readOnly: true
+          type: array
+        indexMetrics:
+          description: List that contains all performance and utilization measurements that Atlas Search index performed by the time MongoDB Atlas received this request.
+          items:
+            $ref: '#/components/schemas/FTSMetric'
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        processId:
+          description: Hostname and port that identifies the process.
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        statusMetrics:
+          description: List that contains all available Atlas Search status metrics when MongoDB Atlas received this request.
+          items:
+            $ref: '#/components/schemas/FTSMetric'
+          type: array
+      required:
+      - groupId
+      - hardwareMetrics
+      - indexMetrics
+      - processId
+      - statusMetrics
+      type: object
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

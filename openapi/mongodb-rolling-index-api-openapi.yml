@@ -1,0 +1,699 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Rolling Index API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Creates one index to a database deployment in a rolling manner. Rolling indexes build indexes on the applicable nodes sequentially and may reduce the performance impact of an index build if your deployment's average CPU utilization exceeds (N-1)/N-10% where N is the number of CPU threads available to mongod of if the WiredTiger cache fill ratio regularly exceeds 90%. If your deployment does not meet this criteria, use the default index build. You can't create a rolling index on an `M0` free cluster or `M2/M5` shared cluster.
+  name: Rolling Index
+paths:
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/index:
+    post:
+      description: Creates an index on the cluster identified by its name in a rolling manner. Creating the index in this way allows index builds on one replica set member as a standalone at a time, starting with the secondary members. Creating indexes in this way requires at least one replica set election. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role or the Project Index Manager role.
+      externalDocs:
+        description: Rolling Index Builds on Replica Sets
+        url: https://docs.mongodb.com/manual/tutorial/build-indexes-on-replica-sets/
+      operationId: createGroupClusterIndexRollingIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies the cluster on which MongoDB Cloud creates an index.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            examples:
+              2dspere Index:
+                description: 2dspere Index
+                value:
+                  collation:
+                    alternate: non-ignorable
+                    backwards: false
+                    caseFirst: lower
+                    caseLevel: false
+                    locale: af
+                    maxVariable: punct
+                    normalization: false
+                    numericOrdering: false
+                    strength: 3
+                  collection: accounts
+                  db: sample_airbnb
+                  keys:
+                  - property_type: '1'
+                  options:
+                    name: PartialIndexTest
+                    partialFilterExpression:
+                      limit:
+                        $gt: 900
+              Partial Index:
+                description: Partial Index
+                value:
+                  collation:
+                    alternate: non-ignorable
+                    backwards: false
+                    caseFirst: lower
+                    caseLevel: false
+                    locale: af
+                    maxVariable: punct
+                    normalization: false
+                    numericOrdering: false
+                    strength: 3
+                  collection: accounts
+                  db: sample_airbnb
+                  keys:
+                  - property_type: '1'
+                  options:
+                    name: PartialIndexTest
+                    partialFilterExpression:
+                      limit:
+                        $gt: 900
+              Sparse Index:
+                description: Sparse Index
+                value:
+                  collation:
+                    alternate: non-ignorable
+                    backwards: false
+                    caseFirst: lower
+                    caseLevel: false
+                    locale: af
+                    maxVariable: punct
+                    normalization: false
+                    numericOrdering: false
+                    strength: 3
+                  collection: accounts
+                  db: sample_airbnb
+                  keys:
+                  - test_field: '1'
+                  options:
+                    name: SparseIndexTest
+                    sparse: true
+            schema:
+              $ref: '#/components/schemas/DatabaseRollingIndexRequest'
+        description: Rolling index to create on the specified cluster.
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Rolling Index
+      tags:
+      - Rolling Index
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api rollingIndex createRollingIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupClusterIndexRollingIndexApiParams{}\n\tsdkResp, httpResp, err := client.RollingIndexApi.\n\t\tCreateGroupClusterIndexRollingIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/index\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/index\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Data Access Admin
+      - Project Index Manager
+      x-xgen-changelog:
+        '2025-05-08': Corrects an issue where the endpoint would allow a rolling index build to be initiated while there was already an index build in progress. The endpoint now returns 400 if an index build is already in progress.
+        '2026-04-06': Corrects an issue where index creation was throwing a 500 error instead of a 409 error when there was an existing index with the same name.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Rolling-Index/operation/createGroupClusterIndexRollingIndex
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: createRollingIndex
+      x-xgen-operation-id-override: createRollingIndex
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+  schemas:
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    DatabaseRollingIndexRequest:
+      properties:
+        collation:
+          $ref: '#/components/schemas/Collation'
+        collection:
+          description: Human-readable label of the collection for which MongoDB Cloud creates an index.
+          type: string
+          writeOnly: true
+        db:
+          description: Human-readable label of the database that holds the collection on which MongoDB Cloud creates an index.
+          type: string
+          writeOnly: true
+        keys:
+          description: List that contains one or more objects that describe the parameters that you want to index.
+          items:
+            additionalProperties:
+              description: Key-value pair that sets the parameter to index as the key and the type of index as its value. To create a [multi-key index](https://docs.mongodb.com/manual/core/index-multikey/), list each parameter in its own object within this array.
+              externalDocs:
+                description: Index Types
+                url: https://docs.mongodb.com/manual/indexes/#index-types
+              maxProperties: 1
+              minProperties: 1
+              type: string
+              writeOnly: true
+            description: Key-value pair that sets the parameter to index as the key and the type of index as its value. To create a [multi-key index](https://docs.mongodb.com/manual/core/index-multikey/), list each parameter in its own object within this array.
+            externalDocs:
+              description: Index Types
+              url: https://docs.mongodb.com/manual/indexes/#index-types
+            maxProperties: 1
+            minProperties: 1
+            type: object
+            writeOnly: true
+          type: array
+          writeOnly: true
+        options:
+          $ref: '#/components/schemas/IndexOptions'
+      required:
+      - collection
+      - db
+      - keys
+      type: object
+    IndexOptions:
+      description: One or more settings that determine how the MongoDB Cloud creates this MongoDB index.
+      externalDocs:
+        description: Index Options
+        url: https://docs.mongodb.com/manual/reference/method/db.collection.createIndex/#options
+      properties:
+        2dsphereIndexVersion:
+          default: 3
+          description: Index version number applied to the 2dsphere index. MongoDB 3.2 and later use version 3. Use this option to override the default version number. This option applies to the **2dsphere** index type only.
+          format: int32
+          type: integer
+        background:
+          default: false
+          description: Flag that indicates whether MongoDB should build the index in the background. This applies to MongoDB databases running feature compatibility version 4.0 or earlier. MongoDB databases running FCV 4.2 or later build indexes using an optimized build process. This process holds the exclusive lock only at the beginning and end of the build process. The rest of the build process yields to interleaving read and write operations. MongoDB databases running FCV 4.2 or later ignore this option. This option applies to all index types.
+          type: boolean
+        bits:
+          default: 26
+          description: Number of precision applied to the stored geohash value of the location data. This option applies to the **2d** index type only.
+          format: int32
+          type: integer
+        bucketSize:
+          description: 'Number of units within which to group the location values. You could group in the same bucket those location values within the specified number of units to each other. This option applies to the geoHaystack index type only.
+
+
+            MongoDB 5.0 removed geoHaystack Indexes and the `geoSearch` command.'
+          format: int32
+          type: integer
+        columnstoreProjection:
+          additionalProperties:
+            description: 'The `columnstoreProjection` document allows to include or exclude sub-schemas schema. One cannot combine inclusion and exclusion statements. Accordingly, the <value> can be either of the following:
+
+              1 or true to include the field and recursively all fields it is a prefix of in the index
+
+              0 or false to exclude the field and recursively all fields it is a prefix of from the index.'
+            format: int32
+            type: integer
+          description: 'The `columnstoreProjection` document allows to include or exclude sub-schemas schema. One cannot combine inclusion and exclusion statements. Accordingly, the <value> can be either of the following:
+
+            1 or true to include the field and recursively all fields it is a prefix of in the index
+
+            0 or false to exclude the field and recursively all fields it is a prefix of from the index.'
+          type: object
+        default_language:
+          default: english
+          description: Human language that determines the list of stop words and the rules for the stemmer and tokenizer. This option accepts the supported languages using its name in lowercase English or the ISO 639-2 code. If you set this parameter to `"none"`, then the text search uses simple tokenization with no list of stop words and no stemming. This option applies to the **text** index type only.
+          type: string
+        expireAfterSeconds:
+          description: Number of seconds that MongoDB retains documents in a Time To Live (TTL) index.
+          format: int32
+          type: integer
+        hidden:
+          default: false
+          description: Flag that determines whether the index is hidden from the query planner. A hidden index is not evaluated as part of the query plan selection.
+          type: boolean
+        language_override:
+          default: language
+          description: Human-readable label that identifies the document parameter that contains the override language for the document. This option applies to the **text** index type only.
+          type: string
+        max:
+          default: 180
+          description: Upper inclusive boundary to limit the longitude and latitude values. This option applies to the 2d index type only.
+          format: int32
+          type: integer
+        min:
+          default: -180
+          description: Lower inclusive boundary to limit the longitude and latitude values. This option applies to the 2d index type only.
+          format: int32
+          type: integer
+        name:
+          description: Human-readable label that identifies this index. This option applies to all index types.
+          type: string
+        partialFilterExpression:
+          additionalProperties:
+            description: "Rules that limit the documents that the index references to a filter expression. All MongoDB index types accept a `partialFilterExpression` option. `partialFilterExpression` can include following expressions:\n\n- equality (`\"parameter\" : \"value\"` or using the `$eq` operator)\n- `\"$exists\": true`\n, maximum: `$gt`, `$gte`, `$lt`, `$lte` comparisons\n- `$type`\n- `$and` (top-level only)\n This option applies to all index types."
+            type: object
+          description: "Rules that limit the documents that the index references to a filter expression. All MongoDB index types accept a `partialFilterExpression` option. `partialFilterExpression` can include following expressions:\n\n- equality (`\"parameter\" : \"value\"` or using the `$eq` operator)\n- `\"$exists\": true`\n, maximum: `$gt`, `$gte`, `$lt`, `$lte` comparisons\n- `$type`\n- `$and` (top-level only)\n This option applies to all index types."
+          type: object
+        sparse:
+          default: false
+          description: 'Flag that indicates whether the index references documents that only have the specified parameter. These indexes use less space but behave differently in some situations like when sorting. The following index types default to sparse and ignore this option: `2dsphere`, `2d`, `geoHaystack`, `text`.
+
+
+            Compound indexes that includes one or more indexes with `2dsphere` keys alongside other key types, only the `2dsphere` index parameters determine which documents the index references. If you run MongoDB 3.2 or later, use partial indexes. This option applies to all index types.'
+          type: boolean
+        storageEngine:
+          additionalProperties:
+            description: 'Storage engine set for the specific index. This value can be set only at creation. This option uses the following format: `"storageEngine" : { "<storage-engine-name>" : "<options>" }` MongoDB validates storage engine configuration options when creating indexes. To support replica sets with members with different storage engines, MongoDB logs these options to the oplog during replication. This option applies to all index types.'
+            externalDocs:
+              description: MongoDB Server Storage Engines
+              url: https://docs.mongodb.com/manual/core/storage-engines/
+            type: object
+          description: 'Storage engine set for the specific index. This value can be set only at creation. This option uses the following format: `"storageEngine" : { "<storage-engine-name>" : "<options>" }` MongoDB validates storage engine configuration options when creating indexes. To support replica sets with members with different storage engines, MongoDB logs these options to the oplog during replication. This option applies to all index types.'
+          externalDocs:
+            description: MongoDB Server Storage Engines
+            url: https://docs.mongodb.com/manual/core/storage-engines/
+          type: object
+        textIndexVersion:
+          default: 3
+          description: Version applied to this text index. MongoDB 3.2 and later use version `3`. Use this option to override the default version number. This option applies to the **text** index type only.
+          format: int32
+          type: integer
+        weights:
+          additionalProperties:
+            description: Relative importance to place upon provided index parameters. This object expresses this as key/value pairs of index parameter and weight to apply to that parameter. You can specify weights for some or all the indexed parameters. The weight must be an integer between 1 and 99,999. MongoDB 5.0 and later can apply **weights** to **text** indexes only.
+            type: object
+          description: Relative importance to place upon provided index parameters. This object expresses this as key/value pairs of index parameter and weight to apply to that parameter. You can specify weights for some or all the indexed parameters. The weight must be an integer between 1 and 99,999. MongoDB 5.0 and later can apply **weights** to **text** indexes only.
+          type: object
+      type: object
+      writeOnly: true
+    Collation:
+      description: One or more settings that specify language-specific rules to compare strings within this index.
+      externalDocs:
+        description: Collation Options
+        url: https://docs.mongodb.com/manual/reference/method/db.collection.createIndex/#options
+      properties:
+        alternate:
+          default: non-ignorable
+          description: Method to handle whitespace and punctuation as base characters for purposes of comparison. `"non-ignorable"` will evaluate Whitespace and Punctuation as Base Characters. `"shifted"` will not, MongoDB Cloud distinguishes these characters when `"strength" > 3`.
+          enum:
+          - non-ignorable
+          - shifted
+          type: string
+        backwards:
+          default: false
+          description: Flag that indicates whether strings with diacritics sort from back of the string. Some French dictionary orders strings in this way. `true` will compare from back to front. `false` will compare from front to back.
+          type: boolean
+        caseFirst:
+          default: 'off'
+          description: Method to handle sort order of case differences during tertiary level comparisons. `"upper"` sorts Uppercase before lowercase. `"lower"` sorts Lowercase before uppercase. `"off"` is similar to "lower" with slight differences.
+          enum:
+          - lower
+          - 'off'
+          - upper
+          type: string
+        caseLevel:
+          default: false
+          description: "Flag that indicates whether to include case comparison when `\"strength\" : 1` or `\"strength\" : 2`.\n- `true` - Include casing in comparison\n  - Strength Level: 1 - Base characters and case.\n  - Strength Level: 2 - Base characters, diacritics (and possible other secondary differences),   and case.\n- `false` - Case is NOT included in comparison."
+          type: boolean
+        locale:
+          description: 'International Components for Unicode (ICU) code that represents a localized language. To specify simple binary comparison, set `"locale" : "simple"`.'
+          enum:
+          - af
+          - sq
+          - am
+          - ar
+          - hy
+          - as
+          - az
+          - bn
+          - be
+          - bs
+          - bs_Cyrl
+          - bg
+          - my
+          - ca
+          - chr
+          - zh
+          - zh_Hant
+          - hr
+          - cs
+          - da
+          - nl
+          - dz
+          - en
+          - en_US
+          - en_US_POSIX
+          - eo
+          - et
+          - ee
+          - fo
+          - fil
+          - fi_FI
+          - fr
+          - fr_CA
+          - gl
+          - ka
+          - de
+          - de_AT
+          - el
+          - gu
+          - ha
+          - haw
+          - he
+          - hi
+          - hu
+          - is
+          - ig
+          - smn
+          - id
+          - ga
+          - it
+          - ja
+          - kl
+          - kn
+          - kk
+          - km
+          - kok
+          - ko
+          - ky
+          - lk
+          - lo
+          - lv
+          - li
+          - lt
+          - dsb
+          - lb
+          - mk
+          - ms
+          - ml
+          - mt
+          - mr
+          - mn
+          - ne
+          - se
+          - nb
+          - nn
+          - or
+          - om
+          - ps
+          - fa
+          - fa_AF
+          - pl
+          - pt
+          - pa
+          - ro
+          - ru
+          - sr
+          - sr_Latn
+          - si
+          - sk
+          - sl
+          - es
+          - sw
+          - sv
+          - ta
+          - te
+          - th
+          - bo
+          - to
+          - tr
+          - uk
+          - hsb
+          - ur
+          - ug
+          - vi
+          - wae
+          - cy
+          - yi
+          - yo
+          - zu
+          - simple
+          type: string
+        maxVariable:
+          description: 'Field that indicates which characters can be ignored when `"alternate" : "shifted"`.`"punct"` ignores both whitespace and punctuation. `"space"` ignores whitespace. This has no affect if `"alternate" : "non-ignorable"`.'
+          enum:
+          - punct
+          - space
+          type: string
+        normalization:
+          default: false
+          description: 'Flag that indicates whether to check if the text requires normalization and then perform it. Most text doesn''t require this normalization processing.
+
+
+            `true` will check if fully normalized and perform normalization to compare text. `false` will not check.'
+          type: boolean
+        numericOrdering:
+          default: false
+          description: Flag that indicates whether to compare sequences of digits as numbers or as strings. `true` will compare as numbers, this results in `10 > 2`. `false` will Compare as strings. This results in `"10" < "2"`.
+          type: boolean
+        strength:
+          default: 3
+          description: 'Degree of comparison to perform when sorting words.
+
+
+            MongoDB Cloud accepts the following _numeric values_ that correspond to the _comparison level_ and what that _comparison method_ is.
+
+
+            - `1` - "Primary" - Compares the base characters only, ignoring other differences such as diacritics and case.
+
+            - `2` - "Secondary" - Compares base characters (primary) and diacritics (secondary). Primary differences take precedence over secondary differences.
+
+            - `3` - "Tertiary" - Compares base characters (primary), diacritics (secondary), and case and variants (tertiary). Differences between base characters takes precedence over secondary differences which take precedence over tertiary differences.
+
+            - `4` - "Quaternary" - Compares for the specific use case to consider punctuation when levels 1 through 3 ignore punctuation or for processing Japanese text.
+
+            - `5` - "Identical" - Compares for the specific use case of tie breaker.'
+          format: int32
+          maximum: 5
+          minimum: 1
+          type: integer
+      required:
+      - locale
+      type: object
+      writeOnly: true
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

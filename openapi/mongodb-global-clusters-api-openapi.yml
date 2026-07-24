@@ -1,0 +1,733 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Global Clusters API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: 'Returns, adds, and removes Global Cluster managed namespaces and custom zone mappings. Each collection in a Global Cluster is associated with a managed namespace. When you create a managed namespace for a Global Cluster, MongoDB Cloud creates an empty collection for that namespace. Creating a managed namespace doesn''t populate a collection with data. Similarly, deleting a managed namespace doesn''t delete the associated collection.
+
+    MongoDB Cloud shards the empty collection using the required location field and a custom shard key. For example, if your custom shard key is `city`, the compound shard key is `location, city`. Each Global Cluster is also associated with one or more Global Writes Zones. When a user creates a Global Cluster, MongoDB Cloud automatically maps each location code to the closest geographical zone. Custom zone mappings allow administrators to override these automatic mappings. For example, a use case might require mapping a location code to a geographically distant zone. Administrators can manage custom zone mappings with the APIs below and the **Global Cluster Configuration** pane when you create or modify your Global Cluster.'
+  name: Global Clusters
+paths:
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites:
+    get:
+      description: 'Returns one managed namespace within the specified global cluster. A managed namespace identifies a collection using the database name, the dot separator, and the collection name. To use this resource, the requesting Service Account or API Key must have the Project Read Only role. Deprecated versions: v2-{2023-02-01}, v2-{2023-01-01}'
+      externalDocs:
+        description: Global Clusters
+        url: https://www.mongodb.com/docs/atlas/global-clusters/
+      operationId: getGroupClusterGlobalWrites
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies this cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              examples:
+                200 Example:
+                  description: 200 Example
+                  value:
+                    customZoneMapping:
+                      DE: 32b6e34b3d91647abb20e7b8
+                      US-VA: 32b6e34b3d91647abb20e7b8
+                    managedNamespaces:
+                    - collection: collectionNameExample
+                      customShardKey: myShardKey
+                      db: DatabaseExample
+                      isCustomShardKeyHashed: false
+                      isShardKeyUnique: false
+                      numInitialChunks: 42
+                      presplitHashedZones: false
+                    selfManagedSharding: true
+              schema:
+                $ref: '#/components/schemas/GeoSharding20240805'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Managed Namespace in One Global Cluster
+      tags:
+      - Global Clusters
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api globalClusters getClusterGlobalWrites --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterGlobalWritesApiParams{}\n\tsdkResp, httpResp, err := client.GlobalClustersApi.\n\t\tGetGroupClusterGlobalWritesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Global-Clusters/operation/getGroupClusterGlobalWrites
+      x-xgen-operation-id-override: getClusterGlobalWrites
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/customZoneMapping:
+    delete:
+      description: 'Removes all custom zone mappings for the specified global cluster. A custom zone mapping matches one ISO 3166-2 location code to a zone in your global cluster. Removing the custom zone mappings restores the default mapping. By default, MongoDB Cloud maps each location code to the closest geographical zone. To use this resource, the requesting Service Account or API Key must have the Project Owner role. Deprecated versions: v2-{2023-02-01}, v2-{2023-01-01}'
+      externalDocs:
+        description: Global Clusters
+        url: https://www.mongodb.com/docs/atlas/global-clusters/
+      operationId: deleteGroupClusterGlobalWriteCustomZoneMapping
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies this cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              examples:
+                200 Example:
+                  description: 200 Example
+                  value:
+                    customZoneMapping:
+                      DE: 32b6e34b3d91647abb20e7b8
+                      US-VA: 32b6e34b3d91647abb20e7b8
+                    managedNamespaces:
+                    - collection: collectionNameExample
+                      customShardKey: myShardKey
+                      db: DatabaseExample
+                      isCustomShardKeyHashed: false
+                      isShardKeyUnique: false
+                      numInitialChunks: 42
+                      presplitHashedZones: false
+                    selfManagedSharding: true
+              schema:
+                $ref: '#/components/schemas/GeoSharding20240805'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove All Custom Zone Mappings from One Global Cluster
+      tags:
+      - Global Clusters
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api globalClusters deleteCustomZoneMapping --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupClusterGlobalWriteCustomZoneMappingApiParams{}\n\thttpResp, err := client.GlobalClustersApi.\n\t\tDeleteGroupClusterGlobalWriteCustomZoneMappingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/customZoneMapping\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/customZoneMapping\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Global-Clusters/operation/deleteGroupClusterGlobalWriteCustomZoneMapping
+      x-xgen-operation-id-override: deleteCustomZoneMapping
+    post:
+      description: 'Creates one custom zone mapping for the specified global cluster. A custom zone mapping matches one ISO 3166-2 location code to a zone in your global cluster. By default, MongoDB Cloud maps each location code to the closest geographical zone. To use this resource, the requesting Service Account or API Key must have the Project Owner role. Deprecated versions: v2-{2023-02-01}, v2-{2023-01-01}'
+      externalDocs:
+        description: Global Clusters
+        url: https://www.mongodb.com/docs/atlas/global-clusters/
+      operationId: createGroupClusterGlobalWriteCustomZoneMapping
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies this cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-08-05+json:
+            schema:
+              $ref: '#/components/schemas/CustomZoneMappings'
+            x-xgen-version: '2024-08-05'
+        description: Custom zone mapping to add to the specified global cluster.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              examples:
+                200 Example:
+                  description: 200 Example
+                  value:
+                    customZoneMapping:
+                      DE: 32b6e34b3d91647abb20e7b8
+                      US-VA: 32b6e34b3d91647abb20e7b8
+                    managedNamespaces:
+                    - collection: collectionNameExample
+                      customShardKey: myShardKey
+                      db: DatabaseExample
+                      isCustomShardKeyHashed: false
+                      isShardKeyUnique: false
+                      numInitialChunks: 42
+                      presplitHashedZones: false
+                    selfManagedSharding: true
+              schema:
+                $ref: '#/components/schemas/GeoSharding20240805'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Add One Custom Zone Mapping to One Global Cluster
+      tags:
+      - Global Clusters
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api globalClusters createCustomZoneMapping --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupClusterGlobalWriteCustomZoneMappingApiParams{}\n\tsdkResp, httpResp, err := client.GlobalClustersApi.\n\t\tCreateGroupClusterGlobalWriteCustomZoneMappingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/customZoneMapping\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/customZoneMapping\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Global-Clusters/operation/createGroupClusterGlobalWriteCustomZoneMapping
+      x-xgen-operation-id-override: createCustomZoneMapping
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/managedNamespaces:
+    delete:
+      description: 'Removes one managed namespace within the specified global cluster. A managed namespace identifies a collection using the database name, the dot separator, and the collection name. Deleting a managed namespace does not remove the associated collection or data. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role. Deprecated versions: v2-{2023-02-01}, v2-{2023-01-01}'
+      externalDocs:
+        description: Global Clusters
+        url: https://www.mongodb.com/docs/atlas/global-clusters/
+      operationId: deleteGroupClusterGlobalWriteManagedNamespaces
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - description: Human-readable label that identifies this cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the database that contains the collection.
+        in: query
+        name: db
+        schema:
+          type: string
+      - description: Human-readable label that identifies the collection associated with the managed namespace.
+        in: query
+        name: collection
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              examples:
+                200 Example:
+                  description: 200 Example
+                  value:
+                    customZoneMapping:
+                      DE: 32b6e34b3d91647abb20e7b8
+                      US-VA: 32b6e34b3d91647abb20e7b8
+                    managedNamespaces:
+                    - collection: collectionNameExample
+                      customShardKey: myShardKey
+                      db: DatabaseExample
+                      isCustomShardKeyHashed: false
+                      isShardKeyUnique: false
+                      numInitialChunks: 42
+                      presplitHashedZones: false
+                    selfManagedSharding: true
+              schema:
+                $ref: '#/components/schemas/GeoSharding20240805'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Managed Namespace from One Global Cluster
+      tags:
+      - Global Clusters
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api globalClusters deleteManagedNamespaces --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupClusterGlobalWriteManagedNamespacesApiParams{}\n\thttpResp, err := client.GlobalClustersApi.\n\t\tDeleteGroupClusterGlobalWriteManagedNamespacesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/managedNamespaces\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/managedNamespaces\""
+      x-rolesRequirements:
+      - Project Data Access Admin
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Global-Clusters/operation/deleteGroupClusterGlobalWriteManagedNamespaces
+      x-xgen-operation-id-override: deleteManagedNamespaces
+    post:
+      description: 'Creates one managed namespace within the specified global cluster. A managed namespace identifies a collection using the database name, the dot separator, and the collection name. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role. Deprecated versions: v2-{2023-02-01}, v2-{2023-01-01}'
+      externalDocs:
+        description: Global Clusters
+        url: https://www.mongodb.com/docs/atlas/global-clusters/
+      operationId: createGroupClusterGlobalWriteManagedNamespace
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies this cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-08-05+json:
+            schema:
+              $ref: '#/components/schemas/ManagedNamespaces'
+            x-xgen-version: '2024-08-05'
+        description: Managed namespace to create within the specified global cluster.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              examples:
+                200 Example:
+                  description: 200 Example
+                  value:
+                    customZoneMapping:
+                      DE: 32b6e34b3d91647abb20e7b8
+                      US-VA: 32b6e34b3d91647abb20e7b8
+                    managedNamespaces:
+                    - collection: collectionNameExample
+                      customShardKey: myShardKey
+                      db: DatabaseExample
+                      isCustomShardKeyHashed: false
+                      isShardKeyUnique: false
+                      numInitialChunks: 42
+                      presplitHashedZones: false
+                    selfManagedSharding: true
+              schema:
+                $ref: '#/components/schemas/GeoSharding20240805'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '405':
+          $ref: '#/components/responses/methodNotAllowed'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Managed Namespace in One Global Cluster
+      tags:
+      - Global Clusters
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api globalClusters createManagedNamespace --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupClusterGlobalWriteManagedNamespaceApiParams{}\n\tsdkResp, httpResp, err := client.GlobalClustersApi.\n\t\tCreateGroupClusterGlobalWriteManagedNamespaceWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/managedNamespaces\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/globalWrites/managedNamespaces\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Data Access Admin
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Global-Clusters/operation/createGroupClusterGlobalWriteManagedNamespace
+      x-xgen-operation-id-override: createManagedNamespace
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    methodNotAllowed:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 405
+            errorCode: ATLAS_BACKUP_CANCEL_SHARD_RESTORE_JOB_NOT_ALLOWED
+            reason: Method Not Allowed
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Method Not Allowed.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+  schemas:
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    CustomZoneMappings:
+      properties:
+        customZoneMappings:
+          description: 'List that contains comma-separated key value pairs to map zones to geographic regions. These pairs map an ISO 3166-1a2 location code, with an ISO 3166-2 subdivision code when possible, to the human-readable label for the desired custom zone. MongoDB Cloud maps the ISO 3166-1a2 code to the nearest geographical zone by default. Include this parameter to override the default mappings.
+
+
+            This parameter returns an empty object if no custom zones exist.'
+          items:
+            $ref: '#/components/schemas/ZoneMapping'
+          type: array
+      required:
+      - customZoneMappings
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    ManagedNamespaces:
+      properties:
+        collection:
+          description: Human-readable label of the collection to manage for this Global Cluster.
+          type: string
+        customShardKey:
+          description: Database parameter used to divide the *collection* into shards. Global clusters require a compound shard key. This compound shard key combines the location parameter and the user-selected custom key.
+          type: string
+        db:
+          description: Human-readable label of the database to manage for this Global Cluster.
+          type: string
+        isCustomShardKeyHashed:
+          default: false
+          description: Flag that indicates whether someone hashed the custom shard key for the specified collection. If you set this value to `false`, MongoDB Cloud uses ranged sharding.
+          externalDocs:
+            description: Hashed Shard Keys
+            url: https://www.mongodb.com/docs/manual/reference/method/sh.shardCollection/#hashed-shard-keys
+          type: boolean
+        isShardKeyUnique:
+          default: false
+          description: Flag that indicates whether someone [hashed](https://www.mongodb.com/docs/manual/reference/method/sh.shardCollection/#hashed-shard-keys) the custom shard key. If this parameter returns `false`, this cluster uses [ranged sharding](https://www.mongodb.com/docs/manual/core/ranged-sharding/).
+          type: boolean
+        numInitialChunks:
+          description: Minimum number of chunks to create initially when sharding an empty collection with a [hashed shard key](https://www.mongodb.com/docs/manual/core/hashed-sharding/).
+          externalDocs:
+            description: Global Cluster Sharding
+            url: https://www.mongodb.com/docs/atlas/shard-global-collection/
+          format: int64
+          maximum: 8192
+          type: integer
+        presplitHashedZones:
+          default: false
+          description: Flag that indicates whether MongoDB Cloud should create and distribute initial chunks for an empty or non-existing collection. MongoDB Cloud distributes data based on the defined zones and zone ranges for the collection.
+          externalDocs:
+            description: Hashed Shard Key
+            url: https://www.mongodb.com/docs/manual/core/hashed-sharding/
+          type: boolean
+      required:
+      - collection
+      - customShardKey
+      - db
+      type: object
+    ZoneMapping:
+      description: Human-readable label that identifies the subset of a global cluster.
+      properties:
+        location:
+          description: Code that represents a location that maps to a zone in your global cluster. MongoDB Cloud represents this location with a ISO 3166-2 location and subdivision codes when possible.
+          type: string
+        zone:
+          description: Human-readable label that identifies the zone in your global cluster. This zone maps to a location code.
+          type: string
+      required:
+      - location
+      - zone
+      title: Global Cluster Zone
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    GeoSharding20240805:
+      properties:
+        customZoneMapping:
+          additionalProperties:
+            description: "List that contains comma-separated key value pairs to map zones to geographic regions. These pairs map an ISO 3166-1a2 location code, with an ISO 3166-2 subdivision code when possible, to a unique 24-hexadecimal string that identifies the custom zone.\n\n The 24-hexadecimal string corresponds to a `Replication Specifications` `zoneId` property.\n\nThis parameter returns an empty object if no custom zones exist.\n\nExample: `{\"US-VA\": \"6716c5a804f4ce77e899bf99\", \"DE\": \"6716c5a804f4ce77e899bf9a\"}`."
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            readOnly: true
+            type: string
+          description: "List that contains comma-separated key value pairs to map zones to geographic regions. These pairs map an ISO 3166-1a2 location code, with an ISO 3166-2 subdivision code when possible, to a unique 24-hexadecimal string that identifies the custom zone.\n\n The 24-hexadecimal string corresponds to a `Replication Specifications` `zoneId` property.\n\nThis parameter returns an empty object if no custom zones exist.\n\nExample: `{\"US-VA\": \"6716c5a804f4ce77e899bf99\", \"DE\": \"6716c5a804f4ce77e899bf9a\"}`."
+          readOnly: true
+          type: object
+        managedNamespaces:
+          description: List that contains a namespace for a Global Cluster. MongoDB Cloud manages this cluster.
+          items:
+            $ref: '#/components/schemas/ManagedNamespaces'
+          readOnly: true
+          type: array
+        selfManagedSharding:
+          description: Boolean that controls which management mode the Global Cluster is operating under. If this parameter is true Self-Managed Sharding is enabled and users are in control of the zone sharding within the Global Cluster. If this parameter is false Atlas-Managed Sharding is enabled and Atlas is control of zone sharding within the Global Cluster.
+          readOnly: true
+          type: boolean
+      type: object
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

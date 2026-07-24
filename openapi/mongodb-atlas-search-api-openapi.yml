@@ -1,0 +1,2358 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Atlas Search API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns, adds, edits, and removes Atlas Search indexes for the specified cluster. Also returns and updates user-defined analyzers for the specified cluster.
+  name: Atlas Search
+paths:
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes:
+    post:
+      deprecated: true
+      description: Creates one Atlas Search index on the specified collection. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. Only clusters running MongoDB v4.2 or later can use Atlas Search. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: createGroupClusterFtsIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection on which to create an Atlas Search index.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ClusterSearchIndex'
+        description: Creates one Atlas Search index on the specified collection.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ClusterSearchIndex'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Atlas Search Index
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch createClusterFtsIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupClusterFtsIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tCreateGroupClusterFtsIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-sunset: '2027-07-01'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/createGroupClusterFtsIndex
+      x-xgen-operation-id-override: createClusterFtsIndex
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{databaseName}/{collectionName}:
+    get:
+      deprecated: true
+      description: Returns all Atlas Search indexes on the specified collection. Atlas Search indexes contain the indexed fields and the analyzers used to create the indexes. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: listGroupClusterFtsIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Name of the collection that contains one or more Atlas Search indexes.
+        in: path
+        name: collectionName
+        required: true
+        schema:
+          type: string
+      - description: Human-readable label that identifies the database that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: databaseName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                description: List of Atlas Search indexes that MongoDB Cloud returns for this request.
+                items:
+                  $ref: '#/components/schemas/ClusterSearchIndex'
+                type: array
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Atlas Search Indexes for One Collection
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch listClusterFtsIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterFtsIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tListGroupClusterFtsIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{databaseName}/{collectionName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{databaseName}/{collectionName}?pretty=true\""
+      x-rolesRequirements:
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Search Index Editor
+      - Project Stream Processing Owner
+      x-sunset: '2027-07-01'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/listGroupClusterFtsIndex
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: list
+      x-xgen-operation-id-override: listClusterFtsIndex
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{indexId}:
+    delete:
+      deprecated: true
+      description: Removes one Atlas Search index that you identified with its unique ID. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: deleteGroupClusterFtsIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the database and collection with one or more Application Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the Atlas Search index. Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes.
+        in: path
+        name: indexId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Atlas Search Index
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch deleteClusterFtsIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupClusterFtsIndexApiParams{}\n\thttpResp, err := client.AtlasSearchApi.\n\t\tDeleteGroupClusterFtsIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{indexId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{indexId}\""
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-sunset: '2027-07-01'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/deleteGroupClusterFtsIndex
+      x-xgen-operation-id-override: deleteClusterFtsIndex
+    get:
+      deprecated: true
+      description: Returns one Atlas Search index in the specified project. You identify this index using its unique ID. Atlas Search index contains the indexed fields and the analyzers used to create the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: getGroupClusterFtsIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the Application Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Application Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Application Search indexes.
+        in: path
+        name: indexId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ClusterSearchIndex'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Atlas Search Index
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch getClusterFtsIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterFtsIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tGetGroupClusterFtsIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{indexId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{indexId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Search Index Editor
+      - Project Stream Processing Owner
+      x-sunset: '2027-07-01'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/getGroupClusterFtsIndex
+      x-xgen-operation-id-override: getClusterFtsIndex
+    patch:
+      deprecated: true
+      description: Updates one Atlas Search index that you identified with its unique ID. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: updateGroupClusterFtsIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection whose Atlas Search index to update.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the Atlas Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes.
+        in: path
+        name: indexId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ClusterSearchIndex'
+        description: Details to update on the Atlas Search index.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ClusterSearchIndex'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Atlas Search Index
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch updateClusterFtsIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupClusterFtsIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tUpdateGroupClusterFtsIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{indexId}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/fts/indexes/{indexId}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-sunset: '2027-07-01'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/updateGroupClusterFtsIndex
+      x-xgen-operation-id-override: updateClusterFtsIndex
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment:
+    delete:
+      description: Deletes the Search Nodes for the specified cluster.
+      operationId: deleteGroupClusterSearchDeployment
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the cluster to delete.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              x-xgen-version: '2024-05-30'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete Search Nodes
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch deleteClusterSearchDeployment --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupClusterSearchDeploymentApiParams{}\n\thttpResp, err := client.AtlasSearchApi.\n\t\tDeleteGroupClusterSearchDeploymentWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment\""
+      x-rolesRequirements:
+      - Project Cluster Manager
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/deleteGroupClusterSearchDeployment
+      x-xgen-operation-id-override: deleteClusterSearchDeployment
+    get:
+      description: 'Returns the Search Nodes for the specified cluster. Deprecated versions: v2-{2024-05-30}, v2-{2023-01-01}'
+      operationId: getGroupClusterSearchDeployment
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the cluster to return the Search Nodes for.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/ApiSearchDeploymentResponseView'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Search Nodes
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch getClusterSearchDeployment --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterSearchDeploymentApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tGetGroupClusterSearchDeploymentWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-changelog:
+        '2025-03-12': Updates the return of the API when no nodes exist, the endpoint returns 200 with an empty JSON ({}) instead of 400.
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/getGroupClusterSearchDeployment
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: get
+      x-xgen-operation-id-override: getClusterSearchDeployment
+    patch:
+      description: 'Updates the Search Nodes for the specified cluster. Deprecated versions: v2-{2023-01-01}'
+      operationId: updateGroupClusterSearchDeployment
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the cluster to update the Search Nodes for.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-05-30+json:
+            schema:
+              $ref: '#/components/schemas/ApiSearchDeploymentRequestView'
+        description: Updates the Search Nodes for the specified cluster.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/ApiSearchDeploymentResponseView'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update Search Nodes
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch updateClusterSearchDeployment --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupClusterSearchDeploymentApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tUpdateGroupClusterSearchDeploymentWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Cluster Manager
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/updateGroupClusterSearchDeployment
+      x-xgen-operation-id-override: updateClusterSearchDeployment
+    post:
+      description: Creates Search Nodes for the specified cluster.
+      operationId: createGroupClusterSearchDeployment
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      - $ref: '#/components/parameters/groupId'
+      - description: Label that identifies the cluster to create Search Nodes for.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-05-30+json:
+            schema:
+              $ref: '#/components/schemas/ApiSearchDeploymentRequestView'
+        description: Creates Search Nodes for the specified cluster.
+        required: true
+      responses:
+        '201':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/ApiSearchDeploymentResponseView'
+              x-xgen-version: '2024-05-30'
+          description: Created
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create Search Nodes
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch createClusterSearchDeployment --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupClusterSearchDeploymentApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tCreateGroupClusterSearchDeploymentWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/deployment\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/createGroupClusterSearchDeployment
+      x-xgen-operation-id-override: createClusterSearchDeployment
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes:
+    get:
+      description: Returns all Atlas Search indexes on the specified cluster. Atlas Search indexes contain the indexed fields and the analyzers used to create the indexes. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: listGroupClusterSearchIndexes
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                description: List of Atlas Search indexes that MongoDB Cloud returns for this request.
+                items:
+                  $ref: '#/components/schemas/SearchIndexResponse'
+                type: array
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+        '503':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Service Unavailable.
+      summary: Return All Atlas Search Indexes for One Cluster
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch listClusterSearchIndexes --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterSearchIndexesApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tListGroupClusterSearchIndexesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes?pretty=true\""
+      x-rolesRequirements:
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Search Index Editor
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/listGroupClusterSearchIndexes
+      x-xgen-operation-id-override: listClusterSearchIndexes
+    post:
+      description: Creates one Atlas Search index on the specified collection. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. Only clusters running MongoDB v4.2 or later can use Atlas Search. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: createGroupClusterSearchIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection on which to create an Atlas Search index.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-05-30+json:
+            schema:
+              $ref: '#/components/schemas/SearchIndexCreateRequest'
+        description: Creates one Atlas Search index on the specified collection.
+        required: true
+      responses:
+        '201':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/SearchIndexResponse'
+              x-xgen-version: '2024-05-30'
+          description: Created
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Atlas Search Index
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch createClusterSearchIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupClusterSearchIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tCreateGroupClusterSearchIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/createGroupClusterSearchIndex
+      x-xgen-operation-id-override: createClusterSearchIndex
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}:
+    get:
+      description: Returns all Atlas Search indexes on the specified collection. Atlas Search indexes contain the indexed fields and the analyzers used to create the indexes. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: listGroupClusterSearchIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Name of the collection that contains one or more Atlas Search indexes.
+        in: path
+        name: collectionName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the database that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: databaseName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                description: List of Atlas Search indexes that MongoDB Cloud returns for this request.
+                items:
+                  $ref: '#/components/schemas/SearchIndexResponse'
+                type: array
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+        '503':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Service Unavailable.
+      summary: Return All Atlas Search Indexes for One Collection
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch listSearchIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterSearchIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tListGroupClusterSearchIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}?pretty=true\""
+      x-rolesRequirements:
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Search Index Editor
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/listGroupClusterSearchIndex
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: list
+      x-xgen-operation-id-override: listSearchIndex
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}/{indexName}:
+    delete:
+      description: Removes one Atlas Search index that you identified with its database, collection, and name. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role. This deletion is eventually consistent.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: deleteGroupClusterSearchIndexByName
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the database and collection with one or more Application Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Name of the collection that contains one or more Atlas Search indexes.
+        in: path
+        name: collectionName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the database that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: databaseName
+        required: true
+        schema:
+          type: string
+      - description: Name of the Atlas Search index to delete.
+        in: path
+        name: indexName
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              x-xgen-version: '2024-05-30'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Atlas Search Index by Name
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch deleteIndexByName --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupClusterSearchIndexByNameApiParams{}\n\thttpResp, err := client.AtlasSearchApi.\n\t\tDeleteGroupClusterSearchIndexByNameWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}/{indexName}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}/{indexName}\""
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/deleteGroupClusterSearchIndexByName
+      x-xgen-method-verb-override:
+        customMethod: true
+        verb: deleteByName
+      x-xgen-operation-id-override: deleteIndexByName
+    get:
+      description: Returns one Atlas Search index in the specified project. You identify this index using its database, collection and name. Atlas Search index contains the indexed fields and the analyzers used to create the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: getGroupClusterSearchIndexByName
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Name of the collection that contains one or more Atlas Search indexes.
+        in: path
+        name: collectionName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the database that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: databaseName
+        required: true
+        schema:
+          type: string
+      - description: Name of the Atlas Search index to return.
+        in: path
+        name: indexName
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/SearchIndexResponse'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Atlas Search Index by Name
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch getIndexByName --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterSearchIndexByNameApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tGetGroupClusterSearchIndexByNameWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}/{indexName}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}/{indexName}?pretty=true\""
+      x-rolesRequirements:
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Search Index Editor
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/getGroupClusterSearchIndexByName
+      x-xgen-method-verb-override:
+        customMethod: true
+        verb: getByName
+      x-xgen-operation-id-override: getIndexByName
+    patch:
+      description: Updates one Atlas Search index that you identified with its database, collection name, and index name. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: updateGroupClusterSearchIndexByName
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection whose Atlas Search index you want to update.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Name of the collection that contains one or more Atlas Search indexes.
+        in: path
+        name: collectionName
+        required: true
+        schema:
+          type: string
+      - description: Label that identifies the database that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: databaseName
+        required: true
+        schema:
+          type: string
+      - description: Name of the Atlas Search index to update.
+        in: path
+        name: indexName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-05-30+json:
+            schema:
+              $ref: '#/components/schemas/SearchIndexUpdateRequest'
+        description: Details to update the Atlas Search index with.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/SearchIndexResponse'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Atlas Search Index by Name
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch updateIndexByName --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupClusterSearchIndexByNameApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tUpdateGroupClusterSearchIndexByNameWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}/{indexName}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{databaseName}/{collectionName}/{indexName}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/updateGroupClusterSearchIndexByName
+      x-xgen-method-verb-override:
+        customMethod: true
+        verb: updateByName
+      x-xgen-operation-id-override: updateIndexByName
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{indexId}:
+    delete:
+      description: Removes one Atlas Search index that you identified with its unique ID. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role. This deletion is eventually consistent.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: deleteGroupClusterSearchIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the database and collection with one or more Application Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the Atlas Search index. Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes.
+        in: path
+        name: indexId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              x-xgen-version: '2024-05-30'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Atlas Search Index by ID
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch deleteClusterSearchIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupClusterSearchIndexApiParams{}\n\thttpResp, err := client.AtlasSearchApi.\n\t\tDeleteGroupClusterSearchIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{indexId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{indexId}\""
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/deleteGroupClusterSearchIndex
+      x-xgen-operation-id-override: deleteClusterSearchIndex
+    get:
+      description: Returns one Atlas Search index in the specified project. You identify this index using its unique ID. Atlas Search index contains the indexed fields and the analyzers used to create the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: getGroupClusterSearchIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection with one or more Atlas Search indexes.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the Application Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Application Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Application Search indexes.
+        in: path
+        name: indexId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/SearchIndexResponse'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+        '503':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Service Unavailable.
+      summary: Return One Atlas Search Index by ID
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch getClusterSearchIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupClusterSearchIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tGetGroupClusterSearchIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{indexId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{indexId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Search Index Editor
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/getGroupClusterSearchIndex
+      x-xgen-operation-id-override: getClusterSearchIndex
+    patch:
+      description: Updates one Atlas Search index that you identified with its unique ID. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role.
+      externalDocs:
+        description: Atlas Search Indexes
+        url: https://dochub.mongodb.org/core/index-definitions-fts
+      operationId: updateGroupClusterSearchIndex
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Name of the cluster that contains the collection whose Atlas Search index you want to update.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Unique 24-hexadecimal digit string that identifies the Atlas Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes.
+        in: path
+        name: indexId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-05-30+json:
+            schema:
+              $ref: '#/components/schemas/SearchIndexUpdateRequest'
+        description: Details to update on the Atlas Search index.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-05-30+json:
+              schema:
+                $ref: '#/components/schemas/SearchIndexResponse'
+              x-xgen-version: '2024-05-30'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '409':
+          $ref: '#/components/responses/conflict'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Atlas Search Index by ID
+      tags:
+      - Atlas Search
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api atlasSearch updateClusterSearchIndex --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupClusterSearchIndexApiParams{}\n\tsdkResp, httpResp, err := client.AtlasSearchApi.\n\t\tUpdateGroupClusterSearchIndexWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{indexId}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/search/indexes/{indexId}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Search Index Editor
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Atlas-Search/operation/updateGroupClusterSearchIndex
+      x-xgen-operation-id-override: updateClusterSearchIndex
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  schemas:
+    ApiSearchDeploymentRequestView:
+      properties:
+        specs:
+          description: 'List of settings that configure the Search Nodes for your cluster.
+
+
+            **NOTE**: We accept a single configuration for all nodes currently.'
+          items:
+            $ref: '#/components/schemas/ApiSearchDeploymentSpecView'
+          maxItems: 1
+          minItems: 1
+          type: array
+      required:
+      - specs
+      type: object
+    SearchMappings:
+      description: Index specifications for the collection's fields.
+      properties:
+        dynamic:
+          description: Indicates whether the index uses static, default dynamic, or configurable dynamic mappings. Set to `true` to enable dynamic mapping with default type set or define object to specify the name of the configured type sets for dynamic mapping. If you specify configurable dynamic mappings, you must define the referred type sets in the `typeSets` field. Set to `false` to use only static mappings through `mappings.fields`.
+          example:
+            typeSet: typeSet1
+          externalDocs:
+            description: Static, Dynamic or Configurable Dynamic Mappings
+            url: https://dochub.mongodb.org/core/field-mapping-definition-fts#static-and-dynamic-mappings
+          type: object
+        fields:
+          additionalProperties:
+            $ref: '#/components/schemas/Fields'
+          description: One or more field specifications for the Atlas Search index. Required if `mappings.dynamic` is omitted or set to `false`.
+          externalDocs:
+            description: Atlas Search Index
+            url: https://dochub.mongodb.org/core/index-definitions-fts
+          type: object
+          x-additionalPropertiesName: Field Name
+      title: Mappings
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    ClusterSearchIndex:
+      discriminator:
+        mapping:
+          search: '#/components/schemas/SearchIndex'
+          vectorSearch: '#/components/schemas/VectorSearchIndex'
+        propertyName: type
+      properties:
+        collectionName:
+          description: Human-readable label that identifies the collection that contains one or more Atlas Search indexes.
+          type: string
+        database:
+          description: Human-readable label that identifies the database that contains the collection with one or more Atlas Search indexes.
+          type: string
+        indexID:
+          description: Unique 24-hexadecimal digit string that identifies this Atlas Search index.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        name:
+          description: Human-readable label that identifies this index. Within each namespace, names of all indexes in the namespace must be unique.
+          type: string
+        numPartitions:
+          default: 1
+          description: Number of index partitions. Allowed values are [1, 2, 4].
+          format: int32
+          type: integer
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `IN_PROGRESS`: Atlas is building or re-building the index after an edit.
+
+            - `STEADY`: You can use this search index.
+
+            - `FAILED`: Atlas could not build the index.
+
+            - `MIGRATING`: Atlas is upgrading the underlying cluster tier and migrating indexes.
+
+            - `PAUSED`: The cluster is paused.'
+          enum:
+          - IN_PROGRESS
+          - STEADY
+          - FAILED
+          - MIGRATING
+          - STALE
+          - PAUSED
+          readOnly: true
+          type: string
+        storedSource:
+          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see documentation.
+          example:
+            include | exclude:
+            - field1
+            - field2
+          externalDocs:
+            description: Stored Source Fields
+            url: https://dochub.mongodb.org/core/atlas-search-stored-source
+          type: object
+        type:
+          description: Type of the index. Default type is search.
+          enum:
+          - search
+          - vectorSearch
+          type: string
+      required:
+      - collectionName
+      - database
+      - name
+      type: object
+    ApiSearchDeploymentSpecView:
+      properties:
+        instanceSize:
+          description: Hardware specification for the Search Node instance sizes.
+          enum:
+          - S20_HIGHCPU_NVME
+          - S30_HIGHCPU_NVME
+          - S40_HIGHCPU_NVME
+          - S50_HIGHCPU_NVME
+          - S60_HIGHCPU_NVME
+          - S70_HIGHCPU_NVME
+          - S80_HIGHCPU_NVME
+          - S30_LOWCPU_NVME
+          - S40_LOWCPU_NVME
+          - S50_LOWCPU_NVME
+          - S60_LOWCPU_NVME
+          - S70_LOWCPU_NVME
+          - S80_LOWCPU_NVME
+          - S90_LOWCPU_NVME
+          - S100_LOWCPU_NVME
+          - S110_LOWCPU_NVME
+          - S120_LOWCPU_NVME
+          - S130_LOWCPU_NVME
+          - S135_LOWCPU_NVME
+          - S140_LOWCPU_NVME
+          - S40_STORAGE_NVME
+          - S50_STORAGE_NVME
+          - S60_STORAGE_NVME
+          - S80_STORAGE_NVME
+          - S90_STORAGE_NVME
+          type: string
+        nodeCount:
+          description: Number of Search Nodes in the cluster.
+          example: 2
+          format: int32
+          maximum: 32
+          minimum: 2
+          type: integer
+      required:
+      - instanceSize
+      - nodeCount
+      type: object
+    VectorSearchIndexDefinition:
+      description: The vector search index definition set by the user.
+      properties:
+        fields:
+          description: Settings that configure the fields, one per object, to index. You must define at least one "vector" type field. You can optionally define "filter" type fields also.
+          externalDocs:
+            description: Vector Search Fields
+            url: https://dochub.mongodb.org/core/avs-vector-type
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          type: array
+        nestedRoot:
+          description: Top-level path to the array that contains vector fields. When provided, vector fields under this path are treated as nested.
+          example: sections
+          type: string
+        numPartitions:
+          default: 1
+          description: Number of index partitions. Allowed values are [1, 2, 4].
+          format: int32
+          type: integer
+        storedSource:
+          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.
+          example:
+            include | exclude:
+            - field1
+            - field2
+          externalDocs:
+            description: Stored Source Fields
+            url: https://dochub.mongodb.org/core/atlas-search-stored-source
+          type: object
+      required:
+      - fields
+      title: Vector Search Index Definition
+      type: object
+    SearchStagedIndexStatusDetail:
+      description: Contains status information about an index building in the background.
+      properties:
+        definition:
+          $ref: '#/components/schemas/SearchIndexDefinition'
+        definitionVersion:
+          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
+        message:
+          description: Optional message describing an error.
+          type: string
+        queryable:
+          description: Flag that indicates whether the index generation is queryable on the host.
+          type: boolean
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+      title: Search Staged Index Status Detail
+      type: object
+    SearchHostStatusDetail:
+      properties:
+        hostname:
+          description: Hostname that corresponds to the status detail.
+          type: string
+        mainIndex:
+          $ref: '#/components/schemas/SearchMainIndexStatusDetail'
+        queryable:
+          description: Flag that indicates whether the index is queryable on the host.
+          type: boolean
+        stagedIndex:
+          $ref: '#/components/schemas/SearchStagedIndexStatusDetail'
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+      title: Search Host Status Detail
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    SearchIndexDefinition:
+      description: The search index definition set by the user.
+      properties:
+        numPartitions:
+          default: 1
+          description: Number of index partitions. Allowed values are [1, 2, 4].
+          format: int32
+          type: integer
+        storedSource:
+          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.
+          example:
+            include | exclude:
+            - field1
+            - field2
+          externalDocs:
+            description: Stored Source Fields
+            url: https://dochub.mongodb.org/core/atlas-search-stored-source
+          type: object
+      title: Search Index Definition
+      type: object
+    AtlasSearchAnalyzer:
+      properties:
+        charFilters:
+          description: Filters that examine text one character at a time and perform filtering operations.
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          type: array
+        name:
+          description: 'Name that identifies the custom analyzer. Names must be unique within an index, and must not start with any of the following strings:
+
+            - `lucene.`
+
+            - `builtin.`
+
+            - `mongodb.`'
+          type: string
+        tokenFilters:
+          description: 'Filter that performs operations such as:
+
+
+            - Stemming, which reduces related words, such as "talking", "talked", and "talks" to their root word "talk".
+
+
+            - Redaction, which is the removal of sensitive information from public documents.'
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          type: array
+        tokenizer:
+          additionalProperties:
+            description: Tokenizer that you want to use to create tokens. Tokens determine how Atlas Search splits up text into discrete chunks for indexing.
+            type: object
+          description: Tokenizer that you want to use to create tokens. Tokens determine how Atlas Search splits up text into discrete chunks for indexing.
+          type: object
+      required:
+      - name
+      - tokenizer
+      title: Atlas Search Analyzer
+      type: object
+    SearchIndexCreateRequest:
+      discriminator:
+        mapping:
+          search: '#/components/schemas/TextSearchIndexCreateRequest'
+          vectorSearch: '#/components/schemas/VectorSearchIndexCreateRequest'
+        propertyName: type
+      properties:
+        collectionName:
+          description: Label that identifies the collection to create an Atlas Search index in.
+          type: string
+        database:
+          description: Label that identifies the database that contains the collection to create an Atlas Search index in.
+          type: string
+        name:
+          description: Label that identifies this index. Within each namespace, names of all indexes in the namespace must be unique.
+          type: string
+        type:
+          description: Type of the index. The default type is search.
+          enum:
+          - search
+          - vectorSearch
+          type: string
+      required:
+      - collectionName
+      - database
+      - name
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    BasicDBObject:
+      additionalProperties:
+        type: object
+      type: object
+    SearchMainIndexStatusDetail:
+      description: Contains status information about the active index.
+      properties:
+        definition:
+          $ref: '#/components/schemas/SearchIndexDefinition'
+        definitionVersion:
+          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
+        message:
+          description: Optional message describing an error.
+          type: string
+        queryable:
+          description: Flag that indicates whether the index generation is queryable on the host.
+          type: boolean
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+      title: Search Main Index Status Detail
+      type: object
+    ApiSearchDeploymentResponseView:
+      properties:
+        encryptionAtRestProvider:
+          description: Cloud service provider that manages your customer keys to provide an additional layer of Encryption At Rest for the cluster.
+          enum:
+          - NONE
+          - AWS
+          - AZURE
+          - GCP
+          externalDocs:
+            description: Encryption at Rest using Customer Key Management
+            url: https://www.mongodb.com/docs/atlas/security-kms-encryption/
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal character string that identifies the project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the search deployment.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        specs:
+          description: List of settings that configure the Search Nodes for your cluster. The configuration will be returned for each region and shard.
+          items:
+            $ref: '#/components/schemas/ApiSearchDeploymentSpecView'
+          readOnly: true
+          type: array
+        stateName:
+          description: Human-readable label that indicates the current operating condition of this search deployment.
+          enum:
+          - IDLE
+          - PAUSED
+          - UPDATING
+          readOnly: true
+          type: string
+      type: object
+    SearchSynonymMappingDefinition:
+      description: Synonyms used for this full text index.
+      properties:
+        analyzer:
+          description: Specific pre-defined method chosen to apply to the synonyms to be searched.
+          enum:
+          - lucene.standard
+          - lucene.simple
+          - lucene.whitespace
+          - lucene.keyword
+          - lucene.arabic
+          - lucene.armenian
+          - lucene.basque
+          - lucene.bengali
+          - lucene.brazilian
+          - lucene.bulgarian
+          - lucene.catalan
+          - lucene.chinese
+          - lucene.cjk
+          - lucene.czech
+          - lucene.danish
+          - lucene.dutch
+          - lucene.english
+          - lucene.finnish
+          - lucene.french
+          - lucene.galician
+          - lucene.german
+          - lucene.greek
+          - lucene.hindi
+          - lucene.hungarian
+          - lucene.indonesian
+          - lucene.irish
+          - lucene.italian
+          - lucene.japanese
+          - lucene.korean
+          - lucene.kuromoji
+          - lucene.latvian
+          - lucene.lithuanian
+          - lucene.morfologik
+          - lucene.nori
+          - lucene.norwegian
+          - lucene.persian
+          - lucene.portuguese
+          - lucene.romanian
+          - lucene.russian
+          - lucene.smartcn
+          - lucene.sorani
+          - lucene.spanish
+          - lucene.swedish
+          - lucene.thai
+          - lucene.turkish
+          - lucene.ukrainian
+          type: string
+        name:
+          description: Label that identifies the synonym definition. Each `synonym.name` must be unique within the same index definition.
+          type: string
+        source:
+          $ref: '#/components/schemas/SynonymSource'
+      required:
+      - analyzer
+      - name
+      - source
+      title: Synonym Mapping Definition
+      type: object
+    SearchIndexUpdateRequest:
+      properties:
+        definition:
+          description: The index definition to update the search index to.
+          oneOf:
+          - $ref: '#/components/schemas/TextSearchIndexDefinition'
+          - $ref: '#/components/schemas/VectorSearchIndexDefinition'
+          type: object
+      required:
+      - definition
+      title: Search Index Update Request
+      type: object
+    TextSearchIndexDefinition:
+      description: The text search index definition set by the user.
+      properties:
+        analyzer:
+          default: lucene.standard
+          description: "Specific pre-defined method chosen to convert database field text into searchable words. This conversion reduces the text of fields into the smallest units of text. These units are called a **term** or **token**. This process, known as tokenization, involves making the following changes to the text in fields:\n\n- extracting words\n- removing punctuation\n- removing accents\n- changing to lowercase\n- removing common words\n- reducing words to their root form (stemming)\n- changing words to their base form (lemmatization)\n MongoDB Cloud uses the process you select to build the Atlas Search index."
+          enum:
+          - lucene.standard
+          - lucene.simple
+          - lucene.whitespace
+          - lucene.keyword
+          - lucene.arabic
+          - lucene.armenian
+          - lucene.basque
+          - lucene.bengali
+          - lucene.brazilian
+          - lucene.bulgarian
+          - lucene.catalan
+          - lucene.chinese
+          - lucene.cjk
+          - lucene.czech
+          - lucene.danish
+          - lucene.dutch
+          - lucene.english
+          - lucene.finnish
+          - lucene.french
+          - lucene.galician
+          - lucene.german
+          - lucene.greek
+          - lucene.hindi
+          - lucene.hungarian
+          - lucene.indonesian
+          - lucene.irish
+          - lucene.italian
+          - lucene.japanese
+          - lucene.korean
+          - lucene.kuromoji
+          - lucene.latvian
+          - lucene.lithuanian
+          - lucene.morfologik
+          - lucene.nori
+          - lucene.norwegian
+          - lucene.persian
+          - lucene.portuguese
+          - lucene.romanian
+          - lucene.russian
+          - lucene.smartcn
+          - lucene.sorani
+          - lucene.spanish
+          - lucene.swedish
+          - lucene.thai
+          - lucene.turkish
+          - lucene.ukrainian
+          externalDocs:
+            description: Atlas Search Analyzers
+            url: https://dochub.mongodb.org/core/analyzers--fts
+          type: string
+        analyzers:
+          description: List of user-defined methods to convert database field text into searchable words.
+          externalDocs:
+            description: Custom Atlas Search Analyzers
+            url: https://dochub.mongodb.org/core/custom-fts
+          items:
+            $ref: '#/components/schemas/AtlasSearchAnalyzer'
+          type: array
+        mappings:
+          $ref: '#/components/schemas/SearchMappings'
+        numPartitions:
+          default: 1
+          description: Number of index partitions. Allowed values are [1, 2, 4].
+          format: int32
+          type: integer
+        searchAnalyzer:
+          default: lucene.standard
+          description: Method applied to identify words when searching this index.
+          enum:
+          - lucene.standard
+          - lucene.simple
+          - lucene.whitespace
+          - lucene.keyword
+          - lucene.arabic
+          - lucene.armenian
+          - lucene.basque
+          - lucene.bengali
+          - lucene.brazilian
+          - lucene.bulgarian
+          - lucene.catalan
+          - lucene.chinese
+          - lucene.cjk
+          - lucene.czech
+          - lucene.danish
+          - lucene.dutch
+          - lucene.english
+          - lucene.finnish
+          - lucene.french
+          - lucene.galician
+          - lucene.german
+          - lucene.greek
+          - lucene.hindi
+          - lucene.hungarian
+          - lucene.indonesian
+          - lucene.irish
+          - lucene.italian
+          - lucene.japanese
+          - lucene.korean
+          - lucene.kuromoji
+          - lucene.latvian
+          - lucene.lithuanian
+          - lucene.morfologik
+          - lucene.nori
+          - lucene.norwegian
+          - lucene.persian
+          - lucene.portuguese
+          - lucene.romanian
+          - lucene.russian
+          - lucene.smartcn
+          - lucene.sorani
+          - lucene.spanish
+          - lucene.swedish
+          - lucene.thai
+          - lucene.turkish
+          - lucene.ukrainian
+          type: string
+        sort:
+          description: 'Sort definition for the index. When defined, the index will be pre-sorted on the specified fields, which improves query sort performance for those fields. Supports two formats: simple format with field name and direction, or complex format with additional options. The `order` field is required (1=ascending, -1=descending).The `noData` field is optional and controls how missing values are sorted(default: "lowest").'
+          example:
+            anotherField:
+              noData: highest
+              order: -1
+            fieldName: 1
+          type: object
+        storedSource:
+          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.
+          example:
+            include | exclude:
+            - field1
+            - field2
+          externalDocs:
+            description: Stored Source Fields
+            url: https://dochub.mongodb.org/core/atlas-search-stored-source
+          type: object
+        synonyms:
+          description: Rule sets that map words to their synonyms in this index.
+          externalDocs:
+            description: Synonym Mapping
+            url: https://dochub.mongodb.org/core/fts-synonym-mappings
+          items:
+            $ref: '#/components/schemas/SearchSynonymMappingDefinition'
+          type: array
+        typeSets:
+          description: Type sets for the index.
+          items:
+            $ref: '#/components/schemas/SearchTypeSets'
+          maxItems: 100
+          type: array
+      required:
+      - mappings
+      title: Text Search Index Definition
+      type: object
+    SearchIndexDefinitionVersion:
+      description: Object which includes the version number of the index definition and the time that the index definition was created.
+      properties:
+        createdAt:
+          description: The time at which this index definition was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+        version:
+          description: The version number associated with this index definition when it was created.
+          format: int64
+          type: integer
+      title: Search Index Definition Version
+      type: object
+    SynonymSource:
+      description: Data set that stores words and their applicable synonyms.
+      properties:
+        collection:
+          description: Label that identifies the MongoDB collection that stores words and their applicable synonyms.
+          type: string
+      required:
+      - collection
+      type: object
+    SearchTypeSets:
+      description: Type sets for an Atlas Search index definition.
+      externalDocs:
+        description: Type Sets
+        url: https://dochub.mongodb.org/core/atlas-search-configure-dynamic-indexing
+      properties:
+        name:
+          description: Label that identifies the type set name. Each `typeSets.name` must be unique within the same index definition.
+          type: string
+        types:
+          description: List of types associated with the type set. Each type definition must include a `type` field specifying the search field type (`autocomplete`, `boolean`, `date`, `geo`, `number`, `objectId`, `string`, `token`, or `uuid`) and may include additional configuration properties specific to that type.
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          maxItems: 100
+          type: array
+      required:
+      - name
+      - types
+      title: TypeSets
+      type: object
+    Fields:
+      externalDocs:
+        description: Atlas Search Field Mappings
+        url: https://dochub.mongodb.org/core/field-mapping-definition-fts#define-field-mappings
+      type: object
+    SearchIndexResponse:
+      discriminator:
+        mapping:
+          search: '#/components/schemas/TextSearchIndexResponse'
+          vectorSearch: '#/components/schemas/VectorSearchIndexResponse'
+        propertyName: type
+      properties:
+        collectionName:
+          description: Label that identifies the collection that contains one or more Atlas Search indexes.
+          type: string
+        database:
+          description: Label that identifies the database that contains the collection with one or more Atlas Search indexes.
+          type: string
+        indexID:
+          description: Unique 24-hexadecimal digit string that identifies this Atlas Search index.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        latestDefinition:
+          $ref: '#/components/schemas/SearchIndexDefinition'
+        latestDefinitionVersion:
+          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
+        name:
+          description: Label that identifies this index. Within each namespace, the names of all indexes must be unique.
+          type: string
+        queryable:
+          description: Flag that indicates whether the index is queryable on all hosts.
+          type: boolean
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+        statusDetail:
+          description: List of documents detailing index status on each host.
+          items:
+            $ref: '#/components/schemas/SearchHostStatusDetail'
+          type: array
+        type:
+          description: Type of the index. The default type is search.
+          enum:
+          - search
+          - vectorSearch
+          type: string
+      title: Search Index Response
+      type: object
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

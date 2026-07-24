@@ -1,0 +1,1609 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Activity Feed API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns pre-filtered activity feed links for projects and organizations. The returned links can be shared and opened to view the activity feed with the specified filters applied.
+  name: Activity Feed
+paths:
+  /api/atlas/v2/groups/{groupId}/activityFeed:
+    get:
+      description: Returns a pre-filtered activity feed link for the specified project based on the provided date range and event types. The returned link can be shared and opened to view the activity feed with the same filters applied. To use this resource, the requesting Service Account or API Key must have the Project Read Only role or higher.
+      operationId: getGroupActivityFeed
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: 'Category of incident recorded at this moment in time.
+
+
+          **IMPORTANT**: The complete list of event type values changes frequently.'
+        in: query
+        name: eventType
+        schema:
+          description: List of event types to filter the activity feed.
+          externalDocs:
+            description: Event Types
+            url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
+          items:
+            $ref: '#/components/schemas/EventTypeForNdsGroup'
+          maxItems: 20
+          type: array
+      - description: End date and time for events to include in the activity feed link. ISO 8601 timestamp format in UTC.
+        in: query
+        name: maxDate
+        schema:
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+      - description: Start date and time for events to include in the activity feed link. ISO 8601 timestamp format in UTC.
+        in: query
+        name: minDate
+        schema:
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+      - description: Human-readable label that identifies the cluster.
+        in: query
+        name: clusterName
+        schema:
+          description: List of cluster names to filter the activity feed.
+          items:
+            type: string
+          maxItems: 20
+          type: array
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/ActivityFeedLinkResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Pre-Filtered Activity Feed Link for One Project
+      tags:
+      - Activity Feed
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api activityFeed getGroupActivityFeed --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupActivityFeedApiParams{}\n\tsdkResp, httpResp, err := client.ActivityFeedApi.\n\t\tGetGroupActivityFeedWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/activityFeed?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/activityFeed?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Activity-Feed/operation/getGroupActivityFeed
+  /api/atlas/v2/orgs/{orgId}/activityFeed:
+    get:
+      description: Returns a pre-filtered activity feed link for the specified organization based on the provided date range and event types. The returned link can be shared and opened to view the activity feed with the same filters applied. To use this resource, the requesting Service Account or API Key must have the Organization Member role.
+      operationId: getOrgActivityFeed
+      parameters:
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/pretty'
+      - description: 'Category of incident recorded at this moment in time.
+
+
+          **IMPORTANT**: The complete list of event type values changes frequently.'
+        in: query
+        name: eventType
+        schema:
+          description: List of event types to filter the activity feed.
+          externalDocs:
+            description: Event Types
+            url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
+          items:
+            $ref: '#/components/schemas/EventTypeForOrg'
+          maxItems: 20
+          type: array
+      - description: End date and time for events to include in the activity feed link. ISO 8601 timestamp format in UTC.
+        in: query
+        name: maxDate
+        schema:
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+      - description: Start date and time for events to include in the activity feed link. ISO 8601 timestamp format in UTC.
+        in: query
+        name: minDate
+        schema:
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/ActivityFeedLinkResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Pre-Filtered Activity Feed Link for One Organization
+      tags:
+      - Activity Feed
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api activityFeed getOrgActivityFeed --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetOrgActivityFeedApiParams{}\n\tsdkResp, httpResp, err := client.ActivityFeedApi.\n\t\tGetOrgActivityFeedWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/activityFeed?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/activityFeed?pretty=true\""
+      x-rolesRequirements:
+      - Organization Member
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Activity-Feed/operation/getOrgActivityFeed
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  schemas:
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    ActivityFeedLinkResponse:
+      description: Response containing a shareable activity feed link.
+      properties:
+        link:
+          description: Shareable link to the activity feed with pre-applied filters.
+          example: https://cloud.mongodb.com/redirect/1234567890abcdef12345678
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      required:
+      - link
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    EventTypeForNdsGroup:
+      oneOf:
+      - enum:
+        - ALERT_ACKNOWLEDGED_AUDIT
+        - ALERT_UNACKNOWLEDGED_AUDIT
+        title: Alert Audit Types
+        type: string
+      - enum:
+        - ALERT_CONFIG_DISABLED_AUDIT
+        - ALERT_CONFIG_ENABLED_AUDIT
+        - ALERT_CONFIG_ADDED_AUDIT
+        - ALERT_CONFIG_DELETED_AUDIT
+        - ALERT_CONFIG_CHANGED_AUDIT
+        title: Alert Audit Types
+        type: string
+      - enum:
+        - API_KEY_CREATED
+        - API_KEY_DELETED
+        - API_KEY_ACCESS_LIST_ENTRY_ADDED
+        - API_KEY_ACCESS_LIST_ENTRY_DELETED
+        - API_KEY_ROLES_CHANGED
+        - API_KEY_DESCRIPTION_CHANGED
+        - API_KEY_ADDED_TO_GROUP
+        - API_KEY_REMOVED_FROM_GROUP
+        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
+        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
+        title: API User Event Types
+        type: string
+      - enum:
+        - SERVICE_ACCOUNT_CREATED
+        - SERVICE_ACCOUNT_DELETED
+        - SERVICE_ACCOUNT_ROLES_CHANGED
+        - SERVICE_ACCOUNT_DETAILS_CHANGED
+        - SERVICE_ACCOUNT_ADDED_TO_GROUP
+        - SERVICE_ACCOUNT_REMOVED_FROM_GROUP
+        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_ADDED
+        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_DELETED
+        - SERVICE_ACCOUNT_SECRET_ADDED
+        - SERVICE_ACCOUNT_SECRET_DELETED
+        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
+        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
+        title: Service Account Event Types
+        type: string
+      - enum:
+        - URL_CONFIRMATION
+        - SUCCESSFUL_DEPLOY
+        - DEPLOYMENT_FAILURE
+        - DEPLOYMENT_MODEL_CHANGE_SUCCESS
+        - DEPLOYMENT_MODEL_CHANGE_FAILURE
+        - REQUEST_RATE_LIMIT
+        - LOG_FORWARDER_FAILURE
+        - INSIDE_REALM_METRIC_THRESHOLD
+        - OUTSIDE_REALM_METRIC_THRESHOLD
+        - SYNC_FAILURE
+        - TRIGGER_FAILURE
+        - TRIGGER_AUTO_RESUMED
+        title: App Services Event Types
+        type: string
+      - enum:
+        - AUTO_INDEXING_ENABLED
+        - AUTO_INDEXING_DISABLED
+        - AUTO_INDEXING_INDEX_BUILD_SUBMITTED
+        - AUTO_INDEXING_SLOW_INDEX_BUILD
+        - AUTO_INDEXING_STALLED_INDEX_BUILD
+        - AUTO_INDEXING_FAILED_INDEX_BUILD
+        - AUTO_INDEXING_COMPLETED_INDEX_BUILD
+        - AUTO_INDEXING_STARTED_INDEX_BUILD
+        title: Auto Indexing Event Types
+        type: string
+      - enum:
+        - AUTOMATION_CONFIG_PUBLISHED_AUDIT
+        title: Automation Config Event Types
+        type: string
+      - enum:
+        - PEER_CREATED
+        - PEER_DELETED
+        - PEER_UPDATED
+        title: AWS Peer Vpc Audit Types
+        type: string
+      - enum:
+        - AZURE_PEER_CREATED
+        - AZURE_PEER_UPDATED
+        - AZURE_PEER_ACTIVE
+        - AZURE_PEER_DELETED
+        title: Azure Peer Network Audit Types
+        type: string
+      - enum:
+        - CREDIT_CARD_CURRENT
+        - CREDIT_CARD_ABOUT_TO_EXPIRE
+        - PENDING_INVOICE_UNDER_THRESHOLD
+        - PENDING_INVOICE_OVER_THRESHOLD
+        - DAILY_BILL_UNDER_THRESHOLD
+        - DAILY_BILL_OVER_THRESHOLD
+        - DAILY_BILLING_CHANGE_NORMAL
+        - DAILY_BILLING_CHANGE_OVER_THRESHOLD
+        - WEEKLY_BILLING_CHANGE_NORMAL
+        - WEEKLY_BILLING_CHANGE_OVER_THRESHOLD
+        - MONTHLY_BILLING_CHANGE_NORMAL
+        - MONTHLY_BILLING_CHANGE_OVER_THRESHOLD
+        title: Billing Event Types
+        type: string
+      - enum:
+        - CLUSTER_CONNECTION_GET_DATABASES
+        - CLUSTER_CONNECTION_GET_DATABASE_COLLECTIONS
+        - CLUSTER_CONNECTION_GET_DATABASE_NAMESPACES
+        - CLUSTER_CONNECTION_GET_NAMESPACES_WITH_UUID
+        - CLUSTER_CONNECTION_GET_AGGREGATED_VIEW_INFOS
+        - CLUSTER_CONNECTION_AGGREGATE
+        - CLUSTER_CONNECTION_CREATE_COLLECTION
+        - CLUSTER_CONNECTION_SAMPLE_COLLECTION_FIELD_NAMES
+        - CLUSTER_CONNECTION_SAMPLE_COLLECTION_FIELD_NAMES_AND_TYPES
+        - CLUSTER_CONNECTION_FIND_DOCUMENTS
+        - CLUSTER_CONNECTION_GET_NAMESPACES_AND_PROJECT_SQL_SCHEMA_DATA
+        title: Cluster Connection Audit Types
+        type: string
+      - enum:
+        - CLUSTER_MONGOS_IS_PRESENT
+        - CLUSTER_MONGOS_IS_MISSING
+        title: Cluster Event Types
+        type: string
+      - enum:
+        - CPS_SNAPSHOT_STARTED
+        - CPS_SNAPSHOT_SUCCESSFUL
+        - CPS_SNAPSHOT_FAILED
+        - CPS_CONCURRENT_SNAPSHOT_FAILED_WILL_RETRY
+        - CPS_SNAPSHOT_FALLBACK_SUCCESSFUL
+        - CPS_SNAPSHOT_BEHIND
+        - CPS_COPY_SNAPSHOT_STARTED
+        - CPS_COPY_SNAPSHOT_FAILED
+        - CPS_COPY_SNAPSHOT_FAILED_WILL_RETRY
+        - CPS_COPY_SNAPSHOT_SUCCESSFUL
+        - CPS_PREV_SNAPSHOT_OLD
+        - CPS_SNAPSHOT_FALLBACK_FAILED
+        - CPS_RESTORE_SUCCESSFUL
+        - CPS_EXPORT_SUCCESSFUL
+        - CPS_RESTORE_FAILED
+        - CPS_EXPORT_FAILED
+        - CPS_COLLECTION_RESTORE_SUCCESSFUL
+        - CPS_COLLECTION_RESTORE_FAILED
+        - CPS_COLLECTION_RESTORE_PARTIAL_SUCCESS
+        - CPS_COLLECTION_RESTORE_CANCELED
+        - CPS_AUTO_EXPORT_FAILED
+        - CPS_SNAPSHOT_DOWNLOAD_REQUEST_FAILED
+        - CPS_OPLOG_BEHIND
+        - CPS_OPLOG_CAUGHT_UP
+        title: Cps Backup Event Types
+        type: string
+      - enum:
+        - DATA_EXPLORER
+        - DATA_EXPLORER_CRUD_ATTEMPT
+        - DATA_EXPLORER_CRUD_ERROR
+        - DATA_EXPLORER_CRUD
+        title: Data Explorer Accessed Event Types
+        type: string
+      - enum:
+        - DATA_EXPLORER_SESSION_CREATED
+        title: Data Explorer Event Types
+        type: string
+      - enum:
+        - CPS_DATA_PROTECTION_ENABLE_REQUESTED
+        - CPS_DATA_PROTECTION_ENABLED
+        - CPS_DATA_PROTECTION_UPDATE_REQUESTED
+        - CPS_DATA_PROTECTION_UPDATED
+        - CPS_DATA_PROTECTION_DISABLE_REQUESTED
+        - CPS_DATA_PROTECTION_DISABLED
+        - CPS_DATA_PROTECTION_APPROVED_FOR_DISABLEMENT
+        title: CPS Backup Compliance Policy Event Types
+        type: string
+      - enum:
+        - CPS_RESTORE_REQUESTED_AUDIT
+        - CPS_SNAPSHOT_SCHEDULE_UPDATED_AUDIT
+        - CPS_SNAPSHOT_FASTER_RESTORES_START_AUDIT
+        - CPS_SNAPSHOT_FASTER_RESTORES_SUCCESS_AUDIT
+        - CPS_SNAPSHOT_FASTER_RESTORES_FAILED_AUDIT
+        - CPS_SNAPSHOT_DELETED_AUDIT
+        - CPS_SNAPSHOT_RETENTION_MODIFIED_AUDIT
+        - CPS_SNAPSHOT_IN_PROGRESS_AUDIT
+        - CPS_SNAPSHOT_COMPLETED_AUDIT
+        - CPS_ON_DEMAND_SNAPSHOT_REQUESTED
+        - CPS_OPLOG_CAUGHT_UP_AUDIT
+        - CPS_OPLOG_BEHIND_AUDIT
+        title: Disk Backup Event Types
+        type: string
+      - enum:
+        - AWS_ENCRYPTION_KEY_ROTATED
+        - AWS_ENCRYPTION_KEY_NEEDS_ROTATION
+        - AZURE_ENCRYPTION_KEY_ROTATED
+        - AZURE_ENCRYPTION_KEY_NEEDS_ROTATION
+        - GCP_ENCRYPTION_KEY_ROTATED
+        - GCP_ENCRYPTION_KEY_NEEDS_ROTATION
+        - AWS_ENCRYPTION_KEY_VALID
+        - AWS_ENCRYPTION_KEY_INVALID
+        - AZURE_ENCRYPTION_KEY_VALID
+        - AZURE_ENCRYPTION_KEY_INVALID
+        - GCP_ENCRYPTION_KEY_VALID
+        - GCP_ENCRYPTION_KEY_INVALID
+        title: Encryption Event Types
+        type: string
+      - enum:
+        - BUCKET_CREATED_AUDIT
+        - BUCKET_DELETED_AUDIT
+        title: Export Bucket Audit Types
+        type: string
+      - enum:
+        - FTS_INDEX_DELETION_FAILED
+        - FTS_INDEX_BUILD_COMPLETE
+        - FTS_INDEX_BUILD_FAILED
+        - FTS_INDEX_CREATED
+        - FTS_INDEX_UPDATED
+        - FTS_INDEX_DELETED
+        - FTS_INDEX_CLEANED_UP
+        - FTS_INDEX_STALE
+        - FTS_INDEXES_RESTORED
+        - FTS_INDEXES_RESTORE_FAILED
+        - FTS_INDEXES_SYNONYM_MAPPING_INVALID
+        title: FTS Index Audit Types
+        type: string
+      - enum:
+        - GCP_PEER_CREATED
+        - GCP_PEER_DELETED
+        - GCP_PEER_UPDATED
+        - GCP_PEER_ACTIVE
+        - GCP_PEER_INACTIVE
+        title: GCP Peer Vpc Audit Types
+        type: string
+      - enum:
+        - DATA_EXPLORER_ENABLED
+        - DATA_EXPLORER_DISABLED
+        - CREDIT_CARD_ADDED
+        - CREDIT_CARD_UPDATED
+        - GROUP_DELETED
+        - GROUP_CREATED
+        - GROUP_MOVED
+        - GROUP_TEMPORARILY_ACTIVATED
+        - GROUP_ACTIVATED
+        - GROUP_LOCKED
+        - GROUP_SUSPENDED
+        - GROUP_FLUSHED
+        - GROUP_NAME_CHANGED
+        - GROUP_CHARTS_ACTIVATION_REQUESTED
+        - GROUP_CHARTS_ACTIVATED
+        - GROUP_CHARTS_UPGRADED
+        - GROUP_CHARTS_RESET
+        - GROUP_DEFAULT_ALERTS_SETTINGS_CHANGED
+        title: Group Audit Types
+        type: string
+      - enum:
+        - PAID_IN_FULL
+        - DELINQUENT
+        - ALL_USERS_HAVE_MULTI_FACTOR_AUTH
+        - USERS_WITHOUT_MULTI_FACTOR_AUTH
+        - ENCRYPTION_AT_REST_KMS_NETWORK_ACCESS_DENIED
+        - ENCRYPTION_AT_REST_KMS_NETWORK_ACCESS_RESTORED
+        - ENCRYPTION_AT_REST_CONFIG_NO_LONGER_VALID
+        - ENCRYPTION_AT_REST_CONFIG_IS_VALID
+        - GROUP_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRING
+        - GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRING
+        - GROUP_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRED
+        - GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRED
+        - ACTIVE_LEGACY_TLS_CONNECTIONS
+        - NO_ACTIVE_LEGACY_TLS_CONNECTIONS
+        title: Group Event Types
+        type: string
+      - enum:
+        - INTEGRATION_CONFIGURED
+        - INTEGRATION_REMOVED
+        title: Group Integration Event Types
+        type: string
+      - enum:
+        - ATTEMPT_KILLOP_AUDIT
+        - ATTEMPT_KILLSESSION_AUDIT
+        - HOST_UP
+        - HOST_DOWN
+        - HOST_HAS_INDEX_SUGGESTIONS
+        - HOST_MONGOT_RECOVERED_OOM
+        - HOST_MONGOT_CRASHING_OOM
+        - HOST_MONGOT_RESUME_REPLICATION
+        - HOST_MONGOT_STOP_REPLICATION
+        - HOST_MONGOT_UNPAUSE_INITIAL_SYNC
+        - HOST_MONGOT_PAUSE_INITIAL_SYNC
+        - HOST_MONGOT_SUFFICIENT_DISK_SPACE
+        - HOST_MONGOT_APPROACHING_STOP_REPLICATION
+        - HOST_MONGOT_RESTARTED
+        - HOST_SEARCH_NODE_UNBLOCKED
+        - HOST_SEARCH_NODE_INDEX_FAILED
+        - HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN
+        - HOST_EXTERNAL_LOG_SINK_EXPORT_RESUMED
+        - HOST_ENOUGH_DISK_SPACE
+        - HOST_NOT_ENOUGH_DISK_SPACE
+        - SSH_KEY_NDS_HOST_ACCESS_REQUESTED
+        - SSH_KEY_NDS_HOST_ACCESS_REFRESHED
+        - SSH_KEY_NDS_HOST_ACCESS_ATTEMPT
+        - SSH_KEY_NDS_HOST_ACCESS_GRANTED
+        - SSH_KEY_NDS_HOST_ACCESS_LEVEL_CHANGED
+        - ALERT_HOST_SSH_SESSION_STARTED
+        - HOST_SSH_SESSION_ENDED
+        - HOST_X509_CERTIFICATE_CERTIFICATE_GENERATED_FOR_SUPPORT_ACCESS
+        - PUSH_BASED_LOG_EXPORT_RESUMED
+        - PUSH_BASED_LOG_EXPORT_STOPPED
+        - PUSH_BASED_LOG_EXPORT_DROPPED_LOG
+        - HOST_VERSION_BEHIND
+        - VERSION_BEHIND
+        - HOST_EXPOSED
+        - HOST_SSL_CERTIFICATE_STALE
+        - HOST_SECURITY_CHECKUP_NOT_MET
+        - PROFILER_CONFIGURED_TOO_WIDELY
+        title: Host Event Types
+        type: string
+      - enum:
+        - INSIDE_METRIC_THRESHOLD
+        - OUTSIDE_METRIC_THRESHOLD
+        title: Host Metric Event Types
+        type: string
+      - enum:
+        - ROLLING_INDEX_FAILED_INDEX_BUILD
+        - ROLLING_INDEX_SUCCESS_INDEX_BUILD
+        - INDEX_FAILED_INDEX_BUILD
+        - INDEX_SUCCESS_INDEX_BUILD
+        title: Index Build Audit Types
+        type: string
+      - enum:
+        - MONGOTUNE_INFO
+        - MONGOTUNE_ALERT
+        title: Mongotune Event Types
+        type: string
+      - enum:
+        - CLUSTER_CREATED
+        - CLUSTER_RESURRECTED
+        - CLUSTER_READY
+        - CLUSTER_UPDATE_SUBMITTED
+        - CLUSTER_PROCESS_ARGS_UPDATE_SUBMITTED
+        - CLUSTER_MONGOT_PROCESS_ARGS_UPDATE_SUBMITTED
+        - CLUSTER_SERVER_PARAMETERS_UPDATE_SUBMITTED
+        - CLUSTER_AUTOMATICALLY_PAUSED
+        - CLUSTER_UPDATE_STARTED
+        - CLUSTER_UPDATE_STARTED_INTERNAL
+        - CLUSTER_UPDATE_COMPLETED
+        - MATERIAL_CLUSTER_UPDATE_COMPLETED_INTERNAL
+        - CLUSTER_DELETE_SUBMITTED
+        - CLUSTER_DELETE_SUBMITTED_INTERNAL
+        - CLUSTER_DELETED
+        - CLUSTER_IMPORT_STARTED
+        - CLUSTER_IMPORT_CANCELLED
+        - CLUSTER_IMPORT_EXPIRED
+        - CLUSTER_IMPORT_CUTOVER
+        - CLUSTER_IMPORT_COMPLETED
+        - CLUSTER_IMPORT_FAILED
+        - CLUSTER_IMPORT_RESTART_REQUESTED
+        - PROJECT_LIVE_IMPORT_OVERRIDES_ADDED
+        - PROJECT_LIVE_IMPORT_OVERRIDES_UPDATED
+        - PROJECT_LIVE_IMPORT_OVERRIDES_DELETED
+        - CLUSTER_OPLOG_RESIZED
+        - CLUSTER_INSTANCE_RESTARTED
+        - CLUSTER_INSTANCE_STOP_START
+        - CLUSTER_INSTANCE_RESYNC_REQUESTED
+        - CLUSTER_INSTANCE_RESYNC_CLEARED
+        - CLUSTER_INSTANCE_UPDATE_REQUESTED
+        - CLUSTER_INSTANCE_REPLACED
+        - CLUSTER_INSTANCE_REPLACE_CLEARED
+        - CLUSTER_INSTANCE_SWAPPED
+        - CLUSTER_INSTANCE_SWAP_CLEARED
+        - CLUSTER_INSTANCE_VM_RESTART_CLEARED
+        - CLUSTER_INSTANCE_VM_REBOOT_CLEARED
+        - CLUSTER_INSTANCE_CONFIG_UPDATED
+        - CLUSTER_INSTANCE_AGENT_API_KEY_ROTATED
+        - CLUSTER_INSTANCE_SSL_ROTATED
+        - CLUSTER_INSTANCE_SSL_ROTATED_PER_CLUSTER
+        - CLUSTER_INSTANCE_SSL_REVOKED
+        - RELOAD_SSL_ON_PROCESSES
+        - RELOAD_SSL_ON_PROCESSES_REQUESTED
+        - CLUSTER_INSTANCE_ADMIN_BACKUP_SNAPSHOT_REQUESTED
+        - DATA_LAKE_QUERY_LOGS_DOWNLOADED
+        - FEDERATED_DATABASE_QUERY_LOGS_DOWNLOADED
+        - ONLINE_ARCHIVE_QUERY_LOGS_DOWNLOADED
+        - MONGODB_LOGS_DOWNLOADED
+        - MONGOSQLD_LOGS_DOWNLOADED
+        - MONGOT_LOGS_DOWNLOADED
+        - MONGODB_USER_ADDED
+        - MONGODB_USER_DELETED
+        - MONGODB_USER_X509_CERT_CREATED
+        - MONGODB_USER_X509_CERT_REVOKED
+        - MONGODB_USER_UPDATED
+        - MONGODB_ROLE_ADDED
+        - MONGODB_ROLE_DELETED
+        - MONGODB_ROLE_UPDATED
+        - NETWORK_PERMISSION_ENTRY_ADDED
+        - NETWORK_PERMISSION_ENTRY_REMOVED
+        - NETWORK_PERMISSION_ENTRY_UPDATED
+        - PRIVATE_NETWORK_ENDPOINT_ENTRY_ADDED
+        - PRIVATE_NETWORK_ENDPOINT_ENTRY_REMOVED
+        - PRIVATE_NETWORK_ENDPOINT_ENTRY_UPDATED
+        - PLAN_STARTED
+        - PLAN_COMPLETED
+        - PLAN_ABANDONED
+        - PLAN_DECLINED
+        - PLAN_FAILURE_COUNT_RESET
+        - PLAN_ASAP_REQUESTED
+        - INDEPENDENT_SHARD_AUTO_SCALING_AVAILABLE
+        - INDEPENDENT_SHARD_SCALING_CLUSTER_MIGRATED
+        - INDEPENDENT_SHARD_SCALING_CLUSTER_ROLLED_BACK
+        - MOVE_SKIPPED
+        - STEP_SKIPPED
+        - PROXY_RESTARTED
+        - PROXY_PANICKED
+        - ATLAS_MAINTENANCE_PROTECTED_HOURS_CREATED
+        - ATLAS_MAINTENANCE_PROTECTED_HOURS_MODIFIED
+        - ATLAS_MAINTENANCE_PROTECTED_HOURS_REMOVED
+        - ATLAS_MAINTENANCE_WINDOW_ADDED
+        - ATLAS_MAINTENANCE_WINDOW_MODIFIED
+        - ATLAS_MAINTENANCE_WINDOW_REMOVED
+        - ATLAS_MAINTENANCE_START_ASAP
+        - ATLAS_MAINTENANCE_SCHEDULED_FOR_NEXT_WINDOW
+        - ATLAS_MAINTENANCE_DEFERRED
+        - ATLAS_MAINTENANCE_AUTO_DEFER_ENABLED
+        - ATLAS_MAINTENANCE_AUTO_DEFER_DISABLED
+        - ATLAS_MAINTENANCE_RESET_BY_ADMIN
+        - ATLAS_MAINTENANCE_DEFERRED_BY_ADMIN
+        - SCHEDULED_MAINTENANCE
+        - PROJECT_SCHEDULED_MAINTENANCE
+        - PROJECT_LIMIT_UPDATED
+        - PROJECT_ENABLE_EXTENDED_STORAGE_SIZES_UPDATED
+        - OS_MAINTENANCE
+        - OS_MAINTENANCE_RESTART
+        - OS_MAINTENANCE_REPLACEMENT
+        - FREE_UPGRADE_STARTED
+        - FLEX_UPGRADE_STARTED
+        - SERVERLESS_UPGRADE_STARTED
+        - TEST_FAILOVER_REQUESTED
+        - USER_SECURITY_SETTINGS_UPDATED
+        - AUDIT_LOG_CONFIGURATION_UPDATED
+        - STREAMS_AUDIT_LOG_CONFIGURATION_UPDATED
+        - ENCRYPTION_AT_REST_CONFIGURATION_UPDATED
+        - ENCRYPTION_AT_REST_CONFIGURATION_VALIDATION_FAILED
+        - ENCRYPTION_AT_REST_CONFIGURATION_VALIDATION_SUCCEEDED
+        - ENCRYPTION_AT_REST_KEY_ROTATION_STARTED
+        - ENCRYPTION_AT_REST_PRIVATE_ENDPOINT_CREATED
+        - ENCRYPTION_AT_REST_PRIVATE_ENDPOINT_DELETED
+        - NDS_SET_IMAGE_OVERRIDES
+        - NDS_SET_CHEF_TARBALL_URI
+        - RESTRICTED_EMPLOYEE_ACCESS_BYPASS
+        - REVOKED_EMPLOYEE_ACCESS_BYPASS
+        - DEVICE_SYNC_DEBUG_ACCESS_GRANTED
+        - DEVICE_SYNC_DEBUG_ACCESS_REVOKED
+        - DEVICE_SYNC_DEBUG_X509_CERT_CREATED
+        - EMPLOYEE_ACCESS_GRANTED
+        - EMPLOYEE_ACCESS_REVOKED
+        - QUERY_ENGINE_TENANT_CREATED
+        - QUERY_ENGINE_TENANT_UPDATED
+        - QUERY_ENGINE_TENANT_REMOVED
+        - FEDERATED_DATABASE_CREATED
+        - FEDERATED_DATABASE_UPDATED
+        - FEDERATED_DATABASE_REMOVED
+        - TENANT_SNAPSHOT_FAILED
+        - TENANT_RESTORE_FAILED
+        - SAMPLE_DATASET_LOAD_REQUESTED
+        - CUSTOMER_X509_CRL_UPDATED
+        - CONTAINER_SUBNETS_UPDATE_REQUESTED
+        - ONLINE_ARCHIVE_CREATED
+        - ONLINE_ARCHIVE_DELETED
+        - ONLINE_ARCHIVE_UPDATED
+        - ONLINE_ARCHIVE_PAUSE_REQUESTED
+        - ONLINE_ARCHIVE_PAUSED
+        - ONLINE_ARCHIVE_ACTIVE
+        - ONLINE_ARCHIVE_ORPHANED
+        - ONLINE_ARCHIVE_DATA_EXPIRATION_RULE_ENABLED
+        - ONLINE_ARCHIVE_DATA_EXPIRATION_RULE_UPDATED
+        - ONLINE_ARCHIVE_DATA_EXPIRATION_RULE_DISABLED
+        - ONLINE_ARCHIVE_DELETE_AFTER_DATE_UPDATED
+        - CLOUD_PROVIDER_ACCESS_AWS_IAM_ROLE_ADDED
+        - CLOUD_PROVIDER_ACCESS_AWS_IAM_ROLE_DELETED
+        - CLOUD_PROVIDER_ACCESS_AWS_IAM_ROLE_UPDATED
+        - CLOUD_PROVIDER_ACCESS_AZURE_SERVICE_PRINCIPAL_ADDED
+        - CLOUD_PROVIDER_ACCESS_AZURE_SERVICE_PRINCIPAL_DELETED
+        - CLOUD_PROVIDER_ACCESS_AZURE_SERVICE_PRINCIPAL_UPDATED
+        - CLOUD_PROVIDER_ACCESS_GCP_SERVICE_ACCOUNT_ADDED
+        - CLOUD_PROVIDER_ACCESS_GCP_SERVICE_ACCOUNT_DELETED
+        - CLOUD_PROVIDER_ACCESS_GCP_SERVICE_ACCOUNT_UPDATED
+        - PENDING_INDEXES_DELETED
+        - PENDING_INDEXES_CANCELED
+        - PROCESS_RESTART_REQUESTED
+        - AUTO_HEALING_ACTION
+        - AUTO_HEALING_REQUESTED_CRITICAL_INSTANCE_POWER_CYCLE
+        - AUTO_HEALING_REQUESTED_INSTANCE_REPLACEMENT
+        - AUTO_HEALING_REQUESTED_NODE_RESYNC
+        - EXTRA_MAINTENANCE_DEFERRAL_GRANTED
+        - GROUP_AUTOMATION_CONFIG_PUBLISHED
+        - CLUSTER_AUTOMATION_CONFIG_PUBLISHED
+        - SET_ENSURE_CLUSTER_CONNECTIVITY_AFTER_FOR_CLUSTER
+        - CLUSTER_LINKED_TO_VERCEL
+        - CLUSTER_UNLINKED_FROM_VERCEL
+        - INGESTION_PIPELINE_DELETED
+        - INGESTION_PIPELINE_DESTROYED
+        - INGESTION_PIPELINE_CREATED
+        - INGESTION_PIPELINE_UPDATED
+        - OS_TUNE_FILE_OVERRIDES
+        - MONITORING_AGENT_OVERRIDES
+        - MONITORING_AGENT_REBALANCE_FLAG
+        - MONITORING_AGENT_REBALANCE_TRIGGERED
+        - CLUSTER_PREFERRED_CPU_ARCHITECTURE_MODIFIED
+        - CLUSTER_FORCE_PLANNED
+        - CLUSTER_REGIONAL_OUTAGE_SIMULATION_STARTED
+        - CLUSTER_REGIONAL_OUTAGE_SIMULATION_FAILED_TO_START
+        - CLUSTER_REGIONAL_OUTAGE_SIMULATION_END_REQUESTED
+        - CLUSTER_REGIONAL_OUTAGE_SIMULATION_COMPLETED
+        - CLUSTER_REGIONAL_OUTAGE_SIMULATION_CANCELLED_CLUSTER_PAUSE
+        - UIS_PANICKED
+        - TENANT_UPGRADE_TO_SERVERLESS_SUCCESSFUL
+        - TENANT_UPGRADE_TO_SERVERLESS_FAILED
+        - SERVERLESS_UPGRADE_TO_DEDICATED_SUCCESSFUL
+        - SERVERLESS_UPGRADE_TO_DEDICATED_FAILED
+        - CLUSTER_FORCE_RECONFIG_REQUESTED
+        - PROJECT_BYPASSED_MAINTENANCE
+        - FEATURE_FLAG_MAINTENANCE
+        - DATA_FEDERATION_QUERY_LIMIT_CONFIGURED
+        - DATA_FEDERATION_QUERY_LIMIT_DELETED
+        - DATA_API_SETUP_FOR_VERCEL
+        - ADMIN_CLUSTER_LOCK_UPDATED
+        - CLUSTER_ROLLING_RESYNC_STARTED
+        - CLUSTER_ROLLING_RESYNC_COMPLETED
+        - CLUSTER_ROLLING_RESYNC_FAILED
+        - NODE_ROLLING_RESYNC_SCHEDULED
+        - CLUSTER_ROLLING_RESYNC_CANCELED
+        - CLUSTER_OS_UPDATED
+        - CLUSTER_INSTANCE_FAMILY_UPDATED
+        - PUSH_BASED_LOG_EXPORT_ENABLED
+        - PUSH_BASED_LOG_EXPORT_CONFIGURATION_UPDATED
+        - PUSH_BASED_LOG_EXPORT_DISABLED
+        - LOG_STREAMING_ENABLED
+        - LOG_STREAMING_CONFIGURATION_UPDATED
+        - LOG_STREAMING_DISABLED
+        - DATADOG_LOG_STREAMING_ENABLED
+        - DATADOG_LOG_STREAMING_CONFIGURATION_UPDATED
+        - DATADOG_LOG_STREAMING_DISABLED
+        - SPLUNK_LOG_STREAMING_ENABLED
+        - SPLUNK_LOG_STREAMING_CONFIGURATION_UPDATED
+        - SPLUNK_LOG_STREAMING_DISABLED
+        - S3_LOG_STREAMING_ENABLED
+        - S3_LOG_STREAMING_CONFIGURATION_UPDATED
+        - S3_LOG_STREAMING_DISABLED
+        - AZURE_LOG_STREAMING_ENABLED
+        - AZURE_LOG_STREAMING_CONFIGURATION_UPDATED
+        - AZURE_LOG_STREAMING_DISABLED
+        - GCP_LOG_STREAMING_ENABLED
+        - GCP_LOG_STREAMING_CONFIGURATION_UPDATED
+        - GCP_LOG_STREAMING_DISABLED
+        - OTEL_LOG_STREAMING_ENABLED
+        - OTEL_LOG_STREAMING_CONFIGURATION_UPDATED
+        - OTEL_LOG_STREAMING_DISABLED
+        - OTEL_METRIC_INTEGRATION_ENABLED
+        - OTEL_METRIC_INTEGRATION_CONFIGURATION_UPDATED
+        - OTEL_METRIC_INTEGRATION_DISABLED
+        - AZURE_CLUSTER_PREFERRED_STORAGE_TYPE_UPDATED
+        - CONTAINER_DELETED
+        - REGIONALIZED_PRIVATE_ENDPOINT_MODE_ENABLED
+        - REGIONALIZED_PRIVATE_ENDPOINT_MODE_DISABLED
+        - STREAM_TENANT_CREATED
+        - STREAM_TENANT_UPDATED
+        - STREAM_TENANT_DELETED
+        - STREAM_TENANT_CONNECTIONS_LISTED
+        - STREAM_TENANT_CONNECTION_UPDATED
+        - STREAM_TENANT_CONNECTION_DELETED
+        - STREAM_TENANT_CONNECTION_CREATED
+        - STREAM_TENANT_CONNECTION_VIEWED
+        - STREAM_TENANT_OPERATIONAL_LOGS
+        - STREAM_TENANT_AUDIT_LOGS
+        - STREAM_TENANT_AUDIT_LOGS_DELETED
+        - QUEUED_ADMIN_ACTION_CREATED
+        - QUEUED_ADMIN_ACTION_COMPLETED
+        - QUEUED_ADMIN_ACTION_CANCELLED
+        - ATLAS_SQL_SCHEDULED_UPDATE_CREATED
+        - ATLAS_SQL_SCHEDULED_UPDATE_MODIFIED
+        - ATLAS_SQL_SCHEDULED_UPDATE_REMOVED
+        - CLUSTER_INSTANCE_DISABLED
+        - CLUSTER_INSTANCE_ENABLED
+        - CLUSTER_BLOCK_WRITE
+        - CLUSTER_UNBLOCK_WRITE
+        - KMIP_KEY_ROTATION_SCHEDULED
+        - SSL_CERTIFICATE_ISSUED
+        - PROJECT_SCHEDULED_MAINTENANCE_OUTSIDE_OF_PROTECTED_HOURS
+        - CLUSTER_CANCELING_SHARD_DRAIN_REQUESTED
+        - CLUSTER_CANCELING_CONFIG_SERVER_TRANSITION_REQUESTED
+        - CLUSTER_MIGRATE_BACK_TO_AWS_MANAGED_IP_REQUESTED
+        - CLUSTER_IP_MIGRATED_FIRST_ROUND
+        - CLUSTER_IP_MIGRATED_SECOND_ROUND
+        - CLUSTER_IP_MIGRATED_FINAL_ROUND
+        - CLUSTER_IP_ROLLED_BACK
+        - AZ_BALANCING_OVERRIDE_MODIFIED
+        - FTDC_SETTINGS_UPDATED
+        - PROXY_PROTOCOL_FOR_PRIVATE_LINK_MODE_UPDATED
+        - MONGOTUNE_WRITE_BLOCK_POLICY_ELIGIBLE
+        - MONGOTUNE_WRITE_BLOCK_POLICY_INELIGIBLE
+        - PREDICTIVE_AUTOSCALING_ENABLED
+        - PREDICTIVE_AUTOSCALING_DISABLED
+        - SHADOW_CLUSTER_CREATE_EXPOSURE
+        - SHADOW_CLUSTER_DELETE_EXPOSURE
+        - SHADOW_CLUSTER_RECORDING_STATUS_UPDATE
+        - SHADOW_CLUSTER_REPLAY_STATUS_UPDATE
+        - NODE_HIDDEN_BY_ADMIN
+        - NODE_UNHIDDEN_BY_ADMIN
+        - CLUSTER_CREATED_VIA_ANIS
+        title: Atlas Audit Types
+        type: string
+      - enum:
+        - DB_CHECK_UPDATED
+        - CLUSTER_SAMPLED_FOR_DB_CHECK
+        - DB_CHECK_SCHEDULED_FOR_CLUSTER
+        - DB_CHECK_DEFERRED_FOR_CLUSTER
+        - CLUSTER_OPTED_OUT_OF_DB_CHECK
+        title: DB Check Audit Types
+        type: string
+      - enum:
+        - CLUSTER_SAMPLED_FOR_DATA_VALIDATION
+        - DATA_VALIDATION_SUBMITTED_FOR_CLUSTER
+        - CLUSTER_OPTED_OUT_OF_DATA_VALIDATION
+        - REPLICA_SET_SAMPLED_FOR_INTER_NODE_DATA_VALIDATION
+        - REPLICA_SET_OPTED_OUT_OF_INTER_NODE_DATA_VALIDATION
+        - INTER_NODE_DATA_VALIDATION_SUBMITTED_FOR_REPLICA_SET
+        title: Data Validation Audit Types
+        type: string
+      - enum:
+        - COMPUTE_AUTO_SCALE_INITIATED
+        - DISK_AUTO_SCALE_INITIATED
+        - COMPUTE_AUTO_SCALE_INITIATED_BASE
+        - COMPUTE_AUTO_SCALE_INITIATED_ANALYTICS
+        - COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_BASE
+        - COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_ANALYTICS
+        - COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_BASE
+        - COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_ANALYTICS
+        - COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE
+        - COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_ANALYTICS
+        - COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE
+        - COMPUTE_AUTO_SCALE_OPLOG_FAIL_ANALYTICS
+        - DISK_AUTO_SCALE_MAX_DISK_SIZE_FAIL
+        - DISK_AUTO_SCALE_OPLOG_FAIL
+        - PREDICTIVE_COMPUTE_AUTO_SCALE_INITIATED_BASE
+        - PREDICTIVE_COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE
+        - PREDICTIVE_COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE
+        - CLUSTER_AUTO_SHARDING_INITIATED
+        title: Auto Scaling Audit Types
+        type: string
+      - enum:
+        - MAINTENANCE_IN_ADVANCED
+        - MAINTENANCE_AUTO_DEFERRED
+        - MAINTENANCE_STARTED
+        - MAINTENANCE_COMPLETED
+        - MAINTENANCE_NO_LONGER_NEEDED
+        title: Maintenance Window Audit Types
+        type: string
+      - enum:
+        - SERVERLESS_AUTO_SCALING_INITIATED
+        - SERVERLESS_VERTICAL_SCALING_INITIATED
+        - SERVERLESS_HORIZONTAL_SCALING_INITIATED
+        - SERVERLESS_MTM_DRAIN_REQUESTED
+        - SERVERLESS_MTM_DRAIN_INITIATED
+        - SERVERLESS_MTM_DRAIN_COMPLETED
+        - SERVERLESS_MTM_DRAIN_STOPPED
+        title: Serverless Auto Scaling Audit Types
+        type: string
+      - enum:
+        - SERVERLESS_INSTANCE_CREATED
+        - SERVERLESS_INSTANCE_READY
+        - SERVERLESS_INSTANCE_UPDATE_SUBMITTED
+        - SERVERLESS_INSTANCE_UPDATE_STARTED
+        - SERVERLESS_INSTANCE_UPDATE_COMPLETED
+        - SERVERLESS_INSTANCE_DELETE_SUBMITTED
+        - SERVERLESS_INSTANCE_DELETED
+        - SERVERLESS_INSTANCE_UNBLOCKED
+        title: Serverless Instance Audit Types
+        type: string
+      - enum:
+        - TENANT_ENDPOINT_CREATED
+        - TENANT_ENDPOINT_RESERVED
+        - TENANT_ENDPOINT_RESERVATION_FAILED
+        - TENANT_ENDPOINT_UPDATED
+        - TENANT_ENDPOINT_INITIATING
+        - TENANT_ENDPOINT_AVAILABLE
+        - TENANT_ENDPOINT_FAILED
+        - TENANT_ENDPOINT_DELETING
+        - TENANT_ENDPOINT_DELETED
+        - TENANT_ENDPOINT_EXPIRED
+        title: Auto Scaling Audit Types
+        type: string
+      - enum:
+        - TENANT_ENDPOINT_SERVICE_DEPLOYMENT_CREATED
+        - TENANT_ENDPOINT_SERVICE_CREATED
+        - TENANT_ENDPOINT_SERVICE_AVAILABLE
+        - TENANT_ENDPOINT_SERVICE_DEPLOYMENT_DELETE_REQUESTED
+        - TENANT_ENDPOINT_SERVICE_DELETED
+        - TENANT_ENDPOINT_SERVICE_DEPLOYMENT_DELETED
+        - TENANT_ENDPOINT_SERVICE_DEPLOYMENT_NUM_DESIRED_ENDPOINT_SERVICES_INCREASED
+        title: Tenant Endpoint Service Deployment Audit Types
+        type: string
+      - enum:
+        - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CA_EXPIRATION_RESOLVED
+        - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CA_EXPIRATION_CHECK
+        - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CRL_EXPIRATION_RESOLVED
+        - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CRL_EXPIRATION_CHECK
+        - NDS_X509_USER_AUTHENTICATION_MANAGED_USER_CERTS_EXPIRATION_RESOLVED
+        - NDS_X509_USER_AUTHENTICATION_MANAGED_USER_CERTS_EXPIRATION_CHECK
+        title: x509 User Auth Event Types
+        type: string
+      - enum:
+        - ONLINE_ARCHIVE_INSUFFICIENT_INDEXES_CHECK
+        - ONLINE_ARCHIVE_INSUFFICIENT_INDEXES_RESOLVED
+        - ONLINE_ARCHIVE_UP_TO_DATE
+        - ONLINE_ARCHIVE_DATA_EXPIRATION_RESOLVED
+        - ONLINE_ARCHIVE_MAX_CONSECUTIVE_OFFLOAD_WINDOWS_CHECK
+        title: Online Archive Event Types
+        type: string
+      - enum:
+        - CROSS_REGION_SUPPORTED_REGION_MODIFIED
+        - ENDPOINT_SERVICE_CREATED
+        - ENDPOINT_SERVICE_DELETED
+        - INTERFACE_ENDPOINT_CREATED
+        - INTERFACE_ENDPOINT_DELETED
+        - INTERFACE_ENDPOINT_PATCHED
+        - INTERFACE_ENDPOINT_RETRIED
+        title: Private Link Audit Types
+        type: string
+      - enum:
+        - PROACTIVE_OPERATION_EVENT_LOGGED
+        title: Proactive Operation Event Types
+        type: string
+      - enum:
+        - PRIMARY_ELECTED
+        - REPLICATION_OPLOG_WINDOW_HEALTHY
+        - REPLICATION_OPLOG_WINDOW_RUNNING_OUT
+        - ONE_PRIMARY
+        - NO_PRIMARY
+        - TOO_MANY_ELECTIONS
+        - TOO_FEW_HEALTHY_MEMBERS
+        - TOO_MANY_UNHEALTHY_MEMBERS
+        title: ReplicaSet Event Types
+        type: string
+      - enum:
+        - SEARCH_DEPLOYMENT_CREATED
+        - SEARCH_DEPLOYMENT_UPDATED
+        - SEARCH_DEPLOYMENT_DELETED
+        title: Search Deployment Audit Types
+        type: string
+      - enum:
+        - SERVERLESS_DEPLOYMENT_CREATED
+        - SERVERLESS_DEPLOYMENT_DELETED
+        - SERVERLESS_DEPLOYMENT_UPDATED
+        - SERVERLESS_DEPLOYMENT_INSTANCE_REPLACED
+        - SERVERLESS_DEPLOYMENT_INSTANCE_REBOOTED
+        - SERVERLESS_DEPLOYMENT_ENDPOINT_SERVICE_LINKED
+        - SERVERLESS_DEPLOYMENT_ENDPOINT_SERVICE_UNLINKED
+        - SERVERLESS_DEPLOYMENT_ENVOY_INSTANCE_UIS_KEYS_ROTATED
+        title: Serverless Deployment Audit Types
+        type: string
+      - enum:
+        - INSIDE_SERVERLESS_METRIC_THRESHOLD
+        - OUTSIDE_SERVERLESS_METRIC_THRESHOLD
+        title: Serverless Event Types
+        type: string
+      - enum:
+        - INSIDE_FLEX_METRIC_THRESHOLD
+        - OUTSIDE_FLEX_METRIC_THRESHOLD
+        title: Flex Metric Event Types
+        type: string
+      - enum:
+        - SETUP_SERVERLESS_INITIATED
+        title: Setup Serverless Audit Types
+        type: string
+      - enum:
+        - MAX_PROCESSOR_COUNT_REACHED
+        title: Streams Event Types
+        type: string
+      - enum:
+        - STREAM_PROCESSOR_STATE_IS_FAILED
+        - INSIDE_STREAM_PROCESSOR_METRIC_THRESHOLD
+        - OUTSIDE_STREAM_PROCESSOR_METRIC_THRESHOLD
+        title: Stream Processor Event Types
+        type: string
+      - enum:
+        - CASE_CREATED
+        title: Support Case Event Types
+        type: string
+      - enum:
+        - SUPPORT_EMAILS_SENT_SUCCESSFULLY
+        - SUPPORT_EMAILS_SENT_FAILURE
+        title: Support Event Types
+        type: string
+      - enum:
+        - TEAM_ADDED_TO_GROUP
+        - TEAM_REMOVED_FROM_GROUP
+        - TEAM_ROLES_MODIFIED
+        title: Team Event Types
+        type: string
+      - enum:
+        - TENANT_SNAPSHOT_STARTED_AUDIT
+        - TENANT_SNAPSHOT_COMPLETED_AUDIT
+        - TENANT_SNAPSHOT_DELETED_AUDIT
+        - TENANT_RESTORE_REQUESTED_AUDIT
+        - TENANT_RESTORE_COMPLETED_AUDIT
+        - TENANT_SNAPSHOT_DOWNLOAD_REQUESTED_AUDIT
+        title: Tenant Backup Event Types
+        type: string
+      - enum:
+        - JOINED_GROUP
+        - REMOVED_FROM_GROUP
+        - INVITED_TO_GROUP
+        - REQUESTED_TO_JOIN_GROUP
+        - GROUP_INVITATION_DELETED
+        - USER_ROLES_CHANGED_AUDIT
+        - JOIN_GROUP_REQUEST_DENIED_AUDIT
+        - JOIN_GROUP_REQUEST_APPROVED_AUDIT
+        title: User Event Types
+        type: string
+      - enum:
+        - CLUSTER_FCV_FIXED
+        - CLUSTER_FCV_UNFIXED
+        - CLUSTER_FCV_EXPIRATION_DATE_UPDATED
+        - CLUSTER_FCV_DOWNGRADED
+        - CLUSTER_BINARY_VERSION_DOWNGRADED
+        - CLUSTER_BINARY_VERSION_UPGRADED
+        - CLUSTER_OS_FIXED
+        - CLUSTER_OS_UNFIXED
+        title: Version Audit Types
+        type: string
+      - enum:
+        - TAGS_MODIFIED
+        - CLUSTER_TAGS_MODIFIED
+        - GROUP_TAGS_MODIFIED
+        title: Resource Event Types
+        type: string
+      - enum:
+        - EMPLOYEE_DOWNLOADED_CLUSTER_LOGS
+        title: Access Event Types
+        type: string
+      - enum:
+        - CHARTS_API_SUCCESS
+        - CHARTS_API_FAILURE
+        title: Charts Api Call Audit Types
+        type: string
+      - enum:
+        - RESOURCE_POLICY_VIOLATED
+        title: Atlas Resource Policy Audit Types
+        type: string
+      - enum:
+        - QUERY_SHAPE_BLOCKED
+        - QUERY_SHAPE_UNBLOCKED
+        title: Query Shape Event Types
+        type: string
+      - enum:
+        - SHARD_KEY_ANALYSIS_STARTED
+        - SHARD_KEY_ANALYSIS_FINISHED
+        - QUERY_SAMPLING_STARTED
+        - QUERY_SAMPLING_STOPPED
+        title: Shard Key Advisor Event Types
+        type: string
+      - enum:
+        - AI_MODELS_API_KEY_CREATED
+        - AI_MODELS_API_KEY_DELETED
+        title: Ai Models Event Types
+        type: string
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    EventTypeForOrg:
+      oneOf:
+      - enum:
+        - ALERT_ACKNOWLEDGED_AUDIT
+        - ALERT_UNACKNOWLEDGED_AUDIT
+        title: Alert Audit Types
+        type: string
+      - enum:
+        - ALERT_CONFIG_DISABLED_AUDIT
+        - ALERT_CONFIG_ENABLED_AUDIT
+        - ALERT_CONFIG_ADDED_AUDIT
+        - ALERT_CONFIG_DELETED_AUDIT
+        - ALERT_CONFIG_CHANGED_AUDIT
+        title: Alert Audit Types
+        type: string
+      - enum:
+        - API_KEY_CREATED
+        - API_KEY_DELETED
+        - API_KEY_ACCESS_LIST_ENTRY_ADDED
+        - API_KEY_ACCESS_LIST_ENTRY_DELETED
+        - API_KEY_ROLES_CHANGED
+        - API_KEY_DESCRIPTION_CHANGED
+        - API_KEY_ADDED_TO_GROUP
+        - API_KEY_REMOVED_FROM_GROUP
+        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
+        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
+        title: API User Event Types
+        type: string
+      - enum:
+        - SERVICE_ACCOUNT_CREATED
+        - SERVICE_ACCOUNT_DELETED
+        - SERVICE_ACCOUNT_ROLES_CHANGED
+        - SERVICE_ACCOUNT_DETAILS_CHANGED
+        - SERVICE_ACCOUNT_ADDED_TO_GROUP
+        - SERVICE_ACCOUNT_REMOVED_FROM_GROUP
+        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_ADDED
+        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_DELETED
+        - SERVICE_ACCOUNT_SECRET_ADDED
+        - SERVICE_ACCOUNT_SECRET_DELETED
+        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
+        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
+        title: Service Account Event Types
+        type: string
+      - enum:
+        - AWS_PAYMENT_PAID
+        - CHARGE_SUCCEEDED
+        - CHARGE_FAILED
+        - CHARGE_PROCESSING
+        - CHARGE_PENDING_REVERSAL
+        - BRAINTREE_CHARGE_FAILED
+        - INVOICE_CLOSED
+        - CHECK_PAYMENT_RECEIVED
+        - WIRE_TRANSFER_PAYMENT_RECEIVED
+        - DISCOUNT_APPLIED
+        - CREDIT_ISSUED
+        - CREDIT_PULLED_FWD
+        - CREDIT_END_DATE_MODIFIED
+        - PROMO_CODE_APPLIED
+        - PAYMENT_FORGIVEN
+        - REFUND_ISSUED
+        - ACCOUNT_DOWNGRADED
+        - ACCOUNT_UPGRADED
+        - ACCOUNT_MODIFIED
+        - SUPPORT_PLAN_ACTIVATED
+        - SUPPORT_PLAN_CANCELLED
+        - SUPPORT_PLAN_CANCELLATION_SCHEDULED
+        - INITIATE_SALESFORCE_SERVICE_CLOUD_SYNC
+        - INVOICE_ADDRESS_CHANGED
+        - INVOICE_ADDRESS_ADDED
+        - PREPAID_PLAN_ACTIVATED
+        - ELASTIC_INVOICING_MODE_ACTIVATED
+        - ELASTIC_INVOICING_MODE_DEACTIVATED
+        - TERMINATE_PAID_SERVICES
+        - BILLING_EMAIL_ADDRESS_ADDED
+        - BILLING_EMAIL_ADDRESS_CHANGED
+        - BILLING_EMAIL_ADDRESS_REMOVED
+        - AWS_BILLING_ACCOUNT_CREDIT_ISSUED
+        - GCP_BILLING_ACCOUNT_CREDIT_ISSUED
+        - CREDIT_SFOLID_MODIFIED
+        - PREPAID_PLAN_MODIFIED
+        - AWS_USAGE_REPORTED
+        - AZURE_USAGE_REPORTED
+        - GCP_USAGE_REPORTED
+        - VERCEL_USAGE_REPORTED
+        - BECAME_PAYING_ORG
+        - BECAME_LINKED_ORG
+        - NEW_LINKED_ORG
+        - UNLINKED_ORG
+        - ORG_LINKED_TO_PAYING_ORG
+        - ORG_UNLINKED_FROM_PAYING_ORG
+        - ORG_UNLINK_REQUESTED
+        - ORG_UNLINK_CANCELLED
+        - PAYMENT_UPDATED_THROUGH_API
+        - AZURE_BILLING_ACCOUNT_CREDIT_ISSUED
+        - CREDIT_START_DATE_MODIFIED
+        - CREDIT_ELASTIC_INVOICING_MODIFIED
+        - CREDIT_TYPE_MODIFIED
+        - CREDIT_AMOUNT_CENTS_MODIFIED
+        - CREDIT_AMOUNT_REMAINING_CENTS_MODIFIED
+        - CREDIT_TOTAL_BILLED_CENTS_MODIFIED
+        - CREDIT_AWS_CUSTOMER_ID_MODIFIED
+        - CREDIT_AWS_PRODUCT_CODE_MODIFIED
+        - CREDIT_GCP_MARKETPLACE_ENTITLEMENT_ID_MODIFIED
+        - CREDIT_AZURE_SUBSCRIPTION_ID_MODIFIED
+        - CREDIT_AZURE_PRIVATE_PLAN_ID_MODIFIED
+        - TARGETED_REBILL_EXECUTED
+        - LEGACY_REBILL_EXECUTED
+        - EVERGREEN_DEAL_CANCELLED
+        - GRACE_PERIOD_ACTIVATED
+        - GRACE_PERIOD_NO_LONGER_IN_EFFECT
+        - PENDING_DEAL_ACTIVATION_ADDED
+        - PENDING_DEAL_ACTIVATION_CANCELED
+        - PENDING_DEAL_APPLIED
+        - PENDING_DEAL_ACTIVATION_FAILED
+        - EVERGREEN_PRIORITY_MODIFIED
+        - CROSS_ORG_OPERATION_TICKET_TRACKING
+        - ADMIN_OVERRIDE_PAYMENT_METHOD_DELETED
+        - ADMIN_OVERRIDE_PAYMENT_METHOD_EXPIRED
+        - PAYMENT_METHOD_FLAGGED
+        - PAYMENT_METHOD_UNFLAGGED
+        - MARKETPLACE_REFUND_ISSUED
+        - PAYMENT_DUE_DATE_EXTENDED
+        title: Billing Event Types
+        type: string
+      - enum:
+        - FEDERATION_SETTINGS_CREATED
+        - FEDERATION_SETTINGS_DELETED
+        - FEDERATION_SETTINGS_UPDATED
+        - IDENTITY_PROVIDER_CREATED
+        - IDENTITY_PROVIDER_UPDATED
+        - IDENTITY_PROVIDER_DELETED
+        - IDENTITY_PROVIDER_ACTIVATED
+        - OIDC_IDENTITY_PROVIDER_UPDATED
+        - IDENTITY_PROVIDER_DEACTIVATED
+        - IDENTITY_PROVIDER_JWKS_REVOKED
+        - OIDC_IDENTITY_PROVIDER_ENABLED
+        - OIDC_IDENTITY_PROVIDER_DISABLED
+        - DOMAINS_ASSOCIATED
+        - DOMAIN_CREATED
+        - DOMAIN_DELETED
+        - DOMAIN_VERIFIED
+        - ORG_SETTINGS_CONFIGURED
+        - ORG_SETTINGS_UPDATED
+        - ORG_SETTINGS_DELETED
+        - RESTRICT_ORG_MEMBERSHIP_ENABLED
+        - RESTRICT_ORG_MEMBERSHIP_DISABLED
+        - ROLE_MAPPING_CREATED
+        - ROLE_MAPPING_UPDATED
+        - ROLE_MAPPING_DELETED
+        title: Federation Settings Event Types
+        type: string
+      - enum:
+        - GROUP_DELETED
+        - GROUP_CREATED
+        - GROUP_MOVED
+        title: Group Audit Types
+        type: string
+      - enum:
+        - MLAB_MIGRATION_COMPLETED
+        - MLAB_MIGRATION_TARGET_CLUSTER_CREATED
+        - MLAB_MIGRATION_DATABASE_USERS_IMPORTED
+        - MLAB_MIGRATION_IP_WHITELIST_IMPORTED
+        - MLAB_MIGRATION_TARGET_CLUSTER_SET
+        - MLAB_MIGRATION_DATABASE_RENAMED
+        - MLAB_MIGRATION_LIVE_IMPORT_STARTED
+        - MLAB_MIGRATION_LIVE_IMPORT_READY_FOR_CUTOVER
+        - MLAB_MIGRATION_LIVE_IMPORT_CUTOVER_COMPLETE
+        - MLAB_MIGRATION_LIVE_IMPORT_ERROR
+        - MLAB_MIGRATION_LIVE_IMPORT_CANCELLED
+        - MLAB_MIGRATION_DUMP_AND_RESTORE_TEST_STARTED
+        - MLAB_MIGRATION_DUMP_AND_RESTORE_TEST_SKIPPED
+        - MLAB_MIGRATION_DUMP_AND_RESTORE_STARTED
+        - MLAB_MIGRATION_SUPPORT_PLAN_SELECTED
+        - MLAB_MIGRATION_SUPPORT_PLAN_OPTED_OUT
+        title: Mlab Migration Audit Types
+        type: string
+      - enum:
+        - ORG_LIMIT_UPDATED
+        - SHADOW_CLUSTER_ORG_OPT_IN
+        - SHADOW_CLUSTER_ORG_OPT_OUT
+        title: Atlas Audit Types
+        type: string
+      - enum:
+        - ORG_CREATED
+        - CUSTOM_SESSION_TIMEOUT_MODIFIED
+        - SECURITY_CONTACT_MODIFIED
+        - ORG_CREDIT_CARD_ADDED
+        - ORG_CREDIT_CARD_UPDATED
+        - ORG_CREDIT_CARD_CURRENT
+        - ORG_CREDIT_CARD_ABOUT_TO_EXPIRE
+        - ORG_PAYPAL_LINKED
+        - ORG_PAYPAL_UPDATED
+        - ORG_PAYPAL_CANCELLED
+        - ORG_OVERRIDE_PAYMENT_METHOD_ADDED
+        - ORG_BANK_ACCOUNT_ADDED
+        - ORG_BANK_ACCOUNT_UPDATED
+        - ORG_WALLET_ADDED
+        - ORG_WALLET_UPDATED
+        - ORG_ACTIVATED
+        - ORG_TEMPORARILY_ACTIVATED
+        - ORG_SUSPENSION_DATE_CHANGED
+        - ORG_SUSPENDED
+        - ORG_ADMIN_SUSPENDED
+        - ORG_ADMIN_LOCKED
+        - ORG_CLUSTERS_DELETED
+        - ORG_CLUSTERS_PAUSED
+        - ORG_LOCKED
+        - ORG_LOCKED_ACCELERATED
+        - ORG_UNDER_FINANCIAL_PROTECTION
+        - ORG_NO_FINANCIAL_PROTECTION
+        - ORG_RENAMED
+        - ALL_ORG_USERS_HAVE_MFA
+        - ORG_USERS_WITHOUT_MFA
+        - ORG_INVOICE_UNDER_THRESHOLD
+        - ORG_INVOICE_OVER_THRESHOLD
+        - ORG_DAILY_BILL_UNDER_THRESHOLD
+        - ORG_DAILY_BILL_OVER_THRESHOLD
+        - ORG_DAILY_BILLING_CHANGE_NORMAL
+        - ORG_DAILY_BILLING_CHANGE_OVER_THRESHOLD
+        - ORG_WEEKLY_BILLING_CHANGE_NORMAL
+        - ORG_WEEKLY_BILLING_CHANGE_OVER_THRESHOLD
+        - ORG_MONTHLY_BILLING_CHANGE_NORMAL
+        - ORG_MONTHLY_BILLING_CHANGE_OVER_THRESHOLD
+        - ORG_GROUP_CHARGES_UNDER_THRESHOLD
+        - ORG_GROUP_CHARGES_OVER_THRESHOLD
+        - ORG_TWO_FACTOR_AUTH_REQUIRED
+        - ORG_TWO_FACTOR_AUTH_OPTIONAL
+        - ORG_PUBLIC_API_ACCESS_LIST_REQUIRED
+        - ORG_PUBLIC_API_ACCESS_LIST_NOT_REQUIRED
+        - ORG_EMPLOYEE_ACCESS_RESTRICTED
+        - ORG_EMPLOYEE_ACCESS_UNRESTRICTED
+        - ORG_CONNECTED_TO_MLAB
+        - ORG_DISCONNECTED_FROM_MLAB
+        - ORG_IDP_CERTIFICATE_CURRENT
+        - ORG_IDP_CERTIFICATE_ABOUT_TO_EXPIRE
+        - ORG_CONNECTED_TO_VERCEL
+        - ORG_DISCONNECTED_TO_VERCEL
+        - ORG_CONNECTION_UNINSTALLED_FROM_VERCEL
+        - ORG_UI_IP_ACCESS_LIST_ENABLED
+        - ORG_UI_IP_ACCESS_LIST_DISABLED
+        - ORG_EDITED_UI_IP_ACCESS_LIST_ENTRIES
+        - ORG_SERVICE_ACCOUNT_MAX_SECRET_VALIDITY_EDITED
+        - ORG_SERVICE_ACCOUNT_SECRETS_EXPIRED
+        - ORG_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRED
+        - ORG_SERVICE_ACCOUNT_SECRETS_EXPIRING
+        - ORG_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRING
+        - ORG_MONGODB_VERSION_EOL_EXTENSION_ACCEPTED
+        - ORG_MONGODB_VERSION_EOL_EXTENSION_PENDING
+        - ORG_MONGODB_VERSION_EOL_EXTENSION_CANCELLED
+        - ORG_BAAS_EOL_EXTENSION_ACCEPTED
+        - ORG_BAAS_EOL_EXTENSION_PENDING
+        - ORG_BAAS_EOL_EXTENSION_CANCELED
+        - GROUP_MOVED_FROM_ORG
+        - SANDBOX_ENABLED_FOR_ORG
+        - SANDBOX_DISABLED_FOR_ORG
+        - SANDBOX_CONFIG_DELETED
+        - SANDBOX_TEMPLATE_UPDATED
+        - ORGANIZATION_VOYAGE_SETTINGS_CREATED
+        - ORGANIZATION_VOYAGE_SETTINGS_DELETED
+        - PROJECT_CREATED_VIA_ANIS
+        title: Org Event Types
+        type: string
+      - enum:
+        - AWS_SELF_SERVE_ACCOUNT_LINKED
+        - AWS_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - AWS_SELF_SERVE_ACCOUNT_CANCELLED
+        - AWS_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - GCP_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - GCP_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - AZURE_SELF_SERVE_ACCOUNT_LINKED
+        - AZURE_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - AZURE_SELF_SERVE_ACCOUNT_CANCELLED
+        - AZURE_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - GCP_SELF_SERVE_ACCOUNT_LINKED
+        - GCP_SELF_SERVE_ACCOUNT_CANCELLED
+        - VERCEL_SELF_SERVE_ACCOUNT_LINKED
+        - VERCEL_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - VERCEL_SELF_SERVE_ACCOUNT_CANCELLED
+        - VERCEL_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - VERCEL_INVOICE_CREATED
+        - VERCEL_INVOICE_NOT_PAID
+        - VERCEL_INVOICE_OVERDUE
+        - VERCEL_INVOICE_PAID
+        - VERCEL_INVOICE_REFUNDED
+        title: Partner Event Types
+        type: string
+      - enum:
+        - SUPPORT_EMAILS_SENT_SUCCESSFULLY
+        - SUPPORT_EMAILS_SENT_FAILURE
+        title: Support Event Types
+        type: string
+      - enum:
+        - TEAM_CREATED
+        - TEAM_DELETED
+        - TEAM_UPDATED
+        - TEAM_NAME_CHANGED
+        - TEAM_ADDED_TO_GROUP
+        - TEAM_REMOVED_FROM_GROUP
+        - TEAM_ROLES_MODIFIED
+        title: Team Event Types
+        type: string
+      - enum:
+        - JOINED_ORG
+        - JOINED_TEAM
+        - INVITED_TO_ORG
+        - ORG_INVITATION_DELETED
+        - REMOVED_FROM_ORG
+        - REMOVED_FROM_TEAM
+        - USER_ROLES_CHANGED_AUDIT
+        - ORG_FLEX_CONSULTING_PURCHASED
+        - ORG_FLEX_CONSULTING_PURCHASE_FAILED
+        - INVITED_TO_TEAM
+        title: User Event Types
+        type: string
+      - enum:
+        - TAGS_MODIFIED
+        - GROUP_TAGS_MODIFIED
+        title: Resource Event Types
+        type: string
+      - enum:
+        - RESOURCE_POLICY_CREATED
+        - RESOURCE_POLICY_MODIFIED
+        - RESOURCE_POLICY_DELETED
+        - RESOURCE_POLICY_VIOLATED
+        title: Atlas Resource Policy Audit Types
+        type: string
+      - enum:
+        - AI_MODELS_USAGE_TIER_UPDATED
+        title: Ai Models Event Types
+        type: string
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+  parameters:
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    orgId:
+      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
+      in: path
+      name: orgId
+      required: true
+      schema:
+        example: 4888442a3354817a7320eb61
+        pattern: ^([a-f0-9]{24})$
+        type: string
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

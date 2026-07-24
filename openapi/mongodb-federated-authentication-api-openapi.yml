@@ -1,0 +1,2262 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Federated Authentication API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns, adds, edits, and removes federation-related features such as role mappings and connected organization configurations.
+  name: Federated Authentication
+paths:
+  /api/atlas/v2/federationSettings/{federationSettingsId}:
+    delete:
+      description: 'Deletes the federation settings instance and all associated data, including identity providers and domains. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in the last remaining connected organization. **Note**: requests to this resource will fail if there is more than one connected organization in the federation.'
+      operationId: deleteFederationSetting
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: No Content
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete One Federation Settings Instance
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication deleteFederationSetting --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteFederationSettingApiParams{}\n\thttpResp, err := client.FederatedAuthenticationApi.\n\t\tDeleteFederationSettingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/deleteFederationSetting
+  /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs:
+    get:
+      description: Returns all connected organization configurations in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations.
+      operationId: listFederationSettingConnectedOrgConfigs
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedConnectedOrgConfigsView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Organization Configurations from One Federation
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication listConnectedOrgConfigs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListFederationSettingConnectedOrgConfigsApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tListFederationSettingConnectedOrgConfigsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/listFederationSettingConnectedOrgConfigs
+      x-xgen-operation-id-override: listConnectedOrgConfigs
+  /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}:
+    delete:
+      description: 'Removes one connected organization configuration from the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role. Note: This request fails if only one connected organization exists in the federation.'
+      operationId: removeFederationSettingConnectedOrgConfig
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      - description: Unique 24-hexadecimal digit string that identifies the connected organization configuration to remove.
+        in: path
+        name: orgId
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Organization Configuration from One Federation
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication removeConnectedOrgConfig --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.RemoveFederationSettingConnectedOrgConfigApiParams{}\n\thttpResp, err := client.FederatedAuthenticationApi.\n\t\tRemoveFederationSettingConnectedOrgConfigWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/removeFederationSettingConnectedOrgConfig
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: remove
+      x-xgen-operation-id-override: removeConnectedOrgConfig
+    get:
+      description: Returns the specified connected organization configuration from the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in the connected organization.
+      operationId: getFederationSettingConnectedOrgConfig
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      - description: Unique 24-hexadecimal digit string that identifies the connected organization configuration to return.
+        in: path
+        name: orgId
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ConnectedOrgConfig'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Organization Configuration from One Federation
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication getConnectedOrgConfig --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetFederationSettingConnectedOrgConfigApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tGetFederationSettingConnectedOrgConfigWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/getFederationSettingConnectedOrgConfig
+      x-xgen-operation-id-override: getConnectedOrgConfig
+    patch:
+      description: "Updates one connected organization configuration from the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role. \n\n**Note** If the organization configuration has no associated identity provider, you can't use this resource to update role mappings or post authorization role grants.  \n\n**Note**: The `domainRestrictionEnabled` field defaults to false if not provided in the request. \n\n**Note**: If the `identityProviderId` field is not provided, you will disconnect the organization and the identity provider. \n\n**Note**: Currently connected data access identity providers missing from the `dataAccessIdentityProviderIds` field will be disconnected."
+      operationId: updateFederationSettingConnectedOrgConfig
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      - description: Unique 24-hexadecimal digit string that identifies the connected organization configuration to update.
+        in: path
+        name: orgId
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/ConnectedOrgConfig'
+        description: The connected organization configuration that you want to update.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/ConnectedOrgConfig'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Organization Configuration in One Federation
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication updateConnectedOrgConfig --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateFederationSettingConnectedOrgConfigApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tUpdateFederationSettingConnectedOrgConfigWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/updateFederationSettingConnectedOrgConfig
+      x-xgen-operation-id-override: updateConnectedOrgConfig
+  /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings:
+    get:
+      description: Returns all role mappings from the specified organization in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
+      operationId: listFederationSettingConnectedOrgConfigRoleMappings
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRoleMappingView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Role Mappings from One Organization
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication listRoleMappings --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListFederationSettingConnectedOrgConfigRoleMappingsApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tListFederationSettingConnectedOrgConfigRoleMappingsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/listFederationSettingConnectedOrgConfigRoleMappings
+      x-xgen-operation-id-override: listRoleMappings
+    post:
+      description: Adds one role mapping to the specified organization in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
+      operationId: createFederationSettingConnectedOrgConfigRoleMapping
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/AuthFederationRoleMapping'
+        description: The role mapping that you want to create.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/AuthFederationRoleMapping'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Role Mapping in One Organization Configuration
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication createRoleMapping --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateFederationSettingConnectedOrgConfigRoleMappingApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tCreateFederationSettingConnectedOrgConfigRoleMappingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/createFederationSettingConnectedOrgConfigRoleMapping
+      x-xgen-operation-id-override: createRoleMapping
+  /api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}:
+    delete:
+      description: Removes one role mapping in the specified organization from the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
+      operationId: deleteFederationSettingConnectedOrgConfigRoleMapping
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - description: Unique 24-hexadecimal digit string that identifies the role mapping that you want to remove.
+        in: path
+        name: id
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: No Content
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Role Mapping from One Organization
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication deleteRoleMapping --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteFederationSettingConnectedOrgConfigRoleMappingApiParams{}\n\thttpResp, err := client.FederatedAuthenticationApi.\n\t\tDeleteFederationSettingConnectedOrgConfigRoleMappingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/deleteFederationSettingConnectedOrgConfigRoleMapping
+      x-xgen-operation-id-override: deleteRoleMapping
+    get:
+      description: Returns one role mapping from the specified organization in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
+      operationId: getFederationSettingConnectedOrgConfigRoleMapping
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - description: Unique 24-hexadecimal digit string that identifies the role mapping that you want to return.
+        in: path
+        name: id
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/AuthFederationRoleMapping'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Role Mapping from One Organization
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication getRoleMapping --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetFederationSettingConnectedOrgConfigRoleMappingApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tGetFederationSettingConnectedOrgConfigRoleMappingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/getFederationSettingConnectedOrgConfigRoleMapping
+      x-xgen-operation-id-override: getRoleMapping
+    put:
+      description: Updates one role mapping in the specified organization in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
+      operationId: updateFederationSettingConnectedOrgConfigRoleMapping
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - description: Unique 24-hexadecimal digit string that identifies the role mapping that you want to update.
+        in: path
+        name: id
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/AuthFederationRoleMapping'
+        description: The role mapping that you want to update.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/AuthFederationRoleMapping'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Role Mapping in One Organization
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication updateRoleMapping --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateFederationSettingConnectedOrgConfigRoleMappingApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tUpdateFederationSettingConnectedOrgConfigRoleMappingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/connectedOrgConfigs/{orgId}/roleMappings/{id}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/updateFederationSettingConnectedOrgConfigRoleMapping
+      x-xgen-operation-id-override: updateRoleMapping
+  /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders:
+    get:
+      description: Returns all identity providers with the provided protocol and type in the specified federation. If no protocol is specified, only SAML identity providers will be returned. If no `idpType` is specified, only WORKFORCE identity providers will be returned. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations.
+      operationId: listFederationSettingIdentityProviders
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - description: The protocols of the target identity providers.
+        in: query
+        name: protocol
+        schema:
+          items:
+            default: SAML
+            enum:
+            - SAML
+            - OIDC
+            type: string
+          type: array
+      - description: The types of the target identity providers.
+        in: query
+        name: idpType
+        schema:
+          items:
+            default: WORKFORCE
+            enum:
+            - WORKFORCE
+            - WORKLOAD
+            type: string
+          type: array
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFederationIdentityProvider'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Identity Providers in One Federation
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication listIdentityProviders --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListFederationSettingIdentityProvidersApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tListFederationSettingIdentityProvidersWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/listFederationSettingIdentityProviders
+      x-xgen-operation-id-override: listIdentityProviders
+    post:
+      description: 'Creates one identity provider within the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations.
+
+
+        **Note**: This resource only supports the creation of OIDC identity providers.'
+      operationId: createFederationSettingIdentityProvider
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/envelope'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-11-15+json:
+            schema:
+              $ref: '#/components/schemas/FederationOidcIdentityProviderUpdate'
+        description: The identity provider that you want to create.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-11-15+json:
+              schema:
+                $ref: '#/components/schemas/FederationOidcIdentityProvider'
+              x-xgen-version: '2023-11-15'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Identity Provider
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication createIdentityProvider --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateFederationSettingIdentityProviderApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tCreateFederationSettingIdentityProviderWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/createFederationSettingIdentityProvider
+      x-xgen-operation-id-override: createIdentityProvider
+  /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}:
+    delete:
+      description: "Deletes one identity provider in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role for the connected organization. \n\n**Note**: Requests to this resource will fail if the identity provider is connected to more than one organization or is connected to an organization unowned by the requesting Service Account or API key. Before deleting an identity provider, confirm that no organization in your federation uses this identity provider."
+      externalDocs:
+        description: Manage Organization Mapping for Federated Authentication
+        url: https://www.mongodb.com/docs/atlas/security/manage-org-mapping/
+      operationId: deleteFederationSettingIdentityProvider
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - description: Unique 24-hexadecimal digit string that identifies the identity provider to connect.
+        in: path
+        name: identityProviderId
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-11-15+json:
+              x-xgen-version: '2023-11-15'
+          description: No Response
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Delete One Identity Provider
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication deleteIdentityProvider --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteFederationSettingIdentityProviderApiParams{}\n\thttpResp, err := client.FederatedAuthenticationApi.\n\t\tDeleteFederationSettingIdentityProviderWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/deleteFederationSettingIdentityProvider
+      x-xgen-operation-id-override: deleteIdentityProvider
+    get:
+      description: 'Returns one identity provider in the specified federation by the identity provider''s id. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations. Deprecated versions: v2-{2023-01-01}'
+      operationId: getFederationSettingIdentityProvider
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - description: Unique string that identifies the identity provider to connect. If using an API version before 11-15-2023, use the legacy 20-hexadecimal digit id. This id can be found within the Federation Management Console > Identity Providers tab by clicking the info icon in the IdP ID row of a configured identity provider. For all other versions, use the 24-hexadecimal digit id.
+        in: path
+        name: identityProviderId
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-11-15+json:
+              schema:
+                $ref: '#/components/schemas/FederationIdentityProvider'
+              x-xgen-version: '2023-11-15'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Identity Provider by ID
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication getIdentityProvider --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetFederationSettingIdentityProviderApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tGetFederationSettingIdentityProviderWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/getFederationSettingIdentityProvider
+      x-xgen-operation-id-override: getIdentityProvider
+    patch:
+      description: 'Updates one identity provider in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations.
+
+
+        **Note**: Changing authorization types and/or updating authorization claims can prevent current users and/or groups from accessing the database.
+
+
+        **Note**: When deactivating a SAML identity provider connected to an organization, the requesting Service Account or API key must have the Organization Owner role for the organization. If the identity provider is connected to multiple organizations, the request will fail. Deprecated versions: v2-{2023-01-01}'
+      operationId: updateFederationSettingIdentityProvider
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - description: Unique string that identifies the identity provider to connect. If using an API version before 11-15-2023, use the legacy 20-hexadecimal digit id. This id can be found within the Federation Management Console > Identity Providers tab by clicking the info icon in the IdP ID row of a configured identity provider. For all other versions, use the 24-hexadecimal digit id.
+        in: path
+        name: identityProviderId
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-11-15+json:
+            schema:
+              $ref: '#/components/schemas/FederationIdentityProviderUpdate'
+        description: The identity provider that you want to update.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-11-15+json:
+              schema:
+                $ref: '#/components/schemas/FederationIdentityProvider'
+              x-xgen-version: '2023-11-15'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '405':
+          $ref: '#/components/responses/methodNotAllowed'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Identity Provider
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication updateIdentityProvider --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateFederationSettingIdentityProviderApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tUpdateFederationSettingIdentityProviderWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PATCH \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/updateFederationSettingIdentityProvider
+      x-xgen-operation-id-override: updateIdentityProvider
+  /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/jwks:
+    delete:
+      description: "Revokes the JWKS tokens from the requested OIDC identity provider. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations. \n\n**Note**: Revoking your JWKS tokens immediately refreshes your IdP public keys from all your Atlas clusters, invalidating previously signed access tokens and logging out all users. You may need to restart your MongoDB clients. All organizations connected to the identity provider will be affected."
+      externalDocs:
+        description: Configure OIDC Authorization
+        url: https://www.mongodb.com/docs/atlas/security-oidc/#revoke-jwks
+      operationId: revokeFederationSettingIdentityProviderJwks
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - description: Unique 24-hexadecimal digit string that identifies the identity provider to connect.
+        in: path
+        name: identityProviderId
+        required: true
+        schema:
+          example: 32b6e34b3d91647abb20e7b8
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-11-15+json:
+              x-xgen-version: '2023-11-15'
+          description: No Response
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Revoke JWKS from One OIDC Identity Provider
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication revokeIdentityProviderJwks --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.RevokeFederationSettingIdentityProviderJwksApiParams{}\n\thttpResp, err := client.FederatedAuthenticationApi.\n\t\tRevokeFederationSettingIdentityProviderJwksWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/jwks\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/jwks\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/revokeFederationSettingIdentityProviderJwks
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: revoke
+      x-xgen-operation-id-override: revokeIdentityProviderJwks
+  /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/metadata.xml:
+    get:
+      description: Returns the metadata of one identity provider in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations.
+      operationId: getFederationSettingIdentityProviderMetadata
+      parameters:
+      - $ref: '#/components/parameters/federationSettingsId'
+      - $ref: '#/components/parameters/identityProviderId'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                type: string
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '405':
+          $ref: '#/components/responses/methodNotAllowed'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Metadata of One Identity Provider
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication getIdentityProviderMetadata --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetFederationSettingIdentityProviderMetadataApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tGetFederationSettingIdentityProviderMetadataWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/metadata.xml?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/metadata.xml?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/getFederationSettingIdentityProviderMetadata
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: get
+      x-xgen-operation-id-override: getIdentityProviderMetadata
+  /api/atlas/v2/orgs/{orgId}/federationSettings:
+    get:
+      description: Returns information about the federation settings for the specified organization. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in the connected organization.
+      operationId: getOrgFederationSettings
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/OrgFederationSettings'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Federation Settings for One Organization
+      tags:
+      - Federated Authentication
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api federatedAuthentication getFederationSettings --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetOrgFederationSettingsApiParams{}\n\tsdkResp, httpResp, err := client.FederatedAuthenticationApi.\n\t\tGetOrgFederationSettingsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/federationSettings?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/federationSettings?pretty=true\""
+      x-rolesRequirements:
+      - Organization Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/getOrgFederationSettings
+      x-xgen-operation-id-override: getFederationSettings
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    methodNotAllowed:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 405
+            errorCode: ATLAS_BACKUP_CANCEL_SHARD_RESTORE_JOB_NOT_ALLOWED
+            reason: Method Not Allowed
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Method Not Allowed.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  schemas:
+    FederationSamlIdentityProviderUpdate:
+      properties:
+        associatedDomains:
+          description: List that contains the domains associated with the identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          maxLength: 50
+          minLength: 1
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          example: urn:idp:default
+          type: string
+        pemFileInfo:
+          $ref: '#/components/schemas/PemFileInfoUpdate'
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        requestBinding:
+          description: SAML Authentication Request Protocol HTTP method binding (POST or REDIRECT) that Federated Authentication uses to send the authentication request.
+          enum:
+          - HTTP-POST
+          - HTTP-REDIRECT
+          type: string
+        responseSignatureAlgorithm:
+          description: Signature algorithm that Federated Authentication uses to encrypt the identity provider signature.
+          enum:
+          - SHA-1
+          - SHA-256
+          type: string
+        slug:
+          description: Custom SSO URL for the identity provider.
+          type: string
+        ssoDebugEnabled:
+          description: Flag that indicates whether the identity provider has SSO debug enabled.
+          type: boolean
+        ssoUrl:
+          description: URL that points to the receiver of the SAML authentication request.
+          example: https://example.com
+          type: string
+        status:
+          description: String enum that indicates whether the identity provider is active.
+          enum:
+          - ACTIVE
+          - INACTIVE
+          type: string
+      required:
+      - ssoDebugEnabled
+      title: SAML
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    PaginatedFederationIdentityProvider:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/FederationIdentityProvider'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    FederationOidcWorkloadIdentityProviderUpdate:
+      properties:
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          maxLength: 50
+          minLength: 1
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          example: urn:idp:default
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      title: OIDC WORKLOAD
+      type: object
+    X509Certificate:
+      properties:
+        notAfter:
+          description: Latest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+        notBefore:
+          description: Earliest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+      type: object
+    PemFileInfoUpdate:
+      description: PEM file information for the identity provider's current certificates.
+      properties:
+        certificates:
+          description: List of certificates in the file.
+          items:
+            $ref: '#/components/schemas/X509CertificateUpdate'
+          type: array
+        fileName:
+          description: Human-readable label given to the file.
+          type: string
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    PaginatedRoleMappingView:
+      description: List role mappings from the specified organization in the specified federation.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/AuthFederationRoleMapping'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    FederationOidcIdentityProviderUpdate:
+      oneOf:
+      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProviderUpdate'
+      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProviderUpdate'
+      properties:
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          maxLength: 50
+          minLength: 1
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          example: urn:idp:default
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      type: object
+    ConnectedOrgConfig:
+      properties:
+        dataAccessIdentityProviderIds:
+          description: The collection of unique ids representing the identity providers that can be used for data access in this organization.
+          items:
+            description: Unique 24-hexadecimal digit string that represents the id of the identity providers that can be used for data access in this organization.
+            type: string
+          type: array
+          uniqueItems: true
+        domainAllowList:
+          description: Approved domains that restrict users who can join the organization based on their email address.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        domainRestrictionEnabled:
+          description: Value that indicates whether domain restriction is enabled for this connected organization.
+          type: boolean
+        identityProviderId:
+          description: Legacy 20-hexadecimal digit string that identifies the UI access identity provider that this connected organization configuration is associated with. This id can be found within the Federation Management Console > Identity Providers tab by clicking the info icon in the IdP ID row of a configured identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the connected organization configuration.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        postAuthRoleGrants:
+          description: Atlas roles that are granted to a user in this organization after authenticating. Roles are a human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific MongoDB Cloud user. These roles can only be organization specific roles.
+          items:
+            enum:
+            - ORG_OWNER
+            - ORG_MEMBER
+            - ORG_GROUP_CREATOR
+            - ORG_BILLING_ADMIN
+            - ORG_BILLING_READ_ONLY
+            - ORG_STREAM_PROCESSING_ADMIN
+            - ORG_READ_ONLY
+            type: string
+          type: array
+          uniqueItems: true
+        roleMappings:
+          description: Role mappings that are configured in this organization.
+          items:
+            $ref: '#/components/schemas/AuthFederationRoleMapping'
+          type: array
+          uniqueItems: true
+        userConflicts:
+          description: List that contains the users who have an email address that doesn't match any domain on the allowed list.
+          items:
+            $ref: '#/components/schemas/FederatedUser'
+          type: array
+      required:
+      - domainRestrictionEnabled
+      - orgId
+      type: object
+    AuthFederationRoleMapping:
+      description: Mapping settings that link one IdP and MongoDB Cloud.
+      properties:
+        externalGroupName:
+          description: Unique human-readable label that identifies the identity provider group to which this role mapping applies.
+          maxLength: 200
+          minLength: 1
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this role mapping.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        roleAssignments:
+          description: Atlas roles and the unique identifiers of the groups and organizations associated with each role. The array must include at least one element with an Organization role and its respective `orgId`. Each element in the array can have a value for `orgId` or `groupId`, but not both.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfigRoleAssignment'
+          type: array
+          uniqueItems: true
+      required:
+      - externalGroupName
+      - roleAssignments
+      title: Federated Authentication Role Mapping
+      type: object
+    ConnectedOrgConfigRoleAssignment:
+      properties:
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project to which this role belongs. Each element within `roleAssignments` can have a value for `groupId` or `orgId`, but not both.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. Each element within `roleAssignments` can have a value for `orgId` or `groupId`, but not both.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        role:
+          description: Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.
+          externalDocs:
+            description: MongoDB Atlas User Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          type: string
+      type: object
+    FederationIdentityProviderUpdate:
+      oneOf:
+      - $ref: '#/components/schemas/FederationSamlIdentityProviderUpdate'
+      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProviderUpdate'
+      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProviderUpdate'
+      properties:
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          maxLength: 50
+          minLength: 1
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          example: urn:idp:default
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+      type: object
+    FederationSamlIdentityProvider:
+      properties:
+        acsUrl:
+          description: URL that points to where to send the SAML response.
+          type: string
+        associatedDomains:
+          description: List that contains the domains associated with the identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        audienceUri:
+          description: Unique string that identifies the intended audience of the SAML assertion.
+          type: string
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        pemFileInfo:
+          $ref: '#/components/schemas/PemFileInfo'
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        requestBinding:
+          description: SAML Authentication Request Protocol HTTP method binding (POST or REDIRECT) that Federated Authentication uses to send the authentication request.
+          enum:
+          - HTTP-POST
+          - HTTP-REDIRECT
+          type: string
+        responseSignatureAlgorithm:
+          description: Signature algorithm that Federated Authentication uses to encrypt the identity provider signature.
+          enum:
+          - SHA-1
+          - SHA-256
+          type: string
+        slug:
+          description: Custom SSO URL for the identity provider.
+          type: string
+        ssoDebugEnabled:
+          description: Flag that indicates whether the identity provider has SSO debug enabled.
+          type: boolean
+        ssoUrl:
+          description: URL that points to the receiver of the SAML authentication request.
+          type: string
+        status:
+          description: String enum that indicates whether the identity provider is active.
+          enum:
+          - ACTIVE
+          - INACTIVE
+          type: string
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      title: SAML
+      type: object
+    FederationOidcIdentityProvider:
+      oneOf:
+      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProvider'
+      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProvider'
+      properties:
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    X509CertificateUpdate:
+      properties:
+        content:
+          description: Certificate content.
+          type: string
+        notAfter:
+          description: Latest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+        notBefore:
+          description: Earliest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+      type: object
+    FederationOidcWorkloadIdentityProvider:
+      properties:
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      title: OIDC WORKLOAD
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    PaginatedConnectedOrgConfigsView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    FederationOidcWorkforceIdentityProviderUpdate:
+      properties:
+        associatedDomains:
+          description: List that contains the domains associated with the identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        clientId:
+          description: Client identifier that is assigned to an application by the Identity Provider.
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          maxLength: 50
+          minLength: 1
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          example: urn:idp:default
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        requestedScopes:
+          description: Scopes that MongoDB applications will request from the authorization endpoint.
+          items:
+            type: string
+          type: array
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      title: OIDC WORKFORCE
+      type: object
+    FederationOidcWorkforceIdentityProvider:
+      properties:
+        associatedDomains:
+          description: List that contains the domains associated with the identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        clientId:
+          description: Client identifier that is assigned to an application by the Identity Provider.
+          type: string
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        requestedScopes:
+          description: Scopes that MongoDB applications will request from the authorization endpoint.
+          items:
+            type: string
+          type: array
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      title: OIDC WORKFORCE
+      type: object
+    FederationIdentityProvider:
+      oneOf:
+      - $ref: '#/components/schemas/FederationSamlIdentityProvider'
+      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProvider'
+      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProvider'
+      properties:
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      type: object
+    PemFileInfo:
+      description: PEM file information for the identity provider's current certificates.
+      properties:
+        certificates:
+          description: List of certificates in the file.
+          items:
+            $ref: '#/components/schemas/X509Certificate'
+          type: array
+        fileName:
+          description: Human-readable label given to the file.
+          type: string
+      type: object
+    FederatedUser:
+      description: MongoDB Cloud user linked to this federated authentication.
+      properties:
+        emailAddress:
+          description: Email address of the MongoDB Cloud user linked to the federated organization.
+          format: email
+          type: string
+        federationSettingsId:
+          description: Unique 24-hexadecimal digit string that identifies the federation to which this MongoDB Cloud user belongs.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        firstName:
+          description: First or given name that belongs to the MongoDB Cloud user.
+          type: string
+        lastName:
+          description: Last name, family name, or surname that belongs to the MongoDB Cloud user.
+          type: string
+        userId:
+          description: Unique 24-hexadecimal digit string that identifies this user.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+      required:
+      - emailAddress
+      - federationSettingsId
+      - firstName
+      - lastName
+      title: Federated User
+      type: object
+    OrgFederationSettings:
+      description: Details that define how to connect one MongoDB Cloud organization to one federated authentication service.
+      properties:
+        federatedDomains:
+          description: List of domains associated with the organization's identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        hasRoleMappings:
+          description: Flag that indicates whether this organization has role mappings configured.
+          type: boolean
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this federation.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        identityProviderId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider connected to this organization.
+          example: c2777a9eca931f29fc2f
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        identityProviderStatus:
+          description: String enum that indicates whether the identity provider is active.
+          enum:
+          - ACTIVE
+          - INACTIVE
+          type: string
+      required:
+      - federatedDomains
+      title: Organization Federation Settings
+      type: object
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    identityProviderId:
+      description: Legacy 20-hexadecimal digit string that identifies the identity provider. This id can be found within the Federation Management Console > Identity Providers tab by clicking the info icon in the IdP ID row of a configured identity provider.
+      in: path
+      name: identityProviderId
+      required: true
+      schema:
+        example: c2777a9eca931f29fc2f
+        pattern: ^([a-f0-9]{20})$
+        type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    federationSettingsId:
+      description: Unique 24-hexadecimal digit string that identifies your federation.
+      in: path
+      name: federationSettingsId
+      required: true
+      schema:
+        example: 55fa922fb343282757d9554e
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    orgId:
+      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
+      in: path
+      name: orgId
+      required: true
+      schema:
+        example: 4888442a3354817a7320eb61
+        pattern: ^([a-f0-9]{24})$
+        type: string
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

@@ -1,0 +1,1416 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Performance Advisor API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns suggested indexes and slow query data for a database deployment. Also enables or disables MongoDB Cloud-managed slow operation thresholds. To view field values in a sample query, you must have the Project Data Access Read Only role or higher. Otherwise, MongoDB Cloud returns redacted data rather than the field values.
+  name: Performance Advisor
+paths:
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/dropIndexSuggestions:
+    get:
+      description: Returns the indexes that the Performance Advisor suggests to drop. The Performance Advisor suggests dropping unused, redundant, and hidden indexes to improve write performance and increase storage space. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupClusterPerformanceAdvisorDropIndexSuggestions
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              schema:
+                $ref: '#/components/schemas/DropIndexSuggestionsResponse'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Suggested Indexes to Drop
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor listDropIndexSuggestions --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterPerformanceAdvisorDropIndexSuggestionsApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tListGroupClusterPerformanceAdvisorDropIndexSuggestionsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/dropIndexSuggestions?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/dropIndexSuggestions?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/listGroupClusterPerformanceAdvisorDropIndexSuggestions
+      x-xgen-operation-id-override: listDropIndexSuggestions
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/schemaAdvice:
+    get:
+      description: Returns the schema suggestions that the Performance Advisor detects. The Performance Advisor provides holistic schema recommendations for your cluster by sampling documents in your most active collections and collections with slow-running queries. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupClusterPerformanceAdvisorSchemaAdvice
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              schema:
+                $ref: '#/components/schemas/SchemaAdvisorResponse'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Schema Advice
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor listSchemaAdvice --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterPerformanceAdvisorSchemaAdviceApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tListGroupClusterPerformanceAdvisorSchemaAdviceWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/schemaAdvice?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/schemaAdvice?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/listGroupClusterPerformanceAdvisorSchemaAdvice
+      x-xgen-operation-id-override: listSchemaAdvice
+  /api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/suggestedIndexes:
+    get:
+      description: Returns the indexes that the Performance Advisor suggests. The Performance Advisor monitors queries that MongoDB considers slow and suggests new indexes to improve query performance. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupClusterPerformanceAdvisorSuggestedIndexes
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Process IDs from which to retrieve suggested indexes. A `processId` is a combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests. To include multiple `processIds`, pass the parameter multiple times delimited with an ampersand (`&`) between each `processId`.
+        in: query
+        name: processIds
+        schema:
+          items:
+            pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+            type: string
+          type: array
+        style: form
+      - description: 'Namespaces from which to retrieve suggested indexes. A namespace consists of one database and one collection resource written as `.`: `<database>.<collection>`. To include multiple namespaces, pass the parameter multiple times delimited with an ampersand (`&`) between each namespace. Omit this parameter to return results for all namespaces.'
+        in: query
+        name: namespaces
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      - description: 'Date and time from which the query retrieves the suggested indexes. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).
+
+
+          - If you don''t specify the **until** parameter, the endpoint returns data covering from the **since** value and the current time.
+
+          - If you specify neither the **since** nor the **until** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: since
+        schema:
+          format: int64
+          minimum: 1199145600000
+          type: integer
+      - description: 'Date and time up until which the query retrieves the suggested indexes. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).
+
+
+          - If you specify the **until** parameter, you must specify the **since** parameter.
+
+          - If you specify neither the **since** nor the **until** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: until
+        schema:
+          format: int64
+          minimum: 1199145600000
+          type: integer
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAdvisorResponse'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Suggested Indexes
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor listClusterSuggestedIndexes --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupClusterPerformanceAdvisorSuggestedIndexesApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tListGroupClusterPerformanceAdvisorSuggestedIndexesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/suggestedIndexes?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{clusterName}/performanceAdvisor/suggestedIndexes?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/listGroupClusterPerformanceAdvisorSuggestedIndexes
+      x-xgen-operation-id-override: listClusterSuggestedIndexes
+  /api/atlas/v2/groups/{groupId}/managedSlowMs:
+    get:
+      description: Get whether the Managed Slow MS feature is enabled.
+      operationId: getGroupManagedSlowMs
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                type: boolean
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Managed Slow Operation Threshold Status
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor getManagedSlowMs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupManagedSlowMsApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tGetGroupManagedSlowMsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/managedSlowMs?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/managedSlowMs?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/getGroupManagedSlowMs
+      x-xgen-operation-id-override: getManagedSlowMs
+  /api/atlas/v2/groups/{groupId}/managedSlowMs/disable:
+    delete:
+      description: Disables the slow operation threshold that MongoDB Cloud calculated for the specified project. The threshold determines which operations the Performance Advisor and Query Profiler considers slow. When enabled, MongoDB Cloud uses the average execution time for operations on your cluster to determine slow-running queries. As a result, the threshold is more pertinent to your cluster workload. The slow operation threshold is enabled by default for dedicated clusters (M10+). When disabled, MongoDB Cloud considers any operation that takes longer than 100 milliseconds to be slow. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+      operationId: disableGroupManagedSlowMs
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Disable Managed Slow Operation Threshold
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor disableManagedSlowMs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DisableGroupManagedSlowMsApiParams{}\n\thttpResp, err := client.PerformanceAdvisorApi.\n\t\tDisableGroupManagedSlowMsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/managedSlowMs/disable\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/managedSlowMs/disable\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/disableGroupManagedSlowMs
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+      x-xgen-operation-id-override: disableManagedSlowMs
+  /api/atlas/v2/groups/{groupId}/managedSlowMs/enable:
+    post:
+      description: Enables MongoDB Cloud to use its slow operation threshold for the specified project. The threshold determines which operations the Performance Advisor and Query Profiler considers slow. When enabled, MongoDB Cloud uses the average execution time for operations on your cluster to determine slow-running queries. As a result, the threshold is more pertinent to your cluster workload. The slow operation threshold is enabled by default for dedicated clusters (M10+). When disabled, MongoDB Cloud considers any operation that takes longer than 100 milliseconds to be slow. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+      operationId: enableGroupManagedSlowMs
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: This endpoint does not return a response body.
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Enable Managed Slow Operation Threshold
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor enableManagedSlowMs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.EnableGroupManagedSlowMsApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tEnableGroupManagedSlowMsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/managedSlowMs/enable\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/managedSlowMs/enable\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/enableGroupManagedSlowMs
+      x-xgen-method-verb-override:
+        customMethod: true
+      x-xgen-operation-id-override: enableManagedSlowMs
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/namespaces:
+    get:
+      description: Returns up to 20 namespaces for collections experiencing slow queries on the specified host. If you specify a secondary member of a replica set that hasn't received any database read operations, the endpoint doesn't return any namespaces. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupProcessPerformanceAdvisorNamespaces
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: 'Length of time expressed during which the query finds suggested indexes among the managed namespaces in the cluster. This parameter expresses its value in milliseconds.
+
+
+          - If you don''t specify the **since** parameter, the endpoint returns data covering the duration before the current time.
+
+          - If you specify neither the **duration** nor **since** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: duration
+        schema:
+          format: int64
+          type: integer
+      - description: Combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      - description: 'Date and time from which the query retrieves the suggested indexes. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).
+
+
+          - If you don''t specify the **duration** parameter, the endpoint returns data covering from the **since** value and the current time.
+
+          - If you specify neither the **duration** nor the **since** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: since
+        schema:
+          format: int64
+          minimum: 1199145600000
+          type: integer
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/Namespaces'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Namespaces for One Host
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor listPerformanceAdvisorNamespaces --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupProcessPerformanceAdvisorNamespacesApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tListGroupProcessPerformanceAdvisorNamespacesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/namespaces?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/namespaces?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/listGroupProcessPerformanceAdvisorNamespaces
+      x-xgen-operation-id-override: listPerformanceAdvisorNamespaces
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/slowQueryLogs:
+    get:
+      description: Returns log lines for slow queries that the Performance Advisor and Query Profiler identified. The Performance Advisor monitors queries that MongoDB considers slow and suggests new indexes to improve query performance. MongoDB Cloud bases the threshold for slow queries on the average time of operations on your cluster. This enables workload-relevant recommendations. To use this resource, the requesting Service Account or API Key must have any Project Data Access role or the Project Observability Viewer role.
+      operationId: listGroupProcessPerformanceAdvisorSlowQueryLogs
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: 'Length of time expressed during which the query finds slow queries among the managed namespaces in the cluster. This parameter expresses its value in milliseconds.
+
+
+          - If you don''t specify the **since** parameter, the endpoint returns data covering the duration before the current time.
+
+          - If you specify neither the **duration** nor **since** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: duration
+        schema:
+          format: int64
+          type: integer
+      - description: 'Namespaces from which to retrieve slow queries. A namespace consists of one database and one collection resource written as `.`: `<database>.<collection>`. To include multiple namespaces, pass the parameter multiple times delimited with an ampersand (`&`) between each namespace. Omit this parameter to return results for all namespaces.'
+        in: query
+        name: namespaces
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      - description: Maximum number of lines from the log to return.
+        in: query
+        name: nLogs
+        schema:
+          default: 20000
+          format: int64
+          maximum: 20000
+          minimum: 0
+          type: integer
+      - description: Combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      - description: 'Date and time from which the query retrieves the slow queries. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).
+
+
+          - If you don''t specify the **duration** parameter, the endpoint returns data covering from the **since** value and the current time.
+
+          - If you specify neither the **duration** nor the **since** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: since
+        schema:
+          format: int64
+          minimum: 1199145600000
+          type: integer
+      - description: Whether or not to include metrics extracted from the slow query log as separate fields.
+        in: query
+        name: includeMetrics
+        schema:
+          default: false
+          type: boolean
+      - description: Whether or not to include the replica state of the host when the slow query log was generated as a separate field.
+        in: query
+        name: includeReplicaState
+        schema:
+          default: false
+          type: boolean
+      - description: Whether or not to include the operation type (read/write/command) extracted from the slow query log as a separate field.
+        in: query
+        name: includeOpType
+        schema:
+          default: false
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAdvisorSlowQueryList'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Slow Queries
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor listSlowQueryLogs --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupProcessPerformanceAdvisorSlowQueryLogsApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tListGroupProcessPerformanceAdvisorSlowQueryLogsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/slowQueryLogs?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/slowQueryLogs?pretty=true\""
+      x-rolesRequirements:
+      - Project Data Access Admin
+      - Project Data Access Read Only
+      - Project Data Access Read Write
+      - Project Observability Viewer
+      - Project Stream Processing Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/listGroupProcessPerformanceAdvisorSlowQueryLogs
+      x-xgen-operation-id-override: listSlowQueryLogs
+  /api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/suggestedIndexes:
+    get:
+      description: Returns the indexes that the Performance Advisor suggests. The Performance Advisor monitors queries that MongoDB considers slow and suggests new indexes to improve query performance. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
+      operationId: listGroupProcessPerformanceAdvisorSuggestedIndexes
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: 'Length of time expressed during which the query finds suggested indexes among the managed namespaces in the cluster. This parameter expresses its value in milliseconds.
+
+
+          - If you don''t specify the **since** parameter, the endpoint returns data covering the duration before the current time.
+
+          - If you specify neither the **duration** nor **since** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: duration
+        schema:
+          format: int64
+          type: integer
+      - description: 'Namespaces from which to retrieve suggested indexes. A namespace consists of one database and one collection resource written as `.`: `<database>.<collection>`. To include multiple namespaces, pass the parameter multiple times delimited with an ampersand (`&`) between each namespace. Omit this parameter to return results for all namespaces.'
+        in: query
+        name: namespaces
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      - description: Maximum number of example queries that benefit from the suggested index.
+        in: query
+        name: nExamples
+        schema:
+          default: 5
+          format: int64
+          type: integer
+      - description: Number that indicates the maximum indexes to suggest.
+        in: query
+        name: nIndexes
+        schema:
+          format: int64
+          type: integer
+      - description: Combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+        in: path
+        name: processId
+        required: true
+        schema:
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          type: string
+      - description: 'Date and time from which the query retrieves the suggested indexes. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).
+
+
+          - If you don''t specify the **duration** parameter, the endpoint returns data covering from the **since** value and the current time.
+
+          - If you specify neither the **duration** nor the **since** parameters, the endpoint returns data from the previous 24 hours.'
+        in: query
+        name: since
+        schema:
+          format: int64
+          minimum: 1199145600000
+          type: integer
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAdvisorResponse'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Suggested Indexes
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor listSuggestedIndexes --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupProcessPerformanceAdvisorSuggestedIndexesApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tListGroupProcessPerformanceAdvisorSuggestedIndexesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/suggestedIndexes?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/processes/{processId}/performanceAdvisor/suggestedIndexes?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/listGroupProcessPerformanceAdvisorSuggestedIndexes
+      x-xgen-operation-id-override: listSuggestedIndexes
+  /api/atlas/v2/groups/{groupId}/serverless/{clusterName}/performanceAdvisor/autoIndexing:
+    get:
+      deprecated: true
+      description: Get whether the Serverless Auto Indexing feature is enabled. This endpoint returns a value for Flex clusters that were created with the Create Serverless Instance endpoint or Flex clusters that were migrated from Serverless instances. However, the value returned is not indicative of the Auto Indexing state as Auto Indexing is unavailable for Flex clusters. This endpoint will be sunset on January 22, 2026.
+      externalDocs:
+        description: Create Serverless Instance
+        url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Instances/operation/createServerlessInstance
+      operationId: getGroupServerlessPerformanceAdvisorAutoIndexing
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                type: boolean
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Serverless Auto-Indexing Status
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor getServerlessAutoIndexing --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupServerlessPerformanceAdvisorAutoIndexingApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tGetGroupServerlessPerformanceAdvisorAutoIndexingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/serverless/{clusterName}/performanceAdvisor/autoIndexing?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/serverless/{clusterName}/performanceAdvisor/autoIndexing?pretty=true\""
+      x-rolesRequirements:
+      - Project Read Only
+      x-sunset: '2026-01-22'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/getGroupServerlessPerformanceAdvisorAutoIndexing
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: get
+      x-xgen-operation-id-override: getServerlessAutoIndexing
+    post:
+      deprecated: true
+      description: Set whether the Serverless Auto Indexing feature is enabled. This endpoint sets a value for Flex clusters that were created with the Create Serverless Instance endpoint or Flex clusters that were migrated from Serverless instances. However, the value returned is not indicative of the Auto Indexing state as Auto Indexing is unavailable for Flex clusters. This endpoint will be sunset on January 22, 2026.
+      externalDocs:
+        description: Create Serverless Instance
+        url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Instances/operation/createServerlessInstance
+      operationId: setGroupServerlessPerformanceAdvisorAutoIndexing
+      parameters:
+      - $ref: '#/components/parameters/groupId'
+      - description: Human-readable label that identifies the cluster.
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+      - description: Value that we want to set for the Serverless Auto Indexing toggle.
+        in: query
+        name: enable
+        required: true
+        schema:
+          type: boolean
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Set Serverless Auto-Indexing Status
+      tags:
+      - Performance Advisor
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api performanceAdvisor setServerlessAutoIndexing --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.SetGroupServerlessPerformanceAdvisorAutoIndexingApiParams{}\n\tsdkResp, httpResp, err := client.PerformanceAdvisorApi.\n\t\tSetGroupServerlessPerformanceAdvisorAutoIndexingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/serverless/{clusterName}/performanceAdvisor/autoIndexing\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/serverless/{clusterName}/performanceAdvisor/autoIndexing\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-sunset: '2026-01-22'
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Performance-Advisor/operation/setGroupServerlessPerformanceAdvisorAutoIndexing
+      x-xgen-method-verb-override:
+        customMethod: 'True'
+        verb: set
+      x-xgen-operation-id-override: setServerlessAutoIndexing
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+  schemas:
+    NamespaceObj:
+      description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+      properties:
+        namespace:
+          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+          readOnly: true
+          type: string
+        type:
+          default: collection
+          description: Human-readable label that identifies the type of namespace.
+          enum:
+          - collection
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    DropIndexSuggestionsIndex:
+      properties:
+        accessCount:
+          description: Usage count (since last restart) of index.
+          format: int64
+          type: integer
+        index:
+          description: List that contains documents that specify a key in the index and its sort order.
+          items:
+            description: One index key paired with its sort order. A value of `1` indicates an ascending sort order. A value of `-1` indicates a descending sort order. Keys in indexes with multiple keys appear in the same order that they appear in the index.
+            type: object
+          type: array
+        name:
+          description: Name of index.
+          type: string
+        namespace:
+          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+          type: string
+        shards:
+          description: List that contains strings that specifies the shards where the index is found.
+          items:
+            description: Shard name.
+            type: string
+          type: array
+        since:
+          description: Date of most recent usage of index. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+        sizeBytes:
+          description: Size of index.
+          format: int64
+          type: integer
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    SchemaAdvisorResponse:
+      properties:
+        recommendations:
+          description: List that contains the documents with information about the schema advice that Performance Advisor suggests.
+          items:
+            $ref: '#/components/schemas/SchemaAdvisorItemRecommendation'
+          readOnly: true
+          type: array
+      type: object
+    PerformanceAdvisorSlowQueryList:
+      properties:
+        slowQueries:
+          description: List of operations that the Performance Advisor detected that took longer to execute than a specified threshold.
+          items:
+            $ref: '#/components/schemas/PerformanceAdvisorSlowQuery'
+          readOnly: true
+          type: array
+      type: object
+    SchemaAdvisorItemRecommendation:
+      properties:
+        affectedNamespaces:
+          description: List that contains the namespaces and information on why those namespaces triggered the recommendation.
+          items:
+            $ref: '#/components/schemas/SchemaAdvisorNamespaceTriggers'
+          readOnly: true
+          type: array
+        description:
+          description: Description of the specified recommendation.
+          readOnly: true
+          type: string
+        recommendation:
+          description: Type of recommendation.
+          enum:
+          - REDUCE_LOOKUP_OPS
+          - AVOID_UNBOUNDED_ARRAY
+          - REDUCE_DOCUMENT_SIZE
+          - REMOVE_UNNECESSARY_INDEXES
+          - REDUCE_NUMBER_OF_NAMESPACES
+          - OPTIMIZE_CASE_INSENSITIVE_REGEX_QUERIES
+          - OPTIMIZE_TEXT_QUERIES
+          readOnly: true
+          type: string
+      type: object
+    SchemaAdvisorTriggerDetails:
+      properties:
+        description:
+          description: Description of the trigger type.
+          readOnly: true
+          type: string
+        triggerType:
+          description: Type of trigger.
+          enum:
+          - PERCENT_QUERIES_USE_LOOKUP
+          - NUMBER_OF_QUERIES_USE_LOOKUP
+          - DOCS_CONTAIN_UNBOUNDED_ARRAY
+          - NUMBER_OF_NAMESPACES
+          - DOC_SIZE_TOO_LARGE
+          - NUM_INDEXES
+          - QUERIES_CONTAIN_CASE_INSENSITIVE_REGEX
+          readOnly: true
+          type: string
+      type: object
+    PerformanceAdvisorOpStats:
+      description: Details that this resource returned about the specified query.
+      properties:
+        ms:
+          description: Length of time expressed during which the query finds suggested indexes among the managed namespaces in the cluster. This parameter expresses its value in milliseconds. This parameter relates to the **duration** query parameter.
+          format: int64
+          readOnly: true
+          type: integer
+        nReturned:
+          description: Number of results that the query returns.
+          format: int64
+          readOnly: true
+          type: integer
+        nScanned:
+          description: Number of documents that the query read.
+          format: int64
+          readOnly: true
+          type: integer
+        ts:
+          description: Date and time from which the query retrieves the suggested indexes. This parameter expresses its value in the number of seconds that have elapsed since the UNIX epoch. This parameter relates to the **since** query parameter.
+          externalDocs:
+            description: UNIX Epoch
+            url: https://en.wikipedia.org/wiki/Unix_time
+          format: int64
+          readOnly: true
+          type: integer
+      readOnly: true
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    PerformanceAdvisorIndex:
+      properties:
+        avgObjSize:
+          description: The average size of an object in the collection of this index.
+          format: double
+          readOnly: true
+          type: number
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this index.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        impact:
+          description: List that contains unique 24-hexadecimal character string that identifies the query shapes in this response that the Performance Advisor suggests.
+          items:
+            description: One unique 24-hexadecimal character string that identifies one query shape.
+            type: string
+          readOnly: true
+          type: array
+        index:
+          description: List that contains documents that specify a key in the index and its sort order.
+          items:
+            additionalProperties:
+              description: One index key paired with its sort order. A value of `1` indicates an ascending sort order. A value of `-1` indicates a descending sort order. Keys in indexes with multiple keys appear in the same order that they appear in the index.
+              enum:
+              - 1
+              - -1
+              format: int32
+              type: integer
+            description: One index key paired with its sort order. A value of `1` indicates an ascending sort order. A value of `-1` indicates a descending sort order. Keys in indexes with multiple keys appear in the same order that they appear in the index.
+            type: object
+          readOnly: true
+          type: array
+        namespace:
+          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+          readOnly: true
+          type: string
+        weight:
+          description: Estimated performance improvement that the suggested index provides. This value corresponds to **Impact** in the Performance Advisor user interface.
+          format: double
+          readOnly: true
+          type: number
+      type: object
+    PerformanceAdvisorSlowQuery:
+      description: Details of one slow query that the Performance Advisor detected.
+      properties:
+        line:
+          description: Text of the MongoDB log related to this slow query.
+          readOnly: true
+          type: string
+        metrics:
+          $ref: '#/components/schemas/PerformanceAdvisorSlowQueryMetrics'
+        namespace:
+          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+          readOnly: true
+          type: string
+        opType:
+          description: Operation type (read/write/command) associated with this slow query log.
+          readOnly: true
+          type: string
+        replicaState:
+          description: Replica state associated with this slow query log.
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    DropIndexSuggestionsResponse:
+      properties:
+        hiddenIndexes:
+          description: List that contains the documents with information about the hidden indexes that the Performance Advisor suggests to remove.
+          items:
+            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
+          readOnly: true
+          type: array
+        redundantIndexes:
+          description: List that contains the documents with information about the redundant indexes that the Performance Advisor suggests to remove.
+          items:
+            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
+          readOnly: true
+          type: array
+        unusedIndexes:
+          description: List that contains the documents with information about the unused indexes that the Performance Advisor suggests to remove.
+          items:
+            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
+          readOnly: true
+          type: array
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    SchemaAdvisorNamespaceTriggers:
+      properties:
+        namespace:
+          description: Namespace of the affected collection. Will be null for `REDUCE_NUMBER_OF_NAMESPACE` recommendation.
+          nullable: true
+          readOnly: true
+          type: string
+        triggers:
+          description: List of triggers that specify why the collection activated the recommendation.
+          items:
+            $ref: '#/components/schemas/SchemaAdvisorTriggerDetails'
+          readOnly: true
+          type: array
+      type: object
+    PerformanceAdvisorOperationView:
+      properties:
+        predicates:
+          description: List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.
+          items:
+            description: List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.
+            readOnly: true
+            type: object
+          readOnly: true
+          type: array
+        stats:
+          $ref: '#/components/schemas/PerformanceAdvisorOpStats'
+      type: object
+    PerformanceAdvisorShape:
+      properties:
+        avgMs:
+          description: Average duration in milliseconds for the queries examined that match this shape.
+          format: int64
+          readOnly: true
+          type: integer
+        count:
+          description: Number of queries examined that match this shape.
+          format: int64
+          readOnly: true
+          type: integer
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this shape. This string exists only for the duration of this API request.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        inefficiencyScore:
+          description: Average number of documents read for every document that the query returns.
+          externalDocs:
+            description: Understanding the Query Inefficiency Score
+            url: https://www.mongodb.com/docs/atlas/performance-advisor/#std-label-query-inefficiency-score
+          format: int64
+          readOnly: true
+          type: integer
+        namespace:
+          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+          readOnly: true
+          type: string
+        operations:
+          description: List that contains specific about individual queries.
+          items:
+            $ref: '#/components/schemas/PerformanceAdvisorOperationView'
+          readOnly: true
+          type: array
+      type: object
+    Namespaces:
+      properties:
+        namespaces:
+          description: List that contains each combination of database, collection, and type on the specified host.
+          items:
+            $ref: '#/components/schemas/NamespaceObj'
+          readOnly: true
+          type: array
+          uniqueItems: true
+      type: object
+    PerformanceAdvisorResponse:
+      properties:
+        shapes:
+          description: List of query predicates, sorts, and projections that the Performance Advisor suggests.
+          items:
+            $ref: '#/components/schemas/PerformanceAdvisorShape'
+          readOnly: true
+          type: array
+        suggestedIndexes:
+          description: List that contains the documents with information about the indexes that the Performance Advisor suggests.
+          items:
+            $ref: '#/components/schemas/PerformanceAdvisorIndex'
+          readOnly: true
+          type: array
+      type: object
+    PerformanceAdvisorSlowQueryMetrics:
+      description: Metrics from a slow query log.
+      properties:
+        docsExamined:
+          description: The number of documents in the collection that MongoDB scanned in order to carry out the operation.
+          format: int64
+          readOnly: true
+          type: integer
+        docsExaminedReturnedRatio:
+          description: Ratio of documents examined to documents returned.
+          format: double
+          readOnly: true
+          type: number
+        docsReturned:
+          description: The number of documents returned by the operation.
+          format: int64
+          readOnly: true
+          type: integer
+        fromUserConnection:
+          description: This boolean will be true when the server can identify the query source as non-server. This field is only available for MDB 8.0+.
+          readOnly: true
+          type: boolean
+        hasIndexCoverage:
+          description: Indicates if the query has index coverage.
+          readOnly: true
+          type: boolean
+        hasSort:
+          description: This boolean will be true when a query cannot use the ordering in the index to return the requested sorted results; i.e. MongoDB must sort the documents after it receives the documents from a cursor.
+          readOnly: true
+          type: boolean
+        keysExamined:
+          description: The number of index keys that MongoDB scanned in order to carry out the operation.
+          format: int64
+          readOnly: true
+          type: integer
+        keysExaminedReturnedRatio:
+          description: Ratio of keys examined to documents returned.
+          format: double
+          readOnly: true
+          type: number
+        numYields:
+          description: The number of times the operation yielded to allow other operations to complete.
+          format: int64
+          readOnly: true
+          type: integer
+        operationExecutionTime:
+          description: Total execution time of a query in milliseconds.
+          format: int64
+          readOnly: true
+          type: integer
+        responseLength:
+          description: The length in bytes of the operation's result document.
+          format: int64
+          readOnly: true
+          type: integer
+      readOnly: true
+      type: object
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

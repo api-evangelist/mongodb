@@ -1,0 +1,1647 @@
+openapi: 3.0.1
+info:
+  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Access Tracking Invoices API
+  version: '2.0'
+  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns invoices.
+  name: Invoices
+paths:
+  /api/atlas/v2/orgs/{orgId}/billing/costExplorer/usage:
+    post:
+      description: Creates a query process within the Cost Explorer for the given parameters. A token is returned that can be used to poll the status of the query and eventually retrieve the results.
+      operationId: createOrgBillingCostExplorerUsageProcess
+      parameters:
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/envelope'
+      requestBody:
+        content:
+          application/vnd.atlas.2023-01-01+json:
+            schema:
+              $ref: '#/components/schemas/CostExplorerFilterRequestBody'
+        description: Filter parameters for the Cost Explorer query.
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/CostExplorerFilterResponseView'
+              x-xgen-version: '2023-01-01'
+          description: Accepted
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Cost Explorer Query Process
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices createCostExplorerProcess --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateOrgBillingCostExplorerUsageProcessApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tCreateOrgBillingCostExplorerUsageProcessWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/billing/costExplorer/usage\" \\\n  -d '{ <Payload> }'"
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/billing/costExplorer/usage\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/createOrgBillingCostExplorerUsageProcess
+      x-xgen-method-verb-override:
+        customMethod: false
+        verb: createProcess
+      x-xgen-operation-id-override: createCostExplorerProcess
+  /api/atlas/v2/orgs/{orgId}/billing/costExplorer/usage/{token}:
+    get:
+      description: Returns the usage details for a Cost Explorer query, if the query is finished and the data is ready to be viewed. If the data is not ready, a 'processing' response will indicate that another request should be sent later to view the data.
+      operationId: getOrgBillingCostExplorerUsage
+      parameters:
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/envelope'
+      - description: Unique 64 digit string that identifies the Cost Explorer query.
+        in: path
+        name: token
+        required: true
+        schema:
+          example: 4ABBE973862346D40F3AE859D4BE96E0F895764EB14EAB039E7B82F9D638C05C
+          maxLength: 64
+          minLength: 64
+          type: string
+      responses:
+        '102':
+          description: Processing
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+csv:
+              example: 'Billed Date,666acb8787ba90706905dcae,
+
+                Invoice Id,"June 1, 2024 - July 1, 2024",
+
+                Organization Name,Test 2,
+
+                Organization ID,666acb8787ba90706905dcae,
+
+                Project Name,666acb8787ba90706905dcae,
+
+                Project Id,666acb8787ba90706905dcae,
+
+                Cluster Name,TestCluster
+
+                Cluster Unique Id,666acb8787ba90706905dcae
+
+                Usage Amount, 1018.39
+
+                '
+              schema:
+                type: string
+              x-xgen-version: '2023-01-01'
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/CostExplorerQueryResult'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return Usage Details for One Cost Explorer Query
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices getCostExplorerUsage --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetOrgBillingCostExplorerUsageApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tGetOrgBillingCostExplorerUsageWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/billing/costExplorer/usage/{token}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/billing/costExplorer/usage/{token}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/getOrgBillingCostExplorerUsage
+      x-xgen-operation-id-override: getCostExplorerUsage
+  /api/atlas/v2/orgs/{orgId}/invoices:
+    get:
+      description: 'Returns all invoices that MongoDB issued to the specified organization. This list includes all invoices regardless of invoice status. To use this resource, the requesting Service Account or API Key must have the Organization Billing Viewer, Organization Billing Admin, or Organization Owner role. If you have a cross-organization setup, you can view linked invoices if you have the Organization Billing Admin or Organization Owner role.
+
+        To compute the total owed amount of the invoices - sum up total owed of each invoice. It could be computed as a sum of owed amount of each payment included into the invoice. To compute payment''s owed amount - use formula `totalBilledCents` * `unitPrice` + `salesTax` - `startingBalanceCents`.'
+      operationId: listOrgInvoices
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Flag that indicates whether to return linked invoices in the `linkedInvoices` field.
+        in: query
+        name: viewLinkedInvoices
+        schema:
+          default: true
+          type: boolean
+      - description: Statuses of the invoice to be retrieved. Omit to return invoices of all statuses.
+        in: query
+        name: statusNames
+        schema:
+          items:
+            enum:
+            - PENDING
+            - CLOSED
+            - FORGIVEN
+            - FAILED
+            - PAID
+            - FREE
+            - PREPAID
+            - INVOICED
+            type: string
+          type: array
+          uniqueItems: true
+      - description: Retrieve the invoices the `startDates` of which are greater than or equal to the `fromDate`. If omit, the invoices return will go back to earliest `startDate`.
+        in: query
+        name: fromDate
+        schema:
+          example: '2023-01-01'
+          format: date
+          type: string
+      - description: Retrieve the invoices the `endDates` of which are smaller than or equal to the `toDate`. If omit, the invoices return will go further to latest `endDate`.
+        in: query
+        name: toDate
+        schema:
+          example: '2023-01-01'
+          format: date
+          type: string
+      - description: Field used to sort the returned invoices by. Use in combination with `orderBy` parameter to control the order of the result.
+        in: query
+        name: sortBy
+        schema:
+          default: END_DATE
+          enum:
+          - START_DATE
+          - END_DATE
+          type: string
+      - description: Field used to order the returned invoices by. Use in combination of `sortBy` parameter to control the order of the result.
+        example: desc
+        in: query
+        name: orderBy
+        schema:
+          default: desc
+          enum:
+          - desc
+          - asc
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiInvoiceMetadataView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Invoices for One Organization
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices listInvoices --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListOrgInvoicesApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tListOrgInvoicesWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/listOrgInvoices
+      x-xgen-operation-id-override: listInvoices
+  /api/atlas/v2/orgs/{orgId}/invoices/pending:
+    get:
+      description: Returns all invoices accruing charges for the current billing cycle for the specified organization. To use this resource, the requesting Service Account or API Key must have the Organization Billing Viewer, Organization Billing Admin, or Organization Owner role. If you have a cross-organization setup, you can view linked invoices if you have the Organization Billing Admin or Organization Owner Role.
+      operationId: listOrgInvoicePending
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiInvoiceView'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Pending Invoices for One Organization
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices listInvoicePending --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListOrgInvoicePendingApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tListOrgInvoicePendingWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/pending?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/pending?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/listOrgInvoicePending
+      x-xgen-operation-id-override: listInvoicePending
+  /api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}:
+    get:
+      description: 'Returns one invoice that MongoDB issued to the specified organization. A unique 24-hexadecimal digit string identifies the invoice. You can choose to receive this invoice in JSON or CSV format. To use this resource, the requesting Service Account or API Key must have the Organization Billing Viewer, Organization Billing Admin, or Organization Owner role. If you have a cross-organization setup, you can query for a linked invoice if you have the Organization Billing Admin or Organization Owner role.
+
+        To compute the total owed amount of the invoice - sum up total owed amount of each payment included into the invoice. To compute payment''s owed amount - use formula `totalBilledCents` * `unitPrice` + `salesTax` - `startingBalanceCents`.'
+      operationId: getOrgInvoice
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.
+        in: path
+        name: invoiceId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+csv:
+              example: 'Invoice Number,666acb8787ba43606905dcae,
+
+                Billing Period,"June 1, 2024 - July 1, 2024",
+
+                Organization Name,Test 2,
+
+                Organization ID,666acb8787ba43606905dcac,
+
+
+                Date,Usage Date,Description,Note,Organization Name,Organization ID,Project,Project ID,SKU,Region,Cluster,Replica Set,Config Server,Application,Unit,Unit Price,Quantity,Discount Percent,Amount
+
+                '
+              schema:
+                type: string
+              x-xgen-version: '2023-01-01'
+            application/vnd.atlas.2023-01-01+json:
+              schema:
+                $ref: '#/components/schemas/BillingInvoice'
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Invoice for One Organization
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices getInvoice --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetOrgInvoiceApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tGetOrgInvoiceWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/getOrgInvoice
+      x-xgen-operation-id-override: getInvoice
+  /api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}/csv:
+    get:
+      description: "Returns one invoice that MongoDB issued to the specified organization in CSV format. A unique 24-hexadecimal digit string identifies the invoice. To use this resource, the requesting Service Account or API Key have at least the Organization Billing Viewer, Organization Billing Admin, or Organization Owner role. If you have a cross-organization setup, you can query for a linked invoice if you have the Organization Billing Admin or Organization Owner Role.\n To compute the total owed amount of the invoice - sum up total owed amount of each payment included into the invoice. To compute payment's owed amount - use formula `totalBilledCents` * `unitPrice` + `salesTax` - `startingBalanceCents`."
+      operationId: getOrgInvoiceCsv
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/orgId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.
+        in: path
+        name: invoiceId
+        required: true
+        schema:
+          pattern: '[0-9a-f]+'
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2023-01-01+csv:
+              example: 'Invoice Number,666acb8787ba43606905dcae,
+
+                Billing Period,"June 1, 2024 - July 1, 2024",
+
+                Organization Name,Test 2,
+
+                Organization ID,666acb8787ba43606905dcac,
+
+
+                Date,Usage Date,Description,Note,Organization Name,Organization ID,Project,Project ID,SKU,Region,Cluster,Replica Set,Config Server,Application,Unit,Unit Price,Quantity,Discount Percent,Amount
+
+                '
+              schema:
+                type: string
+              x-xgen-version: '2023-01-01'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Invoice as CSV for One Organization
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices getInvoiceCsv --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetOrgInvoiceCsvApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tGetOrgInvoiceCsvWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+csv\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}/csv?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+csv\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}/csv?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/getOrgInvoiceCsv
+      x-xgen-operation-id-override: getInvoiceCsv
+  /api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}/lineItems:search:
+    get:
+      description: Query the `lineItems` of the specified invoice and return the result JSON. A unique 24-hexadecimal digit string identifies the invoice.
+      operationId: searchOrgInvoiceLineItems
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/orgId'
+      - description: Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.
+        in: path
+        name: invoiceId
+        required: true
+        schema:
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2024-08-05+json:
+            schema:
+              $ref: '#/components/schemas/ApiPublicUsageDetailsQueryRequest'
+        description: Filter parameters for the `lineItems` query. Send a request with an empty JSON body to retrieve all line items for a given `invoiceID` without applying any filters.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2024-08-05+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicApiUsageDetailsLineItemView'
+              x-xgen-version: '2024-08-05'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Line Items for One Invoice by Invoice ID
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices searchInvoiceLineItems --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.SearchOrgInvoiceLineItemsApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tSearchOrgInvoiceLineItemsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}/lineItems:search?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}/lineItems:search?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/searchOrgInvoiceLineItems
+      x-xgen-operation-id-override: searchInvoiceLineItems
+  /api/atlas/v2/skus:
+    get:
+      description: Returns all available SKUs (Stock Keeping Units) that can appear on MongoDB invoices. SKUs represent different products and services offered by MongoDB.
+      operationId: listSkus
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApiSKUView'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Stock Keeping Units
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices listSkus --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListSkusApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tListSkusWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/skus?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/skus?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/listSkus
+  /api/atlas/v2/skus/{skuId}:
+    get:
+      description: Returns details about a single SKU (Stock Keeping Unit) by its identifier. SKUs represent different products and services offered by MongoDB.
+      operationId: getSku
+      parameters:
+      - description: Unique identifier of the SKU to retrieve.
+        example: ATLAS_AWS_INSTANCE_M10
+        in: path
+        name: skuId
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/pretty'
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/SkuResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Stock Keeping Unit
+      tags:
+      - Invoices
+      x-codeSamples:
+      - lang: cURL
+        label: Atlas CLI
+        source: atlas api invoices getSku --help
+      - lang: go
+        label: Go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetSkuApiParams{}\n\tsdkResp, httpResp, err := client.InvoicesApi.\n\t\tGetSkuWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - lang: cURL
+        label: curl (Service Accounts)
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/skus/{skuId}?pretty=true\""
+      - lang: cURL
+        label: curl (Digest)
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/skus/{skuId}?pretty=true\""
+      x-rolesRequirements:
+      - Organization Billing Viewer
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/getSku
+components:
+  responses:
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+  schemas:
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    CostExplorerQueryResult:
+      type: object
+    BillingInvoice:
+      properties:
+        amountBilledCents:
+          description: Sum of services that the specified organization consumed in the period covered in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        amountPaidCents:
+          description: Sum that the specified organization paid toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        created:
+          description: Date and time when MongoDB Cloud created this invoice. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        creditsCents:
+          description: Sum that MongoDB credited the specified organization toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        endDate:
+          description: Date and time when MongoDB Cloud finished the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        lineItems:
+          description: List that contains individual services included in this invoice.
+          items:
+            $ref: '#/components/schemas/InvoiceLineItem'
+          readOnly: true
+          type: array
+        linkedInvoices:
+          description: List that contains the invoices for organizations linked to the paying organization.
+          items:
+            $ref: '#/components/schemas/BillingInvoice'
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the organization charged for services consumed from MongoDB Cloud.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        payments:
+          description: List that contains funds transferred to MongoDB to cover the specified service noted in this invoice.
+          items:
+            $ref: '#/components/schemas/BillingPayment'
+          readOnly: true
+          type: array
+        refunds:
+          description: List that contains payments that MongoDB returned to the organization for this invoice.
+          items:
+            $ref: '#/components/schemas/BillingRefund'
+          readOnly: true
+          type: array
+        salesTaxCents:
+          description: Sum of sales tax applied to this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        startDate:
+          description: Date and time when MongoDB Cloud began the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        startingBalanceCents:
+          description: Sum that the specified organization owed to MongoDB when MongoDB issued this invoice. This parameter expresses its value in US Dollars.
+          format: int64
+          readOnly: true
+          type: integer
+        statusName:
+          description: 'Phase of payment processing in which this invoice exists when you made this request. Accepted phases include:
+
+
+            - `CLOSED`: MongoDB finalized all charges in the billing cycle but has yet to charge the customer.
+
+            - `FAILED`: MongoDB attempted to charge the provided credit card but charge for that amount failed.
+
+            - `FORGIVEN`: Customer initiated payment which MongoDB later forgave.
+
+            - `FREE`: All charges totalled zero so the customer won''t be charged.
+
+            - `INVOICED`: MongoDB handled these charges using elastic invoicing.
+
+            - `PAID`: MongoDB succeeded in charging the provided credit card.
+
+            - `PENDING`: Invoice includes charges for the current billing cycle.
+
+            - `PREPAID`: Customer has a pre-paid plan so they won''t be charged.'
+          enum:
+          - PENDING
+          - CLOSED
+          - FORGIVEN
+          - FAILED
+          - PAID
+          - FREE
+          - PREPAID
+          - INVOICED
+          type: string
+        subtotalCents:
+          description: Sum of all positive invoice line items contained in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        updated:
+          description: Date and time when MongoDB Cloud last updated the value of this payment. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    SkuResponse:
+      properties:
+        description:
+          description: Human-readable short summary of what this SKU represents.
+          readOnly: true
+          type: string
+        id:
+          description: Unique string that identifies the SKU.
+          readOnly: true
+          type: string
+      type: object
+    UsageDetailsFilterRequest:
+      description: Request body which contains various fields to filter line items as part of certain Invoice Usage Details queries.
+      properties:
+        billEndDate:
+          description: The inclusive billing start date for usage details filter.
+          format: date
+          type: string
+        billStartDate:
+          description: The inclusive billing start date for usage details filter.
+          format: date
+          type: string
+        clusterIds:
+          description: The list of unique cluster ids to be included in the Usage Details filter.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+          uniqueItems: true
+        groupIds:
+          description: The list of groups to be included in the Usage Details filter.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+          uniqueItems: true
+        includeZeroCentLineItems:
+          description: Whether zero cent line items should be included.
+          type: boolean
+        skuServices:
+          description: The list of projects to be included in the Cost Explorer Query.
+          items:
+            enum:
+            - Atlas
+            - Clusters
+            - Storage
+            - Serverless Instances
+            - Backup
+            - Data Transfer
+            - BI Connector
+            - DSC Compute
+            - DSC Storage
+            - Premium Features
+            - Atlas Data Federation
+            - Atlas Stream Processing
+            - App Services
+            - Charts
+            - Cloud Manager
+            - Cloud Manager Standard/Premium
+            - Legacy Backup
+            - AI Models
+            - Automated Embedding
+            - Native Reranking
+            - Flex Consulting
+            - Support
+            - Credits
+            type: string
+          type: array
+          uniqueItems: true
+        usageEndDate:
+          description: The inclusive billing start date for usage details filter.
+          format: date
+          type: string
+        usageStartDate:
+          description: The inclusive usage start date for usage details filter.
+          format: date
+          type: string
+      type: object
+    CostExplorerFilterRequestBody:
+      description: Request body for a cost explorer query.
+      properties:
+        clusters:
+          description: The list of clusters to be included in the Cost Explorer Query.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+        endDate:
+          description: The exclusive ending date for the Cost Explorer query. The date must be the start of a month.
+          format: date
+          type: string
+        groupBy:
+          description: The dimension to group the returned usage results by. At least one filter value needs to be provided for a dimension to be used.
+          enum:
+          - organizations
+          - projects
+          - clusters
+          - services
+          type: string
+        includePartialMatches:
+          description: Flag to control whether usage that matches the filter criteria, but does not have values for all filter criteria is included in response. Default is false, which excludes the partially matching data.
+          type: boolean
+        organizations:
+          description: The list of organizations to be included in the Cost Explorer Query.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+        projects:
+          description: The list of projects to be included in the Cost Explorer Query.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+        services:
+          description: The list of SKU services to be included in the Cost Explorer Query.
+          items:
+            enum:
+            - Atlas
+            - Clusters
+            - Storage
+            - Serverless Instances
+            - Backup
+            - Data Transfer
+            - BI Connector
+            - DSC Compute
+            - DSC Storage
+            - Premium Features
+            - Atlas Data Federation
+            - Atlas Stream Processing
+            - App Services
+            - Charts
+            - Cloud Manager
+            - Cloud Manager Standard/Premium
+            - Legacy Backup
+            - AI Models
+            - Automated Embedding
+            - Native Reranking
+            - Flex Consulting
+            - Support
+            - Credits
+            type: string
+          type: array
+        startDate:
+          description: The inclusive starting date for the Cost Explorer query. The date must be the start of a month.
+          format: date
+          type: string
+      required:
+      - endDate
+      - startDate
+      type: object
+    BillingPayment:
+      description: Funds transferred to MongoDB to cover the specified service in this invoice.
+      properties:
+        amountBilledCents:
+          description: Sum of services that the specified organization consumed in the period covered in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        amountPaidCents:
+          description: Sum that the specified organization paid toward the associated invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        created:
+          description: Date and time when the customer made this payment attempt. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        currency:
+          description: The currency in which payment was paid. This parameter expresses its value in 3-letter ISO 4217 currency code.
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this payment toward the associated invoice.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        salesTaxCents:
+          description: Sum of sales tax applied to this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        statusName:
+          description: 'Phase of payment processing for the associated invoice when you made this request. These phases include:
+
+
+            - `CANCELLED`: Customer or MongoDB cancelled the payment.
+
+            - `ERROR`: Issue arose when attempting to complete payment.
+
+            - `FAILED`: MongoDB tried to charge the credit card without success.
+
+            - `FAILED_AUTHENTICATION`: Strong Customer Authentication has failed. Confirm that your payment method is authenticated.
+
+            - `FORGIVEN`: Customer initiated payment which MongoDB later forgave.
+
+            - `INVOICED`: MongoDB issued an invoice that included this line item.
+
+            - `NEW`: Customer provided a method of payment, but MongoDB hasn''t tried to charge the credit card.
+
+            - `PAID`: Customer submitted a successful payment.
+
+            - `PARTIAL_PAID`: Customer paid for part of this line item.'
+          enum:
+          - NEW
+          - FORGIVEN
+          - FAILED
+          - PAID
+          - PARTIAL_PAID
+          - CANCELLED
+          - INVOICED
+          - FAILED_AUTHENTICATION
+          - PROCESSING
+          - PENDING_REVERSAL
+          - REFUNDED
+          type: string
+        subtotalCents:
+          description: Sum of all positive invoice line items contained in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        unitPrice:
+          description: The unit price applied to `amountBilledCents` to compute total payment amount. This value is represented as a decimal string.
+          readOnly: true
+          type: string
+        updated:
+          description: Date and time when the customer made an update to this payment attempt. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      title: Payment
+      type: object
+    ApiPublicUsageDetailsQueryRequest:
+      description: Request body for an Invoice Usage Details query with filtering, pagination, and sort.
+      properties:
+        filters:
+          $ref: '#/components/schemas/UsageDetailsFilterRequest'
+        sortField:
+          description: Specify the field used to specify how to sort query results. Default to bill date.
+          enum:
+          - USAGE_DATES
+          - BILL_DATES
+          - TOTAL_PRICE_CENTS
+          type: string
+        sortOrder:
+          description: Specify the sort order (ascending / descending) used to specify how to sort query results. Defaults to descending.
+          enum:
+          - ASCENDING
+          - DESCENDING
+          type: string
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    BillingInvoiceMetadata:
+      properties:
+        amountBilledCents:
+          description: Sum of services that the specified organization consumed in the period covered in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        amountPaidCents:
+          description: Sum that the specified organization paid toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        created:
+          description: Date and time when MongoDB Cloud created this invoice. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        creditsCents:
+          description: Sum that MongoDB credited the specified organization toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        endDate:
+          description: Date and time when MongoDB Cloud finished the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        linkedInvoices:
+          description: List that contains the invoices for organizations linked to the paying organization.
+          items:
+            $ref: '#/components/schemas/BillingInvoiceMetadata'
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the organization charged for services consumed from MongoDB Cloud.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        salesTaxCents:
+          description: Sum of sales tax applied to this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        startDate:
+          description: Date and time when MongoDB Cloud began the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        startingBalanceCents:
+          description: Sum that the specified organization owed to MongoDB when MongoDB issued this invoice. This parameter expresses its value in US Dollars.
+          format: int64
+          readOnly: true
+          type: integer
+        statusName:
+          description: 'Phase of payment processing in which this invoice exists when you made this request. Accepted phases include:
+
+
+            - `CLOSED`: MongoDB finalized all charges in the billing cycle but has yet to charge the customer.
+
+            - `FAILED`: MongoDB attempted to charge the provided credit card but charge for that amount failed.
+
+            - `FORGIVEN`: Customer initiated payment which MongoDB later forgave.
+
+            - `FREE`: All charges totalled zero so the customer won''t be charged.
+
+            - `INVOICED`: MongoDB handled these charges using elastic invoicing.
+
+            - `PAID`: MongoDB succeeded in charging the provided credit card.
+
+            - `PENDING`: Invoice includes charges for the current billing cycle.
+
+            - `PREPAID`: Customer has a pre-paid plan so they won''t be charged.'
+          enum:
+          - PENDING
+          - CLOSED
+          - FORGIVEN
+          - FAILED
+          - PAID
+          - FREE
+          - PREPAID
+          - INVOICED
+          type: string
+        subtotalCents:
+          description: Sum of all positive invoice line items contained in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        updated:
+          description: Date and time when MongoDB Cloud last updated the value of this payment. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    PaginatedPublicApiUsageDetailsLineItemView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/PublicApiUsageDetailsLineItemView'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PaginatedApiInvoiceView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/BillingInvoice'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    CostExplorerFilterResponseView:
+      description: Response object to give information about created query.
+      properties:
+        token:
+          description: The token used to identify the created Cost Explorer query.
+          example: d9ab638a801efe182f98ae3e18ea4bb47b9fda808a28a8c7de205bb0e94f7d71
+          maxLength: 64
+          minLength: 64
+          type: string
+      type: object
+    PaginatedApiSKUView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/SkuResponse'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    InvoiceLineItem:
+      description: One service included in this invoice.
+      properties:
+        clusterName:
+          description: Human-readable label that identifies the cluster that incurred the charge.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when MongoDB Cloud created this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        discountCents:
+          description: Sum by which MongoDB discounted this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar). The resource returns this parameter when a discount applies.
+          format: int64
+          readOnly: true
+          type: integer
+        endDate:
+          description: Date and time when when MongoDB Cloud finished charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project associated to this line item.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        groupName:
+          description: Human-readable label that identifies the project.
+          type: string
+        note:
+          description: Comment that applies to this line item.
+          readOnly: true
+          type: string
+        percentDiscount:
+          description: Percentage by which MongoDB discounted this line item. The resource returns this parameter when a discount applies.
+          format: float
+          readOnly: true
+          type: number
+        quantity:
+          description: Number of units included for the line item. These can be expressions of storage (GB), time (hours), or other units.
+          format: double
+          readOnly: true
+          type: number
+        sku:
+          description: Human-readable description of the service that this line item provided. This Stock Keeping Unit (SKU) could be the instance type, a support charge, advanced security, or another service.
+          externalDocs:
+            description: To see how to list all possible values, click here.
+            url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/listSkus
+          readOnly: true
+          type: string
+        startDate:
+          description: Date and time when MongoDB Cloud began charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        stitchAppName:
+          description: Human-readable label that identifies the Atlas App Services application associated with this line item.
+          externalDocs:
+            description: Create a new Atlas App Service
+            url: https://www.mongodb.com/docs/atlas/app-services/manage-apps/create/create-with-ui/
+          readOnly: true
+          type: string
+        tags:
+          additionalProperties:
+            description: A map of key-value pairs corresponding to the tags associated with the line item resource.
+            items:
+              description: A map of key-value pairs corresponding to the tags associated with the line item resource.
+              readOnly: true
+              type: string
+            readOnly: true
+            type: array
+          description: A map of key-value pairs corresponding to the tags associated with the line item resource.
+          readOnly: true
+          type: object
+        tierLowerBound:
+          description: "Lower bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierLowerBound` appears only if your `lineItems[n].sku` is tiered."
+          format: double
+          readOnly: true
+          type: number
+        tierUpperBound:
+          description: "Upper bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierUpperBound` appears only if your `lineItems[n].sku` is tiered."
+          format: double
+          readOnly: true
+          type: number
+        totalPriceCents:
+          description: Sum of the cost set for this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar) and calculates this value as `unitPriceDollars` * `quantity` * 100.
+          format: int64
+          readOnly: true
+          type: integer
+        unit:
+          description: Element used to express what **quantity** this line item measures. This value can be elements of time, storage capacity, and the like.
+          readOnly: true
+          type: string
+        unitPriceDollars:
+          description: Value per **unit** for this line item expressed in US Dollars.
+          format: double
+          readOnly: true
+          type: number
+      title: Line Item
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    PaginatedApiInvoiceMetadataView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/BillingInvoiceMetadata'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PublicApiUsageDetailsLineItemView:
+      properties:
+        billDate:
+          description: Billing date of the line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+        clusterName:
+          description: Cluster associated with the line item.
+          type: string
+        description:
+          description: Description of the line item, which can include SKU name and other identifying information.
+          type: string
+        groupId:
+          description: Group id associated with the line item.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        quantity:
+          description: Quantity of line item in units associated with SKU.
+          format: double
+          readOnly: true
+          type: number
+        totalPriceCents:
+          description: Price * quantity in applicable units, expressed as an integral number of cents.
+          format: int64
+          type: integer
+        unitPriceDollars:
+          description: Price in units associated with the SKU for the line item.
+          format: double
+          type: number
+        usageDate:
+          description: Usage date of the line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+      type: object
+    BillingRefund:
+      description: One payment that MongoDB returned to the organization for this invoice.
+      properties:
+        amountCents:
+          description: Sum of the funds returned to the specified organization expressed in cents (100th of US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        created:
+          description: Date and time when MongoDB Cloud created this refund. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        paymentId:
+          description: Unique 24-hexadecimal digit string that identifies the payment that the organization had made.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        reason:
+          description: Justification that MongoDB accepted to return funds to the organization.
+          readOnly: true
+          type: string
+      title: Refund
+      type: object
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    orgId:
+      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
+      in: path
+      name: orgId
+      required: true
+      schema:
+        example: 4888442a3354817a7320eb61
+        pattern: ^([a-f0-9]{24})$
+        type: string
+  headers:
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting
