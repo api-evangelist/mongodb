@@ -1,0 +1,837 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MongoDB Atlas Administration Access Tracking Atlas Search API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://cloud.mongodb.com/api/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Atlas Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create One Atlas Search Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/fts/indexes",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection on which to create an Atlas Search index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates one Atlas Search index on the specified collection. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. Only clusters running MongoDB v4.2 or later can use Atlas Search. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role."
+        },
+        {
+          "info": {
+            "name": "Return All Atlas Search Indexes for One Collection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/fts/indexes/:databaseName/:collectionName",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "collectionName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the collection that contains one or more Atlas Search indexes."
+              },
+              {
+                "name": "databaseName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the database that contains the collection with one or more Atlas Search indexes."
+              }
+            ]
+          },
+          "docs": "Returns all Atlas Search indexes on the specified collection. Atlas Search indexes contain the indexed fields and the analyzers used to create the indexes. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role."
+        },
+        {
+          "info": {
+            "name": "Return One Atlas Search Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/fts/indexes/:indexId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "indexId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the Application Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Application Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Application Search indexes."
+              }
+            ]
+          },
+          "docs": "Returns one Atlas Search index in the specified project. You identify this index using its unique ID. Atlas Search index contains the indexed fields and the analyzers used to create the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role."
+        },
+        {
+          "info": {
+            "name": "Update One Atlas Search Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/fts/indexes/:indexId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection whose Atlas Search index to update."
+              },
+              {
+                "name": "indexId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the Atlas Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates one Atlas Search index that you identified with its unique ID. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role."
+        },
+        {
+          "info": {
+            "name": "Remove One Atlas Search Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/fts/indexes/:indexId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the database and collection with one or more Application Search indexes."
+              },
+              {
+                "name": "indexId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the Atlas Search index. Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes."
+              }
+            ]
+          },
+          "docs": "Removes one Atlas Search index that you identified with its unique ID. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role."
+        },
+        {
+          "info": {
+            "name": "Return All Search Nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/deployment",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the cluster to return the Search Nodes for."
+              }
+            ]
+          },
+          "docs": "Returns the Search Nodes for the specified cluster. Deprecated versions: v2-{2024-05-30}, v2-{2023-01-01}"
+        },
+        {
+          "info": {
+            "name": "Create Search Nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/deployment",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the cluster to create Search Nodes for."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates Search Nodes for the specified cluster."
+        },
+        {
+          "info": {
+            "name": "Update Search Nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/deployment",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the cluster to update the Search Nodes for."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the Search Nodes for the specified cluster. Deprecated versions: v2-{2023-01-01}"
+        },
+        {
+          "info": {
+            "name": "Delete Search Nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/deployment",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the cluster to delete."
+              }
+            ]
+          },
+          "docs": "Deletes the Search Nodes for the specified cluster."
+        },
+        {
+          "info": {
+            "name": "Return All Atlas Search Indexes for One Cluster",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection with one or more Atlas Search indexes."
+              }
+            ]
+          },
+          "docs": "Returns all Atlas Search indexes on the specified cluster. Atlas Search indexes contain the indexed fields and the analyzers used to create the indexes. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role."
+        },
+        {
+          "info": {
+            "name": "Create One Atlas Search Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection on which to create an Atlas Search index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates one Atlas Search index on the specified collection. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. Only clusters running MongoDB v4.2 or later can use Atlas Search. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role."
+        },
+        {
+          "info": {
+            "name": "Return All Atlas Search Indexes for One Collection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes/:databaseName/:collectionName",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "collectionName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the collection that contains one or more Atlas Search indexes."
+              },
+              {
+                "name": "databaseName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the database that contains the collection with one or more Atlas Search indexes."
+              }
+            ]
+          },
+          "docs": "Returns all Atlas Search indexes on the specified collection. Atlas Search indexes contain the indexed fields and the analyzers used to create the indexes. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role."
+        },
+        {
+          "info": {
+            "name": "Return One Atlas Search Index by Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes/:databaseName/:collectionName/:indexName",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "collectionName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the collection that contains one or more Atlas Search indexes."
+              },
+              {
+                "name": "databaseName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the database that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "indexName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the Atlas Search index to return."
+              }
+            ]
+          },
+          "docs": "Returns one Atlas Search index in the specified project. You identify this index using its database, collection and name. Atlas Search index contains the indexed fields and the analyzers used to create the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role."
+        },
+        {
+          "info": {
+            "name": "Update One Atlas Search Index by Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes/:databaseName/:collectionName/:indexName",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection whose Atlas Search index you want to update."
+              },
+              {
+                "name": "collectionName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the collection that contains one or more Atlas Search indexes."
+              },
+              {
+                "name": "databaseName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the database that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "indexName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the Atlas Search index to update."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates one Atlas Search index that you identified with its database, collection name, and index name. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role."
+        },
+        {
+          "info": {
+            "name": "Remove One Atlas Search Index by Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes/:databaseName/:collectionName/:indexName",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the database and collection with one or more Application Search indexes."
+              },
+              {
+                "name": "collectionName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the collection that contains one or more Atlas Search indexes."
+              },
+              {
+                "name": "databaseName",
+                "value": "",
+                "type": "path",
+                "description": "Label that identifies the database that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "indexName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the Atlas Search index to delete."
+              }
+            ]
+          },
+          "docs": "Removes one Atlas Search index that you identified with its database, collection, and name. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role. This deletion is eventually consistent."
+        },
+        {
+          "info": {
+            "name": "Return One Atlas Search Index by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes/:indexId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection with one or more Atlas Search indexes."
+              },
+              {
+                "name": "indexId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the Application Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Application Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Application Search indexes."
+              }
+            ]
+          },
+          "docs": "Returns one Atlas Search index in the specified project. You identify this index using its unique ID. Atlas Search index contains the indexed fields and the analyzers used to create the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Read Write role."
+        },
+        {
+          "info": {
+            "name": "Update One Atlas Search Index by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes/:indexId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the collection whose Atlas Search index you want to update."
+              },
+              {
+                "name": "indexId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the Atlas Search [index](https://dochub.mongodb.org/core/index-definitions-fts). Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates one Atlas Search index that you identified with its unique ID. Atlas Search indexes define the fields on which to create the index and the analyzers to use when creating the index. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role."
+        },
+        {
+          "info": {
+            "name": "Remove One Atlas Search Index by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/search/indexes/:indexId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Name of the cluster that contains the database and collection with one or more Application Search indexes."
+              },
+              {
+                "name": "indexId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the Atlas Search index. Use the [Get All Atlas Search Indexes for a Collection API](https://docs.atlas.mongodb.com/reference/api/fts-indexes-get-all/) endpoint to find the IDs of all Atlas Search indexes."
+              }
+            ]
+          },
+          "docs": "Removes one Atlas Search index that you identified with its unique ID. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role. This deletion is eventually consistent."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

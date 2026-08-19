@@ -1,0 +1,434 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MongoDB Atlas Administration Access Tracking Collection Level Metrics API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://cloud.mongodb.com/api/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Collection Level Metrics",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Return Pinned Namespaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/collStats/pinned",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster to retrieve pinned namespaces for."
+              }
+            ]
+          },
+          "docs": "Returns a list of given cluster's pinned namespaces, a set of namespaces manually selected by users to collect query latency metrics on."
+        },
+        {
+          "info": {
+            "name": "Pin Namespaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/collStats/pinned",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster to pin namespaces to."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Pin provided list of namespaces for collection-level latency metrics collection for the given Group and Cluster. This initializes a pinned namespaces list or replaces any existing pinned namespaces list for the Group and Cluster."
+        },
+        {
+          "info": {
+            "name": "Add Pinned Namespaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/collStats/pinned",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster to pin namespaces to."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add provided list of namespaces to existing pinned namespaces list for collection-level latency metrics collection for the given Group and Cluster."
+        },
+        {
+          "info": {
+            "name": "Unpin Namespaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/collStats/unpin",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster to unpin namespaces from."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Unpin provided list of namespaces for collection-level latency metrics collection for the given Group and Cluster."
+        },
+        {
+          "info": {
+            "name": "Return Ranked Namespaces from One Cluster",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/:clusterView/collStats/namespaces",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster to pin namespaces to."
+              },
+              {
+                "name": "clusterView",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster topology to retrieve metrics for."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud begins reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud stops reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "period",
+                "value": "",
+                "type": "query",
+                "description": "Duration over which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC. Include this parameter when you do not set **start** and **end**."
+              }
+            ]
+          },
+          "docs": "Return the subset of namespaces from the given cluster sorted by highest total execution time (descending) within the given time window."
+        },
+        {
+          "info": {
+            "name": "Return Cluster-Level Query Latency",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/clusters/:clusterName/:clusterView/:databaseName/:collectionName/collStats/measurements",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "clusterName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster to retrieve metrics for."
+              },
+              {
+                "name": "clusterView",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the cluster topology to retrieve metrics for."
+              },
+              {
+                "name": "databaseName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the database."
+              },
+              {
+                "name": "collectionName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the collection."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "metrics",
+                "value": "",
+                "type": "query",
+                "description": "List that contains the metrics that you want to retrieve for the associated data series. If you don't set this parameter, this resource returns data series for all Coll Stats Latency metrics."
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud begins reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud stops reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "period",
+                "value": "",
+                "type": "query",
+                "description": "Duration over which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC. Include this parameter when you do not set **start** and **end**."
+              }
+            ]
+          },
+          "docs": "Get a list of the Coll Stats Latency cluster-level measurements for the given namespace."
+        },
+        {
+          "info": {
+            "name": "Return All Metric Names",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/collStats/metrics",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              }
+            ]
+          },
+          "docs": "Returns all available Coll Stats Latency metric names and their respective units for the specified project at the time of request."
+        },
+        {
+          "info": {
+            "name": "Return Ranked Namespaces from One Host",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/processes/:processId/collStats/namespaces",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "processId",
+                "value": "",
+                "type": "path",
+                "description": "Combination of hostname and IANA port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (mongod or mongos). The port must be the IANA port on which the MongoDB process listens for requests."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud begins reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud stops reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "period",
+                "value": "",
+                "type": "query",
+                "description": "Duration over which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC. Include this parameter when you do not set **start** and **end**."
+              }
+            ]
+          },
+          "docs": "Return the subset of namespaces from the given process ranked by highest total execution time (descending) within the given time window."
+        },
+        {
+          "info": {
+            "name": "Return Host-Level Query Latency",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/processes/:processId/:databaseName/:collectionName/collStats/measurements",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "processId",
+                "value": "",
+                "type": "path",
+                "description": "Combination of hostname and IANA port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (mongod or mongos). The port must be the IANA port on which the MongoDB process listens for requests."
+              },
+              {
+                "name": "databaseName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the database."
+              },
+              {
+                "name": "collectionName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies the collection."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "metrics",
+                "value": "",
+                "type": "query",
+                "description": "List that contains the metrics that you want to retrieve for the associated data series. If you don't set this parameter, this resource returns data series for all Coll Stats Latency metrics."
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud begins reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query",
+                "description": "Date and time when MongoDB Cloud stops reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**."
+              },
+              {
+                "name": "period",
+                "value": "",
+                "type": "query",
+                "description": "Duration over which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC. Include this parameter when you do not set **start** and **end**."
+              }
+            ]
+          },
+          "docs": "Get a list of the Coll Stats Latency process-level measurements for the given namespace."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

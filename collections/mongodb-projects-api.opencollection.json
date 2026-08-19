@@ -1,0 +1,854 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MongoDB Atlas Administration Access Tracking Projects API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://cloud.mongodb.com/api/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Projects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Return All Projects",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "includeCount",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response returns the total number of items (`totalCount`) in the response."
+              },
+              {
+                "name": "itemsPerPage",
+                "value": "",
+                "type": "query",
+                "description": "Number of items that the response returns per page."
+              },
+              {
+                "name": "pageNum",
+                "value": "",
+                "type": "query",
+                "description": "Number of the page that displays the current set of the total objects that the response returns."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ]
+          },
+          "docs": "Returns details about all projects. Projects group clusters into logical collections that support an application environment, workload, or both. Each project can have its own users, teams, security, tags, and alert settings. To use this resource, the requesting Service Account or API Key must have the Organization Read Only role or higher."
+        },
+        {
+          "info": {
+            "name": "Create One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "projectOwnerId",
+                "value": "",
+                "type": "query",
+                "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud user to whom to grant the Project Owner role on the specified project. If you set this parameter, it overrides the default value of the oldest Organization Owner."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates one project. Projects group clusters into logical collections that support an application environment, workload, or both. Each project can have its own users, teams, security, tags, and alert settings. To use this resource, the requesting Service Account or API Key must have the Read Write role."
+        },
+        {
+          "info": {
+            "name": "Return One Project by Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/byName/:groupName",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "groupName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies this project."
+              }
+            ]
+          },
+          "docs": "Returns details about the specified project. Projects group clusters into logical collections that support an application environment, workload, or both. Each project can have its own users, teams, security, tags, and alert settings. To use this resource, the requesting Service Account or API Key must have the Project Read Only role."
+        },
+        {
+          "info": {
+            "name": "Return One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ]
+          },
+          "docs": "Returns details about the specified project. Projects group clusters into logical collections that support an application environment, workload, or both. Each project can have its own users, teams, security, tags, and alert settings. To use this resource, the requesting Service Account or API Key must have the Project Read Only role."
+        },
+        {
+          "info": {
+            "name": "Update One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the human-readable label that identifies the specified project, or the tags associated with the project. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Remove One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ]
+          },
+          "docs": "Removes the specified project. Projects group clusters into logical collections that support an application environment, workload, or both. Each project can have its own users, teams, security, tags, and alert settings. You can delete a project only if there are no Online Archives for the clusters in the project. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Add One MongoDB Cloud User to One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/access",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Adds one MongoDB Cloud user to the specified project. If the MongoDB Cloud user is not a member of the project's organization, then the user must accept their invitation to the organization to access information within the specified project. If the MongoDB Cloud User is already a member of the project's organization, then they will be added to the project immediately and an invitation will not be returned by this resource. To use this resource, the requesting Service Account or API Key must have"
+        },
+        {
+          "info": {
+            "name": "Return All Invitations in One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/invites",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "username",
+                "value": "",
+                "type": "query",
+                "description": "Email address of the user account invited to this project."
+              }
+            ]
+          },
+          "docs": "Returns all pending invitations to the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Create Invitation for One MongoDB Cloud User in One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/invites",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Invites one MongoDB Cloud user to join the specified project. The MongoDB Cloud user must accept the invitation to access information within the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Update One Invitation in One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/invites",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the details of one pending invitation to the specified project. To specify which invitation to update, provide the username of the invited user. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Return One Invitation in One Project by Invitation ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/invites/:invitationId",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "invitationId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the invitation."
+              }
+            ]
+          },
+          "docs": "Returns the details of one pending invitation to the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Update One Invitation in One Project by Invitation ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/invites/:invitationId",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "invitationId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the invitation."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the details of one pending invitation to the specified project. To specify which invitation to update, provide the unique identification string for that invitation. Use the Return All Project Invitations endpoint to retrieve IDs for all pending project invitations. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Remove One Invitation from One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/invites/:invitationId",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "invitationId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the invitation."
+              }
+            ]
+          },
+          "docs": "Cancels one pending invitation sent to the specified MongoDB Cloud user to join a project. You can't cancel an invitation that the user accepted. To use this resource, the requesting Service Account or API Key must have the Project Owner role. Note: deleting a project invitation does not delete an organization invitation even if they were created together."
+        },
+        {
+          "info": {
+            "name": "Return All IP Addresses for One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/ipAddresses",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              }
+            ]
+          },
+          "docs": "Returns all IP addresses for this project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role."
+        },
+        {
+          "info": {
+            "name": "Return All Limits for One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/limits",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ]
+          },
+          "docs": "Returns all the limits for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role."
+        },
+        {
+          "info": {
+            "name": "Return One Limit for One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/limits/:limitName",
+            "params": [
+              {
+                "name": "limitName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies this project limit.\n\n| Limit Name | Description | Default | API Override Limit |\n| --- | --- | --- | --- |\n| `atlas.project.deployment.clusters` | Limit on the number of clusters in this project | 25 | 100 |\n| `atlas.project.deployment.nodesPerPrivateLinkRegion` | Limit on the number of nodes per Private Link region in this project | 50 | 90 |\n| `atlas.project.security.databaseAccess.customRoles` | Limit on the number of custom roles in this project | 100 | 1400 |\n| `atlas.project.security.databaseAccess.users` | Limit on the number of database users in this project | 100 | 100 |\n| `atlas.project.security.networkAccess.crossRegionEntries` | Limit on the number of cross-region network access entries in this project | 40 | 220 |\n| `atlas.project.security.networkAccess.entries` | Limit on the number of network access entries in this project | 200 | 20 |\n| `dataFederation.bytesProcessed.query` | Limit on the number of bytes processed during a single Data Federation query | N/A | N/A |\n| `dataFederation.bytesProcessed.daily` | Limit on the number of bytes processed across all Data Federation tenants for the current day | N/A | N/A |\n| `dataFederation.bytesProcessed.weekly` | Limit on the number of bytes processed across all Data Federation tenants for the current week | N/A | N/A |\n| `dataFederation.bytesProcessed.monthly` | Limit on the number of bytes processed across all Data Federation tenants for the current month | N/A | N/A |\n| `atlas.project.deployment.privateServiceConnectionsPerRegionGroup` | Number of Private Service Connections per Region Group | 50 | 100|\n| `atlas.project.deployment.privateServiceConnectionsSubnetMask` | Subnet mask for GCP PSC Networks. Has lower limit of 20. | 27 | 27|\n"
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ]
+          },
+          "docs": "Returns the specified limit for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role."
+        },
+        {
+          "info": {
+            "name": "Set One Project Limit",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/limits/:limitName",
+            "params": [
+              {
+                "name": "limitName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies this project limit.\n\n| Limit Name | Description | Default | API Override Limit |\n| --- | --- | --- | --- |\n| `atlas.project.deployment.clusters` | Limit on the number of clusters in this project | 25 | 100 |\n| `atlas.project.deployment.nodesPerPrivateLinkRegion` | Limit on the number of nodes per Private Link region in this project | 50 | 90 |\n| `atlas.project.security.databaseAccess.customRoles` | Limit on the number of custom roles in this project | 100 | 1400 |\n| `atlas.project.security.databaseAccess.users` | Limit on the number of database users in this project | 100 | 100 |\n| `atlas.project.security.networkAccess.crossRegionEntries` | Limit on the number of cross-region network access entries in this project | 40 | 220 |\n| `atlas.project.security.networkAccess.entries` | Limit on the number of network access entries in this project | 200 | 20 |\n| `dataFederation.bytesProcessed.query` | Limit on the number of bytes processed during a single Data Federation query | N/A | N/A |\n| `dataFederation.bytesProcessed.daily` | Limit on the number of bytes processed across all Data Federation tenants for the current day | N/A | N/A |\n| `dataFederation.bytesProcessed.weekly` | Limit on the number of bytes processed across all Data Federation tenants for the current week | N/A | N/A |\n| `dataFederation.bytesProcessed.monthly` | Limit on the number of bytes processed across all Data Federation tenants for the current month | N/A | N/A |\n| `atlas.project.deployment.privateServiceConnectionsPerRegionGroup` | Number of Private Service Connections per Region Group | 50 | 100|\n| `atlas.project.deployment.privateServiceConnectionsSubnetMask` | Subnet mask for GCP PSC Networks. Has lower limit of 20. | 27 | 27|\n"
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Sets the specified project limit. To use this resource, the requesting Service Account or API Key must have the Project Owner role.\n\n**NOTE**: Increasing the following configuration limits might lead to slower response times in the MongoDB Cloud UI or increased user management overhead leading to authentication or authorization re-architecture. If possible, we recommend that you create additional projects to gain access to more of these resources for a more sustainable growth pattern."
+        },
+        {
+          "info": {
+            "name": "Remove One Project Limit",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/limits/:limitName",
+            "params": [
+              {
+                "name": "limitName",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that identifies this project limit.\n\n| Limit Name | Description | Default | API Override Limit |\n| --- | --- | --- | --- |\n| `atlas.project.deployment.clusters` | Limit on the number of clusters in this project | 25 | 100 |\n| `atlas.project.deployment.nodesPerPrivateLinkRegion` | Limit on the number of nodes per Private Link region in this project | 50 | 90 |\n| `atlas.project.security.databaseAccess.customRoles` | Limit on the number of custom roles in this project | 100 | 1400 |\n| `atlas.project.security.databaseAccess.users` | Limit on the number of database users in this project | 100 | 100 |\n| `atlas.project.security.networkAccess.crossRegionEntries` | Limit on the number of cross-region network access entries in this project | 40 | 220 |\n| `atlas.project.security.networkAccess.entries` | Limit on the number of network access entries in this project | 200 | 20 |\n| `dataFederation.bytesProcessed.query` | Limit on the number of bytes processed during a single Data Federation query | N/A | N/A |\n| `dataFederation.bytesProcessed.daily` | Limit on the number of bytes processed across all Data Federation tenants for the current day | N/A | N/A |\n| `dataFederation.bytesProcessed.weekly` | Limit on the number of bytes processed across all Data Federation tenants for the current week | N/A | N/A |\n| `dataFederation.bytesProcessed.monthly` | Limit on the number of bytes processed across all Data Federation tenants for the current month | N/A | N/A |\n| `atlas.project.deployment.privateServiceConnectionsPerRegionGroup` | Number of Private Service Connections per Region Group | 50 | 100|\n| `atlas.project.deployment.privateServiceConnectionsSubnetMask` | Subnet mask for GCP PSC Networks. Has lower limit of 20. | 27 | 27|\n"
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ]
+          },
+          "docs": "Removes the specified project limit. Depending on the limit, Atlas either resets the limit to its default value or removes the limit entirely. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Return All Available MongoDB LTS Versions for Clusters in One Project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/mongoDBVersions",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "cloudProvider",
+                "value": "",
+                "type": "query",
+                "description": "Filter results to only one cloud provider."
+              },
+              {
+                "name": "instanceSize",
+                "value": "",
+                "type": "query",
+                "description": "Filter results to only one instance size."
+              },
+              {
+                "name": "defaultStatus",
+                "value": "",
+                "type": "query",
+                "description": "Filter results to only the default values per tier. This value must be DEFAULT."
+              },
+              {
+                "name": "itemsPerPage",
+                "value": "",
+                "type": "query",
+                "description": "Number of items that the response returns per page."
+              },
+              {
+                "name": "pageNum",
+                "value": "",
+                "type": "query",
+                "description": "Number of the page that displays the current set of the total objects that the response returns."
+              }
+            ]
+          },
+          "docs": "Returns the MongoDB Long Term Support Major Versions available to new clusters in this project."
+        },
+        {
+          "info": {
+            "name": "Return Project Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/settings",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ]
+          },
+          "docs": "Returns details about the specified project's settings. To use this resource, the requesting Service Account or API Key must have the Project Read Only role."
+        },
+        {
+          "info": {
+            "name": "Update Project Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/settings",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the settings of the specified project. You can update any of the options available. MongoDB cloud only updates the options provided in the request. To use this resource, the requesting Service Account or API Key must have the Project Owner role."
+        },
+        {
+          "info": {
+            "name": "Update Project Roles for One MongoDB Cloud User",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/users/:userId/roles",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "userId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies the user to modify."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the roles of the specified user in the specified project. To specify the user to update, provide the unique 24-hexadecimal digit string that identifies the user in the specified project. To use this resource, the requesting Service Account or API Key must have the Group User Admin role."
+        },
+        {
+          "info": {
+            "name": "Migrate One Project to Another Organization",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId:migrate",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Migrates a project from its current organization to another organization. All project users and their roles will be copied to the same project in the destination organization. You must include an organization API key with the Organization Owner role for the destination organization to verify access to the destination organization when you authenticate with Programmatic API Keys. Otherwise, the requesting user must have the Organization Owner role in both organizations. To use this resource, the "
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

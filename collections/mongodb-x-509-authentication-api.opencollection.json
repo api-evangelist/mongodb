@@ -1,0 +1,150 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MongoDB Atlas Administration Access Tracking X.509 Authentication API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://cloud.mongodb.com/api/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "X.509 Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Return All X.509 Certificates Assigned to One Database User",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/databaseUsers/:username/certs",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "includeCount",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response returns the total number of items (`totalCount`) in the response."
+              },
+              {
+                "name": "itemsPerPage",
+                "value": "",
+                "type": "query",
+                "description": "Number of items that the response returns per page."
+              },
+              {
+                "name": "pageNum",
+                "value": "",
+                "type": "query",
+                "description": "Number of the page that displays the current set of the total objects that the response returns."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "username",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that represents the MongoDB database user account whose certificates you want to return."
+              }
+            ]
+          },
+          "docs": "Returns all unexpired X.509 certificates for the specified MongoDB user. This MongoDB user belongs to one project. Atlas manages these certificates and the MongoDB user. To use this resource, the requesting Service Account or API Key must have the Project Read Only role."
+        },
+        {
+          "info": {
+            "name": "Create One X.509 Certificate for One Database User",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/databaseUsers/:username/certs",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              },
+              {
+                "name": "pretty",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether the response body should be in the prettyprint format."
+              },
+              {
+                "name": "username",
+                "value": "",
+                "type": "path",
+                "description": "Human-readable label that represents the MongoDB database user account for whom to create a certificate."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Generates one X.509 certificate for the specified MongoDB user. Atlas manages the certificate and MongoDB user that belong to one project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.\n\nTo get MongoDB Cloud to generate a managed certificate for a database user, set `\"x509Type\" : \"MANAGED\"` on the desired MongoDB Database User.\n\nIf you are managing your own Certificate Authority (CA) in Self-Managed X.509 mode, you must generate certificates for"
+        },
+        {
+          "info": {
+            "name": "Disable Customer-Managed X.509",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://cloud.mongodb.com/api/atlas/v2/groups/:groupId/userSecurity/customerX509",
+            "params": [
+              {
+                "name": "envelope",
+                "value": "",
+                "type": "query",
+                "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+              }
+            ]
+          },
+          "docs": "Clears the customer-managed X.509 settings on a project, including the uploaded Certificate Authority, which disables self-managed X.509.\n\n Updating this configuration triggers a rolling restart of the database. You must have the Project Owner role to use this endpoint."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

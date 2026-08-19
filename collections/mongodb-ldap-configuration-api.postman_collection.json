@@ -1,0 +1,2818 @@
+{
+  "item": [
+    {
+      "id": "e5a3e124-fd34-4d97-8585-5186f9f5327d",
+      "name": "LDAP Configuration",
+      "description": {
+        "content": "Returns, edits, verifies, and removes LDAP configurations. An LDAP configuration defines settings for MongoDB Cloud to connect to your LDAP server over TLS for user authentication and authorization. Your LDAP server must be visible to the internet or connected to your MongoDB Cloud cluster with VPC Peering. Also, your LDAP server must use TLS. You must have the MongoDB Cloud admin user privilege to use these endpoints. Also, to configure user authentication and authorization with LDAPS, your cluster must run MongoDB 3.6 or higher. Groups for which you have configured LDAPS can't create a cluster using a version of MongoDB 3.6 or lower.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "6da82340-835c-4fb5-9158-c212b92f3cb8",
+          "name": "Return LDAP or X.509 Configuration",
+          "request": {
+            "name": "Return LDAP or X.509 Configuration",
+            "description": {
+              "content": "Returns the current LDAP configuration for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "userSecurity"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "482e96e2-e4be-44b8-9069-2fbe7a30bf6e",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2023-01-01+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2023-01-01+json"
+                }
+              ],
+              "body": "{\n  \"customerX509\": {\n    \"cas\": \"string\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ]\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": false,\n    \"authorizationEnabled\": true,\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"string\",\n    \"hostname\": \"phbofg.dp.apilycax.fu53dc44igo.z192wl2isv4.lw16by7auam.l3fp1ixu.pism\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ],\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"string\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"string\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  },\n  \"links\": [\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    },\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4850f0e9-74a4-4d00-8d5c-69c00cf6f0e1",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "905db9a2-37fb-4270-a375-192f04c5b2bf",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7c75cca0-33dd-49d9-af7e-a81ecb6c4206",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "04fe0a2f-1513-49a2-a301-9345bc260fe2",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b5f5a501-a95c-47dc-903a-2f3bc80fb218",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e01fac45-1218-49da-a4b1-0a59288601cb",
+          "name": "Update LDAP or X.509 Configuration",
+          "request": {
+            "name": "Update LDAP or X.509 Configuration",
+            "description": {
+              "content": "Edits the LDAP configuration for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.\n\nUpdating this configuration triggers a rolling restart of the database.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "userSecurity"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"<string>\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"<string>\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"<string>\"\n      },\n      {\n        \"match\": \"<string>\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"<string>\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "602d6ed3-523d-45c1-a7f3-1ad70a777667",
+              "name": "Accepted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2023-01-01+json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2023-01-01+json"
+                }
+              ],
+              "body": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ]\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ],\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  },\n  \"links\": [\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    },\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "39ffa8fe-d542-47fd-87d7-0231c1e7b090",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bcb9dcc5-9ba6-4d97-9498-4e655c8dc959",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6f90edbe-c728-472a-94f8-7dc4aeff88f0",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0782c5c9-bf90-4e49-b4bc-a0ffe8237435",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2db4405a-6047-4a5c-923e-7c8089a70d50",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "77f64662-d2e1-412e-8166-00736051f4c7",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\"\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindPassword\": \"<string>\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2482d469-3bbf-4b59-ba5a-8048f660ca38",
+          "name": "Remove LDAP User to DN Mapping",
+          "request": {
+            "name": "Remove LDAP User to DN Mapping",
+            "description": {
+              "content": "Removes the current LDAP Distinguished Name mapping captured in the ``userToDNMapping`` document from the LDAP configuration for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "userSecurity",
+                "ldap",
+                "userToDNMapping"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7dfd9cc3-e864-43b2-bf26-5df4a65ca683",
+              "name": "Accepted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "userToDNMapping"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2023-01-01+json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2023-01-01+json"
+                }
+              ],
+              "body": "{\n  \"customerX509\": {\n    \"cas\": \"<string>\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ]\n  },\n  \"ldap\": {\n    \"authenticationEnabled\": \"<boolean>\",\n    \"authorizationEnabled\": \"<boolean>\",\n    \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"caCertificate\": \"<string>\",\n    \"hostname\": \"<string>\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ],\n    \"port\": 636,\n    \"userToDNMapping\": [\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      },\n      {\n        \"match\": \"(.*)\",\n        \"ldapQuery\": \"<string>\",\n        \"substitution\": \"CN={0},CN=Users,DC=my-atlas-ldap-server,DC=example,DC=com\"\n      }\n    ]\n  },\n  \"links\": [\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    },\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2b07e2bc-f345-41e0-aa2a-185efb46bfe2",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "userToDNMapping"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4571b98f-1617-47db-9652-bd9aff13d26a",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "userToDNMapping"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "98b78bf1-8965-4d54-9a27-1f4d1c6ec5e4",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "userToDNMapping"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3e2b1140-5365-4d99-b742-48d9f1e24dc2",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "userToDNMapping"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d3094c6f-86f3-4629-8aed-783f817abcc2",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "userToDNMapping"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "69d4f8bf-11fd-466b-bccf-d07f9785e1ca",
+          "name": "Verify LDAP Configuration in One Project",
+          "request": {
+            "name": "Verify LDAP Configuration in One Project",
+            "description": {
+              "content": "Verifies the LDAP configuration for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "userSecurity",
+                "ldap",
+                "verify"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bindPassword\": \"<string>\",\n  \"bindUsername\": \"<string>\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"caCertificate\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "37d7888f-c93c-4a2f-a71a-5bd464157c18",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2023-01-01+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bindPassword\": \"<string>\",\n  \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"caCertificate\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2023-01-01+json"
+                }
+              ],
+              "body": "{\n  \"groupId\": \"32b6e34b3d91647abb20e7b8\",\n  \"links\": [\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    },\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    }\n  ],\n  \"request\": {\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"caCertificate\": \"<string>\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ]\n  },\n  \"requestId\": \"32b6e34b3d91647abb20e7b8\",\n  \"status\": \"SUCCESS\",\n  \"validations\": [\n    {\n      \"status\": \"OK\",\n      \"validationType\": \"SERVER_SPECIFIED\"\n    },\n    {\n      \"status\": \"OK\",\n      \"validationType\": \"TEMPLATE\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "05b4571c-7f1e-4f38-89ff-b6fddfdf6efc",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"bindPassword\": \"<string>\",\n  \"caCertificate\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4c8db3c3-3a2e-4bfa-b93f-f76e78058e55",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"bindPassword\": \"<string>\",\n  \"caCertificate\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8d43cf8a-048e-4474-8ff3-a44677e637f7",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"bindPassword\": \"<string>\",\n  \"caCertificate\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b5d9eed3-19b2-4834-95ce-c9be67b51853",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"bindPassword\": \"<string>\",\n  \"caCertificate\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "28237b5d-e896-4602-97d9-5756c3c1c2cc",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"bindPassword\": \"<string>\",\n  \"caCertificate\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "79770efb-cfd1-446a-a9f1-641cdb14dac7",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n  \"hostname\": \"<string>\",\n  \"port\": 636,\n  \"authzQueryTemplate\": \"{USER}?memberOf?base\",\n  \"bindPassword\": \"<string>\",\n  \"caCertificate\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d853e99a-7eef-41ed-8887-bdc70220f88f",
+          "name": "Return Status of LDAP Configuration Verification in One Project",
+          "request": {
+            "name": "Return Status of LDAP Configuration Verification in One Project",
+            "description": {
+              "content": "Returns the status of one request to verify one LDAP configuration for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "userSecurity",
+                "ldap",
+                "verify",
+                ":requestId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "requestId",
+                  "description": "(Required) Unique string that identifies the request to verify an Lightweight Directory Access Protocol (LDAP) configuration."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7d3226a4-473e-4ac5-809a-a8bdac786f24",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify",
+                    ":requestId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "requestId",
+                      "description": "(Required) Unique string that identifies the request to verify an Lightweight Directory Access Protocol (LDAP) configuration."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2023-01-01+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2023-01-01+json"
+                }
+              ],
+              "body": "{\n  \"groupId\": \"32b6e34b3d91647abb20e7b8\",\n  \"links\": [\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    },\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    }\n  ],\n  \"request\": {\n    \"bindUsername\": \"CN=BindUser,CN=Users,DC=myldapserver,DC=mycompany,DC=com\",\n    \"hostname\": \"<string>\",\n    \"port\": 636,\n    \"caCertificate\": \"<string>\",\n    \"links\": [\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      },\n      {\n        \"href\": \"https://cloud.mongodb.com/api/atlas\",\n        \"rel\": \"self\"\n      }\n    ]\n  },\n  \"requestId\": \"32b6e34b3d91647abb20e7b8\",\n  \"status\": \"FAIL\",\n  \"validations\": [\n    {\n      \"status\": \"OK\",\n      \"validationType\": \"TEMPLATE\"\n    },\n    {\n      \"status\": \"OK\",\n      \"validationType\": \"QUERY_SERVER\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "52ae64d5-8023-438e-b8b7-04cd1d3b01ef",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify",
+                    ":requestId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "requestId",
+                      "description": "(Required) Unique string that identifies the request to verify an Lightweight Directory Access Protocol (LDAP) configuration."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c2ecb4fc-9965-4a1a-ab6e-7179981a79d9",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify",
+                    ":requestId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "requestId",
+                      "description": "(Required) Unique string that identifies the request to verify an Lightweight Directory Access Protocol (LDAP) configuration."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fe74e925-3562-4e5d-85b0-790231ec5a26",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify",
+                    ":requestId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "requestId",
+                      "description": "(Required) Unique string that identifies the request to verify an Lightweight Directory Access Protocol (LDAP) configuration."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a7aa241c-aeda-4311-a22b-c5150f249071",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify",
+                    ":requestId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "requestId",
+                      "description": "(Required) Unique string that identifies the request to verify an Lightweight Directory Access Protocol (LDAP) configuration."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "378"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "378"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e6242efd-2186-4075-85cc-1fd2ae290129",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "userSecurity",
+                    "ldap",
+                    "verify",
+                    ":requestId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "requestId",
+                      "description": "(Required) Unique string that identifies the request to verify an Lightweight Directory Access Protocol (LDAP) configuration."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://cloud.mongodb.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://cloud.mongodb.com/api/oauth/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e1116f55-0f82-4174-9b93-a0d727310467",
+    "name": "MongoDB Atlas Administration Access Tracking LDAP Configuration API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account).",
+      "type": "text/plain"
+    }
+  }
+}

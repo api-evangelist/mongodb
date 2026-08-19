@@ -1,0 +1,4070 @@
+{
+  "item": [
+    {
+      "id": "c0bb3f8d-f6ef-486f-a1f7-af741a191657",
+      "name": "Query Shape Insights",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7ef0927f-e049-48b9-bb92-7af9a19e1a09",
+          "name": "Return Query Statistic Summaries",
+          "request": {
+            "name": "Return Query Statistic Summaries",
+            "description": {
+              "content": "Returns a list of query shape statistics summaries for a given cluster. Query shape statistics provide performance insights about MongoDB queries, helping users identify problematic query patterns and potential optimizations.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "clusters",
+                ":clusterName",
+                "queryShapeInsights",
+                "summaries"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "since",
+                  "value": "<long>",
+                  "description": "Date and time from which to retrieve query shape statistics. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).\n\n- If you don't specify the **until** parameter, the endpoint returns data covering from the **since** value and the current time.\n- If you specify neither the **since** nor the **until** parameters, the endpoint returns data from the previous 24 hours."
+                },
+                {
+                  "disabled": false,
+                  "key": "until",
+                  "value": "<long>",
+                  "description": "Date and time up until which to retrieve query shape statistics. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).\n\n- If you specify the **until** parameter, you must specify the **since** parameter.\n- If you specify neither the **since** nor the **until** parameters, the endpoint returns data from the previous 24 hours."
+                },
+                {
+                  "disabled": false,
+                  "key": "processIds",
+                  "value": "<string>",
+                  "description": "Process IDs from which to retrieve query shape statistics. A `processId` is a combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests. To include multiple `processId`, pass the parameter multiple times delimited with an ampersand (`&`) between each `processId`."
+                },
+                {
+                  "disabled": false,
+                  "key": "processIds",
+                  "value": "<string>",
+                  "description": "Process IDs from which to retrieve query shape statistics. A `processId` is a combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests. To include multiple `processId`, pass the parameter multiple times delimited with an ampersand (`&`) between each `processId`."
+                },
+                {
+                  "disabled": false,
+                  "key": "namespaces",
+                  "value": "<string>",
+                  "description": "Namespaces from which to retrieve query shape statistics. A namespace consists of one database and one collection resource written as `.`: `<database>.<collection>`. To include multiple namespaces, pass the parameter multiple times delimited with an ampersand (`&`) between each namespace. Omit this parameter to return results for all namespaces."
+                },
+                {
+                  "disabled": false,
+                  "key": "namespaces",
+                  "value": "<string>",
+                  "description": "Namespaces from which to retrieve query shape statistics. A namespace consists of one database and one collection resource written as `.`: `<database>.<collection>`. To include multiple namespaces, pass the parameter multiple times delimited with an ampersand (`&`) between each namespace. Omit this parameter to return results for all namespaces."
+                },
+                {
+                  "disabled": false,
+                  "key": "commands",
+                  "value": "<string>",
+                  "description": "Retrieve query shape statistics matching specified MongoDB commands. To include multiple commands, pass the parameter multiple times delimited with an ampersand (`&`) between each command. The currently supported parameters are find, distinct, and aggregate. Omit this parameter to return results for all supported commands."
+                },
+                {
+                  "disabled": false,
+                  "key": "commands",
+                  "value": "<string>",
+                  "description": "Retrieve query shape statistics matching specified MongoDB commands. To include multiple commands, pass the parameter multiple times delimited with an ampersand (`&`) between each command. The currently supported parameters are find, distinct, and aggregate. Omit this parameter to return results for all supported commands."
+                },
+                {
+                  "disabled": false,
+                  "key": "nSummaries",
+                  "value": "100",
+                  "description": "Maximum number of query statistic summaries to return."
+                },
+                {
+                  "disabled": false,
+                  "key": "series",
+                  "value": "<string>",
+                  "description": "Query shape statistics data series to retrieve. A series represents a specific metric about query execution. To include multiple series, pass the parameter multiple times delimited with an ampersand (`&`) between each series. Omit this parameter to return results for all available series."
+                },
+                {
+                  "disabled": false,
+                  "key": "series",
+                  "value": "<string>",
+                  "description": "Query shape statistics data series to retrieve. A series represents a specific metric about query execution. To include multiple series, pass the parameter multiple times delimited with an ampersand (`&`) between each series. Omit this parameter to return results for all available series."
+                },
+                {
+                  "disabled": false,
+                  "key": "queryShapeHashes",
+                  "value": "<string>",
+                  "description": "A list of SHA256 hashes of desired query shapes, output by MongoDB commands like `$queryStats` and $explain or slow query logs. To include multiple series, pass the parameter multiple times delimited with an ampersand (`&`) between each series. Omit this parameter to return results for all available series."
+                },
+                {
+                  "disabled": false,
+                  "key": "queryShapeHashes",
+                  "value": "<string>",
+                  "description": "A list of SHA256 hashes of desired query shapes, output by MongoDB commands like `$queryStats` and $explain or slow query logs. To include multiple series, pass the parameter multiple times delimited with an ampersand (`&`) between each series. Omit this parameter to return results for all available series."
+                },
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "clusterName",
+                  "description": "(Required) Human-readable label that identifies the cluster."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2025-03-12+json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7c0a2887-4660-4f91-8f95-e2fe316208a9",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    "summaries"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "commands",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nSummaries",
+                      "value": "100"
+                    },
+                    {
+                      "key": "series",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2025-03-12+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2025-03-12+json"
+                }
+              ],
+              "body": "{\n  \"summaries\": [\n    {\n      \"avgWorkingMillis\": 4558.482264762392,\n      \"bytesRead\": 685.9769304098062,\n      \"command\": \"aggregate\",\n      \"cpuTime\": 4965.842449742507,\n      \"docsExamined\": 4408.138397732367,\n      \"docsExaminedRatio\": 3843.5193229342044,\n      \"docsReturned\": 985.1242666266679,\n      \"execCount\": 6333.247850333611,\n      \"keysExamined\": 9637.885301993912,\n      \"keysExaminedRatio\": 7706.49992331043,\n      \"lastExecMicros\": 8807.690258364806,\n      \"namespace\": \"string\",\n      \"p50ExecMicros\": 2848.9837478219583,\n      \"p90ExecMicros\": 6178.397337445407,\n      \"p99ExecMicros\": 8979.185172337406,\n      \"queryShape\": \"string\",\n      \"queryShapeHash\": \"string\",\n      \"systemQuery\": false,\n      \"totalTimeToResponseMicros\": 1429.5558437993693,\n      \"totalWorkingMillis\": 1627.0179488063486\n    },\n    {\n      \"avgWorkingMillis\": 2151.775776904843,\n      \"bytesRead\": 4985.473666784592,\n      \"command\": \"find\",\n      \"cpuTime\": 1702.4303119428696,\n      \"docsExamined\": 1724.895435800934,\n      \"docsExaminedRatio\": 2897.934483433775,\n      \"docsReturned\": 3564.624928327539,\n      \"execCount\": 4492.919002798735,\n      \"keysExamined\": 8468.53657207555,\n      \"keysExaminedRatio\": 4982.2212283594545,\n      \"lastExecMicros\": 4388.492215365151,\n      \"namespace\": \"string\",\n      \"p50ExecMicros\": 2869.8924642658662,\n      \"p90ExecMicros\": 2020.4733001491493,\n      \"p99ExecMicros\": 489.3002392371448,\n      \"queryShape\": \"string\",\n      \"queryShapeHash\": \"string\",\n      \"systemQuery\": true,\n      \"totalTimeToResponseMicros\": 6029.6251639315915,\n      \"totalWorkingMillis\": 6117.301579803075\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "72f53dd7-8984-413a-b834-a29333b9ce6b",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    "summaries"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "commands",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nSummaries",
+                      "value": "100"
+                    },
+                    {
+                      "key": "series",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1f3c973a-e0cc-4bde-9075-1d5664a98586",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    "summaries"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "commands",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nSummaries",
+                      "value": "100"
+                    },
+                    {
+                      "key": "series",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d9143827-0653-4fac-ba0a-202c0a61dff5",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    "summaries"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "commands",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nSummaries",
+                      "value": "100"
+                    },
+                    {
+                      "key": "series",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c066d493-58b9-43c0-b669-e4b3043b8756",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    "summaries"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "commands",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nSummaries",
+                      "value": "100"
+                    },
+                    {
+                      "key": "series",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6d812cba-e839-48d4-9e0c-c96a1906588b",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    "summaries"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "commands",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nSummaries",
+                      "value": "100"
+                    },
+                    {
+                      "key": "series",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "908c4fe2-03da-43ef-8b64-c62ea9e33ec3",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    "summaries"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "namespaces",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "commands",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nSummaries",
+                      "value": "100"
+                    },
+                    {
+                      "key": "series",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "queryShapeHashes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8febbe9c-4479-4105-bd45-f8650eb7fa9b",
+          "name": "Return Query Shape Details",
+          "request": {
+            "name": "Return Query Shape Details",
+            "description": {
+              "content": "Returns the metadata and statistics summary for a given query shape hash.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "clusters",
+                ":clusterName",
+                "queryShapeInsights",
+                ":queryShapeHash",
+                "details"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                },
+                {
+                  "disabled": false,
+                  "key": "since",
+                  "value": "<long>",
+                  "description": "Date and time from which to retrieve query shape statistics. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).\n\n- If you don't specify the **until** parameter, the endpoint returns data covering from the **since** value and the current time.\n- If you specify neither the **since** nor the **until** parameters, the endpoint returns data from the previous 24 hours."
+                },
+                {
+                  "disabled": false,
+                  "key": "until",
+                  "value": "<long>",
+                  "description": "Date and time up until which to retrieve query shape statistics. This parameter expresses its value in the number of milliseconds that have elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time).\n\n- If you specify the **until** parameter, you must specify the **since** parameter.\n- If you specify neither the **since** nor the **until** parameters, the endpoint returns data from the previous 24 hours."
+                },
+                {
+                  "disabled": false,
+                  "key": "processIds",
+                  "value": "<string>",
+                  "description": "Process IDs from which to retrieve query shape statistics. A `processId` is a combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests. To include multiple `processIds`, pass the parameter multiple times delimited with an ampersand (`&`) between each `processId`."
+                },
+                {
+                  "disabled": false,
+                  "key": "processIds",
+                  "value": "<string>",
+                  "description": "Process IDs from which to retrieve query shape statistics. A `processId` is a combination of host and port that serves the MongoDB process. The host must be the hostname, FQDN, IPv4 address, or IPv6 address of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests. To include multiple `processIds`, pass the parameter multiple times delimited with an ampersand (`&`) between each `processId`."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "clusterName",
+                  "description": "(Required) Human-readable label that identifies the cluster."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "queryShapeHash",
+                  "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2025-03-12+json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "66154744-a47a-4b66-94a9-4a2281aa79bf",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    ":queryShapeHash",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2025-03-12+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2025-03-12+json"
+                }
+              ],
+              "body": "{\n  \"firstSeen\": {\n    \"applicationName\": \"string\",\n    \"driverName\": \"string\",\n    \"driverVersion\": \"string\",\n    \"timestamp\": 7685\n  },\n  \"lastSeen\": {\n    \"applicationName\": \"string\",\n    \"driverName\": \"string\",\n    \"driverVersion\": \"string\",\n    \"timestamp\": 8859\n  },\n  \"queryStats\": {\n    \"avgWorkingMillis\": 4481.574909162858,\n    \"bytesRead\": 9959.230250612109,\n    \"command\": \"distinct\",\n    \"cpuTime\": 7480.650992153406,\n    \"docsExamined\": 161.27266188492806,\n    \"docsExaminedRatio\": 9408.195200011258,\n    \"docsReturned\": 5557.2248024111805,\n    \"execCount\": 940.5921543304396,\n    \"keysExamined\": 3317.1811783449157,\n    \"keysExaminedRatio\": 1114.3446414769342,\n    \"lastExecMicros\": 8849.199124987364,\n    \"namespace\": \"string\",\n    \"p50ExecMicros\": 4405.024993439286,\n    \"p90ExecMicros\": 4588.5958563225695,\n    \"p99ExecMicros\": 5364.9395613856095,\n    \"queryShape\": \"string\",\n    \"queryShapeHash\": \"string\",\n    \"systemQuery\": true,\n    \"totalTimeToResponseMicros\": 9167.36880489337,\n    \"totalWorkingMillis\": 5155.604508650545\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "25641e58-2c92-4e72-81a0-872155073de1",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    ":queryShapeHash",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "921df46a-2b9d-474f-aea2-582ee05d1541",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    ":queryShapeHash",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "18720e9a-cf89-4bc7-8917-401416436cf8",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    ":queryShapeHash",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "692c2de1-ad61-42c6-8506-1926d1a7d390",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    ":queryShapeHash",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "47c6ef40-f65c-49bb-9bdb-c6e52ebe8136",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    ":queryShapeHash",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2cac057f-c452-438b-b623-a84e97c1c8ed",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapeInsights",
+                    ":queryShapeHash",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "processIds",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "01553afa-8d15-4e9c-a22f-9dcc222969a6",
+          "name": "Return All Query Shapes",
+          "request": {
+            "name": "Return All Query Shapes",
+            "description": {
+              "content": "Returns a list of query shapes for one cluster. Query shapes may be filtered by their status; at present, this endpoint supports only the REJECTED status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "clusters",
+                ":clusterName",
+                "queryShapes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "REJECTED",
+                  "description": "The status of query shapes to retrieve. Only REJECTED status is supported. If omitted, defaults to REJECTED."
+                },
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "includeCount",
+                  "value": "true",
+                  "description": "Flag that indicates whether the response returns the total number of items (`totalCount`) in the response."
+                },
+                {
+                  "disabled": false,
+                  "key": "itemsPerPage",
+                  "value": "100",
+                  "description": "Number of items that the response returns per page."
+                },
+                {
+                  "disabled": false,
+                  "key": "pageNum",
+                  "value": "1",
+                  "description": "Number of the page that displays the current set of the total objects that the response returns."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "clusterName",
+                  "description": "(Required) Human-readable label that identifies the cluster."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2025-03-12+json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "53a9f988-64f4-439d-a2a2-ffd6f078b73e",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "REJECTED"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeCount",
+                      "value": "true"
+                    },
+                    {
+                      "key": "itemsPerPage",
+                      "value": "100"
+                    },
+                    {
+                      "key": "pageNum",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2025-03-12+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2025-03-12+json"
+                }
+              ],
+              "body": "{\n  \"results\": [\n    {\n      \"queryShapeHash\": \"string\",\n      \"status\": \"UNREJECTED\",\n      \"command\": \"DISTINCT\",\n      \"namespace\": \"string\",\n      \"queryShape\": \"string\"\n    },\n    {\n      \"queryShapeHash\": \"string\",\n      \"status\": \"REJECTED\",\n      \"command\": \"AGGREGATE\",\n      \"namespace\": \"string\",\n      \"queryShape\": \"string\"\n    }\n  ],\n  \"links\": [\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    },\n    {\n      \"href\": \"https://cloud.mongodb.com/api/atlas\",\n      \"rel\": \"self\"\n    }\n  ],\n  \"totalCount\": 3098\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fb26028d-ed8e-43e1-b65c-fb60532dcb36",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "REJECTED"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeCount",
+                      "value": "true"
+                    },
+                    {
+                      "key": "itemsPerPage",
+                      "value": "100"
+                    },
+                    {
+                      "key": "pageNum",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a5d6997c-d2fe-42f8-b716-56a22320e66e",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "REJECTED"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeCount",
+                      "value": "true"
+                    },
+                    {
+                      "key": "itemsPerPage",
+                      "value": "100"
+                    },
+                    {
+                      "key": "pageNum",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e0d2c70a-d258-4b1c-95bc-d9e3da6510ca",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "REJECTED"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeCount",
+                      "value": "true"
+                    },
+                    {
+                      "key": "itemsPerPage",
+                      "value": "100"
+                    },
+                    {
+                      "key": "pageNum",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7f13ada5-97dc-456c-a287-7a81d0d2eaf5",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "REJECTED"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeCount",
+                      "value": "true"
+                    },
+                    {
+                      "key": "itemsPerPage",
+                      "value": "100"
+                    },
+                    {
+                      "key": "pageNum",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "731591cc-c699-4cb9-be92-9a364baaabc6",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "REJECTED"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeCount",
+                      "value": "true"
+                    },
+                    {
+                      "key": "itemsPerPage",
+                      "value": "100"
+                    },
+                    {
+                      "key": "pageNum",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4c2f1a35-bb5d-432e-94fd-22d6e957d2fe",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "REJECTED"
+                    },
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeCount",
+                      "value": "true"
+                    },
+                    {
+                      "key": "itemsPerPage",
+                      "value": "100"
+                    },
+                    {
+                      "key": "pageNum",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1d4b0f4d-6188-434a-bec5-7db895395733",
+          "name": "Return One Query Shape",
+          "request": {
+            "name": "Return One Query Shape",
+            "description": {
+              "content": "Returns the details for a single query shape. This endpoint only returns query shapes with REJECTED status. If the specified query shape hash does not correspond to a rejected query shape, a 404 Not Found error is returned.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "clusters",
+                ":clusterName",
+                "queryShapes",
+                ":queryShapeHash"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "clusterName",
+                  "description": "(Required) Human-readable label that identifies the cluster."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "queryShapeHash",
+                  "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2025-03-12+json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f97144c1-3254-482b-95aa-d432759b833f",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2025-03-12+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2025-03-12+json"
+                }
+              ],
+              "body": "{\n  \"queryShapeHash\": \"string\",\n  \"status\": \"UNREJECTED\",\n  \"command\": \"AGGREGATE\",\n  \"namespace\": \"string\",\n  \"queryShape\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "12d3fa59-4d8e-424c-99e7-dd87baba60a9",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "963865f3-7534-4aaa-a409-d27f7e1463e7",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dbda436c-895e-4cb0-ad7b-c05e3f7b223f",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f7d4205b-3f64-4c7f-a841-0b98c79f10c8",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1bf91957-ad33-423e-855a-e130a2363256",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6f5a9d53-27c2-4ff9-97f6-d100d6f5f1a9",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b0290294-f0b6-4b78-b57b-0014df27aa14",
+          "name": "Update Query Shape Rejection Status",
+          "request": {
+            "name": "Update Query Shape Rejection Status",
+            "description": {
+              "content": "Updates the rejection status of a query shape. Use this endpoint to reject a query shape (preventing it from executing on the cluster) or to unreject a previously rejected query shape (allowing it to execute again). This operation is idempotent: rejecting an already rejected query shape or unrejecting an already unrejected query shape will return 200 OK.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "clusters",
+                ":clusterName",
+                "queryShapes",
+                ":queryShapeHash"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "clusterName",
+                  "description": "(Required) Human-readable label that identifies the cluster."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "queryShapeHash",
+                  "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.atlas.2025-03-12+json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2025-03-12+json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1f418ab4-84af-474d-825f-f3ecab81e68d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2025-03-12+json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2025-03-12+json"
+                }
+              ],
+              "body": "{\n  \"queryShapeHash\": \"string\",\n  \"status\": \"UNREJECTED\",\n  \"command\": \"AGGREGATE\",\n  \"namespace\": \"string\",\n  \"queryShape\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9d092289-ce7d-4a61-823a-6e9070b2863f",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "94ed3b84-1259-43c6-a6ed-e36084052f20",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "da70854e-00d7-4a11-a1db-60c8e342f77a",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4feddad8-3e6b-4445-8ff9-e228a9122b18",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "441d374f-6ba2-4389-9bb1-a2c70f71bbc3",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "948"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "948"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "58fb81c5-f5d7-483a-9433-2c02ffa5de22",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "queryShapes",
+                    ":queryShapeHash"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "queryShapeHash",
+                      "description": "(Required) A SHA256 hash of a query shape, output by MongoDB commands like `$queryStats` and `$explain` or slow query logs."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://cloud.mongodb.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://cloud.mongodb.com/api/oauth/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "c11f3346-48f9-4000-86d3-64af8ab38ec9",
+    "name": "MongoDB Atlas Administration Access Tracking Query Shape Insights API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account).",
+      "type": "text/plain"
+    }
+  }
+}

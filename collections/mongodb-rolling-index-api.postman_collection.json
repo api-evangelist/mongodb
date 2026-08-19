@@ -1,0 +1,814 @@
+{
+  "item": [
+    {
+      "id": "e396ee1f-dee9-40f9-bb56-9389f0147681",
+      "name": "Rolling Index",
+      "description": {
+        "content": "Creates one index to a database deployment in a rolling manner. Rolling indexes build indexes on the applicable nodes sequentially and may reduce the performance impact of an index build if your deployment's average CPU utilization exceeds (N-1)/N-10% where N is the number of CPU threads available to mongod of if the WiredTiger cache fill ratio regularly exceeds 90%. If your deployment does not meet this criteria, use the default index build. You can't create a rolling index on an `M0` free cluster or `M2/M5` shared cluster.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "8b2e6f60-d3d3-47ee-8ec3-76a2450969a5",
+          "name": "Create One Rolling Index",
+          "request": {
+            "name": "Create One Rolling Index",
+            "description": {
+              "content": "Creates an index on the cluster identified by its name in a rolling manner. Creating the index in this way allows index builds on one replica set member as a standalone at a time, starting with the secondary members. Creating indexes in this way requires at least one replica set election. To use this resource, the requesting Service Account or API Key must have the Project Data Access Admin role or the Project Index Manager role.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "atlas",
+                "v2",
+                "groups",
+                ":groupId",
+                "clusters",
+                ":clusterName",
+                "index"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "envelope",
+                  "value": "false",
+                  "description": "Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body."
+                },
+                {
+                  "disabled": false,
+                  "key": "pretty",
+                  "value": "false",
+                  "description": "Flag that indicates whether the response body should be in the prettyprint format."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "groupId",
+                  "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "clusterName",
+                  "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.atlas.2023-01-01+json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"collection\": \"<string>\",\n  \"db\": \"<string>\",\n  \"keys\": [\n    {\n      \"key_0\": \"<string>\"\n    },\n    {\n      \"key_0\": \"<string>\"\n    }\n  ],\n  \"collation\": {\n    \"locale\": \"<string>\",\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"off\",\n    \"caseLevel\": false,\n    \"maxVariable\": \"<string>\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"options\": {\n    \"2dsphereIndexVersion\": 3,\n    \"background\": false,\n    \"bits\": 26,\n    \"bucketSize\": \"<integer>\",\n    \"columnstoreProjection\": {\n      \"key_0\": \"<integer>\"\n    },\n    \"default_language\": \"english\",\n    \"expireAfterSeconds\": \"<integer>\",\n    \"hidden\": false,\n    \"language_override\": \"language\",\n    \"max\": 180,\n    \"min\": -180,\n    \"name\": \"<string>\",\n    \"partialFilterExpression\": {\n      \"key_0\": \"<object>\"\n    },\n    \"sparse\": false,\n    \"storageEngine\": {\n      \"key_0\": \"<object>\",\n      \"key_1\": \"<object>\",\n      \"key_2\": \"<object>\"\n    },\n    \"textIndexVersion\": 3,\n    \"weights\": {\n      \"key_0\": \"<object>\",\n      \"key_1\": \"<object>\",\n      \"key_2\": \"<object>\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "c2a7c652-326d-4f87-a495-c93097a06bc2",
+              "name": "Accepted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.atlas.2023-01-01+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "119"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/vnd.atlas.2023-01-01+json"
+                }
+              ],
+              "body": "\"\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "572b5010-7ee7-4bbd-8598-81bbcad1692f",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) No provider AWS exists.\",\n  \"error\": 400,\n  \"errorCode\": \"VALIDATION_ERROR\",\n  \"reason\": \"Bad Request\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "66e2d0cd-63be-45ab-b4e9-12d8265c8288",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 401,\n  \"errorCode\": \"NOT_ORG_GROUP_CREATOR\",\n  \"reason\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2a9c8b6a-6554-4ca5-8212-06d936652c0b",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 403,\n  \"errorCode\": \"CANNOT_CHANGE_GROUP_NAME\",\n  \"reason\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "15d4c58d-cd84-4fe3-aaa4-978aec896cea",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS\",\n  \"error\": 404,\n  \"errorCode\": \"RESOURCE_NOT_FOUND\",\n  \"reason\": \"Not Found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "898c4f7f-4f3e-4aad-8896-21fd14c6b3e0",
+              "name": "Conflict.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554\",\n  \"error\": 409,\n  \"errorCode\": \"CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK\",\n  \"reason\": \"Conflict\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8f4f95aa-fd43-46ee-811b-9168e0577fdf",
+              "name": "Too Many Requests.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "The maximum number of requests that a user can make within a specific time window.",
+                  "key": "RateLimit-Limit",
+                  "value": "119"
+                },
+                {
+                  "disabled": false,
+                  "description": "The number of requests remaining in the current rate limit window before the limit is reached.",
+                  "key": "RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "disabled": false,
+                  "description": "The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.",
+                  "key": "Retry-After",
+                  "value": "119"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 429,\n  \"errorCode\": \"RATE_LIMITED\",\n  \"reason\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "36bcf6a9-fe31-4355-9ae3-764def202b8f",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "atlas",
+                    "v2",
+                    "groups",
+                    ":groupId",
+                    "clusters",
+                    ":clusterName",
+                    "index"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "envelope",
+                      "value": "false"
+                    },
+                    {
+                      "key": "pretty",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "groupId",
+                      "description": "(Required) Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.\n\n**NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "clusterName",
+                      "description": "(Required) Human-readable label that identifies the cluster on which MongoDB Cloud creates an index."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"collation\": {\n    \"alternate\": \"non-ignorable\",\n    \"backwards\": false,\n    \"caseFirst\": \"lower\",\n    \"caseLevel\": false,\n    \"locale\": \"af\",\n    \"maxVariable\": \"punct\",\n    \"normalization\": false,\n    \"numericOrdering\": false,\n    \"strength\": 3\n  },\n  \"collection\": \"accounts\",\n  \"db\": \"sample_airbnb\",\n  \"keys\": [\n    {\n      \"property_type\": \"1\"\n    }\n  ],\n  \"options\": {\n    \"name\": \"PartialIndexTest\",\n    \"partialFilterExpression\": {\n      \"limit\": {\n        \"$gt\": 900\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"(This is just an example, the exception may not be related to this endpoint)\",\n  \"error\": 500,\n  \"errorCode\": \"UNEXPECTED_ERROR\",\n  \"reason\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://cloud.mongodb.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://cloud.mongodb.com/api/oauth/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "30c40695-11a1-4bce-8b63-849e241b6411",
+    "name": "MongoDB Atlas Administration Access Tracking Rolling Index API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account).",
+      "type": "text/plain"
+    }
+  }
+}
