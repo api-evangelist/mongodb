@@ -1,44 +1,69 @@
-specification: API Commons Rate Limits
-specificationVersion: '0.1'
-schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
-provider: MongoDB Atlas
-providerId: mongodb
-created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
-reconciled: true
-tags:
-  - Rate Limiting
-  - Database
-description: Atlas Admin API per-project rate limits; cluster connections by tier.
+# Rate limits transcribed from the provider's own documentation — see provenance. Quoted, not derived.
+generated: '2026-09-20'
+method: searched
+source: https://www.mongodb.com/docs/atlas/api/api-rate-limit/
 sources:
-  - https://www.mongodb.com/pricing
-  - https://www.mongodb.com/pricing/calculator
-  - https://www.mongodb.com/docs/atlas/api/atlas-admin-api/
-headers: {}
-responseCodes:
-  throttled: 429
+- https://www.mongodb.com/docs/atlas/api/api-rate-limit/
+provenance:
+  tool: planning/api-economics/harvest_ratelimits.py
+  run: 20260920T133210
+  grounding: every limit_text was found verbatim in the fetched page text
+published: false
+note: Token bucket limits per endpoint set and scope (GROUP/ORGANIZATION/USER/IP); expressed as capacity
+  plus refill rate per 60 seconds, so a single request-per-window number is not stated. Representative
+  entries listed; page includes many more endpoint sets at 1200 capacity/500 per 60s.
+limit_count: 12
 limits:
-  - name: Atlas Admin API (default)
-    scope: project
-    metric: requests_per_minute
-    limit: 100
-    timeFrame: minute
-  - name: M0 connections
-    scope: cluster
-    metric: concurrent_connections
-    limit: 500
-  - name: M10 connections
-    scope: cluster
-    metric: concurrent_connections
-    limit: 1500
-  - name: M30 connections
-    scope: cluster
-    metric: concurrent_connections
-    limit: 3000
-  - name: Serverless concurrent operations
-    scope: instance
-    metric: concurrent_ops
-    limit: 1000
+- name: AI Model APIs (GROUP)
+  limit_text: 'Scope: GROUP Capacity: 1200 Refill: 500/60s'
+  scope: endpoint
+  endpoint: AI Model APIs
+- name: AI Model APIs (ORGANIZATION)
+  limit_text: 'Scope: ORGANIZATION Capacity: 500 Refill: 250/60s'
+  scope: account
+  endpoint: AI Model APIs
+- name: Alert Configurations (USER)
+  limit_text: 'Scope: USER Capacity: 300 Refill: 100/60s'
+  scope: user
+  endpoint: GET /api/atlas/v2/alertConfigs/matchers/fieldNames
+- name: Cloud Provider Access
+  limit_text: 'Scope: GROUP Capacity: 2000 Refill: 1000/60s'
+  scope: endpoint
+  endpoint: Cloud Provider Access
+- name: Cluster Log Monitoring
+  limit_text: 'Scope: GROUP Capacity: 10000 Refill: 5000/60s'
+  scope: endpoint
+  endpoint: GET /api/atlas/v2/groups/{groupId}/clusters/{hostName}/logs/{logName}.gz
+- name: Invoice Report Generation
+  limit_text: 'Scope: ORGANIZATION Capacity: 20 Refill: 10/60s'
+  scope: account
+  endpoint: POST /api/atlas/v2/orgs/{orgId}/invoices/{invoiceId}/reports
+- name: Invoices
+  limit_text: 'Scope: ORGANIZATION Capacity: 500 Refill: 100/60s'
+  scope: account
+  endpoint: Invoices
+- name: Organization Settings
+  limit_text: 'Scope: ORGANIZATION Capacity: 10 Refill: 5/60s'
+  scope: account
+  endpoint: Organization Settings
+- name: MongoDB Cloud Users (USER)
+  limit_text: 'Scope: USER Capacity: 2500 Refill: 2000/60s'
+  scope: user
+  endpoint: MongoDB Cloud Users
+- name: Private Endpoint Services
+  limit_text: 'Scope: GROUP Capacity: 4000 Refill: 2000/60s'
+  scope: endpoint
+  endpoint: Private Endpoint Services
+- name: Remote MCP Configurations
+  limit_text: 'Scope: GROUP Capacity: 10 Refill: 10/60s'
+  scope: endpoint
+  endpoint: Remote MCP Configurations
+- name: Root (IP)
+  limit_text: 'Scope: IP Capacity: 400 Refill: 100/60s'
+  scope: ip
+  endpoint: GET /api/atlas/v2/unauth/controlPlaneIPAddresses
+headers:
+- RateLimit-Limit
+- RateLimit-Remaining
+- Retry-After
+exceeded_status: 429
