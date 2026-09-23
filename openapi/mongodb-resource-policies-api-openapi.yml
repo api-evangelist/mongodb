@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Resource Policies API
+  title: MongoDB Atlas Administration Resource Policies API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -474,17 +474,17 @@ paths:
       x-xgen-operation-id-override: validateResourcePolicies
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -496,6 +496,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -536,18 +547,130 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
   schemas:
+    ApiAtlasPolicyMetadataView:
+      properties:
+        policyId:
+          description: Unique 24-hexadecimal character string that identifies the policy.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    ApiAtlasNonCompliantResourceView:
+      properties:
+        orgId:
+          description: Unique 24-hexadecimal character string that identifies the organization the resource belongs to.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resourceId:
+          description: Unique 24-hexadecimal character string that identifies the non-compliant resource.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resourceName:
+          description: Unique human readable string that identifies the non-compliant resource.
+          readOnly: true
+          type: string
+        resourcePoliciesCausingNonCompliance:
+          description: List of resource policies causing the resource to be considered non-compliant.
+          items:
+            $ref: '#/components/schemas/ApiAtlasResourcePolicyMetadataView'
+          readOnly: true
+          type: array
+        resourceType:
+          description: Human-readable label that displays the type of a resource.
+          enum:
+          - DEPRECATED_PROJECT
+          - DEPRECATED_CLUSTER
+          - PROJECT
+          - CLUSTER
+          readOnly: true
+          type: string
+      type: object
+    ApiAtlasResourcePolicyMetadataView:
+      properties:
+        policiesCausingNonCompliance:
+          description: List of policies that are in conflict with the current state of the resource.
+          items:
+            $ref: '#/components/schemas/ApiAtlasPolicyMetadataView'
+          readOnly: true
+          type: array
+        resourcePolicyId:
+          description: Unique 24-hexadecimal character string that identifies the atlas resource policy.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resourcePolicyName:
+          description: Human-readable label that describes the atlas resource policy.
+          readOnly: true
+          type: string
+      type: object
+    ApiAtlasPolicyCreateView:
+      properties:
+        body:
+          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
+          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
+          minLength: 1
+          type: string
+      required:
+      - body
+      type: object
+    ApiAtlasInvalidPolicyErrorDetailView:
+      properties:
+        detail:
+          description: A string that provides a detailed description of a validation error.
+          readOnly: true
+          type: string
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
     ApiAtlasUserMetadataView:
       description: The user that last updated the atlas resource policy.
       properties:
@@ -563,20 +686,6 @@ components:
           type: string
       readOnly: true
       type: object
-    ApiAtlasPolicyView:
-      properties:
-        body:
-          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
-          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal character string that identifies the policy.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-      type: object
     ApiAtlasInvalidPolicyView:
       properties:
         body:
@@ -591,10 +700,17 @@ components:
           readOnly: true
           type: array
       type: object
-    ApiAtlasInvalidPolicyErrorDetailView:
+    ApiAtlasPolicyView:
       properties:
-        detail:
-          description: A string that provides a detailed description of a validation error.
+        body:
+          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
+          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal character string that identifies the policy.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           readOnly: true
           type: string
       type: object
@@ -646,110 +762,6 @@ components:
           readOnly: true
           type: string
       type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    ApiAtlasResourcePolicyMetadataView:
-      properties:
-        policiesCausingNonCompliance:
-          description: List of policies that are in conflict with the current state of the resource.
-          items:
-            $ref: '#/components/schemas/ApiAtlasPolicyMetadataView'
-          readOnly: true
-          type: array
-        resourcePolicyId:
-          description: Unique 24-hexadecimal character string that identifies the atlas resource policy.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resourcePolicyName:
-          description: Human-readable label that describes the atlas resource policy.
-          readOnly: true
-          type: string
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    ApiAtlasNonCompliantResourceView:
-      properties:
-        orgId:
-          description: Unique 24-hexadecimal character string that identifies the organization the resource belongs to.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resourceId:
-          description: Unique 24-hexadecimal character string that identifies the non-compliant resource.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resourceName:
-          description: Unique human readable string that identifies the non-compliant resource.
-          readOnly: true
-          type: string
-        resourcePoliciesCausingNonCompliance:
-          description: List of resource policies causing the resource to be considered non-compliant.
-          items:
-            $ref: '#/components/schemas/ApiAtlasResourcePolicyMetadataView'
-          readOnly: true
-          type: array
-        resourceType:
-          description: Human-readable label that displays the type of a resource.
-          enum:
-          - DEPRECATED_PROJECT
-          - DEPRECATED_CLUSTER
-          - PROJECT
-          - CLUSTER
-          readOnly: true
-          type: string
-      type: object
-    ApiAtlasPolicyMetadataView:
-      properties:
-        policyId:
-          description: Unique 24-hexadecimal character string that identifies the policy.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-      type: object
     ApiAtlasResourcePolicyCreateView:
       properties:
         description:
@@ -767,31 +779,15 @@ components:
       - name
       - policies
       type: object
-    FieldViolation:
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    ApiAtlasResourcePolicyEditView:
-      properties:
-        description:
-          description: Description of the atlas resource policy.
-          type: string
-        name:
-          description: Human-readable label that describes the atlas resource policy.
-          type: string
-        policies:
-          description: List of policies that make up the atlas resource policy.
+        fields:
+          description: Describes all violations in a client request.
           items:
-            $ref: '#/components/schemas/ApiAtlasPolicyCreateView'
+            $ref: '#/components/schemas/FieldViolation'
           type: array
+      readOnly: true
       type: object
     ApiAtlasInvalidResourcePolicyCreateErrorView:
       properties:
@@ -811,24 +807,21 @@ components:
           readOnly: true
           type: array
       type: object
-    ApiAtlasPolicyCreateView:
+    ApiAtlasResourcePolicyEditView:
       properties:
-        body:
-          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
-          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
-          minLength: 1
+        description:
+          description: Description of the atlas resource policy.
           type: string
-      required:
-      - body
+        name:
+          description: Human-readable label that describes the atlas resource policy.
+          type: string
+        policies:
+          description: List of policies that make up the atlas resource policy.
+          items:
+            $ref: '#/components/schemas/ApiAtlasPolicyCreateView'
+          type: array
       type: object
   parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
     pretty:
       description: Flag that indicates whether the response body should be in the prettyprint format.
       in: query
@@ -838,6 +831,13 @@ components:
         externalDocs:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
         type: boolean
     orgId:
       description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
@@ -849,16 +849,16 @@ components:
         pattern: ^([a-f0-9]{24})$
         type: string
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

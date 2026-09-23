@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Network Peering API
+  title: MongoDB Atlas Administration Network Peering API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -822,17 +822,17 @@ paths:
       x-xgen-operation-id-override: disablePeering
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -844,6 +844,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -862,17 +873,6 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
     conflict:
       content:
         application/json:
@@ -884,6 +884,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Conflict.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     badRequest:
       content:
         application/json:
@@ -895,18 +906,186 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
   schemas:
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    GCPNetworkPeeringConnectionSettings:
+      description: Group of Network Peering connection settings.
+      properties:
+        containerId:
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        errorMessage:
+          description: Details of the error returned when requesting a GCP network peering resource. The resource returns `null` if the request succeeded.
+          readOnly: true
+          type: string
+        gcpProjectId:
+          description: Human-readable label that identifies the GCP project that contains the network that you want to peer with the MongoDB Cloud VPC.
+          pattern: ^[a-z][0-9a-z-]{4,28}[0-9a-z]{1}
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the network peering connection.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        networkName:
+          description: Human-readable label that identifies the network to peer with the MongoDB Cloud VPC.
+          pattern: '[a-z]([-a-z0-9]{0,62}[a-z0-9]{0,1})?'
+          type: string
+        providerName:
+          description: Cloud service provider that serves the requested network peering connection.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+        status:
+          description: State of the network peering connection at the time you made the request.
+          enum:
+          - ADDING_PEER
+          - WAITING_FOR_USER
+          - AVAILABLE
+          - FAILED
+          - DELETING
+          readOnly: true
+          type: string
+      required:
+      - containerId
+      - gcpProjectId
+      - networkName
+      title: GCP
+      type: object
+    BaseNetworkPeeringConnectionSettings:
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/AwsNetworkPeeringConnectionSettings'
+          AZURE: '#/components/schemas/AzureNetworkPeeringConnectionSettings'
+          GCP: '#/components/schemas/GCPNetworkPeeringConnectionSettings'
+        propertyName: providerName
+      oneOf:
+      - $ref: '#/components/schemas/AwsNetworkPeeringConnectionSettings'
+      - $ref: '#/components/schemas/AzureNetworkPeeringConnectionSettings'
+      - $ref: '#/components/schemas/GCPNetworkPeeringConnectionSettings'
+      properties:
+        containerId:
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the network peering connection.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        providerName:
+          description: Cloud service provider that serves the requested network peering connection.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+      required:
+      - containerId
+      type: object
     GCPCloudProviderContainer:
       allOf:
       - $ref: '#/components/schemas/CloudProviderContainer'
@@ -977,42 +1156,36 @@ components:
       - regions
       title: GCP
       type: object
-    Link:
+    FieldViolation:
       properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
+        description:
+          description: A description of why the request element is bad.
           type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
+        field:
+          description: A path that leads to a field in the request body.
           type: string
+      required:
+      - description
+      - field
       type: object
-    AwsNetworkPeeringConnectionSettings:
+    AzureNetworkPeeringConnectionSettings:
       description: Group of Network Peering connection settings.
       properties:
-        accepterRegionName:
-          description: Amazon Web Services (AWS) region where the Virtual Peering Connection (VPC) that you peered with the MongoDB Cloud VPC resides. The resource returns `null` if your VPC and the MongoDB Cloud VPC reside in the same region.
+        azureDirectoryId:
+          description: Unique string that identifies the Azure AD directory in which the VNet peered with the MongoDB Cloud VNet resides.
+          format: uuid
           type: string
-        awsAccountId:
-          description: Unique twelve-digit string that identifies the Amazon Web Services (AWS) account that owns the VPC that you peered with the MongoDB Cloud VPC.
-          pattern: ^[0-9]{12}$
-          type: string
-        connectionId:
-          description: Unique string that identifies the peering connection on AWS.
-          readOnly: true
+        azureSubscriptionId:
+          description: Unique string that identifies the Azure subscription in which the VNet you peered with the MongoDB Cloud VNet resides.
+          format: uuid
           type: string
         containerId:
           description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.
           example: 32b6e34b3d91647abb20e7b8
           pattern: ^([a-f0-9]{24})$
           type: string
-        errorStateName:
-          description: Type of error that can be returned when requesting an Amazon Web Services (AWS) peering connection. The resource returns `null` if the request succeeded.
-          enum:
-          - REJECTED
-          - EXPIRED
-          - INVALID_ARGUMENT
+        errorState:
+          description: 'Error message returned when a requested Azure network peering resource returns `"status" : "FAILED"`. The resource returns `null` if the request succeeded.'
           readOnly: true
           type: string
         id:
@@ -1028,64 +1201,31 @@ components:
           - AZURE
           - GCP
           type: string
-        routeTableCidrBlock:
-          description: Internet Protocol (IP) addresses expressed in Classless Inter-Domain Routing (CIDR) notation of the VPC's subnet that you want to peer with the MongoDB Cloud VPC.
-          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+        resourceGroupName:
+          description: Human-readable label that identifies the resource group in which the VNet to peer with the MongoDB Cloud VNet resides.
+          pattern: ^([-\w._()])+$
           type: string
-        statusName:
+        status:
           description: State of the network peering connection at the time you made the request.
           enum:
-          - INITIATING
-          - PENDING_ACCEPTANCE
-          - FAILED
-          - FINALIZING
+          - ADDING_PEER
           - AVAILABLE
-          - TERMINATING
+          - FAILED
+          - DELETION_FAILED
+          - DELETING
           readOnly: true
           type: string
-        vpcId:
-          description: Unique string that identifies the VPC on Amazon Web Services (AWS) that you want to peer with the MongoDB Cloud VPC.
-          pattern: ^vpc-[0-9a-f]{17}$
+        vnetName:
+          description: Human-readable label that identifies the VNet that you want to peer with the MongoDB Cloud VNet.
+          pattern: ^([-\w._()])$
           type: string
       required:
-      - accepterRegionName
-      - awsAccountId
+      - azureDirectoryId
+      - azureSubscriptionId
       - containerId
-      - routeTableCidrBlock
-      - vpcId
-      title: AWS
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
+      - resourceGroupName
+      - vnetName
+      title: AZURE
       type: object
     AWSCloudProviderContainer:
       allOf:
@@ -1150,8 +1290,104 @@ components:
       - regionName
       title: AWS
       type: object
+    PaginatedContainerPeerView:
+      description: Group of Network Peering connection settings.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/BaseNetworkPeeringConnectionSettings'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PrivateIPModeView:
+      properties:
+        enabled:
+          description: Flag that indicates whether someone enabled **Connect via Peering Only** mode for the specified project.
+          type: boolean
+      required:
+      - enabled
+      type: object
     RequestAccepted:
       description: Accepted.
+      type: object
+    PaginatedCloudProviderContainerView:
+      description: List of Network Peering Containers that Amazon Web Services serves.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/CloudProviderContainer'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      title: Network Peering
+      type: object
+    CloudProviderContainer:
+      description: Collection of settings that configures the network container for a virtual private connection on Amazon Web Services.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/AWSCloudProviderContainer'
+          AZURE: '#/components/schemas/AzureCloudProviderContainer'
+          GCP: '#/components/schemas/GCPCloudProviderContainer'
+        propertyName: providerName
+      oneOf:
+      - $ref: '#/components/schemas/AzureCloudProviderContainer'
+      - $ref: '#/components/schemas/GCPCloudProviderContainer'
+      - $ref: '#/components/schemas/AWSCloudProviderContainer'
+      properties:
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the network peering container.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        providerName:
+          description: Cloud service provider that serves the requested network peering containers.
+          enum:
+          - AWS
+          - GCP
+          - AZURE
+          - TENANT
+          - SERVERLESS
+          type: string
+        provisioned:
+          description: Flag that indicates whether MongoDB Cloud clusters exist in the specified network peering container.
+          readOnly: true
+          type: boolean
       type: object
     AzureCloudProviderContainer:
       allOf:
@@ -1253,84 +1489,31 @@ components:
           type: array
       readOnly: true
       type: object
-    BaseNetworkPeeringConnectionSettings:
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/AwsNetworkPeeringConnectionSettings'
-          AZURE: '#/components/schemas/AzureNetworkPeeringConnectionSettings'
-          GCP: '#/components/schemas/GCPNetworkPeeringConnectionSettings'
-        propertyName: providerName
-      oneOf:
-      - $ref: '#/components/schemas/AwsNetworkPeeringConnectionSettings'
-      - $ref: '#/components/schemas/AzureNetworkPeeringConnectionSettings'
-      - $ref: '#/components/schemas/GCPNetworkPeeringConnectionSettings'
+    AwsNetworkPeeringConnectionSettings:
+      description: Group of Network Peering connection settings.
       properties:
+        accepterRegionName:
+          description: Amazon Web Services (AWS) region where the Virtual Peering Connection (VPC) that you peered with the MongoDB Cloud VPC resides. The resource returns `null` if your VPC and the MongoDB Cloud VPC reside in the same region.
+          type: string
+        awsAccountId:
+          description: Unique twelve-digit string that identifies the Amazon Web Services (AWS) account that owns the VPC that you peered with the MongoDB Cloud VPC.
+          pattern: ^[0-9]{12}$
+          type: string
+        connectionId:
+          description: Unique string that identifies the peering connection on AWS.
+          readOnly: true
+          type: string
         containerId:
           description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.
           example: 32b6e34b3d91647abb20e7b8
           pattern: ^([a-f0-9]{24})$
           type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the network peering connection.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        providerName:
-          description: Cloud service provider that serves the requested network peering connection.
+        errorStateName:
+          description: Type of error that can be returned when requesting an Amazon Web Services (AWS) peering connection. The resource returns `null` if the request succeeded.
           enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-      required:
-      - containerId
-      type: object
-    PaginatedContainerPeerView:
-      description: Group of Network Peering connection settings.
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/BaseNetworkPeeringConnectionSettings'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    AzureNetworkPeeringConnectionSettings:
-      description: Group of Network Peering connection settings.
-      properties:
-        azureDirectoryId:
-          description: Unique string that identifies the Azure AD directory in which the VNet peered with the MongoDB Cloud VNet resides.
-          format: uuid
-          type: string
-        azureSubscriptionId:
-          description: Unique string that identifies the Azure subscription in which the VNet you peered with the MongoDB Cloud VNet resides.
-          format: uuid
-          type: string
-        containerId:
-          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        errorState:
-          description: 'Error message returned when a requested Azure network peering resource returns `"status" : "FAILED"`. The resource returns `null` if the request succeeded.'
+          - REJECTED
+          - EXPIRED
+          - INVALID_ARGUMENT
           readOnly: true
           type: string
         id:
@@ -1346,227 +1529,44 @@ components:
           - AZURE
           - GCP
           type: string
-        resourceGroupName:
-          description: Human-readable label that identifies the resource group in which the VNet to peer with the MongoDB Cloud VNet resides.
-          pattern: ^([-\w._()])+$
+        routeTableCidrBlock:
+          description: Internet Protocol (IP) addresses expressed in Classless Inter-Domain Routing (CIDR) notation of the VPC's subnet that you want to peer with the MongoDB Cloud VPC.
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
           type: string
-        status:
+        statusName:
           description: State of the network peering connection at the time you made the request.
           enum:
-          - ADDING_PEER
-          - AVAILABLE
+          - INITIATING
+          - PENDING_ACCEPTANCE
           - FAILED
-          - DELETION_FAILED
-          - DELETING
-          readOnly: true
-          type: string
-        vnetName:
-          description: Human-readable label that identifies the VNet that you want to peer with the MongoDB Cloud VNet.
-          pattern: ^([-\w._()])$
-          type: string
-      required:
-      - azureDirectoryId
-      - azureSubscriptionId
-      - containerId
-      - resourceGroupName
-      - vnetName
-      title: AZURE
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    PrivateIPModeView:
-      properties:
-        enabled:
-          description: Flag that indicates whether someone enabled **Connect via Peering Only** mode for the specified project.
-          type: boolean
-      required:
-      - enabled
-      type: object
-    CloudProviderContainer:
-      description: Collection of settings that configures the network container for a virtual private connection on Amazon Web Services.
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/AWSCloudProviderContainer'
-          AZURE: '#/components/schemas/AzureCloudProviderContainer'
-          GCP: '#/components/schemas/GCPCloudProviderContainer'
-        propertyName: providerName
-      oneOf:
-      - $ref: '#/components/schemas/AzureCloudProviderContainer'
-      - $ref: '#/components/schemas/GCPCloudProviderContainer'
-      - $ref: '#/components/schemas/AWSCloudProviderContainer'
-      properties:
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the network peering container.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        providerName:
-          description: Cloud service provider that serves the requested network peering containers.
-          enum:
-          - AWS
-          - GCP
-          - AZURE
-          - TENANT
-          - SERVERLESS
-          type: string
-        provisioned:
-          description: Flag that indicates whether MongoDB Cloud clusters exist in the specified network peering container.
-          readOnly: true
-          type: boolean
-      type: object
-    GCPNetworkPeeringConnectionSettings:
-      description: Group of Network Peering connection settings.
-      properties:
-        containerId:
-          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        errorMessage:
-          description: Details of the error returned when requesting a GCP network peering resource. The resource returns `null` if the request succeeded.
-          readOnly: true
-          type: string
-        gcpProjectId:
-          description: Human-readable label that identifies the GCP project that contains the network that you want to peer with the MongoDB Cloud VPC.
-          pattern: ^[a-z][0-9a-z-]{4,28}[0-9a-z]{1}
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the network peering connection.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        networkName:
-          description: Human-readable label that identifies the network to peer with the MongoDB Cloud VPC.
-          pattern: '[a-z]([-a-z0-9]{0,62}[a-z0-9]{0,1})?'
-          type: string
-        providerName:
-          description: Cloud service provider that serves the requested network peering connection.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-        status:
-          description: State of the network peering connection at the time you made the request.
-          enum:
-          - ADDING_PEER
-          - WAITING_FOR_USER
+          - FINALIZING
           - AVAILABLE
-          - FAILED
-          - DELETING
+          - TERMINATING
           readOnly: true
           type: string
+        vpcId:
+          description: Unique string that identifies the VPC on Amazon Web Services (AWS) that you want to peer with the MongoDB Cloud VPC.
+          pattern: ^vpc-[0-9a-f]{17}$
+          type: string
       required:
+      - accepterRegionName
+      - awsAccountId
       - containerId
-      - gcpProjectId
-      - networkName
-      title: GCP
+      - routeTableCidrBlock
+      - vpcId
+      title: AWS
       type: object
-    PaginatedCloudProviderContainerView:
-      description: List of Network Peering Containers that Amazon Web Services serves.
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/CloudProviderContainer'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      title: Network Peering
-      type: object
-  parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

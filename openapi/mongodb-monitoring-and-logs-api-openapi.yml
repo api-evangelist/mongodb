@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Monitoring and Logs API
+  title: MongoDB Atlas Administration Monitoring and Logs API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -1219,17 +1219,17 @@ paths:
       x-xgen-operation-id-override: getProcessMeasurements
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -1241,17 +1241,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
-    unauthorized:
+    internalServerError:
       content:
         application/json:
           example:
             detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -1281,6 +1281,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Conflict.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     badRequest:
       content:
         application/json:
@@ -1292,51 +1303,7 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
   parameters:
-    indexName:
-      description: Human-readable label that identifies the index.
-      in: path
-      name: indexName
-      required: true
-      schema:
-        example: myindex
-        type: string
-    collectionName:
-      description: Human-readable label that identifies the collection.
-      in: path
-      name: collectionName
-      required: true
-      schema:
-        example: mycoll
-        type: string
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
     itemsPerPage:
       description: Number of items that the response returns per page.
       in: query
@@ -1346,49 +1313,6 @@ components:
         maximum: 500
         minimum: 1
         type: integer
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    start:
-      description: Date and time when MongoDB Cloud begins reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**.
-      in: query
-      name: start
-      schema:
-        format: date-time
-        type: string
-    databaseName:
-      description: Human-readable label that identifies the database.
-      in: path
-      name: databaseName
-      required: true
-      schema:
-        example: mydb
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    granularity:
-      description: Duration that specifies the interval at which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC.
-      in: query
-      name: granularity
-      required: true
-      schema:
-        example: PT1M
-        type: string
     includeCount:
       description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
       in: query
@@ -1405,6 +1329,34 @@ components:
         example: my.host.name.com:27017
         pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
         type: string
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    databaseName:
+      description: Human-readable label that identifies the database.
+      in: path
+      name: databaseName
+      required: true
+      schema:
+        example: mydb
+        type: string
+    indexName:
+      description: Human-readable label that identifies the index.
+      in: path
+      name: indexName
+      required: true
+      schema:
+        example: myindex
+        type: string
     end:
       description: Date and time when MongoDB Cloud stops reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**.
       in: query
@@ -1412,6 +1364,39 @@ components:
       schema:
         format: date-time
         type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    collectionName:
+      description: Human-readable label that identifies the collection.
+      in: path
+      name: collectionName
+      required: true
+      schema:
+        example: mycoll
+        type: string
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
     period:
       description: Duration over which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC. Include this parameter when you do not set **start** and **end**.
       in: query
@@ -1419,18 +1404,22 @@ components:
       schema:
         example: PT10H
         type: string
+    granularity:
+      description: Duration that specifies the interval at which Atlas reports the metrics. This parameter expresses its value in the ISO 8601 duration format in UTC.
+      in: query
+      name: granularity
+      required: true
+      schema:
+        example: PT1M
+        type: string
+    start:
+      description: Date and time when MongoDB Cloud begins reporting the metrics. This parameter expresses its value in the ISO 8601 timestamp format in UTC. Include this parameter when you do not set **period**.
+      in: query
+      name: start
+      schema:
+        format: date-time
+        type: string
   schemas:
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
     ApiError:
       properties:
         badRequestDetail:
@@ -1463,150 +1452,44 @@ components:
       - error
       - errorCode
       type: object
-    MesurementsDatabase:
+    Link:
       properties:
-        databaseName:
-          description: Human-readable label that identifies the database that the specified MongoDB process serves.
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
           type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    MetricsMeasurement:
+      properties:
+        dataPoints:
+          description: List that contains the value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
           items:
-            $ref: '#/components/schemas/Link'
+            $ref: '#/components/schemas/MetricDataPoint'
           readOnly: true
           type: array
-      type: object
-    MetricDataPoint_Atlas:
-      description: Value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
-      properties:
-        timestamp:
-          description: Date and time when this data point occurred. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
+        name:
+          description: Human-readable label of the measurement that this data point covers.
           readOnly: true
           type: string
-        value:
-          description: Value that comprises this data point.
-          readOnly: true
-          type: number
-      readOnly: true
-      type: object
-    MeasurementsIndexes:
-      properties:
-        collectionName:
-          description: Human-readable label that identifies the collection.
-          readOnly: true
-          type: string
-        databaseName:
-          description: Human-readable label that identifies the database that the specified MongoDB process serves.
-          readOnly: true
-          type: string
-        end:
-          description: Date and time that specifies when to stop retrieving measurements. If you set **end**, you must set **start**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        granularity:
-          description: Duration that specifies the interval between measurement data points. The parameter expresses its value in ISO 8601 timestamp format in UTC. If you set this parameter, you must set either **period** or **start** and **end**.
+        units:
+          description: Element used to quantify the measurement. The resource returns units of throughput, storage, and time.
           enum:
-          - PT1M
-          - PT5M
-          - PT1H
-          - P1D
+          - BYTES
+          - BYTES_PER_SECOND
+          - GIGABYTES
+          - GIGABYTES_PER_HOUR
+          - MEGABYTES_PER_SECOND
+          - MICROSECONDS
+          - MILLISECONDS
+          - PERCENT
+          - SCALAR
+          - SCALAR_PER_SECOND
           readOnly: true
           type: string
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        indexIds:
-          description: List that contains the Atlas Search index identifiers.
-          items:
-            description: Unique 24-hexadecimal digit string that identifies the index.
-            type: string
-          readOnly: true
-          type: array
-        indexStatsMeasurements:
-          description: List that contains the Atlas Search index stats measurements.
-          items:
-            $ref: '#/components/schemas/MetricsMeasurement'
-          readOnly: true
-          type: array
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        processId:
-          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
-          example: mongodb.example.com:27017
-          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
-          readOnly: true
-          type: string
-        start:
-          description: Date and time that specifies when to start retrieving measurements. If you set **start**, you must set **end**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-      type: object
-    PaginatedDatabaseView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/MesurementsDatabase'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    PaginatedHostView_Atlas:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link_Atlas'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/ApiHostView_Atlas'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
       type: object
     MetricDataPoint:
       description: Value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
@@ -1622,77 +1505,78 @@ components:
           type: number
       readOnly: true
       type: object
-    BadRequestDetail:
-      description: Bad request detail.
+    ApiHostView_Atlas:
       properties:
-        fields:
-          description: Describes all violations in a client request.
+        created:
+          description: Date and time when MongoDB Cloud created this MongoDB process. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hostname:
+          description: Hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`).
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?$
+          readOnly: true
+          type: string
+        id:
+          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        lastPing:
+          description: Date and time when MongoDB Cloud received the last ping for this MongoDB process. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
           items:
-            $ref: '#/components/schemas/FieldViolation'
+            $ref: '#/components/schemas/Link_Atlas'
+          readOnly: true
           type: array
-      readOnly: true
-      type: object
-    FTSMetric:
-      description: Measurement of one Atlas Search status when MongoDB Atlas received this request.
-      properties:
-        metricName:
-          description: Human-readable label that identifies this Atlas Search hardware, status, or index measurement.
-          enum:
-          - INDEX_SIZE_ON_DISK
-          - NUMBER_OF_DELETES
-          - NUMBER_OF_ERROR_QUERIES
-          - NUMBER_OF_GETMORE_COMMANDS
-          - NUMBER_OF_INDEX_FIELDS
-          - NUMBER_OF_INSERTS
-          - NUMBER_OF_SUCCESS_QUERIES
-          - NUMBER_OF_UPDATES
-          - REPLICATION_LAG
-          - TOTAL_NUMBER_OF_QUERIES
-          - FTS_DISK_USAGE
-          - FTS_PROCESS_CPU_KERNEL
-          - FTS_PROCESS_CPU_USER
-          - FTS_PROCESS_NORMALIZED_CPU_KERNEL
-          - FTS_PROCESS_NORMALIZED_CPU_USER
-          - FTS_PROCESS_RESIDENT_MEMORY
-          - FTS_PROCESS_SHARED_MEMORY
-          - FTS_PROCESS_VIRTUAL_MEMORY
-          - JVM_CURRENT_MEMORY
-          - JVM_MAX_MEMORY
-          - PAGE_FAULTS
+        port:
+          description: Internet Assigned Numbers Authority (IANA) port on which the MongoDB process listens for requests.
+          format: int32
+          readOnly: true
+          type: integer
+        replicaSetName:
+          description: Human-readable label that identifies the replica set that contains this process. This resource returns this parameter if this process belongs to a replica set.
           readOnly: true
           type: string
-        units:
-          description: Unit of measurement that applies to this Atlas Search metric.
-          enum:
-          - BYTES
-          - BYTES_PER_SECOND
-          - GIGABYTES
-          - GIGABYTES_PER_HOUR
-          - KILOBYTES
-          - MEGABYTES
-          - MEGABYTES_PER_SECOND
-          - MILLISECONDS
-          - MILLISECONDS_LOGSCALE
-          - PERCENT
-          - SCALAR
-          - SCALAR_PER_SECOND
-          - SECONDS
+        shardName:
+          description: Human-readable label that identifies the shard that contains this process. This resource returns this value only if this process belongs to a sharded cluster.
           readOnly: true
           type: string
-      readOnly: true
-      required:
-      - metricName
-      - units
-      type: object
-    Link_Atlas:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
+        typeName:
+          description: Type of MongoDB process that MongoDB Cloud tracks. MongoDB Cloud returns new processes as `NO_DATA` until MongoDB Cloud completes deploying the process.
+          enum:
+          - REPLICA_PRIMARY
+          - REPLICA_SECONDARY
+          - RECOVERING
+          - SHARD_MONGOS
+          - SHARD_CONFIG
+          - SHARD_STANDALONE
+          - SHARD_PRIMARY
+          - SHARD_SECONDARY
+          - NO_DATA
+          readOnly: true
           type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
+        userAlias:
+          description: Human-readable label that identifies the cluster node. MongoDB Cloud sets this hostname usually to the standard hostname for the cluster node. It appears in the connection string for a cluster instead of the value of the hostname parameter.
+          readOnly: true
+          type: string
+        version:
+          description: Version of MongoDB that this process runs.
+          pattern: ([\d]+\.[\d]+\.[\d]+)
+          readOnly: true
           type: string
       type: object
     ApiMeasurementsGeneralView_Atlas:
@@ -1770,6 +1654,135 @@ components:
       - description
       - field
       type: object
+    PaginatedDatabaseView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/MesurementsDatabase'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    MetricsMeasurement_Atlas:
+      properties:
+        dataPoints:
+          description: List that contains the value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
+          items:
+            $ref: '#/components/schemas/MetricDataPoint_Atlas'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable label of the measurement that this data point covers.
+          readOnly: true
+          type: string
+        units:
+          description: Element used to quantify the measurement. The resource returns units of throughput, storage, and time.
+          enum:
+          - BYTES
+          - BYTES_PER_SECOND
+          - GIGABYTES
+          - GIGABYTES_PER_HOUR
+          - MEGABYTES_PER_SECOND
+          - MICROSECONDS
+          - MILLISECONDS
+          - PERCENT
+          - SCALAR
+          - SCALAR_PER_SECOND
+          readOnly: true
+          type: string
+      type: object
+    MeasurementsIndexes:
+      properties:
+        collectionName:
+          description: Human-readable label that identifies the collection.
+          readOnly: true
+          type: string
+        databaseName:
+          description: Human-readable label that identifies the database that the specified MongoDB process serves.
+          readOnly: true
+          type: string
+        end:
+          description: Date and time that specifies when to stop retrieving measurements. If you set **end**, you must set **start**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        granularity:
+          description: Duration that specifies the interval between measurement data points. The parameter expresses its value in ISO 8601 timestamp format in UTC. If you set this parameter, you must set either **period** or **start** and **end**.
+          enum:
+          - PT1M
+          - PT5M
+          - PT1H
+          - P1D
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        indexIds:
+          description: List that contains the Atlas Search index identifiers.
+          items:
+            description: Unique 24-hexadecimal digit string that identifies the index.
+            type: string
+          readOnly: true
+          type: array
+        indexStatsMeasurements:
+          description: List that contains the Atlas Search index stats measurements.
+          items:
+            $ref: '#/components/schemas/MetricsMeasurement'
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        processId:
+          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
+          example: mongodb.example.com:27017
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
+          readOnly: true
+          type: string
+        start:
+          description: Date and time that specifies when to start retrieving measurements. If you set **start**, you must set **end**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    Link_Atlas:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
     MeasurementsNonIndex:
       properties:
         end:
@@ -1825,6 +1838,88 @@ components:
           readOnly: true
           type: array
       type: object
+    FTSMetric:
+      description: Measurement of one Atlas Search status when MongoDB Atlas received this request.
+      properties:
+        metricName:
+          description: Human-readable label that identifies this Atlas Search hardware, status, or index measurement.
+          enum:
+          - INDEX_SIZE_ON_DISK
+          - NUMBER_OF_DELETES
+          - NUMBER_OF_ERROR_QUERIES
+          - NUMBER_OF_GETMORE_COMMANDS
+          - NUMBER_OF_INDEX_FIELDS
+          - NUMBER_OF_INSERTS
+          - NUMBER_OF_SUCCESS_QUERIES
+          - NUMBER_OF_UPDATES
+          - REPLICATION_LAG
+          - TOTAL_NUMBER_OF_QUERIES
+          - FTS_DISK_USAGE
+          - FTS_PROCESS_CPU_KERNEL
+          - FTS_PROCESS_CPU_USER
+          - FTS_PROCESS_NORMALIZED_CPU_KERNEL
+          - FTS_PROCESS_NORMALIZED_CPU_USER
+          - FTS_PROCESS_RESIDENT_MEMORY
+          - FTS_PROCESS_SHARED_MEMORY
+          - FTS_PROCESS_VIRTUAL_MEMORY
+          - JVM_CURRENT_MEMORY
+          - JVM_MAX_MEMORY
+          - PAGE_FAULTS
+          readOnly: true
+          type: string
+        units:
+          description: Unit of measurement that applies to this Atlas Search metric.
+          enum:
+          - BYTES
+          - BYTES_PER_SECOND
+          - GIGABYTES
+          - GIGABYTES_PER_HOUR
+          - KILOBYTES
+          - MEGABYTES
+          - MEGABYTES_PER_SECOND
+          - MILLISECONDS
+          - MILLISECONDS_LOGSCALE
+          - PERCENT
+          - SCALAR
+          - SCALAR_PER_SECOND
+          - SECONDS
+          readOnly: true
+          type: string
+      readOnly: true
+      required:
+      - metricName
+      - units
+      type: object
+    MetricDataPoint_Atlas:
+      description: Value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
+      properties:
+        timestamp:
+          description: Date and time when this data point occurred. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        value:
+          description: Value that comprises this data point.
+          readOnly: true
+          type: number
+      readOnly: true
+      type: object
+    MeasurementDiskPartition:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        partitionName:
+          description: Human-readable label of the disk or partition to which the measurements apply.
+          readOnly: true
+          type: string
+      type: object
     PaginatedDiskPartitionView:
       properties:
         links:
@@ -1851,106 +1946,8 @@ components:
       required:
       - results
       type: object
-    MetricsMeasurement:
+    PaginatedHostView_Atlas:
       properties:
-        dataPoints:
-          description: List that contains the value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
-          items:
-            $ref: '#/components/schemas/MetricDataPoint'
-          readOnly: true
-          type: array
-        name:
-          description: Human-readable label of the measurement that this data point covers.
-          readOnly: true
-          type: string
-        units:
-          description: Element used to quantify the measurement. The resource returns units of throughput, storage, and time.
-          enum:
-          - BYTES
-          - BYTES_PER_SECOND
-          - GIGABYTES
-          - GIGABYTES_PER_HOUR
-          - MEGABYTES_PER_SECOND
-          - MICROSECONDS
-          - MILLISECONDS
-          - PERCENT
-          - SCALAR
-          - SCALAR_PER_SECOND
-          readOnly: true
-          type: string
-      type: object
-    MeasurementDiskPartition:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        partitionName:
-          description: Human-readable label of the disk or partition to which the measurements apply.
-          readOnly: true
-          type: string
-      type: object
-    MetricsMeasurement_Atlas:
-      properties:
-        dataPoints:
-          description: List that contains the value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.
-          items:
-            $ref: '#/components/schemas/MetricDataPoint_Atlas'
-          readOnly: true
-          type: array
-        name:
-          description: Human-readable label of the measurement that this data point covers.
-          readOnly: true
-          type: string
-        units:
-          description: Element used to quantify the measurement. The resource returns units of throughput, storage, and time.
-          enum:
-          - BYTES
-          - BYTES_PER_SECOND
-          - GIGABYTES
-          - GIGABYTES_PER_HOUR
-          - MEGABYTES_PER_SECOND
-          - MICROSECONDS
-          - MILLISECONDS
-          - PERCENT
-          - SCALAR
-          - SCALAR_PER_SECOND
-          readOnly: true
-          type: string
-      type: object
-    ApiHostView_Atlas:
-      properties:
-        created:
-          description: Date and time when MongoDB Cloud created this MongoDB process. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        hostname:
-          description: Hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`).
-          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?$
-          readOnly: true
-          type: string
-        id:
-          description: Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.
-          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\.){1,10}[a-z]+)?(\:[0-9]{4,5})$
-          readOnly: true
-          type: string
-        lastPing:
-          description: Date and time when MongoDB Cloud received the last ping for this MongoDB process. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
           externalDocs:
@@ -1960,42 +1957,20 @@ components:
             $ref: '#/components/schemas/Link_Atlas'
           readOnly: true
           type: array
-        port:
-          description: Internet Assigned Numbers Authority (IANA) port on which the MongoDB process listens for requests.
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ApiHostView_Atlas'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
           format: int32
+          minimum: 0
           readOnly: true
           type: integer
-        replicaSetName:
-          description: Human-readable label that identifies the replica set that contains this process. This resource returns this parameter if this process belongs to a replica set.
-          readOnly: true
-          type: string
-        shardName:
-          description: Human-readable label that identifies the shard that contains this process. This resource returns this value only if this process belongs to a sharded cluster.
-          readOnly: true
-          type: string
-        typeName:
-          description: Type of MongoDB process that MongoDB Cloud tracks. MongoDB Cloud returns new processes as `NO_DATA` until MongoDB Cloud completes deploying the process.
-          enum:
-          - REPLICA_PRIMARY
-          - REPLICA_SECONDARY
-          - RECOVERING
-          - SHARD_MONGOS
-          - SHARD_CONFIG
-          - SHARD_STANDALONE
-          - SHARD_PRIMARY
-          - SHARD_SECONDARY
-          - NO_DATA
-          readOnly: true
-          type: string
-        userAlias:
-          description: Human-readable label that identifies the cluster node. MongoDB Cloud sets this hostname usually to the standard hostname for the cluster node. It appears in the connection string for a cluster instead of the value of the hostname parameter.
-          readOnly: true
-          type: string
-        version:
-          description: Version of MongoDB that this process runs.
-          pattern: ([\d]+\.[\d]+\.[\d]+)
-          readOnly: true
-          type: string
+      required:
+      - results
       type: object
     CloudSearchMetrics:
       properties:
@@ -2044,17 +2019,42 @@ components:
       - processId
       - statusMetrics
       type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    MesurementsDatabase:
+      properties:
+        databaseName:
+          description: Human-readable label that identifies the database that the specified MongoDB process serves.
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      type: object
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

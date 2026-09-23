@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Serverless Private Endpoints API
+  title: MongoDB Atlas Administration Serverless Private Endpoints…
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -88,7 +88,13 @@ paths:
       x-xgen-operation-id-override: listServerlessPrivateEndpoint
     post:
       deprecated: true
-      description: "Creates one private endpoint for one serverless instance. To use this resource, the requesting Service Account or API Key must have the Project Owner role.\n\n A new endpoint won't be immediately available after creation.  Read the steps in the linked tutorial for detailed guidance.\n\nThis feature does not work for Flex clusters. To continue using Private Endpoints once Serverless is replaced by Flex, please use a Dedicated cluster instead. This endpoint will be sunset on January 22, 2026."
+      description: 'Creates one private endpoint for one serverless instance. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
+
+
+        A new endpoint won''t be immediately available after creation. Read the steps in the linked tutorial for detailed guidance.
+
+
+        This feature does not work for Flex clusters. To continue using Private Endpoints once Serverless is replaced by Flex, please use a Dedicated cluster instead. This endpoint will be sunset on January 22, 2026.'
       externalDocs:
         description: Set Up a Private Endpoint for a Serverless Instance Tutorial
         url: https://dochub.mongodb.org/core/serverless-private-endpoint
@@ -374,17 +380,17 @@ paths:
       x-xgen-operation-id-override: updateServerlessPrivateEndpoint
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -396,6 +402,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -436,37 +453,6 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-  parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
   schemas:
     ApiError:
       properties:
@@ -499,6 +485,114 @@ components:
       required:
       - error
       - errorCode
+      type: object
+    ServerlessTenantCreateRequest:
+      properties:
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          type: string
+          writeOnly: true
+      type: object
+    ServerlessAWSTenantEndpoint:
+      description: View for a serverless AWS tenant endpoint.
+      properties:
+        _id:
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        cloudProviderEndpointId:
+          description: Unique string that identifies the private endpoint's network interface.
+          pattern: ^vpce-[0-9a-f]{17}$
+          readOnly: true
+          type: string
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          readOnly: true
+          type: string
+        endpointServiceName:
+          description: Unique string that identifies the Amazon Web Services (AWS) PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.
+          pattern: ^com\.amazonaws\.vpce\.[a-z-0-9]+\.vpce-svc-[0-9a-f]{17}
+          readOnly: true
+          type: string
+        errorMessage:
+          description: Human-readable error message that indicates error condition associated with establishing the private endpoint connection.
+          readOnly: true
+          type: string
+        providerName:
+          description: Human-readable label that identifies the cloud service provider.
+          enum:
+          - AWS
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the current operating status of the private endpoint.
+          enum:
+          - RESERVATION_REQUESTED
+          - RESERVED
+          - INITIATING
+          - AVAILABLE
+          - FAILED
+          - DELETING
+          readOnly: true
+          type: string
+      title: AWS
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    ServerlessTenantEndpoint:
+      oneOf:
+      - $ref: '#/components/schemas/ServerlessAWSTenantEndpoint'
+      - $ref: '#/components/schemas/ServerlessAzureTenantEndpoint'
+      properties:
+        _id:
+          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        cloudProviderEndpointId:
+          description: Unique string that identifies the private endpoint's network interface.
+          readOnly: true
+          type: string
+        comment:
+          description: Human-readable comment associated with the private endpoint.
+          maxLength: 80
+          readOnly: true
+          type: string
+        endpointServiceName:
+          description: Unique string that identifies the PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.
+          pattern: ^com\.amazonaws\.vpce\.[a-z-0-9]+\.vpce-svc-[0-9a-f]{17}|pls_[0-9a-f]{24}$
+          readOnly: true
+          type: string
+        errorMessage:
+          description: Human-readable error message that indicates error condition associated with establishing the private endpoint connection.
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the current operating status of the private endpoint.
+          enum:
+          - RESERVATION_REQUESTED
+          - RESERVED
+          - INITIATING
+          - AVAILABLE
+          - FAILED
+          - DELETING
+          readOnly: true
+          type: string
       type: object
     ServerlessAzureTenantEndpoint:
       description: View for a serverless Azure tenant endpoint.
@@ -556,71 +650,6 @@ components:
           type: string
       title: Azure
       type: object
-    ServerlessTenantCreateRequest:
-      properties:
-        comment:
-          description: Human-readable comment associated with the private endpoint.
-          maxLength: 80
-          type: string
-          writeOnly: true
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    ServerlessAWSTenantEndpoint:
-      description: View for a serverless AWS tenant endpoint.
-      properties:
-        _id:
-          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        cloudProviderEndpointId:
-          description: Unique string that identifies the private endpoint's network interface.
-          pattern: ^vpce-[0-9a-f]{17}$
-          readOnly: true
-          type: string
-        comment:
-          description: Human-readable comment associated with the private endpoint.
-          maxLength: 80
-          readOnly: true
-          type: string
-        endpointServiceName:
-          description: Unique string that identifies the Amazon Web Services (AWS) PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.
-          pattern: ^com\.amazonaws\.vpce\.[a-z-0-9]+\.vpce-svc-[0-9a-f]{17}
-          readOnly: true
-          type: string
-        errorMessage:
-          description: Human-readable error message that indicates error condition associated with establishing the private endpoint connection.
-          readOnly: true
-          type: string
-        providerName:
-          description: Human-readable label that identifies the cloud service provider.
-          enum:
-          - AWS
-          readOnly: true
-          type: string
-        status:
-          description: Human-readable label that indicates the current operating status of the private endpoint.
-          enum:
-          - RESERVATION_REQUESTED
-          - RESERVED
-          - INITIATING
-          - AVAILABLE
-          - FAILED
-          - DELETING
-          readOnly: true
-          type: string
-      title: AWS
-      type: object
     ServerlessTenantEndpointUpdate:
       description: Update view for a serverless tenant endpoint.
       discriminator:
@@ -644,70 +673,47 @@ components:
       required:
       - providerName
       type: object
-    FieldViolation:
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
       type: object
-    ServerlessTenantEndpoint:
-      oneOf:
-      - $ref: '#/components/schemas/ServerlessAWSTenantEndpoint'
-      - $ref: '#/components/schemas/ServerlessAzureTenantEndpoint'
-      properties:
-        _id:
-          description: Unique 24-hexadecimal digit string that identifies the private endpoint.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        cloudProviderEndpointId:
-          description: Unique string that identifies the private endpoint's network interface.
-          readOnly: true
-          type: string
-        comment:
-          description: Human-readable comment associated with the private endpoint.
-          maxLength: 80
-          readOnly: true
-          type: string
-        endpointServiceName:
-          description: Unique string that identifies the PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.
-          pattern: ^com\.amazonaws\.vpce\.[a-z-0-9]+\.vpce-svc-[0-9a-f]{17}|pls_[0-9a-f]{24}$
-          readOnly: true
-          type: string
-        errorMessage:
-          description: Human-readable error message that indicates error condition associated with establishing the private endpoint connection.
-          readOnly: true
-          type: string
-        status:
-          description: Human-readable label that indicates the current operating status of the private endpoint.
-          enum:
-          - RESERVATION_REQUESTED
-          - RESERVED
-          - INITIATING
-          - AVAILABLE
-          - FAILED
-          - DELETING
-          readOnly: true
-          type: string
-      type: object
+  parameters:
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

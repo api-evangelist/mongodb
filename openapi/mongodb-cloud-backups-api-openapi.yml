@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Cloud Backups API
+  title: MongoDB Atlas Administration Cloud Backups API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -447,7 +447,7 @@ paths:
           $ref: '#/components/responses/tooManyRequests'
         '500':
           $ref: '#/components/responses/internalServerError'
-      summary: Return Object Storage Private Endpoints for Cloud Backups for One Cloud Provider in One Project
+      summary: Return Object Storage Private Endpoints for Cloud Backups for One Cloud…
       tags:
       - Cloud Backups
       x-codeSamples:
@@ -516,7 +516,7 @@ paths:
           $ref: '#/components/responses/tooManyRequests'
         '500':
           $ref: '#/components/responses/internalServerError'
-      summary: Create One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+      summary: Create One Object Storage Private Endpoint for Cloud Backups for One Cloud…
       tags:
       - Cloud Backups
       x-codeSamples:
@@ -580,7 +580,7 @@ paths:
           $ref: '#/components/responses/tooManyRequests'
         '500':
           $ref: '#/components/responses/internalServerError'
-      summary: Delete One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider from One Project
+      summary: Delete One Object Storage Private Endpoint for Cloud Backups for One Cloud…
       tags:
       - Cloud Backups
       x-codeSamples:
@@ -645,7 +645,7 @@ paths:
           $ref: '#/components/responses/tooManyRequests'
         '500':
           $ref: '#/components/responses/internalServerError'
-      summary: Return One Object Storage Private Endpoint for Cloud Backups for One Cloud Provider in One Project
+      summary: Return One Object Storage Private Endpoint for Cloud Backups for One Cloud…
       tags:
       - Cloud Backups
       x-codeSamples:
@@ -1090,7 +1090,10 @@ paths:
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Cloud-Backups/operation/listGroupClusterBackupRestoreJobs
       x-xgen-operation-id-override: listBackupRestoreJobs
     post:
-      description: "Restores one snapshot of one cluster from the specified project. Atlas takes on-demand snapshots immediately and scheduled snapshots at regular intervals. If an on-demand snapshot with a status of `queued` or `inProgress` exists, before taking another snapshot, wait until Atlas completes processing the previously taken on-demand snapshot.\n\n To use this resource, the requesting Service Account or API Key must have the Project Backup Manager role, Project Backup Export Operator role, or Project Backup Recovery Operator role."
+      description: 'Restores one snapshot of one cluster from the specified project. Atlas takes on-demand snapshots immediately and scheduled snapshots at regular intervals. If an on-demand snapshot with a status of `queued` or `inProgress` exists, before taking another snapshot, wait until Atlas completes processing the previously taken on-demand snapshot.
+
+
+        To use this resource, the requesting Service Account or API Key must have the Project Backup Manager role, Project Backup Export Operator role, or Project Backup Recovery Operator role.'
       operationId: createGroupClusterBackupRestoreJob
       parameters:
       - $ref: '#/components/parameters/envelope'
@@ -1563,7 +1566,10 @@ paths:
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Cloud-Backups/operation/listGroupClusterBackupSnapshots
       x-xgen-operation-id-override: listBackupSnapshots
     post:
-      description: "Takes one on-demand snapshot for the specified cluster. Atlas takes on-demand snapshots immediately and scheduled snapshots at regular intervals. If an on-demand snapshot with a status of `queued` or `inProgress` exists, before taking another snapshot, wait until Atlas completes processing the previously taken on-demand snapshot.\n\n To use this resource, the requesting Service Account or API Key must have the Project Backup Manager role or Project Backup Creator role."
+      description: 'Takes one on-demand snapshot for the specified cluster. Atlas takes on-demand snapshots immediately and scheduled snapshots at regular intervals. If an on-demand snapshot with a status of `queued` or `inProgress` exists, before taking another snapshot, wait until Atlas completes processing the previously taken on-demand snapshot.
+
+
+        To use this resource, the requesting Service Account or API Key must have the Project Backup Manager role or Project Backup Creator role.'
       operationId: takeGroupClusterBackupSnapshots
       parameters:
       - $ref: '#/components/parameters/envelope'
@@ -2030,7 +2036,7 @@ paths:
       description: 'Returns all restore jobs for one serverless instance from the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
 
 
-        This API can also be used on Flex clusters that were created with the [Create Serverless Instance](https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Instances/operation/createServerlessInstance) endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the List Flex Backup Restore Jobs endpoint instead.'
+        This API can also be used on Flex clusters that were created with the Create Serverless Instance endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the List Flex Backup Restore Jobs endpoint instead.'
       externalDocs:
         description: List Flex Backup Restore Jobs
         url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Flex-Restore-Jobs/operation/listFlexBackupRestoreJobs
@@ -2100,7 +2106,7 @@ paths:
       description: 'Restores one snapshot of one serverless instance from the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
 
 
-        This API can also be used on Flex clusters that were created with the [Create Serverless Instance](https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Instances/operation/createServerlessInstance) endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the Create Flex Backup Restore Job endpoint instead.'
+        This API can also be used on Flex clusters that were created with the Create Serverless Instance endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the Create Flex Backup Restore Job endpoint instead.'
       externalDocs:
         description: Create Flex Backup Restore Job
         url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Flex-Restore-Jobs/operation/createFlexBackupRestoreJob
@@ -2177,7 +2183,7 @@ paths:
       description: 'Returns one restore job for one serverless instance from the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
 
 
-        This API can also be used on Flex clusters that were created with the [Create Serverless Instance](https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Instances/operation/createServerlessInstance) endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the Get Flex Backup Restore Job endpoint instead.'
+        This API can also be used on Flex clusters that were created with the Create Serverless Instance endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the Get Flex Backup Restore Job endpoint instead.'
       externalDocs:
         description: Get Flex Backup Restore Job
         url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Flex-Restore-Jobs/operation/getFlexBackupRestoreJob
@@ -2252,7 +2258,7 @@ paths:
       description: 'Returns all snapshots of one serverless instance from the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
 
 
-        This API can also be used on Flex clusters that were created with the [Create Serverless Instance](https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Instances/operation/createServerlessInstance) endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the List Flex Backups endpoint instead.'
+        This API can also be used on Flex clusters that were created with the Create Serverless Instance endpoint or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the List Flex Backups endpoint instead.'
       externalDocs:
         description: List Flex Backups
         url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Flex-Snapshots/operation/listFlexBackups
@@ -2323,7 +2329,7 @@ paths:
       description: 'Returns one snapshot of one serverless instance from the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
 
 
-        This endpoint can also be used on Flex clusters that were created with the [Create Serverless Instance](https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Serverless-Instances/operation/createServerlessInstance) API or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the Get Flex Backup endpoint instead.'
+        This endpoint can also be used on Flex clusters that were created with the Create Serverless Instance API or Flex clusters that were migrated from Serverless instances. This endpoint will be sunset on January 22, 2026. Please use the Get Flex Backup endpoint instead.'
       externalDocs:
         description: Get Flex Backup
         url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Flex-Snapshots/operation/getFlexBackup
@@ -2393,55 +2399,172 @@ paths:
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Cloud-Backups/operation/getGroupServerlessBackupSnapshot
       x-xgen-operation-id-override: getServerlessBackupSnapshot
 components:
+  responses:
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    methodNotAllowed:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 405
+            errorCode: ATLAS_BACKUP_CANCEL_SHARD_RESTORE_JOB_NOT_ALLOWED
+            reason: Method Not Allowed
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Method Not Allowed.
   schemas:
-    ExportStatus:
-      description: State of the Export Job.
+    BackupLabel:
+      description: Collection of key-value pairs that represent custom data to add to the metadata file that MongoDB Cloud uploads to the bucket when the export job finishes.
       properties:
-        exportedCollections:
-          description: Count of collections whose documents were exported to the Export Bucket.
-          format: int32
-          readOnly: true
-          type: integer
-        totalCollections:
-          description: Total count of collections whose documents will be exported to the Export Bucket.
-          format: int32
-          readOnly: true
-          type: integer
+        key:
+          description: Key for the metadata file that MongoDB Cloud uploads to the bucket when the export job finishes.
+          type: string
+        value:
+          description: Value for the key to include in file that MongoDB Cloud uploads to the bucket when the export job finishes.
+          type: string
       type: object
-    DiskBackupExportJobRequest:
+    ApiError:
       properties:
-        customData:
-          description: Collection of key-value pairs that represent custom data to add to the metadata file that MongoDB Cloud uploads to the bucket when the export job finishes.
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
           items:
-            $ref: '#/components/schemas/BackupLabel'
+            type: object
+          readOnly: true
           type: array
-        exportBucketId:
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    DiskBackupSnapshotExportBucketResponse:
+      description: Disk backup snapshot Export Bucket.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/DiskBackupSnapshotAWSExportBucketResponse'
+          AZURE: '#/components/schemas/DiskBackupSnapshotAzureExportBucketResponse'
+          GCP: '#/components/schemas/DiskBackupSnapshotGCPExportBucketResponse'
+        propertyName: cloudProvider
+      properties:
+        _id:
           description: Unique 24-hexadecimal character string that identifies the Export Bucket.
           example: 32b6e34b3d91647abb20e7b8
           pattern: ^([a-f0-9]{24})$
           type: string
-          writeOnly: true
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        snapshotId:
-          description: Unique 24-hexadecimal character string that identifies the Cloud Backup Snapshot to export.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
+        bucketName:
+          description: The name of the AWS S3 Bucket, Azure Storage Container, or Google Cloud Storage Bucket that Snapshots are exported to.
+          example: export-bucket
+          maxLength: 63
+          minLength: 3
           type: string
-          writeOnly: true
-      required:
-      - exportBucketId
-      - snapshotId
-      type: object
-    PaginatedCloudBackupRestoreJobView:
-      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
           externalDocs:
@@ -2451,46 +2574,10 @@ components:
             $ref: '#/components/schemas/Link'
           readOnly: true
           type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/DiskBackupSnapshotRestoreJob'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
       required:
-      - results
-      type: object
-    PaginatedCloudBackupShardedClusterSnapshotView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/DiskBackupShardedClusterSnapshot'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
+      - _id
+      - bucketName
+      - cloudProvider
       type: object
     Link:
       properties:
@@ -2502,90 +2589,6 @@ components:
           description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
           example: self
           type: string
-      type: object
-    AutoExportPolicyView:
-      description: Policy for automatically exporting Cloud Backup Snapshots.
-      properties:
-        exportBucketId:
-          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        frequencyType:
-          description: Human-readable label that indicates the rate at which the export policy item occurs.
-          enum:
-          - monthly
-          - yearly
-          type: string
-      title: export
-      type: object
-    ServerlessBackupSnapshot:
-      properties:
-        createdAt:
-          description: Date and time when MongoDB Cloud took the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        expiresAt:
-          description: Date and time when MongoDB Cloud deletes the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        frequencyType:
-          description: Human-readable label that identifies how often this snapshot triggers.
-          enum:
-          - hourly
-          - daily
-          - weekly
-          - monthly
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the snapshot.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        mongodVersion:
-          description: Version of the MongoDB host that this snapshot backs up.
-          pattern: ([\d]+\.[\d]+\.[\d]+)
-          readOnly: true
-          type: string
-        serverlessInstanceName:
-          description: Human-readable label given to the serverless instance from which MongoDB Cloud took this snapshot.
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          readOnly: true
-          type: string
-        snapshotType:
-          description: Human-readable label that identifies when this snapshot triggers.
-          enum:
-          - onDemand
-          - scheduled
-          readOnly: true
-          type: string
-        status:
-          description: Human-readable label that indicates the stage of the backup process for this snapshot.
-          enum:
-          - queued
-          - inProgress
-          - completed
-          - failed
-          readOnly: true
-          type: string
-        storageSizeBytes:
-          description: Number of bytes taken to store the backup snapshot.
-          format: int64
-          readOnly: true
-          type: integer
       type: object
     DiskBackupApiPolicyItem:
       description: Specifications for one policy.
@@ -2661,21 +2664,42 @@ components:
       - retentionUnit
       - retentionValue
       type: object
-    DiskBackupSnapshotExportBucketRequest:
-      description: Disk backup snapshot Export Bucket Request.
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/DiskBackupSnapshotAWSExportBucketRequest'
-          AZURE: '#/components/schemas/DiskBackupSnapshotAzureExportBucketRequest'
-          GCP: '#/components/schemas/DiskBackupSnapshotGCPExportBucketRequest'
-        propertyName: cloudProvider
+    DiskBackupExportJob:
       properties:
-        cloudProvider:
-          description: Human-readable label that identifies the cloud provider.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
+        components:
+          description: Information on the export job for each replica set in the sharded cluster.
+          items:
+            $ref: '#/components/schemas/DiskBackupExportMember'
+          readOnly: true
+          type: array
+        createdAt:
+          description: Date and time when a user or Atlas created the Export Job. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        customData:
+          description: Collection of key-value pairs that represent custom data for the metadata file that MongoDB Cloud uploads when the Export Job finishes.
+          items:
+            $ref: '#/components/schemas/BackupLabel'
+          type: array
+        exportBucketId:
+          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        exportStatus:
+          $ref: '#/components/schemas/ExportStatus'
+        finishedAt:
+          description: Date and time when this Export Job completed. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal character string that identifies the restore job.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
           type: string
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
@@ -2686,9 +2710,86 @@ components:
             $ref: '#/components/schemas/Link'
           readOnly: true
           type: array
+        prefix:
+          description: Prefix used for all blob storage objects uploaded as part of the Export Job.
+          pattern: /exported_snapshots/\{ORG-NAME\}/\{PROJECT-NAME\}/\{CLUSTER-NAME\}/\{SNAPSHOT-INITIATION-DATE\}/\{TIMESTAMP\}
+          readOnly: true
+          type: string
+        snapshotId:
+          description: Unique 24-hexadecimal character string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        state:
+          description: State of the Export Job.
+          enum:
+          - Cancelled
+          - Failed
+          - InProgress
+          - Queued
+          - Successful
+          readOnly: true
+          type: string
+        stateReason:
+          $ref: '#/components/schemas/StateReason'
       required:
-      - cloudProvider
+      - exportBucketId
       type: object
+    PaginatedCloudBackupReplicaSetView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/DiskBackupReplicaSet'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    DeleteCopiedBackups20240805:
+      description: Deleted copy setting whose backup copies need to also be deleted.
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider for the deleted copy setting whose backup copies you want to delete.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+          writeOnly: true
+        regionName:
+          description: Target region for the deleted copy setting whose backup copies you want to delete. Please supply the 'Atlas Region'.
+          externalDocs:
+            description: Cloud Provider Regions
+            url: https://www.mongodb.com/docs/atlas/reference/cloud-providers/
+          type: string
+          writeOnly: true
+        zoneId:
+          description: Unique 24-hexadecimal digit string that identifies the zone in a cluster. For global clusters, there can be multiple zones to choose from. For sharded clusters and replica set clusters, there is only one zone in the cluster. To find the Zone Id, do a GET request to Return One Cluster from One Project and consult the `replicationSpecs` array.
+          example: 32b6e34b3d91647abb20e7b8
+          externalDocs:
+            description: Return One Cluster from One Project
+            url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Clusters/operation/getCluster
+          pattern: ^([a-f0-9]{24})$
+          type: string
+          writeOnly: true
+      type: object
+      writeOnly: true
     PaginatedApiAtlasServerlessBackupRestoreJobView:
       properties:
         links:
@@ -2715,58 +2816,251 @@ components:
       required:
       - results
       type: object
-    ApiError:
+    DataProtectionSettings20231001:
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
+        authorizedEmail:
+          description: Email address of the user who authorized to update the Backup Compliance Policy  settings.
+          format: email
           type: string
-        error:
-          description: HTTP status code returned with this error.
+        authorizedUserFirstName:
+          description: First name of the user who authorized to updated the Backup Compliance Policy  settings.
+          type: string
+        authorizedUserLastName:
+          description: Last name of the user who authorized to updated the Backup Compliance Policy  settings.
+          type: string
+        copyProtectionEnabled:
+          default: false
+          description: Flag that indicates whether to prevent cluster users from deleting backups copied to other regions, even if those additional snapshot regions are removed. If unspecified, this value defaults to false.
+          type: boolean
+        deletable:
+          default: false
+          description: Flag that indicates whether the Backup Compliance Policy is allowed to be disabled. It is default to false and a support ticket needs to be filed to request setting to true.
           externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
+            description: Configure a Backup Compliance Policy
+            url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/backup-compliance-policy/
           readOnly: true
+          type: boolean
+        encryptionAtRestEnabled:
+          default: false
+          description: Flag that indicates whether Encryption at Rest using Customer Key  Management is required for all clusters with a Backup Compliance Policy. If unspecified, this value defaults to false.
+          externalDocs:
+            description: Encryption at Rest using Customer Key Management
+            url: https://www.mongodb.com/docs/atlas/security-kms-encryption/
+          type: boolean
+        onDemandPolicyItem:
+          $ref: '#/components/schemas/BackupComplianceOnDemandPolicyItem'
+        pitEnabled:
+          default: false
+          description: Flag that indicates whether the cluster uses Continuous Cloud Backups with a Backup Compliance Policy. If unspecified, this value defaults to false.
+          externalDocs:
+            description: Continuous Cloud Backups
+            url: https://docs.atlas.mongodb.com/backup/cloud-backup/overview/
+          type: boolean
+        projectId:
+          description: Unique 24-hexadecimal digit string that identifies the project for the Backup Compliance Policy.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        restoreWindowDays:
+          description: Number of previous days that you can restore back to with Continuous Cloud Backup with a Backup Compliance Policy. You must specify a positive, non-zero integer, and the maximum retention window can't exceed the hourly retention time. This parameter applies only to Continuous Cloud Backups with a Backup Compliance Policy.
+          format: int32
           type: integer
-        errorCode:
-          description: Application error code returned with this error.
+        scheduledPolicyItems:
+          description: List that contains the specifications for one scheduled policy.
+          items:
+            $ref: '#/components/schemas/BackupComplianceScheduledPolicyItem'
+          type: array
+        state:
+          description: Label that indicates the state of the Backup Compliance Policy settings. MongoDB Cloud ignores this setting when you enable or update the Backup Compliance Policy settings.
+          enum:
+          - ACTIVE
+          - ENABLING
+          - UPDATING
+          - DISABLING
           readOnly: true
           type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
+        updatedDate:
+          description: ISO 8601 timestamp format in UTC that indicates when the user updated the Data Protection Policy settings. MongoDB Cloud ignores this setting when you enable or update the Backup Compliance Policy settings.
+          format: date-time
           readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
+          type: string
+        updatedUser:
+          description: Email address that identifies the user who updated the Backup Compliance Policy settings. MongoDB Cloud ignores this email setting when you enable or update the Backup Compliance Policy settings.
+          format: email
           readOnly: true
           type: string
       required:
-      - error
-      - errorCode
+      - authorizedEmail
+      - authorizedUserFirstName
+      - authorizedUserLastName
       type: object
-    ObjectStoragePrivateEndpointResponse:
+    PaginatedApiAtlasServerlessBackupSnapshotView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ServerlessBackupSnapshot'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    BackupComplianceScheduledPolicyItem:
+      description: Specifications for scheduled policy.
+      properties:
+        frequencyInterval:
+          description: "Number that indicates the frequency interval for a set of Snapshots. A value of `1` specifies the first instance of the corresponding `frequencyType`.\n\n- In a yearly policy item, `1` indicates that the yearly Snapshot occurs on the first day of January and `12` indicates the first day of December.\n\n- In a monthly policy item, `1` indicates that the monthly Snapshot occurs on the first day of the month and `40` indicates the last day of the month.\n\n- In a weekly policy item, `1` indicates that the weekly Snapshot occurs on Monday and `7` indicates Sunday.\n\n- In an hourly policy item, you can set the frequency interval to `1`, `2`, `4`, `6`, `8`, or `12`. For hourly policy items for NVMe clusters, MongoDB Cloud accepts only `12` as the frequency interval value.\n\n MongoDB Cloud ignores this setting for non-hourly policy items in Backup Compliance Policy settings."
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 13
+          - 14
+          - 15
+          - 16
+          - 17
+          - 18
+          - 19
+          - 20
+          - 21
+          - 22
+          - 23
+          - 24
+          - 25
+          - 26
+          - 27
+          - 28
+          - 40
+          format: int32
+          type: integer
+        frequencyType:
+          description: Human-readable label that identifies the frequency type associated with the backup policy.
+          enum:
+          - daily
+          - hourly
+          - weekly
+          - monthly
+          - yearly
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this backup policy item.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        retentionUnit:
+          description: Unit of time in which MongoDB Cloud measures Snapshot retention.
+          enum:
+          - days
+          - weeks
+          - months
+          - years
+          type: string
+        retentionValue:
+          description: 'Duration in days, weeks, months, or years that MongoDB Cloud retains the Snapshot. For less frequent policy items, MongoDB Cloud requires that you specify a value greater than or equal to the value specified for more frequent policy items.
+
+
+            For example: If the hourly policy item specifies a retention of two days, you must specify two days or greater for the retention of the weekly policy item.'
+          format: int32
+          type: integer
+      required:
+      - frequencyInterval
+      - frequencyType
+      - retentionUnit
+      - retentionValue
+      type: object
+    DiskBackupExportJobRequest:
+      properties:
+        customData:
+          description: Collection of key-value pairs that represent custom data to add to the metadata file that MongoDB Cloud uploads to the bucket when the export job finishes.
+          items:
+            $ref: '#/components/schemas/BackupLabel'
+          type: array
+        exportBucketId:
+          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+          writeOnly: true
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        snapshotId:
+          description: Unique 24-hexadecimal character string that identifies the Cloud Backup Snapshot to export.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+          writeOnly: true
+      required:
+      - exportBucketId
+      - snapshotId
+      type: object
+    DiskBackupTimeBasedCopyPolicyItem:
+      allOf:
+      - $ref: '#/components/schemas/DiskBackupCopyPolicyItem'
+      - properties:
+          retentionUnit:
+            description: Unit of time in which MongoDB Cloud measures snapshot copy retention.
+            enum:
+            - days
+            - weeks
+            - months
+            - years
+            type: string
+          retentionValue:
+            description: Duration in days, weeks, months, or years that MongoDB Cloud retains the snapshot copy.
+            format: int32
+            type: integer
+        type: object
+      description: Specifications for one time-based copy policy item.
+      required:
+      - frequencyType
+      - retentionUnit
+      - retentionValue
+      type: object
+    DiskBackupOnDemandCopyPolicyItem:
+      allOf:
+      - $ref: '#/components/schemas/DiskBackupCopyPolicyItem'
+      description: Specifications for one on-demand copy policy item.
+      required:
+      - frequencyType
+      type: object
+    ObjectStoragePrivateEndpointRequest:
       properties:
         cloudProvider:
           description: Human-readable label that identifies the cloud provider.
           enum:
           - AWS
-          type: string
-        errorMessage:
-          description: Error message for failures associated with the Object Storage private endpoint.
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the Private Endpoint Service.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        privateEndpointConnectionName:
-          description: Connection name of the Private Endpoint.
-          readOnly: true
           type: string
         regionName:
           description: Cloud provider region in which the Object Storage private endpoint is located.
@@ -2806,40 +3100,6 @@ components:
             - GLOBAL
             type: string
           type: object
-        status:
-          description: State of the Object Storage private endpoint.
-          enum:
-          - INITIATING
-          - PENDING_ACCEPTANCE
-          - ACTIVE
-          - FAILED
-          - PENDING_RECREATION
-          - DELETING
-          readOnly: true
-          type: string
-      type: object
-    DiskBackupTimeBasedCopyPolicyItem:
-      allOf:
-      - $ref: '#/components/schemas/DiskBackupCopyPolicyItem'
-      - properties:
-          retentionUnit:
-            description: Unit of time in which MongoDB Cloud measures snapshot copy retention.
-            enum:
-            - days
-            - weeks
-            - months
-            - years
-            type: string
-          retentionValue:
-            description: Duration in days, weeks, months, or years that MongoDB Cloud retains the snapshot copy.
-            format: int32
-            type: integer
-        type: object
-      description: Specifications for one time-based copy policy item.
-      required:
-      - frequencyType
-      - retentionUnit
-      - retentionValue
       type: object
     DiskBackupOnDemandSnapshotRequest:
       properties:
@@ -2860,36 +3120,6 @@ components:
           format: int32
           minimum: 1
           type: integer
-      type: object
-    ExtraRetentionSetting:
-      description: Extra retention setting item in the desired backup policy.
-      properties:
-        frequencyType:
-          description: The frequency type for the extra retention settings for the cluster.
-          enum:
-          - HOURLY
-          - DAILY
-          - WEEKLY
-          - MONTHLY
-          - YEARLY
-          - ON_DEMAND
-          type: string
-        retentionDays:
-          description: The number of extra retention days for the cluster.
-          format: int32
-          type: integer
-      type: object
-    ApiPrivateDownloadDeliveryUrl:
-      description: One Uniform Resource Locator (URL) that points to the compressed snapshot files for manual download and the corresponding private endpoint.
-      properties:
-        deliveryUrl:
-          description: One Uniform Resource Locator that points to the compressed snapshot files for manual download.
-          type: string
-        endpointId:
-          description: Unique 22-character alphanumeric string that identifies the private endpoint.
-          example: vpce-3bf78b0ddee411ba1
-          pattern: ^vpce-[0-9a-f]{17}$
-          type: string
       type: object
     DiskBackupSnapshotSchedule20240805:
       properties:
@@ -2985,12 +3215,201 @@ components:
       required:
       - policies
       type: object
-    ObjectStoragePrivateEndpointRequest:
+    BackupSnapshotRetention:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        retentionUnit:
+          description: Quantity of time in which MongoDB Cloud measures snapshot retention.
+          enum:
+          - DAYS
+          - WEEKS
+          - MONTHS
+          - YEARS
+          type: string
+        retentionValue:
+          description: Number that indicates the amount of days, weeks, months, or years that MongoDB Cloud retains the snapshot. For less frequent policy items, MongoDB Cloud requires that you specify a value greater than or equal to the value specified for more frequent policy items. If the hourly policy item specifies a retention of two days, specify two days or greater for the retention of the weekly policy item.
+          example: 5
+          format: int32
+          type: integer
+      required:
+      - retentionUnit
+      - retentionValue
+      type: object
+    PaginatedCloudBackupRestoreJobView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/DiskBackupSnapshotRestoreJob'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PaginatedBackupSnapshotExportBucketsView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/DiskBackupSnapshotExportBucketResponse'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    DiskBackupShardedClusterSnapshotMember:
       properties:
         cloudProvider:
           description: Human-readable label that identifies the cloud provider.
           enum:
           - AWS
+          - AZURE
+          - GCP
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        replicaSetName:
+          description: Human-readable label that identifies the shard or config host from which MongoDB Cloud took this snapshot.
+          readOnly: true
+          type: string
+      required:
+      - cloudProvider
+      - id
+      - replicaSetName
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    ExtraRetentionSetting:
+      description: Extra retention setting item in the desired backup policy.
+      properties:
+        frequencyType:
+          description: The frequency type for the extra retention settings for the cluster.
+          enum:
+          - HOURLY
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+          - ON_DEMAND
+          type: string
+        retentionDays:
+          description: The number of extra retention days for the cluster.
+          format: int32
+          type: integer
+      type: object
+    ApiPrivateDownloadDeliveryUrl:
+      description: One Uniform Resource Locator (URL) that points to the compressed snapshot files for manual download and the corresponding private endpoint.
+      properties:
+        deliveryUrl:
+          description: One Uniform Resource Locator that points to the compressed snapshot files for manual download.
+          type: string
+        endpointId:
+          description: Unique 22-character alphanumeric string that identifies the private endpoint.
+          example: vpce-3bf78b0ddee411ba1
+          pattern: ^vpce-[0-9a-f]{17}$
+          type: string
+      type: object
+    DiskBackupSnapshotExportBucketRequest:
+      description: Disk backup snapshot Export Bucket Request.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/DiskBackupSnapshotAWSExportBucketRequest'
+          AZURE: '#/components/schemas/DiskBackupSnapshotAzureExportBucketRequest'
+          GCP: '#/components/schemas/DiskBackupSnapshotGCPExportBucketRequest'
+        propertyName: cloudProvider
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      required:
+      - cloudProvider
+      type: object
+    ObjectStoragePrivateEndpointResponse:
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider.
+          enum:
+          - AWS
+          type: string
+        errorMessage:
+          description: Error message for failures associated with the Object Storage private endpoint.
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the Private Endpoint Service.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        privateEndpointConnectionName:
+          description: Connection name of the Private Endpoint.
+          readOnly: true
           type: string
         regionName:
           description: Cloud provider region in which the Object Storage private endpoint is located.
@@ -3030,6 +3449,265 @@ components:
             - GLOBAL
             type: string
           type: object
+        status:
+          description: State of the Object Storage private endpoint.
+          enum:
+          - INITIATING
+          - PENDING_ACCEPTANCE
+          - ACTIVE
+          - FAILED
+          - PENDING_RECREATION
+          - DELETING
+          readOnly: true
+          type: string
+      type: object
+    DiskBackupShardedClusterSnapshot:
+      description: Details of the sharded cluster snapshot that MongoDB Cloud created.
+      properties:
+        configServerType:
+          description: Describes a sharded cluster's config server type.
+          enum:
+          - EMBEDDED
+          - DEDICATED
+          readOnly: true
+          type: string
+        createdAt:
+          description: Date and time when MongoDB Cloud took the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: 'Human-readable phrase or sentence that explains the purpose of the snapshot. The resource returns this parameter when `"status": "onDemand"`.'
+          readOnly: true
+          type: string
+        expiresAt:
+          description: Date and time when MongoDB Cloud deletes the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        frequencyType:
+          description: Human-readable label that identifies how often this snapshot triggers.
+          enum:
+          - hourly
+          - daily
+          - weekly
+          - monthly
+          - yearly
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        masterKeyUUID:
+          description: 'Unique string that identifies the Amazon Web Services (AWS) Key Management Service (KMS) Customer Master Key (CMK) used to encrypt the snapshot. The resource returns this value when `"encryptionEnabled" : true`.'
+          format: uuid
+          readOnly: true
+          type: string
+        members:
+          description: 'List that includes the snapshots and the cloud provider that stores the snapshots. The resource returns this parameter when `"type" : "SHARDED_CLUSTER"`.'
+          items:
+            $ref: '#/components/schemas/DiskBackupShardedClusterSnapshotMember'
+          readOnly: true
+          type: array
+        mongodVersion:
+          description: Version of the MongoDB host that this snapshot backs up.
+          pattern: ([\d]+\.[\d]+\.[\d]+)
+          readOnly: true
+          type: string
+        policyItems:
+          description: List that contains unique identifiers for the policy items.
+          items:
+            description: Unique 24-hexadecimal digit string that identifies one policy item.
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          readOnly: true
+          type: array
+        snapshotIds:
+          description: 'List that contains the unique identifiers of the snapshots created for the shards and config host for a sharded cluster. The resource returns this parameter when `"type": "SHARDED_CLUSTER"`. These identifiers should match the ones specified in the **members[n].id** parameters. This allows you to map a snapshot to its shard or config host name.'
+          items:
+            description: Unique 24-hexadecimal digit string that identifies the snapshot for part of the sharded cluster.
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            readOnly: true
+            type: string
+          readOnly: true
+          type: array
+        snapshotType:
+          description: Human-readable label that identifies when this snapshot triggers.
+          enum:
+          - onDemand
+          - scheduled
+          - fallback
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the stage of the backup process for this snapshot.
+          enum:
+          - queued
+          - inProgress
+          - completed
+          - failed
+          readOnly: true
+          type: string
+        storageSizeBytes:
+          description: Number of bytes taken to store the backup at time of snapshot.
+          format: int64
+          readOnly: true
+          type: integer
+        type:
+          description: Human-readable label that categorizes the cluster as a replica set or sharded cluster.
+          enum:
+          - replicaSet
+          - shardedCluster
+          readOnly: true
+          type: string
+      title: Sharded Cluster Snapshot
+      type: object
+    StateReason:
+      description: State reason of the Job. This is set when the job state is "Failed".
+      properties:
+        errorCode:
+          description: Error code relating to state.
+          type: string
+        message:
+          description: Message describing error or state.
+          type: string
+      readOnly: true
+      type: object
+    DiskBackupSnapshotRestoreJob:
+      properties:
+        cancelled:
+          description: Flag that indicates whether someone canceled this restore job.
+          readOnly: true
+          type: boolean
+        components:
+          description: Information on the restore job for each replica set in the sharded cluster.
+          items:
+            $ref: '#/components/schemas/DiskBackupRestoreMember'
+          readOnly: true
+          type: array
+        deliveryType:
+          description: Human-readable label that categorizes the restore job to create.
+          enum:
+          - automated
+          - download
+          - pointInTime
+          type: string
+        deliveryUrl:
+          description: 'One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download. MongoDB Cloud returns this parameter when `"deliveryType" : "download"`.'
+          items:
+            description: One Uniform Resource Locator that points to the compressed snapshot files for manual download.
+            type: string
+          readOnly: true
+          type: array
+        desiredTimestamp:
+          $ref: '#/components/schemas/ApiBSONTimestampView'
+        expired:
+          description: Flag that indicates whether the restore job expired.
+          readOnly: true
+          type: boolean
+        expiresAt:
+          description: Date and time when the restore job expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        failed:
+          description: Flag that indicates whether the restore job failed.
+          readOnly: true
+          type: boolean
+        finishedAt:
+          description: Date and time when the restore job completed. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal character string that identifies the restore job.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        oplogInc:
+          description: 'Oplog operation number from which you want to restore this snapshot. This number represents the second part of an Oplog timestamp. The resource returns this parameter when `"deliveryType" : "pointInTime"` and `oplogTs` exceeds `0`.'
+          example: 1
+          format: int32
+          minimum: 1
+          type: integer
+        oplogTs:
+          description: 'Date and time from which you want to restore this snapshot. This parameter expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch. This number represents the first part of an Oplog timestamp. The resource returns this parameter when `"deliveryType" : "pointInTime"` and `oplogTs` exceeds `0`.'
+          format: int32
+          minimum: 1199145600
+          type: integer
+        pointInTimeUTCSeconds:
+          description: 'Date and time from which MongoDB Cloud restored this snapshot. This parameter expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch. The resource returns this parameter when `"deliveryType" : "pointInTime"` and `pointInTimeUTCSeconds` exceeds `0`.'
+          format: int32
+          minimum: 1199145600
+          type: integer
+        privateDownloadDeliveryUrls:
+          description: 'One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download and the corresponding private endpoint(s). MongoDB Cloud returns this parameter when `"deliveryType" : "download"` and the download can be performed privately.'
+          items:
+            $ref: '#/components/schemas/ApiPrivateDownloadDeliveryUrl'
+          readOnly: true
+          type: array
+        snapshotId:
+          description: Unique 24-hexadecimal character string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        targetClusterName:
+          description: Human-readable label that identifies the target cluster to which the restore job restores the snapshot. The resource returns this parameter when `"deliveryType":` `"automated"`. Required for `automated` and `pointInTime` restore types.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+        targetGroupId:
+          description: Unique 24-hexadecimal digit string that identifies the target project for the specified `targetClusterName`. Required for `automated` and `pointInTime` restore types.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        timestamp:
+          description: Date and time when MongoDB Cloud took the snapshot associated with `snapshotId`. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      required:
+      - deliveryType
+      type: object
+    DiskBackupRestoreMember:
+      properties:
+        downloadUrl:
+          description: 'One Uniform Resource Locator that points to the compressed snapshot files for manual download. MongoDB Cloud returns this parameter when `"deliveryType" : "download"`.'
+          readOnly: true
+          type: string
+        privateDownloadDeliveryUrls:
+          description: 'One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download and the corresponding private endpoint(s). MongoDB Cloud returns this parameter when `"deliveryType" : "download"` and the download can be performed privately.'
+          items:
+            $ref: '#/components/schemas/ApiPrivateDownloadDeliveryUrl'
+          readOnly: true
+          type: array
+        replicaSetName:
+          description: Human-readable label that identifies the replica set on the sharded cluster.
+          readOnly: true
+          type: string
       type: object
     BackupComplianceOnDemandPolicyItem:
       description: Specifications for on-demand policy.
@@ -3090,120 +3768,6 @@ components:
           type: string
         retentionValue:
           description: 'Duration in days, weeks, months, or years that MongoDB Cloud retains the snapshot. For less frequent policy items, MongoDB Cloud requires that you specify a value greater than or equal to the value specified for more frequent policy items.
-
-
-            For example: If the hourly policy item specifies a retention of two days, you must specify two days or greater for the retention of the weekly policy item.'
-          format: int32
-          type: integer
-      required:
-      - frequencyInterval
-      - frequencyType
-      - retentionUnit
-      - retentionValue
-      type: object
-    DiskBackupSnapshotExportBucketResponse:
-      description: Disk backup snapshot Export Bucket.
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/DiskBackupSnapshotAWSExportBucketResponse'
-          AZURE: '#/components/schemas/DiskBackupSnapshotAzureExportBucketResponse'
-          GCP: '#/components/schemas/DiskBackupSnapshotGCPExportBucketResponse'
-        propertyName: cloudProvider
-      properties:
-        _id:
-          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        bucketName:
-          description: The name of the AWS S3 Bucket, Azure Storage Container, or Google Cloud Storage Bucket that Snapshots are exported to.
-          example: export-bucket
-          maxLength: 63
-          minLength: 3
-          type: string
-        cloudProvider:
-          description: Human-readable label that identifies the cloud provider.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-      required:
-      - _id
-      - bucketName
-      - cloudProvider
-      type: object
-    BackupComplianceScheduledPolicyItem:
-      description: Specifications for scheduled policy.
-      properties:
-        frequencyInterval:
-          description: "Number that indicates the frequency interval for a set of Snapshots. A value of `1` specifies the first instance of the corresponding `frequencyType`.\n\n- In a yearly policy item, `1` indicates that the yearly Snapshot occurs on the first day of January and `12` indicates the first day of December.\n\n- In a monthly policy item, `1` indicates that the monthly Snapshot occurs on the first day of the month and `40` indicates the last day of the month.\n\n- In a weekly policy item, `1` indicates that the weekly Snapshot occurs on Monday and `7` indicates Sunday.\n\n- In an hourly policy item, you can set the frequency interval to `1`, `2`, `4`, `6`, `8`, or `12`. For hourly policy items for NVMe clusters, MongoDB Cloud accepts only `12` as the frequency interval value.\n\n MongoDB Cloud ignores this setting for non-hourly policy items in Backup Compliance Policy settings."
-          enum:
-          - 1
-          - 2
-          - 3
-          - 4
-          - 5
-          - 6
-          - 7
-          - 8
-          - 9
-          - 10
-          - 11
-          - 12
-          - 13
-          - 14
-          - 15
-          - 16
-          - 17
-          - 18
-          - 19
-          - 20
-          - 21
-          - 22
-          - 23
-          - 24
-          - 25
-          - 26
-          - 27
-          - 28
-          - 40
-          format: int32
-          type: integer
-        frequencyType:
-          description: Human-readable label that identifies the frequency type associated with the backup policy.
-          enum:
-          - daily
-          - hourly
-          - weekly
-          - monthly
-          - yearly
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this backup policy item.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        retentionUnit:
-          description: Unit of time in which MongoDB Cloud measures Snapshot retention.
-          enum:
-          - days
-          - weeks
-          - months
-          - years
-          type: string
-        retentionValue:
-          description: 'Duration in days, weeks, months, or years that MongoDB Cloud retains the Snapshot. For less frequent policy items, MongoDB Cloud requires that you specify a value greater than or equal to the value specified for more frequent policy items.
 
 
             For example: If the hourly policy item specifies a retention of two days, you must specify two days or greater for the retention of the weekly policy item.'
@@ -3325,202 +3889,19 @@ components:
           type: string
       title: Replica Set Snapshot
       type: object
-    BackupLabel:
-      description: Collection of key-value pairs that represent custom data to add to the metadata file that MongoDB Cloud uploads to the bucket when the export job finishes.
+    ExportStatus:
+      description: State of the Export Job.
       properties:
-        key:
-          description: Key for the metadata file that MongoDB Cloud uploads to the bucket when the export job finishes.
-          type: string
-        value:
-          description: Value for the key to include in file that MongoDB Cloud uploads to the bucket when the export job finishes.
-          type: string
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    ApiBSONTimestampView:
-      description: BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.
-      properties:
-        date:
-          description: Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        increment:
-          description: Order of the database operation that the oplog recorded at specific date and time.
-          example: 1199145600
+        exportedCollections:
+          description: Count of collections whose documents were exported to the Export Bucket.
           format: int32
-          minimum: 1199145600
           readOnly: true
           type: integer
-      readOnly: true
-      title: BSON Timestamp
-      type: object
-    DiskBackupOnDemandCopyPolicyItem:
-      allOf:
-      - $ref: '#/components/schemas/DiskBackupCopyPolicyItem'
-      description: Specifications for one on-demand copy policy item.
-      required:
-      - frequencyType
-      type: object
-    DiskBackupExportJob:
-      properties:
-        components:
-          description: Information on the export job for each replica set in the sharded cluster.
-          items:
-            $ref: '#/components/schemas/DiskBackupExportMember'
-          readOnly: true
-          type: array
-        createdAt:
-          description: Date and time when a user or Atlas created the Export Job. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        customData:
-          description: Collection of key-value pairs that represent custom data for the metadata file that MongoDB Cloud uploads when the Export Job finishes.
-          items:
-            $ref: '#/components/schemas/BackupLabel'
-          type: array
-        exportBucketId:
-          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        exportStatus:
-          $ref: '#/components/schemas/ExportStatus'
-        finishedAt:
-          description: Date and time when this Export Job completed. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal character string that identifies the restore job.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        prefix:
-          description: Prefix used for all blob storage objects uploaded as part of the Export Job.
-          pattern: /exported_snapshots/\{ORG-NAME\}/\{PROJECT-NAME\}/\{CLUSTER-NAME\}/\{SNAPSHOT-INITIATION-DATE\}/\{TIMESTAMP\}
-          readOnly: true
-          type: string
-        snapshotId:
-          description: Unique 24-hexadecimal character string that identifies the snapshot.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        state:
-          description: State of the Export Job.
-          enum:
-          - Cancelled
-          - Failed
-          - InProgress
-          - Queued
-          - Successful
-          readOnly: true
-          type: string
-        stateReason:
-          $ref: '#/components/schemas/StateReason'
-      required:
-      - exportBucketId
-      type: object
-    PaginatedApiAtlasDiskBackupExportJobView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/DiskBackupExportJob'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+        totalCollections:
+          description: Total count of collections whose documents will be exported to the Export Bucket.
           format: int32
-          minimum: 0
           readOnly: true
           type: integer
-      required:
-      - results
-      type: object
-    PaginatedApiAtlasServerlessBackupSnapshotView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/ServerlessBackupSnapshot'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    AdvancedDiskBackupSnapshotSchedulePolicy:
-      description: List that contains a document for each backup policy item in the desired backup policy.
-      properties:
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this backup policy.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        policyItems:
-          description: List that contains the specifications for one policy.
-          items:
-            $ref: '#/components/schemas/DiskBackupApiPolicyItem'
-          type: array
-      required:
-      - policyItems
-      type: object
-    DiskBackupExportMember:
-      properties:
-        exportId:
-          description: Unique 24-hexadecimal character string that identifies the the Cloud Backup snapshot export job for each shard in a sharded cluster.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        replicaSetName:
-          description: Human-readable label that identifies the replica set on the sharded cluster.
-          readOnly: true
-          type: string
       type: object
     DiskBackupCopyPolicyItem:
       description: Specifications for one copy policy item.
@@ -3556,18 +3937,7 @@ components:
       required:
       - frequencyType
       type: object
-    StateReason:
-      description: State reason of the Job. This is set when the job state is "Failed".
-      properties:
-        errorCode:
-          description: Error code relating to state.
-          type: string
-        message:
-          description: Message describing error or state.
-          type: string
-      readOnly: true
-      type: object
-    PaginatedApiAtlasObjectStoragePrivateEndpointResponseView:
+    PaginatedApiAtlasDiskBackupExportJobView:
       properties:
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
@@ -3581,7 +3951,7 @@ components:
         results:
           description: List of returned documents that MongoDB Cloud provides when completing this request.
           items:
-            $ref: '#/components/schemas/ObjectStoragePrivateEndpointResponse'
+            $ref: '#/components/schemas/DiskBackupExportJob'
           readOnly: true
           type: array
         totalCount:
@@ -3602,651 +3972,36 @@ components:
       required:
       - requirePrivateNetworking
       type: object
-    PaginatedCloudBackupReplicaSetView:
+    ApiBSONTimestampView:
+      description: BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.
       properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/DiskBackupReplicaSet'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    DiskBackupSnapshotAWSExportBucketResponse:
-      properties:
-        _id:
-          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        bucketName:
-          description: The name of the AWS S3 Bucket, Azure Storage Container, or Google Cloud Storage Bucket that Snapshots are exported to.
-          example: export-bucket
-          maxLength: 63
-          minLength: 3
-          type: string
-        cloudProvider:
-          description: Human-readable label that identifies the cloud provider.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-        iamRoleId:
-          description: Unique 24-hexadecimal character string that identifies the Unified AWS Access role ID that MongoDB Cloud uses to access the AWS S3 bucket.
-          example: 32b6e34b3d91647abb20e7b8
-          externalDocs:
-            description: Unified AWS Access role ID
-            url: https://www.mongodb.com/docs/atlas/security/set-up-unified-aws-access/
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        region:
-          description: AWS region for the export bucket. This is set by Atlas and is never user-supplied.
-          example: us-east-1
-          readOnly: true
-          type: string
-        requirePrivateNetworking:
-          description: Indicates whether to use private link. User supplied.
-          type: boolean
-      required:
-      - _id
-      - bucketName
-      - cloudProvider
-      - iamRoleId
-      type: object
-    DataProtectionSettings20231001:
-      properties:
-        authorizedEmail:
-          description: Email address of the user who authorized to update the Backup Compliance Policy  settings.
-          format: email
-          type: string
-        authorizedUserFirstName:
-          description: First name of the user who authorized to updated the Backup Compliance Policy  settings.
-          type: string
-        authorizedUserLastName:
-          description: Last name of the user who authorized to updated the Backup Compliance Policy  settings.
-          type: string
-        copyProtectionEnabled:
-          default: false
-          description: Flag that indicates whether to prevent cluster users from deleting backups copied to other regions, even if those additional snapshot regions are removed. If unspecified, this value defaults to false.
-          type: boolean
-        deletable:
-          default: false
-          description: Flag that indicates whether the Backup Compliance Policy is allowed to be disabled. It is default to false and a support ticket needs to be filed to request setting to true.
-          externalDocs:
-            description: Configure a Backup Compliance Policy
-            url: https://www.mongodb.com/docs/atlas/backup/cloud-backup/backup-compliance-policy/
-          readOnly: true
-          type: boolean
-        encryptionAtRestEnabled:
-          default: false
-          description: Flag that indicates whether Encryption at Rest using Customer Key  Management is required for all clusters with a Backup Compliance Policy. If unspecified, this value defaults to false.
-          externalDocs:
-            description: Encryption at Rest using Customer Key Management
-            url: https://www.mongodb.com/docs/atlas/security-kms-encryption/
-          type: boolean
-        onDemandPolicyItem:
-          $ref: '#/components/schemas/BackupComplianceOnDemandPolicyItem'
-        pitEnabled:
-          default: false
-          description: Flag that indicates whether the cluster uses Continuous Cloud Backups with a Backup Compliance Policy. If unspecified, this value defaults to false.
-          externalDocs:
-            description: Continuous Cloud Backups
-            url: https://docs.atlas.mongodb.com/backup/cloud-backup/overview/
-          type: boolean
-        projectId:
-          description: Unique 24-hexadecimal digit string that identifies the project for the Backup Compliance Policy.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        restoreWindowDays:
-          description: Number of previous days that you can restore back to with Continuous Cloud Backup with a Backup Compliance Policy. You must specify a positive, non-zero integer, and the maximum retention window can't exceed the hourly retention time. This parameter applies only to Continuous Cloud Backups with a Backup Compliance Policy.
-          format: int32
-          type: integer
-        scheduledPolicyItems:
-          description: List that contains the specifications for one scheduled policy.
-          items:
-            $ref: '#/components/schemas/BackupComplianceScheduledPolicyItem'
-          type: array
-        state:
-          description: Label that indicates the state of the Backup Compliance Policy settings. MongoDB Cloud ignores this setting when you enable or update the Backup Compliance Policy settings.
-          enum:
-          - ACTIVE
-          - ENABLING
-          - UPDATING
-          - DISABLING
-          readOnly: true
-          type: string
-        updatedDate:
-          description: ISO 8601 timestamp format in UTC that indicates when the user updated the Data Protection Policy settings. MongoDB Cloud ignores this setting when you enable or update the Backup Compliance Policy settings.
+        date:
+          description: Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
           format: date-time
           readOnly: true
           type: string
-        updatedUser:
-          description: Email address that identifies the user who updated the Backup Compliance Policy settings. MongoDB Cloud ignores this email setting when you enable or update the Backup Compliance Policy settings.
-          format: email
-          readOnly: true
-          type: string
-      required:
-      - authorizedEmail
-      - authorizedUserFirstName
-      - authorizedUserLastName
-      type: object
-    DiskBackupCopySetting20240805:
-      description: Copy setting item in the desired backup policy.
-      properties:
-        cloudProvider:
-          description: Human-readable label that identifies the cloud provider that stores the snapshot copy.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-        copyPolicyItems:
-          description: List that contains a document for each copy policy item. Allowed only when `copyPolicyItemsEnabled` is true. Responses omit this field when `copyPolicyItemsEnabled` is false or omitted.
-          items:
-            $ref: '#/components/schemas/DiskBackupCopyPolicyItem'
-          maxItems: 6
-          type: array
-        frequencies:
-          deprecated: true
-          description: 'Deprecated: use `copyPolicyItems`, which defines which snapshots to copy and their retention. Allowed only when `copyPolicyItemsEnabled` is false or omitted. Responses omit this field when `copyPolicyItemsEnabled` is true.'
-          items:
-            enum:
-            - HOURLY
-            - DAILY
-            - WEEKLY
-            - MONTHLY
-            - YEARLY
-            - ON_DEMAND
-            type: string
-          maxItems: 6
-          type: array
-        lastNumberOfSnapshots:
-          description: Number of most recent snapshots to copy to the target region. If specified, Atlas copies this number of the most recent snapshots rather than using a frequency-based or policy-based copy schedule. This field is mutually exclusive with `frequencies` and `copyPolicyItems`.
-          format: int32
-          maximum: 500
-          minimum: 1
-          type: integer
-        regionName:
-          description: Target region to copy snapshots belonging to `zoneId`. Please supply the 'Atlas Region'.
-          externalDocs:
-            description: Cloud Provider Regions
-            url: https://www.mongodb.com/docs/atlas/reference/cloud-providers/
-          type: string
-        shouldCopyOplogs:
-          description: Flag that indicates whether to copy the oplogs to the target region. You can use the oplogs to perform point-in-time restores.
-          type: boolean
-        zoneId:
-          description: Unique 24-hexadecimal digit string that identifies the zone in a cluster. For global clusters, there can be multiple zones to choose from. For sharded clusters and replica set clusters, there is only one zone in the cluster. To find the Zone Id, do a GET request to Return One Cluster from One Project and consult the `replicationSpecs` array.
-          example: 32b6e34b3d91647abb20e7b8
-          externalDocs:
-            description: Return One Cluster From One Project
-            url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Clusters/operation/getCluster
-          pattern: ^([a-f0-9]{24})$
-          type: string
-      required:
-      - zoneId
-      type: object
-    DiskBackupSnapshot:
-      discriminator:
-        mapping:
-          replicaSet: '#/components/schemas/DiskBackupReplicaSet'
-          shardedCluster: '#/components/schemas/DiskBackupShardedClusterSnapshot'
-        propertyName: type
-      properties:
-        createdAt:
-          description: Date and time when MongoDB Cloud took the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        description:
-          description: 'Human-readable phrase or sentence that explains the purpose of the snapshot. The resource returns this parameter when `"status": "onDemand"`.'
-          readOnly: true
-          type: string
-        expiresAt:
-          description: Date and time when MongoDB Cloud deletes the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        frequencyType:
-          description: Human-readable label that identifies how often this snapshot triggers.
-          enum:
-          - hourly
-          - daily
-          - weekly
-          - monthly
-          - yearly
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the snapshot.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        masterKeyUUID:
-          description: 'Unique string that identifies the Amazon Web Services (AWS) Key Management Service (KMS) Customer Master Key (CMK) used to encrypt the snapshot. The resource returns this value when `"encryptionEnabled" : true`.'
-          format: uuid
-          readOnly: true
-          type: string
-        mongodVersion:
-          description: Version of the MongoDB host that this snapshot backs up.
-          pattern: ([\d]+\.[\d]+\.[\d]+)
-          readOnly: true
-          type: string
-        policyItems:
-          description: List that contains unique identifiers for the policy items.
-          items:
-            description: Unique 24-hexadecimal digit string that identifies one policy item.
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            type: string
-          readOnly: true
-          type: array
-        snapshotType:
-          description: Human-readable label that identifies when this snapshot triggers.
-          enum:
-          - onDemand
-          - scheduled
-          - fallback
-          readOnly: true
-          type: string
-        status:
-          description: Human-readable label that indicates the stage of the backup process for this snapshot.
-          enum:
-          - queued
-          - inProgress
-          - completed
-          - failed
-          readOnly: true
-          type: string
-        storageSizeBytes:
-          description: Number of bytes taken to store the backup at time of snapshot.
-          format: int64
-          readOnly: true
-          type: integer
-        type:
-          description: Human-readable label that categorizes the cluster as a replica set or sharded cluster.
-          enum:
-          - replicaSet
-          - shardedCluster
-          readOnly: true
-          type: string
-      type: object
-    DeleteCopiedBackups20240805:
-      description: Deleted copy setting whose backup copies need to also be deleted.
-      properties:
-        cloudProvider:
-          description: Human-readable label that identifies the cloud provider for the deleted copy setting whose backup copies you want to delete.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-          writeOnly: true
-        regionName:
-          description: Target region for the deleted copy setting whose backup copies you want to delete. Please supply the 'Atlas Region'.
-          externalDocs:
-            description: Cloud Provider Regions
-            url: https://www.mongodb.com/docs/atlas/reference/cloud-providers/
-          type: string
-          writeOnly: true
-        zoneId:
-          description: Unique 24-hexadecimal digit string that identifies the zone in a cluster. For global clusters, there can be multiple zones to choose from. For sharded clusters and replica set clusters, there is only one zone in the cluster. To find the Zone Id, do a GET request to Return One Cluster from One Project and consult the `replicationSpecs` array.
-          example: 32b6e34b3d91647abb20e7b8
-          externalDocs:
-            description: Return One Cluster from One Project
-            url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Clusters/operation/getCluster
-          pattern: ^([a-f0-9]{24})$
-          type: string
-          writeOnly: true
-      type: object
-      writeOnly: true
-    PaginatedBackupSnapshotExportBucketsView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/DiskBackupSnapshotExportBucketResponse'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    DiskBackupShardedClusterSnapshot:
-      description: Details of the sharded cluster snapshot that MongoDB Cloud created.
-      properties:
-        configServerType:
-          description: Describes a sharded cluster's config server type.
-          enum:
-          - EMBEDDED
-          - DEDICATED
-          readOnly: true
-          type: string
-        createdAt:
-          description: Date and time when MongoDB Cloud took the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        description:
-          description: 'Human-readable phrase or sentence that explains the purpose of the snapshot. The resource returns this parameter when `"status": "onDemand"`.'
-          readOnly: true
-          type: string
-        expiresAt:
-          description: Date and time when MongoDB Cloud deletes the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        frequencyType:
-          description: Human-readable label that identifies how often this snapshot triggers.
-          enum:
-          - hourly
-          - daily
-          - weekly
-          - monthly
-          - yearly
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the snapshot.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        masterKeyUUID:
-          description: 'Unique string that identifies the Amazon Web Services (AWS) Key Management Service (KMS) Customer Master Key (CMK) used to encrypt the snapshot. The resource returns this value when `"encryptionEnabled" : true`.'
-          format: uuid
-          readOnly: true
-          type: string
-        members:
-          description: 'List that includes the snapshots and the cloud provider that stores the snapshots. The resource returns this parameter when `"type" : "SHARDED_CLUSTER"`.'
-          items:
-            $ref: '#/components/schemas/DiskBackupShardedClusterSnapshotMember'
-          readOnly: true
-          type: array
-        mongodVersion:
-          description: Version of the MongoDB host that this snapshot backs up.
-          pattern: ([\d]+\.[\d]+\.[\d]+)
-          readOnly: true
-          type: string
-        policyItems:
-          description: List that contains unique identifiers for the policy items.
-          items:
-            description: Unique 24-hexadecimal digit string that identifies one policy item.
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            type: string
-          readOnly: true
-          type: array
-        snapshotIds:
-          description: 'List that contains the unique identifiers of the snapshots created for the shards and config host for a sharded cluster. The resource returns this parameter when `"type": "SHARDED_CLUSTER"`. These identifiers should match the ones specified in the **members[n].id** parameters. This allows you to map a snapshot to its shard or config host name.'
-          items:
-            description: Unique 24-hexadecimal digit string that identifies the snapshot for part of the sharded cluster.
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            readOnly: true
-            type: string
-          readOnly: true
-          type: array
-        snapshotType:
-          description: Human-readable label that identifies when this snapshot triggers.
-          enum:
-          - onDemand
-          - scheduled
-          - fallback
-          readOnly: true
-          type: string
-        status:
-          description: Human-readable label that indicates the stage of the backup process for this snapshot.
-          enum:
-          - queued
-          - inProgress
-          - completed
-          - failed
-          readOnly: true
-          type: string
-        storageSizeBytes:
-          description: Number of bytes taken to store the backup at time of snapshot.
-          format: int64
-          readOnly: true
-          type: integer
-        type:
-          description: Human-readable label that categorizes the cluster as a replica set or sharded cluster.
-          enum:
-          - replicaSet
-          - shardedCluster
-          readOnly: true
-          type: string
-      title: Sharded Cluster Snapshot
-      type: object
-    DiskBackupSnapshotRestoreJob:
-      properties:
-        cancelled:
-          description: Flag that indicates whether someone canceled this restore job.
-          readOnly: true
-          type: boolean
-        components:
-          description: Information on the restore job for each replica set in the sharded cluster.
-          items:
-            $ref: '#/components/schemas/DiskBackupRestoreMember'
-          readOnly: true
-          type: array
-        deliveryType:
-          description: Human-readable label that categorizes the restore job to create.
-          enum:
-          - automated
-          - download
-          - pointInTime
-          type: string
-        deliveryUrl:
-          description: 'One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download. MongoDB Cloud returns this parameter when `"deliveryType" : "download"`.'
-          items:
-            description: One Uniform Resource Locator that points to the compressed snapshot files for manual download.
-            type: string
-          readOnly: true
-          type: array
-        desiredTimestamp:
-          $ref: '#/components/schemas/ApiBSONTimestampView'
-        expired:
-          description: Flag that indicates whether the restore job expired.
-          readOnly: true
-          type: boolean
-        expiresAt:
-          description: Date and time when the restore job expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        failed:
-          description: Flag that indicates whether the restore job failed.
-          readOnly: true
-          type: boolean
-        finishedAt:
-          description: Date and time when the restore job completed. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal character string that identifies the restore job.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        oplogInc:
-          description: 'Oplog operation number from which you want to restore this snapshot. This number represents the second part of an Oplog timestamp. The resource returns this parameter when `"deliveryType" : "pointInTime"` and `oplogTs` exceeds `0`.'
-          example: 1
-          format: int32
-          minimum: 1
-          type: integer
-        oplogTs:
-          description: 'Date and time from which you want to restore this snapshot. This parameter expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch. This number represents the first part of an Oplog timestamp. The resource returns this parameter when `"deliveryType" : "pointInTime"` and `oplogTs` exceeds `0`.'
+        increment:
+          description: Order of the database operation that the oplog recorded at specific date and time.
+          example: 1199145600
           format: int32
           minimum: 1199145600
-          type: integer
-        pointInTimeUTCSeconds:
-          description: 'Date and time from which MongoDB Cloud restored this snapshot. This parameter expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch. The resource returns this parameter when `"deliveryType" : "pointInTime"` and `pointInTimeUTCSeconds` exceeds `0`.'
-          format: int32
-          minimum: 1199145600
-          type: integer
-        privateDownloadDeliveryUrls:
-          description: 'One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download and the corresponding private endpoint(s). MongoDB Cloud returns this parameter when `"deliveryType" : "download"` and the download can be performed privately.'
-          items:
-            $ref: '#/components/schemas/ApiPrivateDownloadDeliveryUrl'
           readOnly: true
-          type: array
-        snapshotId:
-          description: Unique 24-hexadecimal character string that identifies the snapshot.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        targetClusterName:
-          description: Human-readable label that identifies the target cluster to which the restore job restores the snapshot. The resource returns this parameter when `"deliveryType":` `"automated"`. Required for `automated` and `pointInTime` restore types.
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          type: string
-        targetGroupId:
-          description: Unique 24-hexadecimal digit string that identifies the target project for the specified `targetClusterName`. Required for `automated` and `pointInTime` restore types.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        timestamp:
-          description: Date and time when MongoDB Cloud took the snapshot associated with `snapshotId`. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-      required:
-      - deliveryType
+          type: integer
+      readOnly: true
+      title: BSON Timestamp
       type: object
-    DiskBackupShardedClusterSnapshotMember:
+    DiskBackupExportMember:
       properties:
-        cloudProvider:
-          description: Human-readable label that identifies the cloud provider.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the snapshot.
+        exportId:
+          description: Unique 24-hexadecimal character string that identifies the the Cloud Backup snapshot export job for each shard in a sharded cluster.
           example: 32b6e34b3d91647abb20e7b8
           pattern: ^([a-f0-9]{24})$
           readOnly: true
           type: string
         replicaSetName:
-          description: Human-readable label that identifies the shard or config host from which MongoDB Cloud took this snapshot.
+          description: Human-readable label that identifies the replica set on the sharded cluster.
           readOnly: true
           type: string
-      required:
-      - cloudProvider
-      - id
-      - replicaSetName
-      type: object
-    BackupSnapshotRetention:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        retentionUnit:
-          description: Quantity of time in which MongoDB Cloud measures snapshot retention.
-          enum:
-          - DAYS
-          - WEEKS
-          - MONTHS
-          - YEARS
-          type: string
-        retentionValue:
-          description: Number that indicates the amount of days, weeks, months, or years that MongoDB Cloud retains the snapshot. For less frequent policy items, MongoDB Cloud requires that you specify a value greater than or equal to the value specified for more frequent policy items. If the hourly policy item specifies a retention of two days, specify two days or greater for the retention of the weekly policy item.
-          example: 5
-          format: int32
-          type: integer
-      required:
-      - retentionUnit
-      - retentionValue
       type: object
     ServerlessBackupRestoreJob:
       properties:
@@ -4343,126 +4098,386 @@ components:
       - targetClusterName
       - targetGroupId
       type: object
-    DiskBackupRestoreMember:
+    PaginatedApiAtlasObjectStoragePrivateEndpointResponseView:
       properties:
-        downloadUrl:
-          description: 'One Uniform Resource Locator that points to the compressed snapshot files for manual download. MongoDB Cloud returns this parameter when `"deliveryType" : "download"`.'
-          readOnly: true
-          type: string
-        privateDownloadDeliveryUrls:
-          description: 'One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download and the corresponding private endpoint(s). MongoDB Cloud returns this parameter when `"deliveryType" : "download"` and the download can be performed privately.'
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
           items:
-            $ref: '#/components/schemas/ApiPrivateDownloadDeliveryUrl'
+            $ref: '#/components/schemas/Link'
           readOnly: true
           type: array
-        replicaSetName:
-          description: Human-readable label that identifies the replica set on the sharded cluster.
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ObjectStoragePrivateEndpointResponse'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    ServerlessBackupSnapshot:
+      properties:
+        createdAt:
+          description: Date and time when MongoDB Cloud took the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        expiresAt:
+          description: Date and time when MongoDB Cloud deletes the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        frequencyType:
+          description: Human-readable label that identifies how often this snapshot triggers.
+          enum:
+          - hourly
+          - daily
+          - weekly
+          - monthly
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        mongodVersion:
+          description: Version of the MongoDB host that this snapshot backs up.
+          pattern: ([\d]+\.[\d]+\.[\d]+)
+          readOnly: true
+          type: string
+        serverlessInstanceName:
+          description: Human-readable label given to the serverless instance from which MongoDB Cloud took this snapshot.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          readOnly: true
+          type: string
+        snapshotType:
+          description: Human-readable label that identifies when this snapshot triggers.
+          enum:
+          - onDemand
+          - scheduled
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the stage of the backup process for this snapshot.
+          enum:
+          - queued
+          - inProgress
+          - completed
+          - failed
+          readOnly: true
+          type: string
+        storageSizeBytes:
+          description: Number of bytes taken to store the backup snapshot.
+          format: int64
+          readOnly: true
+          type: integer
+      type: object
+    DiskBackupSnapshotAWSExportBucketResponse:
+      properties:
+        _id:
+          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        bucketName:
+          description: The name of the AWS S3 Bucket, Azure Storage Container, or Google Cloud Storage Bucket that Snapshots are exported to.
+          example: export-bucket
+          maxLength: 63
+          minLength: 3
+          type: string
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+        iamRoleId:
+          description: Unique 24-hexadecimal character string that identifies the Unified AWS Access role ID that MongoDB Cloud uses to access the AWS S3 bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          externalDocs:
+            description: Unified AWS Access role ID
+            url: https://www.mongodb.com/docs/atlas/security/set-up-unified-aws-access/
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        region:
+          description: AWS region for the export bucket. This is set by Atlas and is never user-supplied.
+          example: us-east-1
+          readOnly: true
+          type: string
+        requirePrivateNetworking:
+          description: Indicates whether to use private link. User supplied.
+          type: boolean
+      required:
+      - _id
+      - bucketName
+      - cloudProvider
+      - iamRoleId
+      type: object
+    PaginatedCloudBackupShardedClusterSnapshotView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/DiskBackupShardedClusterSnapshot'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    DiskBackupCopySetting20240805:
+      description: Copy setting item in the desired backup policy.
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider that stores the snapshot copy.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+        copyPolicyItems:
+          description: List that contains a document for each copy policy item. Allowed only when `copyPolicyItemsEnabled` is true. Responses omit this field when `copyPolicyItemsEnabled` is false or omitted.
+          items:
+            $ref: '#/components/schemas/DiskBackupCopyPolicyItem'
+          maxItems: 6
+          type: array
+        frequencies:
+          deprecated: true
+          description: 'Deprecated: use `copyPolicyItems`, which defines which snapshots to copy and their retention. Allowed only when `copyPolicyItemsEnabled` is false or omitted. Responses omit this field when `copyPolicyItemsEnabled` is true.'
+          items:
+            enum:
+            - HOURLY
+            - DAILY
+            - WEEKLY
+            - MONTHLY
+            - YEARLY
+            - ON_DEMAND
+            type: string
+          maxItems: 6
+          type: array
+        lastNumberOfSnapshots:
+          description: Number of most recent snapshots to copy to the target region. If specified, Atlas copies this number of the most recent snapshots rather than using a frequency-based or policy-based copy schedule. This field is mutually exclusive with `frequencies` and `copyPolicyItems`.
+          format: int32
+          maximum: 500
+          minimum: 1
+          type: integer
+        regionName:
+          description: Target region to copy snapshots belonging to `zoneId`. Please supply the 'Atlas Region'.
+          externalDocs:
+            description: Cloud Provider Regions
+            url: https://www.mongodb.com/docs/atlas/reference/cloud-providers/
+          type: string
+        shouldCopyOplogs:
+          description: Flag that indicates whether to copy the oplogs to the target region. You can use the oplogs to perform point-in-time restores.
+          type: boolean
+        zoneId:
+          description: Unique 24-hexadecimal digit string that identifies the zone in a cluster. For global clusters, there can be multiple zones to choose from. For sharded clusters and replica set clusters, there is only one zone in the cluster. To find the Zone Id, do a GET request to Return One Cluster from One Project and consult the `replicationSpecs` array.
+          example: 32b6e34b3d91647abb20e7b8
+          externalDocs:
+            description: Return One Cluster From One Project
+            url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Clusters/operation/getCluster
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      required:
+      - zoneId
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    AutoExportPolicyView:
+      description: Policy for automatically exporting Cloud Backup Snapshots.
+      properties:
+        exportBucketId:
+          description: Unique 24-hexadecimal character string that identifies the Export Bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        frequencyType:
+          description: Human-readable label that indicates the rate at which the export policy item occurs.
+          enum:
+          - monthly
+          - yearly
+          type: string
+      title: export
+      type: object
+    AdvancedDiskBackupSnapshotSchedulePolicy:
+      description: List that contains a document for each backup policy item in the desired backup policy.
+      properties:
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this backup policy.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        policyItems:
+          description: List that contains the specifications for one policy.
+          items:
+            $ref: '#/components/schemas/DiskBackupApiPolicyItem'
+          type: array
+      required:
+      - policyItems
+      type: object
+    DiskBackupSnapshot:
+      discriminator:
+        mapping:
+          replicaSet: '#/components/schemas/DiskBackupReplicaSet'
+          shardedCluster: '#/components/schemas/DiskBackupShardedClusterSnapshot'
+        propertyName: type
+      properties:
+        createdAt:
+          description: Date and time when MongoDB Cloud took the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: 'Human-readable phrase or sentence that explains the purpose of the snapshot. The resource returns this parameter when `"status": "onDemand"`.'
+          readOnly: true
+          type: string
+        expiresAt:
+          description: Date and time when MongoDB Cloud deletes the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        frequencyType:
+          description: Human-readable label that identifies how often this snapshot triggers.
+          enum:
+          - hourly
+          - daily
+          - weekly
+          - monthly
+          - yearly
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        masterKeyUUID:
+          description: 'Unique string that identifies the Amazon Web Services (AWS) Key Management Service (KMS) Customer Master Key (CMK) used to encrypt the snapshot. The resource returns this value when `"encryptionEnabled" : true`.'
+          format: uuid
+          readOnly: true
+          type: string
+        mongodVersion:
+          description: Version of the MongoDB host that this snapshot backs up.
+          pattern: ([\d]+\.[\d]+\.[\d]+)
+          readOnly: true
+          type: string
+        policyItems:
+          description: List that contains unique identifiers for the policy items.
+          items:
+            description: Unique 24-hexadecimal digit string that identifies one policy item.
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          readOnly: true
+          type: array
+        snapshotType:
+          description: Human-readable label that identifies when this snapshot triggers.
+          enum:
+          - onDemand
+          - scheduled
+          - fallback
+          readOnly: true
+          type: string
+        status:
+          description: Human-readable label that indicates the stage of the backup process for this snapshot.
+          enum:
+          - queued
+          - inProgress
+          - completed
+          - failed
+          readOnly: true
+          type: string
+        storageSizeBytes:
+          description: Number of bytes taken to store the backup at time of snapshot.
+          format: int64
+          readOnly: true
+          type: integer
+        type:
+          description: Human-readable label that categorizes the cluster as a replica set or sharded cluster.
+          enum:
+          - replicaSet
+          - shardedCluster
           readOnly: true
           type: string
       type: object
-  responses:
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    methodNotAllowed:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 405
-            errorCode: ATLAS_BACKUP_CANCEL_SHARD_RESTORE_JOB_NOT_ALLOWED
-            reason: Method Not Allowed
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Method Not Allowed.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
   parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+    itemsPerPage:
+      description: Number of items that the response returns per page.
       in: query
-      name: envelope
+      name: itemsPerPage
       schema:
-        default: false
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
         type: boolean
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
@@ -4476,13 +4491,12 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
-    itemsPerPage:
-      description: Number of items that the response returns per page.
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
       in: query
-      name: itemsPerPage
+      name: pageNum
       schema:
-        default: 100
-        maximum: 500
+        default: 1
         minimum: 1
         type: integer
     pretty:
@@ -4495,32 +4509,24 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
       in: query
-      name: pageNum
+      name: envelope
       schema:
-        default: 1
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
+        default: false
         type: boolean
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

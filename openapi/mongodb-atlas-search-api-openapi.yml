@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Atlas Search API
+  title: MongoDB Atlas Administration Atlas Search API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -1379,17 +1379,17 @@ paths:
       x-xgen-operation-id-override: updateClusterSearchIndex
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -1401,6 +1401,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -1419,17 +1430,6 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
     conflict:
       content:
         application/json:
@@ -1441,6 +1441,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Conflict.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     badRequest:
       content:
         application/json:
@@ -1452,55 +1463,7 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
   schemas:
-    ApiSearchDeploymentRequestView:
-      properties:
-        specs:
-          description: 'List of settings that configure the Search Nodes for your cluster.
-
-
-            **NOTE**: We accept a single configuration for all nodes currently.'
-          items:
-            $ref: '#/components/schemas/ApiSearchDeploymentSpecView'
-          maxItems: 1
-          minItems: 1
-          type: array
-      required:
-      - specs
-      type: object
-    SearchMappings:
-      description: Index specifications for the collection's fields.
-      properties:
-        dynamic:
-          description: Indicates whether the index uses static, default dynamic, or configurable dynamic mappings. Set to `true` to enable dynamic mapping with default type set or define object to specify the name of the configured type sets for dynamic mapping. If you specify configurable dynamic mappings, you must define the referred type sets in the `typeSets` field. Set to `false` to use only static mappings through `mappings.fields`.
-          example:
-            typeSet: typeSet1
-          externalDocs:
-            description: Static, Dynamic or Configurable Dynamic Mappings
-            url: https://dochub.mongodb.org/core/field-mapping-definition-fts#static-and-dynamic-mappings
-          type: object
-        fields:
-          additionalProperties:
-            $ref: '#/components/schemas/Fields'
-          description: One or more field specifications for the Atlas Search index. Required if `mappings.dynamic` is omitted or set to `false`.
-          externalDocs:
-            description: Atlas Search Index
-            url: https://dochub.mongodb.org/core/index-definitions-fts
-          type: object
-          x-additionalPropertiesName: Field Name
-      title: Mappings
-      type: object
     ApiError:
       properties:
         badRequestDetail:
@@ -1532,6 +1495,331 @@ components:
       required:
       - error
       - errorCode
+      type: object
+    SearchMainIndexStatusDetail:
+      description: Contains status information about the active index.
+      properties:
+        definition:
+          $ref: '#/components/schemas/SearchIndexDefinition'
+        definitionVersion:
+          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
+        message:
+          description: Optional message describing an error.
+          type: string
+        queryable:
+          description: Flag that indicates whether the index generation is queryable on the host.
+          type: boolean
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+      title: Search Main Index Status Detail
+      type: object
+    SearchMappings:
+      description: Index specifications for the collection's fields.
+      properties:
+        dynamic:
+          description: Indicates whether the index uses static, default dynamic, or configurable dynamic mappings. Set to `true` to enable dynamic mapping with default type set or define object to specify the name of the configured type sets for dynamic mapping. If you specify configurable dynamic mappings, you must define the referred type sets in the `typeSets` field. Set to `false` to use only static mappings through `mappings.fields`.
+          example:
+            typeSet: typeSet1
+          externalDocs:
+            description: Static, Dynamic or Configurable Dynamic Mappings
+            url: https://dochub.mongodb.org/core/field-mapping-definition-fts#static-and-dynamic-mappings
+          type: object
+        fields:
+          additionalProperties:
+            $ref: '#/components/schemas/Fields'
+          description: One or more field specifications for the Atlas Search index. Required if `mappings.dynamic` is omitted or set to `false`.
+          externalDocs:
+            description: Atlas Search Index
+            url: https://dochub.mongodb.org/core/index-definitions-fts
+          type: object
+          x-additionalPropertiesName: Field Name
+      title: Mappings
+      type: object
+    SearchStagedIndexStatusDetail:
+      description: Contains status information about an index building in the background.
+      properties:
+        definition:
+          $ref: '#/components/schemas/SearchIndexDefinition'
+        definitionVersion:
+          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
+        message:
+          description: Optional message describing an error.
+          type: string
+        queryable:
+          description: Flag that indicates whether the index generation is queryable on the host.
+          type: boolean
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+      title: Search Staged Index Status Detail
+      type: object
+    ApiSearchDeploymentSpecView:
+      properties:
+        instanceSize:
+          description: Hardware specification for the Search Node instance sizes.
+          enum:
+          - S20_HIGHCPU_NVME
+          - S30_HIGHCPU_NVME
+          - S40_HIGHCPU_NVME
+          - S50_HIGHCPU_NVME
+          - S60_HIGHCPU_NVME
+          - S70_HIGHCPU_NVME
+          - S80_HIGHCPU_NVME
+          - S30_LOWCPU_NVME
+          - S40_LOWCPU_NVME
+          - S50_LOWCPU_NVME
+          - S60_LOWCPU_NVME
+          - S70_LOWCPU_NVME
+          - S80_LOWCPU_NVME
+          - S90_LOWCPU_NVME
+          - S100_LOWCPU_NVME
+          - S110_LOWCPU_NVME
+          - S120_LOWCPU_NVME
+          - S130_LOWCPU_NVME
+          - S135_LOWCPU_NVME
+          - S140_LOWCPU_NVME
+          - S40_STORAGE_NVME
+          - S50_STORAGE_NVME
+          - S60_STORAGE_NVME
+          - S80_STORAGE_NVME
+          - S90_STORAGE_NVME
+          type: string
+        nodeCount:
+          description: Number of Search Nodes in the cluster.
+          example: 2
+          format: int32
+          maximum: 32
+          minimum: 2
+          type: integer
+      required:
+      - instanceSize
+      - nodeCount
+      type: object
+    AtlasSearchAnalyzer:
+      properties:
+        charFilters:
+          description: Filters that examine text one character at a time and perform filtering operations.
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          type: array
+        name:
+          description: 'Name that identifies the custom analyzer. Names must be unique within an index, and must not start with any of the following strings:
+
+            - `lucene.`
+
+            - `builtin.`
+
+            - `mongodb.`'
+          type: string
+        tokenFilters:
+          description: 'Filter that performs operations such as:
+
+
+            - Stemming, which reduces related words, such as "talking", "talked", and "talks" to their root word "talk".
+
+
+            - Redaction, which is the removal of sensitive information from public documents.'
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          type: array
+        tokenizer:
+          additionalProperties:
+            description: Tokenizer that you want to use to create tokens. Tokens determine how Atlas Search splits up text into discrete chunks for indexing.
+            type: object
+          description: Tokenizer that you want to use to create tokens. Tokens determine how Atlas Search splits up text into discrete chunks for indexing.
+          type: object
+      required:
+      - name
+      - tokenizer
+      title: Atlas Search Analyzer
+      type: object
+    ApiSearchDeploymentResponseView:
+      properties:
+        encryptionAtRestProvider:
+          description: Cloud service provider that manages your customer keys to provide an additional layer of Encryption At Rest for the cluster.
+          enum:
+          - NONE
+          - AWS
+          - AZURE
+          - GCP
+          externalDocs:
+            description: Encryption at Rest using Customer Key Management
+            url: https://www.mongodb.com/docs/atlas/security-kms-encryption/
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal character string that identifies the project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the search deployment.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        specs:
+          description: List of settings that configure the Search Nodes for your cluster. The configuration will be returned for each region and shard.
+          items:
+            $ref: '#/components/schemas/ApiSearchDeploymentSpecView'
+          readOnly: true
+          type: array
+        stateName:
+          description: Human-readable label that indicates the current operating condition of this search deployment.
+          enum:
+          - IDLE
+          - PAUSED
+          - UPDATING
+          readOnly: true
+          type: string
+      type: object
+    SearchTypeSets:
+      description: Type sets for an Atlas Search index definition.
+      externalDocs:
+        description: Type Sets
+        url: https://dochub.mongodb.org/core/atlas-search-configure-dynamic-indexing
+      properties:
+        name:
+          description: Label that identifies the type set name. Each `typeSets.name` must be unique within the same index definition.
+          type: string
+        types:
+          description: List of types associated with the type set. Each type definition must include a `type` field specifying the search field type (`autocomplete`, `boolean`, `date`, `geo`, `number`, `objectId`, `string`, `token`, or `uuid`) and may include additional configuration properties specific to that type.
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          maxItems: 100
+          type: array
+      required:
+      - name
+      - types
+      title: TypeSets
+      type: object
+    ApiSearchDeploymentRequestView:
+      properties:
+        specs:
+          description: 'List of settings that configure the Search Nodes for your cluster.
+
+
+            **NOTE**: We accept a single configuration for all nodes currently.'
+          items:
+            $ref: '#/components/schemas/ApiSearchDeploymentSpecView'
+          maxItems: 1
+          minItems: 1
+          type: array
+      required:
+      - specs
+      type: object
+    BasicDBObject:
+      additionalProperties:
+        type: object
+      type: object
+    SearchIndexCreateRequest:
+      discriminator:
+        mapping:
+          search: '#/components/schemas/TextSearchIndexCreateRequest'
+          vectorSearch: '#/components/schemas/VectorSearchIndexCreateRequest'
+        propertyName: type
+      properties:
+        collectionName:
+          description: Label that identifies the collection to create an Atlas Search index in.
+          type: string
+        database:
+          description: Label that identifies the database that contains the collection to create an Atlas Search index in.
+          type: string
+        name:
+          description: Label that identifies this index. Within each namespace, names of all indexes in the namespace must be unique.
+          type: string
+        type:
+          description: Type of the index. The default type is search.
+          enum:
+          - search
+          - vectorSearch
+          type: string
+      required:
+      - collectionName
+      - database
+      - name
+      type: object
+    SearchHostStatusDetail:
+      properties:
+        hostname:
+          description: Hostname that corresponds to the status detail.
+          type: string
+        mainIndex:
+          $ref: '#/components/schemas/SearchMainIndexStatusDetail'
+        queryable:
+          description: Flag that indicates whether the index is queryable on the host.
+          type: boolean
+        stagedIndex:
+          $ref: '#/components/schemas/SearchStagedIndexStatusDetail'
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+      title: Search Host Status Detail
       type: object
     ClusterSearchIndex:
       discriminator:
@@ -1603,350 +1891,6 @@ components:
       - database
       - name
       type: object
-    ApiSearchDeploymentSpecView:
-      properties:
-        instanceSize:
-          description: Hardware specification for the Search Node instance sizes.
-          enum:
-          - S20_HIGHCPU_NVME
-          - S30_HIGHCPU_NVME
-          - S40_HIGHCPU_NVME
-          - S50_HIGHCPU_NVME
-          - S60_HIGHCPU_NVME
-          - S70_HIGHCPU_NVME
-          - S80_HIGHCPU_NVME
-          - S30_LOWCPU_NVME
-          - S40_LOWCPU_NVME
-          - S50_LOWCPU_NVME
-          - S60_LOWCPU_NVME
-          - S70_LOWCPU_NVME
-          - S80_LOWCPU_NVME
-          - S90_LOWCPU_NVME
-          - S100_LOWCPU_NVME
-          - S110_LOWCPU_NVME
-          - S120_LOWCPU_NVME
-          - S130_LOWCPU_NVME
-          - S135_LOWCPU_NVME
-          - S140_LOWCPU_NVME
-          - S40_STORAGE_NVME
-          - S50_STORAGE_NVME
-          - S60_STORAGE_NVME
-          - S80_STORAGE_NVME
-          - S90_STORAGE_NVME
-          type: string
-        nodeCount:
-          description: Number of Search Nodes in the cluster.
-          example: 2
-          format: int32
-          maximum: 32
-          minimum: 2
-          type: integer
-      required:
-      - instanceSize
-      - nodeCount
-      type: object
-    VectorSearchIndexDefinition:
-      description: The vector search index definition set by the user.
-      properties:
-        fields:
-          description: Settings that configure the fields, one per object, to index. You must define at least one "vector" type field. You can optionally define "filter" type fields also.
-          externalDocs:
-            description: Vector Search Fields
-            url: https://dochub.mongodb.org/core/avs-vector-type
-          items:
-            $ref: '#/components/schemas/BasicDBObject'
-          type: array
-        nestedRoot:
-          description: Top-level path to the array that contains vector fields. When provided, vector fields under this path are treated as nested.
-          example: sections
-          type: string
-        numPartitions:
-          default: 1
-          description: Number of index partitions. Allowed values are [1, 2, 4].
-          format: int32
-          type: integer
-        storedSource:
-          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.
-          example:
-            include | exclude:
-            - field1
-            - field2
-          externalDocs:
-            description: Stored Source Fields
-            url: https://dochub.mongodb.org/core/atlas-search-stored-source
-          type: object
-      required:
-      - fields
-      title: Vector Search Index Definition
-      type: object
-    SearchStagedIndexStatusDetail:
-      description: Contains status information about an index building in the background.
-      properties:
-        definition:
-          $ref: '#/components/schemas/SearchIndexDefinition'
-        definitionVersion:
-          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
-        message:
-          description: Optional message describing an error.
-          type: string
-        queryable:
-          description: Flag that indicates whether the index generation is queryable on the host.
-          type: boolean
-        status:
-          description: 'Condition of the search index when you made this request.
-
-
-            - `DELETING`: The index is being deleted.
-
-            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
-
-            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
-
-            - `PENDING`: Atlas has not yet started building the index.
-
-            - `BUILDING`: Atlas is building or re-building the index after an edit.
-
-            - `READY`: The index is ready and can support queries.'
-          enum:
-          - DELETING
-          - FAILED
-          - STALE
-          - PENDING
-          - BUILDING
-          - READY
-          - DOES_NOT_EXIST
-          type: string
-      title: Search Staged Index Status Detail
-      type: object
-    SearchHostStatusDetail:
-      properties:
-        hostname:
-          description: Hostname that corresponds to the status detail.
-          type: string
-        mainIndex:
-          $ref: '#/components/schemas/SearchMainIndexStatusDetail'
-        queryable:
-          description: Flag that indicates whether the index is queryable on the host.
-          type: boolean
-        stagedIndex:
-          $ref: '#/components/schemas/SearchStagedIndexStatusDetail'
-        status:
-          description: 'Condition of the search index when you made this request.
-
-
-            - `DELETING`: The index is being deleted.
-
-            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
-
-            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
-
-            - `PENDING`: Atlas has not yet started building the index.
-
-            - `BUILDING`: Atlas is building or re-building the index after an edit.
-
-            - `READY`: The index is ready and can support queries.'
-          enum:
-          - DELETING
-          - FAILED
-          - STALE
-          - PENDING
-          - BUILDING
-          - READY
-          - DOES_NOT_EXIST
-          type: string
-      title: Search Host Status Detail
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    SearchIndexDefinition:
-      description: The search index definition set by the user.
-      properties:
-        numPartitions:
-          default: 1
-          description: Number of index partitions. Allowed values are [1, 2, 4].
-          format: int32
-          type: integer
-        storedSource:
-          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.
-          example:
-            include | exclude:
-            - field1
-            - field2
-          externalDocs:
-            description: Stored Source Fields
-            url: https://dochub.mongodb.org/core/atlas-search-stored-source
-          type: object
-      title: Search Index Definition
-      type: object
-    AtlasSearchAnalyzer:
-      properties:
-        charFilters:
-          description: Filters that examine text one character at a time and perform filtering operations.
-          items:
-            $ref: '#/components/schemas/BasicDBObject'
-          type: array
-        name:
-          description: 'Name that identifies the custom analyzer. Names must be unique within an index, and must not start with any of the following strings:
-
-            - `lucene.`
-
-            - `builtin.`
-
-            - `mongodb.`'
-          type: string
-        tokenFilters:
-          description: 'Filter that performs operations such as:
-
-
-            - Stemming, which reduces related words, such as "talking", "talked", and "talks" to their root word "talk".
-
-
-            - Redaction, which is the removal of sensitive information from public documents.'
-          items:
-            $ref: '#/components/schemas/BasicDBObject'
-          type: array
-        tokenizer:
-          additionalProperties:
-            description: Tokenizer that you want to use to create tokens. Tokens determine how Atlas Search splits up text into discrete chunks for indexing.
-            type: object
-          description: Tokenizer that you want to use to create tokens. Tokens determine how Atlas Search splits up text into discrete chunks for indexing.
-          type: object
-      required:
-      - name
-      - tokenizer
-      title: Atlas Search Analyzer
-      type: object
-    SearchIndexCreateRequest:
-      discriminator:
-        mapping:
-          search: '#/components/schemas/TextSearchIndexCreateRequest'
-          vectorSearch: '#/components/schemas/VectorSearchIndexCreateRequest'
-        propertyName: type
-      properties:
-        collectionName:
-          description: Label that identifies the collection to create an Atlas Search index in.
-          type: string
-        database:
-          description: Label that identifies the database that contains the collection to create an Atlas Search index in.
-          type: string
-        name:
-          description: Label that identifies this index. Within each namespace, names of all indexes in the namespace must be unique.
-          type: string
-        type:
-          description: Type of the index. The default type is search.
-          enum:
-          - search
-          - vectorSearch
-          type: string
-      required:
-      - collectionName
-      - database
-      - name
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    BasicDBObject:
-      additionalProperties:
-        type: object
-      type: object
-    SearchMainIndexStatusDetail:
-      description: Contains status information about the active index.
-      properties:
-        definition:
-          $ref: '#/components/schemas/SearchIndexDefinition'
-        definitionVersion:
-          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
-        message:
-          description: Optional message describing an error.
-          type: string
-        queryable:
-          description: Flag that indicates whether the index generation is queryable on the host.
-          type: boolean
-        status:
-          description: 'Condition of the search index when you made this request.
-
-
-            - `DELETING`: The index is being deleted.
-
-            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
-
-            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
-
-            - `PENDING`: Atlas has not yet started building the index.
-
-            - `BUILDING`: Atlas is building or re-building the index after an edit.
-
-            - `READY`: The index is ready and can support queries.'
-          enum:
-          - DELETING
-          - FAILED
-          - STALE
-          - PENDING
-          - BUILDING
-          - READY
-          - DOES_NOT_EXIST
-          type: string
-      title: Search Main Index Status Detail
-      type: object
-    ApiSearchDeploymentResponseView:
-      properties:
-        encryptionAtRestProvider:
-          description: Cloud service provider that manages your customer keys to provide an additional layer of Encryption At Rest for the cluster.
-          enum:
-          - NONE
-          - AWS
-          - AZURE
-          - GCP
-          externalDocs:
-            description: Encryption at Rest using Customer Key Management
-            url: https://www.mongodb.com/docs/atlas/security-kms-encryption/
-          readOnly: true
-          type: string
-        groupId:
-          description: Unique 24-hexadecimal character string that identifies the project.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the search deployment.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        specs:
-          description: List of settings that configure the Search Nodes for your cluster. The configuration will be returned for each region and shard.
-          items:
-            $ref: '#/components/schemas/ApiSearchDeploymentSpecView'
-          readOnly: true
-          type: array
-        stateName:
-          description: Human-readable label that indicates the current operating condition of this search deployment.
-          enum:
-          - IDLE
-          - PAUSED
-          - UPDATING
-          readOnly: true
-          type: string
-      type: object
     SearchSynonymMappingDefinition:
       description: Synonyms used for this full text index.
       properties:
@@ -2010,6 +1954,164 @@ components:
       - name
       - source
       title: Synonym Mapping Definition
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    VectorSearchIndexDefinition:
+      description: The vector search index definition set by the user.
+      properties:
+        fields:
+          description: Settings that configure the fields, one per object, to index. You must define at least one "vector" type field. You can optionally define "filter" type fields also.
+          externalDocs:
+            description: Vector Search Fields
+            url: https://dochub.mongodb.org/core/avs-vector-type
+          items:
+            $ref: '#/components/schemas/BasicDBObject'
+          type: array
+        nestedRoot:
+          description: Top-level path to the array that contains vector fields. When provided, vector fields under this path are treated as nested.
+          example: sections
+          type: string
+        numPartitions:
+          default: 1
+          description: Number of index partitions. Allowed values are [1, 2, 4].
+          format: int32
+          type: integer
+        storedSource:
+          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.
+          example:
+            include | exclude:
+            - field1
+            - field2
+          externalDocs:
+            description: Stored Source Fields
+            url: https://dochub.mongodb.org/core/atlas-search-stored-source
+          type: object
+      required:
+      - fields
+      title: Vector Search Index Definition
+      type: object
+    SearchIndexResponse:
+      discriminator:
+        mapping:
+          search: '#/components/schemas/TextSearchIndexResponse'
+          vectorSearch: '#/components/schemas/VectorSearchIndexResponse'
+        propertyName: type
+      properties:
+        collectionName:
+          description: Label that identifies the collection that contains one or more Atlas Search indexes.
+          type: string
+        database:
+          description: Label that identifies the database that contains the collection with one or more Atlas Search indexes.
+          type: string
+        indexID:
+          description: Unique 24-hexadecimal digit string that identifies this Atlas Search index.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        latestDefinition:
+          $ref: '#/components/schemas/SearchIndexDefinition'
+        latestDefinitionVersion:
+          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
+        name:
+          description: Label that identifies this index. Within each namespace, the names of all indexes must be unique.
+          type: string
+        queryable:
+          description: Flag that indicates whether the index is queryable on all hosts.
+          type: boolean
+        status:
+          description: 'Condition of the search index when you made this request.
+
+
+            - `DELETING`: The index is being deleted.
+
+            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
+
+            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
+
+            - `PENDING`: Atlas has not yet started building the index.
+
+            - `BUILDING`: Atlas is building or re-building the index after an edit.
+
+            - `READY`: The index is ready and can support queries.'
+          enum:
+          - DELETING
+          - FAILED
+          - STALE
+          - PENDING
+          - BUILDING
+          - READY
+          - DOES_NOT_EXIST
+          type: string
+        statusDetail:
+          description: List of documents detailing index status on each host.
+          items:
+            $ref: '#/components/schemas/SearchHostStatusDetail'
+          type: array
+        type:
+          description: Type of the index. The default type is search.
+          enum:
+          - search
+          - vectorSearch
+          type: string
+      title: Search Index Response
+      type: object
+    SearchIndexDefinitionVersion:
+      description: Object which includes the version number of the index definition and the time that the index definition was created.
+      properties:
+        createdAt:
+          description: The time at which this index definition was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          type: string
+        version:
+          description: The version number associated with this index definition when it was created.
+          format: int64
+          type: integer
+      title: Search Index Definition Version
+      type: object
+    SynonymSource:
+      description: Data set that stores words and their applicable synonyms.
+      properties:
+        collection:
+          description: Label that identifies the MongoDB collection that stores words and their applicable synonyms.
+          type: string
+      required:
+      - collection
+      type: object
+    SearchIndexDefinition:
+      description: The search index definition set by the user.
+      properties:
+        numPartitions:
+          default: 1
+          description: Number of index partitions. Allowed values are [1, 2, 4].
+          format: int32
+          type: integer
+        storedSource:
+          description: Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.
+          example:
+            include | exclude:
+            - field1
+            - field2
+          externalDocs:
+            description: Stored Source Fields
+            url: https://dochub.mongodb.org/core/atlas-search-stored-source
+          type: object
+      title: Search Index Definition
+      type: object
+    Fields:
+      externalDocs:
+        description: Atlas Search Field Mappings
+        url: https://dochub.mongodb.org/core/field-mapping-definition-fts#define-field-mappings
       type: object
     SearchIndexUpdateRequest:
       properties:
@@ -2182,126 +2284,17 @@ components:
       - mappings
       title: Text Search Index Definition
       type: object
-    SearchIndexDefinitionVersion:
-      description: Object which includes the version number of the index definition and the time that the index definition was created.
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        createdAt:
-          description: The time at which this index definition was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          type: string
-        version:
-          description: The version number associated with this index definition when it was created.
-          format: int64
-          type: integer
-      title: Search Index Definition Version
-      type: object
-    SynonymSource:
-      description: Data set that stores words and their applicable synonyms.
-      properties:
-        collection:
-          description: Label that identifies the MongoDB collection that stores words and their applicable synonyms.
-          type: string
-      required:
-      - collection
-      type: object
-    SearchTypeSets:
-      description: Type sets for an Atlas Search index definition.
-      externalDocs:
-        description: Type Sets
-        url: https://dochub.mongodb.org/core/atlas-search-configure-dynamic-indexing
-      properties:
-        name:
-          description: Label that identifies the type set name. Each `typeSets.name` must be unique within the same index definition.
-          type: string
-        types:
-          description: List of types associated with the type set. Each type definition must include a `type` field specifying the search field type (`autocomplete`, `boolean`, `date`, `geo`, `number`, `objectId`, `string`, `token`, or `uuid`) and may include additional configuration properties specific to that type.
+        fields:
+          description: Describes all violations in a client request.
           items:
-            $ref: '#/components/schemas/BasicDBObject'
-          maxItems: 100
+            $ref: '#/components/schemas/FieldViolation'
           type: array
-      required:
-      - name
-      - types
-      title: TypeSets
-      type: object
-    Fields:
-      externalDocs:
-        description: Atlas Search Field Mappings
-        url: https://dochub.mongodb.org/core/field-mapping-definition-fts#define-field-mappings
-      type: object
-    SearchIndexResponse:
-      discriminator:
-        mapping:
-          search: '#/components/schemas/TextSearchIndexResponse'
-          vectorSearch: '#/components/schemas/VectorSearchIndexResponse'
-        propertyName: type
-      properties:
-        collectionName:
-          description: Label that identifies the collection that contains one or more Atlas Search indexes.
-          type: string
-        database:
-          description: Label that identifies the database that contains the collection with one or more Atlas Search indexes.
-          type: string
-        indexID:
-          description: Unique 24-hexadecimal digit string that identifies this Atlas Search index.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        latestDefinition:
-          $ref: '#/components/schemas/SearchIndexDefinition'
-        latestDefinitionVersion:
-          $ref: '#/components/schemas/SearchIndexDefinitionVersion'
-        name:
-          description: Label that identifies this index. Within each namespace, the names of all indexes must be unique.
-          type: string
-        queryable:
-          description: Flag that indicates whether the index is queryable on all hosts.
-          type: boolean
-        status:
-          description: 'Condition of the search index when you made this request.
-
-
-            - `DELETING`: The index is being deleted.
-
-            - `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.
-
-            - `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.
-
-            - `PENDING`: Atlas has not yet started building the index.
-
-            - `BUILDING`: Atlas is building or re-building the index after an edit.
-
-            - `READY`: The index is ready and can support queries.'
-          enum:
-          - DELETING
-          - FAILED
-          - STALE
-          - PENDING
-          - BUILDING
-          - READY
-          - DOES_NOT_EXIST
-          type: string
-        statusDetail:
-          description: List of documents detailing index status on each host.
-          items:
-            $ref: '#/components/schemas/SearchHostStatusDetail'
-          type: array
-        type:
-          description: Type of the index. The default type is search.
-          enum:
-          - search
-          - vectorSearch
-          type: string
-      title: Search Index Response
+      readOnly: true
       type: object
   parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
 
@@ -2324,17 +2317,24 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

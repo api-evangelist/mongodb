@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Online Archive API
+  title: MongoDB Atlas Administration Online Archive API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -461,17 +461,17 @@ paths:
       x-xgen-operation-id-override: updateOnlineArchive
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -483,6 +483,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -501,17 +512,6 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
     conflict:
       content:
         application/json:
@@ -523,6 +523,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Conflict.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     badRequest:
       content:
         application/json:
@@ -534,18 +545,104 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
   schemas:
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
     WeeklyScheduleView:
       allOf:
       - $ref: '#/components/schemas/OnlineArchiveSchedule'
@@ -584,80 +681,70 @@ components:
       required:
       - type
       type: object
-    PartitionFieldView:
-      description: Metadata to partition this online archive.
+    OnlineArchiveSchedule:
+      description: Regular frequency and duration when archiving process occurs.
+      discriminator:
+        mapping:
+          DAILY: '#/components/schemas/DailyScheduleView'
+          DEFAULT: '#/components/schemas/DefaultScheduleView'
+          MONTHLY: '#/components/schemas/MonthlyScheduleView'
+          WEEKLY: '#/components/schemas/WeeklyScheduleView'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/DefaultScheduleView'
+      - $ref: '#/components/schemas/DailyScheduleView'
+      - $ref: '#/components/schemas/WeeklyScheduleView'
+      - $ref: '#/components/schemas/MonthlyScheduleView'
       properties:
-        fieldName:
-          description: Human-readable label that identifies the parameter that MongoDB Cloud uses to partition data. To specify a nested parameter, use the dot notation.
-          maxLength: 700
-          type: string
-        fieldType:
-          description: Data type of the parameter that that MongoDB Cloud uses to partition data. Partition parameters of type UUID must be of binary subtype 4. MongoDB Cloud skips partition parameters of type UUID with subtype 3.
+        type:
+          description: Type of schedule.
           enum:
-          - date
-          - int
-          - long
-          - objectId
-          - string
-          - uuid
-          externalDocs:
-            description: UUID
-            url: http://bsonspec.org/spec.html
-          readOnly: true
-          type: string
-        order:
-          default: 0
-          description: Sequence in which MongoDB Cloud slices the collection data to create partitions. The resource expresses this sequence starting with zero. The value of the `criteria.dateField` parameter defaults as the first item in the partition sequence.
-          format: int32
-          type: integer
-      required:
-      - fieldName
-      - order
-      title: Online Archive Partition
-      type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
+          - DEFAULT
+          - DAILY
+          - WEEKLY
+          - MONTHLY
           type: string
       required:
-      - error
-      - errorCode
+      - type
+      title: Online Archive Schedule
       type: object
+    DataProcessRegionView:
+      description: Settings to configure the region where you wish to store your archived data.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/AWSDataProcessRegionView'
+          AZURE: '#/components/schemas/AzureDataProcessRegionView'
+          GCP: '#/components/schemas/GCPDataProcessRegionView'
+        propertyName: cloudProvider
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the Cloud service provider where you store your archived data.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    CreateDataProcessRegionView:
+      description: Settings to configure the region where you wish to store your archived data.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/AWSCreateDataProcessRegionView'
+          AZURE: '#/components/schemas/AzureCreateDataProcessRegionView'
+          GCP: '#/components/schemas/GCPCreateDataProcessRegionView'
+        propertyName: cloudProvider
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the Cloud service provider where you wish to store your archived data. `AZURE` or `GCP` may be selected only if it is the Cloud service provider for the cluster and no archives for any other cloud provider have been created for the cluster.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+      type: object
+      writeOnly: true
     PaginatedOnlineArchiveView:
       properties:
         links:
@@ -684,53 +771,76 @@ components:
       required:
       - results
       type: object
-    DataProcessRegionView:
-      description: Settings to configure the region where you wish to store your archived data.
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    CriteriaView:
+      description: 'Rules by which MongoDB Cloud archives data.
+
+
+        Use the `criteria.type` field to choose how MongoDB Cloud selects data to archive. Choose data using the age of the data or a MongoDB query.
+
+        `"criteria.type": "DATE"` selects documents to archive based on a date.
+
+        `"criteria.type": "CUSTOM"` selects documents to archive based on a custom JSON query. MongoDB Cloud doesn''t support `"criteria.type": "CUSTOM"` when `"collectionType": "TIMESERIES"`.'
       discriminator:
         mapping:
-          AWS: '#/components/schemas/AWSDataProcessRegionView'
-          AZURE: '#/components/schemas/AzureDataProcessRegionView'
-          GCP: '#/components/schemas/GCPDataProcessRegionView'
-        propertyName: cloudProvider
+          CUSTOM: '#/components/schemas/CustomCriteriaView'
+          DATE: '#/components/schemas/DateCriteriaView'
+        propertyName: type
       properties:
-        cloudProvider:
-          description: Human-readable label that identifies the Cloud service provider where you store your archived data.
+        type:
+          description: 'Means by which MongoDB Cloud selects data to archive. Data can be chosen using the age of the data or a MongoDB query.
+
+            `DATE` selects documents to archive based on a date.
+
+            `CUSTOM` selects documents to archive based on a custom JSON query. MongoDB Cloud doesn''t support `CUSTOM` when `"collectionType": "TIMESERIES"`.'
           enum:
-          - AWS
-          - AZURE
-          - GCP
-          readOnly: true
-          type: string
-      readOnly: true
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    CreateDataProcessRegionView:
-      description: Settings to configure the region where you wish to store your archived data.
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/AWSCreateDataProcessRegionView'
-          AZURE: '#/components/schemas/AzureCreateDataProcessRegionView'
-          GCP: '#/components/schemas/GCPCreateDataProcessRegionView'
-        propertyName: cloudProvider
-      properties:
-        cloudProvider:
-          description: Human-readable label that identifies the Cloud service provider where you wish to store your archived data. `AZURE` or `GCP` may be selected only if it is the Cloud service provider for the cluster and no archives for any other cloud provider have been created for the cluster.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
+          - DATE
+          - CUSTOM
           type: string
       type: object
-      writeOnly: true
+    DailyScheduleView:
+      allOf:
+      - $ref: '#/components/schemas/OnlineArchiveSchedule'
+      - properties:
+          endHour:
+            description: Hour of the day when the scheduled window to run one online archive ends. This field uses the UTC time zone. The window must have a duration of at least two hours. If the end time is before or equal to the start time, the window extends to the next day.
+            format: int32
+            maximum: 23
+            minimum: 0
+            type: integer
+          endMinute:
+            description: Minute of the hour when the scheduled window to run one online archive ends. This field uses the UTC time zone. The window must have a duration of at least two hours. If the end time is before or equal to the start time, the window extends to the next day.
+            format: int32
+            maximum: 59
+            minimum: 0
+            type: integer
+          startHour:
+            description: Hour of the day when the scheduled window to run one online archive starts. This field uses the UTC time zone.
+            format: int32
+            maximum: 23
+            minimum: 0
+            type: integer
+          startMinute:
+            description: Minute of the hour when the scheduled window to run one online archive starts. This field uses the UTC time zone.
+            format: int32
+            maximum: 59
+            minimum: 0
+            type: integer
+        type: object
+      required:
+      - type
+      type: object
     BackupOnlineArchive:
       properties:
         _id:
@@ -822,49 +932,16 @@ components:
           readOnly: true
           type: string
       type: object
-    OnlineArchiveSchedule:
-      description: Regular frequency and duration when archiving process occurs.
-      discriminator:
-        mapping:
-          DAILY: '#/components/schemas/DailyScheduleView'
-          DEFAULT: '#/components/schemas/DefaultScheduleView'
-          MONTHLY: '#/components/schemas/MonthlyScheduleView'
-          WEEKLY: '#/components/schemas/WeeklyScheduleView'
-        propertyName: type
-      oneOf:
-      - $ref: '#/components/schemas/DefaultScheduleView'
-      - $ref: '#/components/schemas/DailyScheduleView'
-      - $ref: '#/components/schemas/WeeklyScheduleView'
-      - $ref: '#/components/schemas/MonthlyScheduleView'
-      properties:
-        type:
-          description: Type of schedule.
-          enum:
-          - DEFAULT
-          - DAILY
-          - WEEKLY
-          - MONTHLY
-          type: string
-      required:
-      - type
-      title: Online Archive Schedule
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    DailyScheduleView:
+    MonthlyScheduleView:
       allOf:
       - $ref: '#/components/schemas/OnlineArchiveSchedule'
       - properties:
+          dayOfMonth:
+            description: Day of the month when the scheduled archive starts.
+            format: int32
+            maximum: 31
+            minimum: 1
+            type: integer
           endHour:
             description: Hour of the day when the scheduled window to run one online archive ends. This field uses the UTC time zone. The window must have a duration of at least two hours. If the end time is before or equal to the start time, the window extends to the next day.
             format: int32
@@ -893,15 +970,11 @@ components:
       required:
       - type
       type: object
-    DataExpirationRuleView:
-      description: Rule for specifying when data should be deleted from the archive.
-      properties:
-        expireAfterDays:
-          description: Number of days used in the date criteria for nominating documents for deletion.
-          format: int32
-          maximum: 9215
-          minimum: 7
-          type: integer
+    DefaultScheduleView:
+      allOf:
+      - $ref: '#/components/schemas/OnlineArchiveSchedule'
+      required:
+      - type
       type: object
     BackupOnlineArchiveCreate:
       properties:
@@ -999,141 +1072,68 @@ components:
       - criteria
       - dbName
       type: object
-    MonthlyScheduleView:
-      allOf:
-      - $ref: '#/components/schemas/OnlineArchiveSchedule'
-      - properties:
-          dayOfMonth:
-            description: Day of the month when the scheduled archive starts.
-            format: int32
-            maximum: 31
-            minimum: 1
-            type: integer
-          endHour:
-            description: Hour of the day when the scheduled window to run one online archive ends. This field uses the UTC time zone. The window must have a duration of at least two hours. If the end time is before or equal to the start time, the window extends to the next day.
-            format: int32
-            maximum: 23
-            minimum: 0
-            type: integer
-          endMinute:
-            description: Minute of the hour when the scheduled window to run one online archive ends. This field uses the UTC time zone. The window must have a duration of at least two hours. If the end time is before or equal to the start time, the window extends to the next day.
-            format: int32
-            maximum: 59
-            minimum: 0
-            type: integer
-          startHour:
-            description: Hour of the day when the scheduled window to run one online archive starts. This field uses the UTC time zone.
-            format: int32
-            maximum: 23
-            minimum: 0
-            type: integer
-          startMinute:
-            description: Minute of the hour when the scheduled window to run one online archive starts. This field uses the UTC time zone.
-            format: int32
-            maximum: 59
-            minimum: 0
-            type: integer
-        type: object
-      required:
-      - type
-      type: object
-    CriteriaView:
-      description: 'Rules by which MongoDB Cloud archives data.
-
-
-        Use the `criteria.type` field to choose how MongoDB Cloud selects data to archive. Choose data using the age of the data or a MongoDB query.
-
-        `"criteria.type": "DATE"` selects documents to archive based on a date.
-
-        `"criteria.type": "CUSTOM"` selects documents to archive based on a custom JSON query. MongoDB Cloud doesn''t support `"criteria.type": "CUSTOM"` when `"collectionType": "TIMESERIES"`.'
-      discriminator:
-        mapping:
-          CUSTOM: '#/components/schemas/CustomCriteriaView'
-          DATE: '#/components/schemas/DateCriteriaView'
-        propertyName: type
+    PartitionFieldView:
+      description: Metadata to partition this online archive.
       properties:
-        type:
-          description: 'Means by which MongoDB Cloud selects data to archive. Data can be chosen using the age of the data or a MongoDB query.
-
-            `DATE` selects documents to archive based on a date.
-
-            `CUSTOM` selects documents to archive based on a custom JSON query. MongoDB Cloud doesn''t support `CUSTOM` when `"collectionType": "TIMESERIES"`.'
-          enum:
-          - DATE
-          - CUSTOM
+        fieldName:
+          description: Human-readable label that identifies the parameter that MongoDB Cloud uses to partition data. To specify a nested parameter, use the dot notation.
+          maxLength: 700
           type: string
-      type: object
-    DefaultScheduleView:
-      allOf:
-      - $ref: '#/components/schemas/OnlineArchiveSchedule'
+        fieldType:
+          description: Data type of the parameter that that MongoDB Cloud uses to partition data. Partition parameters of type UUID must be of binary subtype 4. MongoDB Cloud skips partition parameters of type UUID with subtype 3.
+          enum:
+          - date
+          - int
+          - long
+          - objectId
+          - string
+          - uuid
+          externalDocs:
+            description: UUID
+            url: http://bsonspec.org/spec.html
+          readOnly: true
+          type: string
+        order:
+          default: 0
+          description: Sequence in which MongoDB Cloud slices the collection data to create partitions. The resource expresses this sequence starting with zero. The value of the `criteria.dateField` parameter defaults as the first item in the partition sequence.
+          format: int32
+          type: integer
       required:
-      - type
+      - fieldName
+      - order
+      title: Online Archive Partition
       type: object
-  parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
+    DataExpirationRuleView:
+      description: Rule for specifying when data should be deleted from the archive.
+      properties:
+        expireAfterDays:
+          description: Number of days used in the date criteria for nominating documents for deletion.
+          format: int32
+          maximum: 9215
+          minimum: 7
+          type: integer
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

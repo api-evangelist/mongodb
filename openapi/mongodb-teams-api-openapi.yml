@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Teams API
+  title: MongoDB Atlas Administration Teams API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -709,7 +709,7 @@ paths:
       description: 'Adds one or more MongoDB Cloud users from the specified organization to the specified team. Teams enable you to grant project access roles to MongoDB Cloud users. You can assign up to 250 MongoDB Cloud users from one organization to one team. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
 
 
-        **Note**: This endpoint is deprecated. Use [Add One MongoDB Cloud User to One Team](#tag/MongoDB-Cloud-Users/operation/addUserToTeam) to add an active or pending user to a team.'
+        **Note**: This endpoint is deprecated. Use Add One MongoDB Cloud User to One Team to add an active or pending user to a team.'
       externalDocs:
         description: Manage Organization Teams
         url: https://docs.atlas.mongodb.com/access/manage-teams-in-orgs/#std-label-manage-teams
@@ -791,7 +791,7 @@ paths:
       description: 'Removes one MongoDB Cloud user from the specified team. This team belongs to one organization. Teams enable you to grant project access roles to MongoDB Cloud users. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
 
 
-        **Note**: This endpoint is deprecated. Use [Remove One MongoDB Cloud User from One Team](#tag/MongoDB-Cloud-Users/operation/removeUserFromTeam) to remove an active or pending user from a team.'
+        **Note**: This endpoint is deprecated. Use Remove One MongoDB Cloud User from One Team to remove an active or pending user from a team.'
       externalDocs:
         description: Manage Organization Teams
         url: https://docs.atlas.mongodb.com/access/manage-teams-in-orgs/#std-label-manage-teams
@@ -862,68 +862,155 @@ paths:
         verb: removeFromTeam
       x-xgen-operation-id-override: removeUserFromTeam
 components:
+  responses:
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    orgId:
+      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
+      in: path
+      name: orgId
+      required: true
+      schema:
+        example: 4888442a3354817a7320eb61
+        pattern: ^([a-f0-9]{24})$
+        type: string
   schemas:
-    TeamResponse:
-      properties:
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this team.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        name:
-          description: Human-readable label that identifies the team.
-          type: string
-      type: object
-    TeamRole:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        roleNames:
-          description: One or more project-level roles to assign to the team.
-          externalDocs:
-            description: MongoDB Cloud User Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
-          items:
-            type: string
-          type: array
-          uniqueItems: true
-        teamId:
-          description: Unique 24-hexadecimal character string that identifies the team.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-      required:
-      - roleNames
-      - teamId
-      type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
     ApiError:
       properties:
         badRequestDetail:
@@ -956,15 +1043,47 @@ components:
       - error
       - errorCode
       type: object
-    BadRequestDetail:
-      description: Bad request detail.
+    Team:
       properties:
-        fields:
-          description: Describes all violations in a client request.
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this team.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
           items:
-            $ref: '#/components/schemas/FieldViolation'
+            $ref: '#/components/schemas/Link'
+          readOnly: true
           type: array
-      readOnly: true
+        name:
+          description: Human-readable label that identifies the team.
+          type: string
+        usernames:
+          description: List that contains the MongoDB Cloud users in this team.
+          items:
+            format: email
+            type: string
+          type: array
+          uniqueItems: true
+      required:
+      - name
+      - usernames
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
       type: object
     CloudAccessRoleAssignment:
       description: MongoDB Cloud user's roles and the corresponding organization or project to which that role applies. Each role can apply to one organization or one project but not both.
@@ -991,8 +1110,14 @@ components:
           type: string
       title: Role Assignment
       type: object
-    TeamUpdate:
+    TeamResponse:
       properties:
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this team.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
           externalDocs:
@@ -1005,9 +1130,18 @@ components:
         name:
           description: Human-readable label that identifies the team.
           type: string
-          writeOnly: true
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
       required:
-      - name
+      - description
+      - field
       type: object
     CloudAppUser:
       properties:
@@ -1090,19 +1224,46 @@ components:
       - roles
       - username
       type: object
-    FieldViolation:
+    AddUserToTeam:
       properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud user.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           type: string
       required:
-      - description
-      - field
+      - id
       type: object
-    PaginatedApiAppUserView:
+    TeamRole:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        roleNames:
+          description: One or more project-level roles to assign to the team.
+          externalDocs:
+            description: MongoDB Cloud User Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        teamId:
+          description: Unique 24-hexadecimal character string that identifies the team.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+      required:
+      - roleNames
+      - teamId
+      type: object
+    PaginatedTeamRoleView:
       properties:
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
@@ -1116,7 +1277,7 @@ components:
         results:
           description: List of returned documents that MongoDB Cloud provides when completing this request.
           items:
-            $ref: '#/components/schemas/CloudAppUser'
+            $ref: '#/components/schemas/TeamRole'
           readOnly: true
           type: array
         totalCount:
@@ -1154,14 +1315,8 @@ components:
       required:
       - results
       type: object
-    Team:
+    TeamUpdate:
       properties:
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this team.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
           externalDocs:
@@ -1174,18 +1329,21 @@ components:
         name:
           description: Human-readable label that identifies the team.
           type: string
-        usernames:
-          description: List that contains the MongoDB Cloud users in this team.
-          items:
-            format: email
-            type: string
-          type: array
-          uniqueItems: true
+          writeOnly: true
       required:
       - name
-      - usernames
       type: object
-    PaginatedTeamRoleView:
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    PaginatedApiAppUserView:
       properties:
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
@@ -1199,7 +1357,7 @@ components:
         results:
           description: List of returned documents that MongoDB Cloud provides when completing this request.
           items:
-            $ref: '#/components/schemas/TeamRole'
+            $ref: '#/components/schemas/CloudAppUser'
           readOnly: true
           type: array
         totalCount:
@@ -1211,175 +1369,17 @@ components:
       required:
       - results
       type: object
-    AddUserToTeam:
-      properties:
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud user.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-      required:
-      - id
-      type: object
-  responses:
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-  parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    orgId:
-      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
-      in: path
-      name: orgId
-      required: true
-      schema:
-        example: 4888442a3354817a7320eb61
-        pattern: ^([a-f0-9]{24})$
-        type: string
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

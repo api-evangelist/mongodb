@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Query Shape Insights API
+  title: MongoDB Atlas Administration Query Shape Insights API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -497,17 +497,17 @@ paths:
       x-xgen-version: '2025-03-12'
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -519,6 +519,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -559,55 +570,68 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
   schemas:
-    QueryStatsDetailsResponse:
-      description: Metadata and summary statistics for a given query shape.
+    QueryStatsSummaryListResponse:
       properties:
-        firstSeen:
-          $ref: '#/components/schemas/QueryShapeSeenMetadata'
-        lastSeen:
-          $ref: '#/components/schemas/QueryShapeSeenMetadata'
-        queryStats:
-          $ref: '#/components/schemas/QueryStatsSummary'
-      type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    QueryShapeSeenMetadata:
-      description: Metadata about when a query shape was seen.
-      properties:
-        applicationName:
-          description: The name of the application that this query shape came from. This can be set via the MongoDB connection string. The application name is set to unknown for internal MongoDB queries.
-          type: string
-        driverName:
-          description: The name of the MongoDB driver that this query shape was executed from. The driver name is set to unknown for internal MongoDB queries.
-          type: string
-        driverVersion:
-          description: The version of the MongoDB driver that this query shape was executed from. The driver version is set to unknown for internal MongoDB queries.
-          type: string
-        timestamp:
-          description: Unix epoch milliseconds of the time.
-          format: int64
-          type: integer
+        summaries:
+          description: List of query shape statistic summaries from Query Shape Insights.
+          items:
+            $ref: '#/components/schemas/QueryStatsSummary'
+          type: array
       type: object
     ApiError:
       properties:
@@ -641,39 +665,33 @@ components:
       - error
       - errorCode
       type: object
-    QueryShapeUpdateRequest:
-      description: Request body for modifying the rejection status of a query shape.
+    QueryShapeSeenMetadata:
+      description: Metadata about when a query shape was seen.
       properties:
-        status:
-          description: The rejection status of a query shape. Use REJECTED to prevent the query shape from executing on the cluster, or UNREJECTED to allow it to execute.
-          enum:
-          - REJECTED
-          - UNREJECTED
+        applicationName:
+          description: The name of the application that this query shape came from. This can be set via the MongoDB connection string. The application name is set to unknown for internal MongoDB queries.
           type: string
-      required:
-      - status
+        driverName:
+          description: The name of the MongoDB driver that this query shape was executed from. The driver name is set to unknown for internal MongoDB queries.
+          type: string
+        driverVersion:
+          description: The version of the MongoDB driver that this query shape was executed from. The driver version is set to unknown for internal MongoDB queries.
+          type: string
+        timestamp:
+          description: Unix epoch milliseconds of the time.
+          format: int64
+          type: integer
       type: object
-    BadRequestDetail:
-      description: Bad request detail.
+    Link:
       properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
           type: string
-        field:
-          description: A path that leads to a field in the request body.
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
           type: string
-      required:
-      - description
-      - field
       type: object
     QueryShapeResponse:
       description: Response containing the details and status of a query shape. The query shape field may be null if the user lacks PII view access.
@@ -708,14 +726,6 @@ components:
       - queryShapeHash
       - status
       type: object
-    QueryStatsSummaryListResponse:
-      properties:
-        summaries:
-          description: List of query shape statistic summaries from Query Shape Insights.
-          items:
-            $ref: '#/components/schemas/QueryStatsSummary'
-          type: array
-      type: object
     QueryStatsSummary:
       description: A summary of execution statistics for a given query shape.
       properties:
@@ -737,8 +747,9 @@ components:
         cpuTime:
           description: Total CPU time in nanoseconds consumed by queries with the given query shape. Available for MDB 8.2 and higher.
           format: double
-          nullable: true
-          type: number
+          type:
+          - number
+          - 'null'
         docsExamined:
           description: Total number of documents examined by queries with the given query shape.
           format: double
@@ -800,6 +811,28 @@ components:
           format: double
           type: number
       type: object
+    QueryStatsDetailsResponse:
+      description: Metadata and summary statistics for a given query shape.
+      properties:
+        firstSeen:
+          $ref: '#/components/schemas/QueryShapeSeenMetadata'
+        lastSeen:
+          $ref: '#/components/schemas/QueryShapeSeenMetadata'
+        queryStats:
+          $ref: '#/components/schemas/QueryStatsSummary'
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
     PaginatedQueryShapes:
       description: Paginated collection of query shapes. This endpoint returns a maximum of 100 results.
       properties:
@@ -827,71 +860,39 @@ components:
       required:
       - results
       type: object
-  parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
+    QueryShapeUpdateRequest:
+      description: Request body for modifying the rejection status of a query shape.
+      properties:
+        status:
+          description: The rejection status of a query shape. Use REJECTED to prevent the query shape from executing on the cluster, or UNREJECTED to allow it to execute.
+          enum:
+          - REJECTED
+          - UNREJECTED
+          type: string
+      required:
+      - status
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

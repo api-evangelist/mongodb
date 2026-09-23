@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Data Lake Pipelines API
+  title: MongoDB Atlas Administration Data Lake Pipelines API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -872,17 +872,17 @@ paths:
       x-xgen-operation-id-override: triggerPipeline
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -894,6 +894,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -912,17 +923,6 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
     conflict:
       content:
         application/json:
@@ -934,6 +934,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Conflict.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     badRequest:
       content:
         application/json:
@@ -945,18 +956,52 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
   schemas:
+    FieldTransformation:
+      description: Field Transformations during ingestion of a Data Lake Pipeline.
+      properties:
+        field:
+          description: Key in the document.
+          type: string
+        type:
+          description: Type of transformation applied during the export of the namespace in a Data Lake Pipeline.
+          enum:
+          - EXCLUDE
+          type: string
+      title: Field Transformation
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
     Link:
       properties:
         href:
@@ -967,60 +1012,6 @@ components:
           description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
           example: self
           type: string
-      type: object
-    IngestionSource:
-      description: Ingestion Source of a Data Lake Pipeline.
-      discriminator:
-        mapping:
-          ON_DEMAND_CPS: '#/components/schemas/OnDemandCpsSnapshotSource'
-          PERIODIC_CPS: '#/components/schemas/PeriodicCpsSnapshotSource'
-        propertyName: type
-      properties:
-        type:
-          description: Type of ingestion source of this Data Lake Pipeline.
-          enum:
-          - PERIODIC_CPS
-          - ON_DEMAND_CPS
-          type: string
-      title: Ingestion Source
-      type: object
-    DatasetRetentionPolicy:
-      description: Dataset Retention Policy for a Scheduled Data Lake Pipeline.
-      properties:
-        lastModifiedDate:
-          description: Date when retention policy was last modified. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        units:
-          description: Quantity of time in which the Data Lake Pipeline measures dataset retention.
-          enum:
-          - DAYS
-          - WEEKS
-          - MONTHS
-          type: string
-        value:
-          description: Number that indicates the amount of days, weeks, or months that the Data Lake Pipeline will retain datasets.
-          format: int32
-          minimum: 1
-          type: integer
-      required:
-      - units
-      - value
-      title: Dataset Retention Policy
-      type: object
-    TriggerIngestionPipelineRequest:
-      properties:
-        datasetRetentionPolicy:
-          $ref: '#/components/schemas/DatasetRetentionPolicy'
-        snapshotId:
-          description: Unique 24-hexadecimal character string that identifies the snapshot.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-          writeOnly: true
-      required:
-      - snapshotId
       type: object
     DiskBackupApiPolicyItem:
       description: Specifications for one policy.
@@ -1096,85 +1087,74 @@ components:
       - retentionUnit
       - retentionValue
       type: object
-    DataLakeIngestionPipeline:
-      description: Details of a Data Lake Pipeline.
+    IngestionSink:
+      description: Ingestion destination of a Data Lake Pipeline.
+      discriminator:
+        mapping:
+          DLS: '#/components/schemas/DLSIngestionSink'
+        propertyName: type
       properties:
-        _id:
-          description: Unique 24-hexadecimal digit string that identifies the Data Lake Pipeline.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        createdDate:
-          description: Timestamp that indicates when the Data Lake Pipeline was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        datasetRetentionPolicy:
-          $ref: '#/components/schemas/DatasetRetentionPolicy'
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the group.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        lastUpdatedDate:
-          description: Timestamp that indicates the last time that the Data Lake Pipeline was updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        name:
-          description: Name of this Data Lake Pipeline.
-          type: string
-        sink:
-          $ref: '#/components/schemas/IngestionSink'
-        source:
-          $ref: '#/components/schemas/IngestionSource'
-        state:
-          description: State of this Data Lake Pipeline.
+        type:
+          description: Type of ingestion destination of this Data Lake Pipeline.
           enum:
-          - ACTIVE
-          - PAUSED
+          - DLS
           readOnly: true
           type: string
-        transformations:
-          description: Fields to be excluded for this Data Lake Pipeline.
-          items:
-            $ref: '#/components/schemas/FieldTransformation'
-          type: array
-      title: Data Lake Pipeline
+      title: Ingestion Destination
       type: object
-    ApiError:
+    IngestionSource:
+      description: Ingestion Source of a Data Lake Pipeline.
+      discriminator:
+        mapping:
+          ON_DEMAND_CPS: '#/components/schemas/OnDemandCpsSnapshotSource'
+          PERIODIC_CPS: '#/components/schemas/PeriodicCpsSnapshotSource'
+        propertyName: type
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
+        type:
+          description: Type of ingestion source of this Data Lake Pipeline.
+          enum:
+          - PERIODIC_CPS
+          - ON_DEMAND_CPS
           type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
+      title: Ingestion Source
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
           type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
+        field:
+          description: A path that leads to a field in the request body.
           type: string
       required:
-      - error
-      - errorCode
+      - description
+      - field
+      type: object
+    PaginatedBackupSnapshotView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/DiskBackupSnapshot'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
       type: object
     IngestionPipelineRun:
       description: Run details of a Data Lake Pipeline.
@@ -1258,56 +1238,30 @@ components:
           $ref: '#/components/schemas/PipelineRunStats'
       title: Data Lake Pipeline Run
       type: object
-    PaginatedBackupSnapshotView:
+    DatasetRetentionPolicy:
+      description: Dataset Retention Policy for a Scheduled Data Lake Pipeline.
       properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
+        lastModifiedDate:
+          description: Date when retention policy was last modified. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/DiskBackupSnapshot'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          type: string
+        units:
+          description: Quantity of time in which the Data Lake Pipeline measures dataset retention.
+          enum:
+          - DAYS
+          - WEEKS
+          - MONTHS
+          type: string
+        value:
+          description: Number that indicates the amount of days, weeks, or months that the Data Lake Pipeline will retain datasets.
           format: int32
-          minimum: 0
-          readOnly: true
+          minimum: 1
           type: integer
       required:
-      - results
-      type: object
-    RequestAccepted:
-      description: Accepted.
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
+      - units
+      - value
+      title: Dataset Retention Policy
       type: object
     PaginatedPipelineRunView:
       properties:
@@ -1335,20 +1289,95 @@ components:
       required:
       - results
       type: object
-    IngestionSink:
-      description: Ingestion destination of a Data Lake Pipeline.
-      discriminator:
-        mapping:
-          DLS: '#/components/schemas/DLSIngestionSink'
-        propertyName: type
+    PipelineRunStats:
+      description: Runtime statistics for this Data Lake Pipeline run.
       properties:
-        type:
-          description: Type of ingestion destination of this Data Lake Pipeline.
-          enum:
-          - DLS
+        bytesExported:
+          description: Total data size in bytes exported for this pipeline run.
+          format: int64
+          readOnly: true
+          type: integer
+        numDocs:
+          description: Number of docs ingested for a this pipeline run.
+          format: int64
+          readOnly: true
+          type: integer
+      readOnly: true
+      title: Data Lake Pipeline Run Statistics
+      type: object
+    TriggerIngestionPipelineRequest:
+      properties:
+        datasetRetentionPolicy:
+          $ref: '#/components/schemas/DatasetRetentionPolicy'
+        snapshotId:
+          description: Unique 24-hexadecimal character string that identifies the snapshot.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+          writeOnly: true
+      required:
+      - snapshotId
+      type: object
+    RequestAccepted:
+      description: Accepted.
+      type: object
+    DataLakeIngestionPipeline:
+      description: Details of a Data Lake Pipeline.
+      properties:
+        _id:
+          description: Unique 24-hexadecimal digit string that identifies the Data Lake Pipeline.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           readOnly: true
           type: string
-      title: Ingestion Destination
+        createdDate:
+          description: Timestamp that indicates when the Data Lake Pipeline was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        datasetRetentionPolicy:
+          $ref: '#/components/schemas/DatasetRetentionPolicy'
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the group.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        lastUpdatedDate:
+          description: Timestamp that indicates the last time that the Data Lake Pipeline was updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        name:
+          description: Name of this Data Lake Pipeline.
+          type: string
+        sink:
+          $ref: '#/components/schemas/IngestionSink'
+        source:
+          $ref: '#/components/schemas/IngestionSource'
+        state:
+          description: State of this Data Lake Pipeline.
+          enum:
+          - ACTIVE
+          - PAUSED
+          readOnly: true
+          type: string
+        transformations:
+          description: Fields to be excluded for this Data Lake Pipeline.
+          items:
+            $ref: '#/components/schemas/FieldTransformation'
+          type: array
+      title: Data Lake Pipeline
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
       type: object
     DiskBackupSnapshot:
       discriminator:
@@ -1445,53 +1474,23 @@ components:
           readOnly: true
           type: string
       type: object
-    FieldTransformation:
-      description: Field Transformations during ingestion of a Data Lake Pipeline.
-      properties:
-        field:
-          description: Key in the document.
-          type: string
-        type:
-          description: Type of transformation applied during the export of the namespace in a Data Lake Pipeline.
-          enum:
-          - EXCLUDE
-          type: string
-      title: Field Transformation
-      type: object
-    PipelineRunStats:
-      description: Runtime statistics for this Data Lake Pipeline run.
-      properties:
-        bytesExported:
-          description: Total data size in bytes exported for this pipeline run.
-          format: int64
-          readOnly: true
-          type: integer
-        numDocs:
-          description: Number of docs ingested for a this pipeline run.
-          format: int64
-          readOnly: true
-          type: integer
-      readOnly: true
-      title: Data Lake Pipeline Run Statistics
-      type: object
   parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
       in: query
-      name: envelope
+      name: includeCount
       schema:
-        default: false
+        default: true
         type: boolean
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
+    itemsPerPage:
+      description: Number of items that the response returns per page.
       in: query
-      name: pretty
+      name: itemsPerPage
       schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
 
@@ -1504,15 +1503,6 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
     pageNum:
       description: Number of the page that displays the current set of the total objects that the response returns.
       in: query
@@ -1521,24 +1511,34 @@ components:
         default: 1
         minimum: 1
         type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
       in: query
-      name: includeCount
+      name: pretty
       schema:
-        default: true
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
         type: boolean
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

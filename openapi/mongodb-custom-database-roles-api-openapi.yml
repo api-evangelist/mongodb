@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Custom Database Roles API
+  title: MongoDB Atlas Administration Custom Database Roles API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -14,7 +14,7 @@ security:
 - ServiceAccounts: []
 - DigestAuth: []
 tags:
-- description: Returns, adds, edits, and removes custom database user privilege roles. Use custom roles to specify custom sets of actions that the MongoDB Cloud built-in roles can't describe. You define custom roles at the project level, for all clusters in the project. This resource supports a subset of MongoDB privilege actions. You can create a subset of custom role actions. To create a wider list of custom role actions, use the MongoDB Cloud user interface. Custom roles must include actions that all project's clusters support, and that are compatible with each MongoDB version that your project's clusters use. For example, if your project has MongoDB 4.2 clusters, you can't create custom roles that use actions introduced in MongoDB 4.4.
+- description: Returns, adds, edits, and removes custom database user privilege roles.
   name: Custom Database Roles
 paths:
   /api/atlas/v2/groups/{groupId}/customDBRoles/roles:
@@ -317,26 +317,92 @@ paths:
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Custom-Database-Roles/operation/updateGroupCustomDbRoleRole
       x-xgen-operation-id-override: updateCustomDbRole
 components:
+  responses:
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
   schemas:
-    UserCustomDBRole:
-      properties:
-        actions:
-          description: List of the individual privilege actions that the role grants.
-          items:
-            $ref: '#/components/schemas/DatabasePrivilegeAction'
-          type: array
-        inheritedRoles:
-          description: List of the built-in roles that this custom role inherits.
-          items:
-            $ref: '#/components/schemas/DatabaseInheritedRole'
-          type: array
-          uniqueItems: true
-        roleName:
-          description: Human-readable label that identifies the role for the request. This name must be unique for this custom role in this project.
-          type: string
-      required:
-      - roleName
-      type: object
     ApiError:
       properties:
         badRequestDetail:
@@ -368,6 +434,73 @@ components:
       required:
       - error
       - errorCode
+      type: object
+    DatabaseInheritedRole:
+      description: Role inherited from another context for this database user.
+      externalDocs:
+        description: Built-in MongoDB Roles
+        url: https://docs.mongodb.com/manual/reference/built-in-roles/
+      properties:
+        db:
+          description: Human-readable label that identifies the database on which someone grants the action to one MongoDB user.
+          type: string
+        role:
+          description: Human-readable label that identifies the role inherited. Set this value to `admin` for every role except `read` or `readWrite`.
+          externalDocs:
+            description: MongoDB Built-In Roles
+            url: https://docs.mongodb.com/manual/reference/built-in-roles/
+          type: string
+      required:
+      - db
+      - role
+      title: Inherited Role
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    DatabasePermittedNamespaceResource:
+      description: Namespace to which this database user has access.
+      externalDocs:
+        description: Cluster Resources
+        url: https://docs.mongodb.com/manual/reference/resource-document/#cluster-resource
+      properties:
+        cluster:
+          description: Flag that indicates whether to grant the action on the cluster resource. If `true`, MongoDB Cloud ignores the `actions.resources.collection` and `actions.resources.db` parameters.
+          type: boolean
+        collection:
+          description: 'Human-readable label that identifies the collection on which you grant the action to one MongoDB user. If you don''t set this parameter, you grant the action to all collections in the database specified in the `actions.resources.db` parameter. If you set `"actions.resources.cluster" : true`, MongoDB Cloud ignores this parameter.'
+          type: string
+        db:
+          description: 'Human-readable label that identifies the database on which you grant the action to one MongoDB user. If you set `"actions.resources.cluster" : true`, MongoDB Cloud ignores this parameter.'
+          type: string
+      required:
+      - cluster
+      - collection
+      - db
+      title: Permitted Namespace
+      type: object
+    UpdateCustomDBRole:
+      properties:
+        actions:
+          description: List of the individual privilege actions that the role grants.
+          items:
+            $ref: '#/components/schemas/DatabasePrivilegeAction'
+          type: array
+        inheritedRoles:
+          description: List of the built-in roles that this custom role inherits.
+          items:
+            $ref: '#/components/schemas/DatabaseInheritedRole'
+          type: array
+          uniqueItems: true
       type: object
     DatabasePrivilegeAction:
       description: Privilege action that the role grants.
@@ -461,26 +594,6 @@ components:
       - resources
       title: Database Privilege Action
       type: object
-    DatabaseInheritedRole:
-      description: Role inherited from another context for this database user.
-      externalDocs:
-        description: Built-in MongoDB Roles
-        url: https://docs.mongodb.com/manual/reference/built-in-roles/
-      properties:
-        db:
-          description: Human-readable label that identifies the database on which someone grants the action to one MongoDB user.
-          type: string
-        role:
-          description: Human-readable label that identifies the role inherited. Set this value to `admin` for every role except `read` or `readWrite`.
-          externalDocs:
-            description: MongoDB Built-In Roles
-            url: https://docs.mongodb.com/manual/reference/built-in-roles/
-          type: string
-      required:
-      - db
-      - role
-      title: Inherited Role
-      type: object
     BadRequestDetail:
       description: Bad request detail.
       properties:
@@ -491,19 +604,7 @@ components:
           type: array
       readOnly: true
       type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    UpdateCustomDBRole:
+    UserCustomDBRole:
       properties:
         actions:
           description: List of the individual privilege actions that the role grants.
@@ -516,121 +617,13 @@ components:
             $ref: '#/components/schemas/DatabaseInheritedRole'
           type: array
           uniqueItems: true
-      type: object
-    DatabasePermittedNamespaceResource:
-      description: Namespace to which this database user has access.
-      externalDocs:
-        description: Cluster Resources
-        url: https://docs.mongodb.com/manual/reference/resource-document/#cluster-resource
-      properties:
-        cluster:
-          description: Flag that indicates whether to grant the action on the cluster resource. If `true`, MongoDB Cloud ignores the `actions.resources.collection` and `actions.resources.db` parameters.
-          type: boolean
-        collection:
-          description: 'Human-readable label that identifies the collection on which you grant the action to one MongoDB user. If you don''t set this parameter, you grant the action to all collections in the database specified in the `actions.resources.db` parameter. If you set `"actions.resources.cluster" : true`, MongoDB Cloud ignores this parameter.'
-          type: string
-        db:
-          description: 'Human-readable label that identifies the database on which you grant the action to one MongoDB user. If you set `"actions.resources.cluster" : true`, MongoDB Cloud ignores this parameter.'
+        roleName:
+          description: Human-readable label that identifies the role for the request. This name must be unique for this custom role in this project.
           type: string
       required:
-      - cluster
-      - collection
-      - db
-      title: Permitted Namespace
+      - roleName
       type: object
-  responses:
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
   parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
 
@@ -653,17 +646,24 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:

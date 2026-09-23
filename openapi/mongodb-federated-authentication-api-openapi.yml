@@ -1,11 +1,11 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  description: "The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.\n\nThe Atlas Administration API supports OAuth2 Service Accounts and HTTP Digest-based API keys. Service accounts are the recommended authentication method and API keys are considered a legacy option.\n\nTo authenticate with a Service Account, first exchange its client ID and secret for an access token using the OAuth 2.0 Client Credentials flow. Atlas provides a token endpoint at `POST https://cloud.mongodb.com/api/oauth/token`, which returns a Bearer token that is reusable and valid for 1 hour (3600 seconds).\n\nFor example, to [return a list of your organizations](https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2/operation/operation-listorgs) with [cURL](https://en.wikipedia.org/wiki/CURL), first generate an access token and then use that token to call the same Atlas Administration API endpoint shown in the current example:\n\n```\nACCESS_TOKEN=$(curl -fsS --request POST https://cloud.mongodb.com/api/oauth/token \\\n  --header \"Authorization: Basic $(printf '%s' \"${CLIENT_ID}:${CLIENT_SECRET}\" | base64 | tr -d '\\n')\" \\\n  --header \"Content-Type: application/x-www-form-urlencoded\" \\\n  --header \"Accept: application/json\" \\\n  --data \"grant_type=client_credentials\" | jq -r '.access_token')\n\ncurl --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/orgs?pretty=true\"\n```\n\nIf your organization requires an IP access list for the Atlas Administration API, the token can be created from any IP address, but the API call that uses the token must originate from an allowed IP.\n\nTo learn more, see [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/). For support, see [MongoDB Support](https://www.mongodb.com/support/get-started).\n\nYou can also explore the various endpoints available through the Atlas Administration API in MongoDB's [Postman workspace](https://www.postman.com/mongodb-devrel/workspace/mongodb-atlas-administration-apis/) (requires a Postman account)."
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Access Tracking Federated Authentication API
+  title: MongoDB Atlas Administration Federated Authentication API
   version: '2.0'
   x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
 servers:
@@ -240,7 +240,19 @@ paths:
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Federated-Authentication/operation/getFederationSettingConnectedOrgConfig
       x-xgen-operation-id-override: getConnectedOrgConfig
     patch:
-      description: "Updates one connected organization configuration from the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role. \n\n**Note** If the organization configuration has no associated identity provider, you can't use this resource to update role mappings or post authorization role grants.  \n\n**Note**: The `domainRestrictionEnabled` field defaults to false if not provided in the request. \n\n**Note**: If the `identityProviderId` field is not provided, you will disconnect the organization and the identity provider. \n\n**Note**: Currently connected data access identity providers missing from the `dataAccessIdentityProviderIds` field will be disconnected."
+      description: 'Updates one connected organization configuration from the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
+
+
+        **Note** If the organization configuration has no associated identity provider, you can''t use this resource to update role mappings or post authorization role grants.
+
+
+        **Note**: The `domainRestrictionEnabled` field defaults to false if not provided in the request.
+
+
+        **Note**: If the `identityProviderId` field is not provided, you will disconnect the organization and the identity provider.
+
+
+        **Note**: Currently connected data access identity providers missing from the `dataAccessIdentityProviderIds` field will be disconnected.'
       operationId: updateFederationSettingConnectedOrgConfig
       parameters:
       - $ref: '#/components/parameters/federationSettingsId'
@@ -742,7 +754,10 @@ paths:
       x-xgen-operation-id-override: createIdentityProvider
   /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}:
     delete:
-      description: "Deletes one identity provider in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role for the connected organization. \n\n**Note**: Requests to this resource will fail if the identity provider is connected to more than one organization or is connected to an organization unowned by the requesting Service Account or API key. Before deleting an identity provider, confirm that no organization in your federation uses this identity provider."
+      description: 'Deletes one identity provider in the specified federation. To use this resource, the requesting Service Account or API Key must have the Organization Owner role for the connected organization.
+
+
+        **Note**: Requests to this resource will fail if the identity provider is connected to more than one organization or is connected to an organization unowned by the requesting Service Account or API key. Before deleting an identity provider, confirm that no organization in your federation uses this identity provider.'
       externalDocs:
         description: Manage Organization Mapping for Federated Authentication
         url: https://www.mongodb.com/docs/atlas/security/manage-org-mapping/
@@ -933,7 +948,10 @@ paths:
       x-xgen-operation-id-override: updateIdentityProvider
   /api/atlas/v2/federationSettings/{federationSettingsId}/identityProviders/{identityProviderId}/jwks:
     delete:
-      description: "Revokes the JWKS tokens from the requested OIDC identity provider. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations. \n\n**Note**: Revoking your JWKS tokens immediately refreshes your IdP public keys from all your Atlas clusters, invalidating previously signed access tokens and logging out all users. You may need to restart your MongoDB clients. All organizations connected to the identity provider will be affected."
+      description: 'Revokes the JWKS tokens from the requested OIDC identity provider. To use this resource, the requesting Service Account or API Key must have the Organization Owner role in one of the connected organizations.
+
+
+        **Note**: Revoking your JWKS tokens immediately refreshes your IdP public keys from all your Atlas clusters, invalidating previously signed access tokens and logging out all users. You may need to restart your MongoDB clients. All organizations connected to the identity provider will be affected.'
       externalDocs:
         description: Configure OIDC Authorization
         url: https://www.mongodb.com/docs/atlas/security-oidc/#revoke-jwks
@@ -1106,28 +1124,17 @@ paths:
       x-xgen-operation-id-override: getFederationSettings
 components:
   responses:
-    internalServerError:
+    notFound:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    methodNotAllowed:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 405
-            errorCode: ATLAS_BACKUP_CANCEL_SHARD_RESTORE_JOB_NOT_ALLOWED
-            reason: Method Not Allowed
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Method Not Allowed.
+      description: Not Found.
     forbidden:
       content:
         application/json:
@@ -1139,6 +1146,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
     tooManyRequests:
       content:
         application/json:
@@ -1179,18 +1197,209 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-    notFound:
+    methodNotAllowed:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 405
+            errorCode: ATLAS_BACKUP_CANCEL_SHARD_RESTORE_JOB_NOT_ALLOWED
+            reason: Method Not Allowed
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Not Found.
+      description: Method Not Allowed.
   schemas:
+    OrgFederationSettings:
+      description: Details that define how to connect one MongoDB Cloud organization to one federated authentication service.
+      properties:
+        federatedDomains:
+          description: List of domains associated with the organization's identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        hasRoleMappings:
+          description: Flag that indicates whether this organization has role mappings configured.
+          type: boolean
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this federation.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        identityProviderId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider connected to this organization.
+          example: c2777a9eca931f29fc2f
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        identityProviderStatus:
+          description: String enum that indicates whether the identity provider is active.
+          enum:
+          - ACTIVE
+          - INACTIVE
+          type: string
+      required:
+      - federatedDomains
+      title: Organization Federation Settings
+      type: object
+    FederationOidcWorkloadIdentityProvider:
+      properties:
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      title: OIDC WORKLOAD
+      type: object
+    FederationOidcWorkforceIdentityProviderUpdate:
+      properties:
+        associatedDomains:
+          description: List that contains the domains associated with the identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        clientId:
+          description: Client identifier that is assigned to an application by the Identity Provider.
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          maxLength: 50
+          minLength: 1
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          example: urn:idp:default
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        requestedScopes:
+          description: Scopes that MongoDB applications will request from the authorization endpoint.
+          items:
+            type: string
+          type: array
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      title: OIDC WORKFORCE
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
     FederationSamlIdentityProviderUpdate:
       properties:
         associatedDomains:
@@ -1294,59 +1503,55 @@ components:
       required:
       - results
       type: object
-    FederationOidcWorkloadIdentityProviderUpdate:
+    ConnectedOrgConfigRoleAssignment:
       properties:
-        audience:
-          description: Identifier of the intended recipient of the token.
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project to which this role belongs. Each element within `roleAssignments` can have a value for `groupId` or `orgId`, but not both.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           type: string
-        authorizationType:
-          description: Indicates whether authorization is granted based on group membership or user ID.
-          enum:
-          - GROUP
-          - USER
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. Each element within `roleAssignments` can have a value for `orgId` or `groupId`, but not both.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           type: string
-        description:
-          description: The description of the identity provider.
+        role:
+          description: Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.
+          externalDocs:
+            description: MongoDB Atlas User Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
           type: string
-        displayName:
-          description: Human-readable label that identifies the identity provider.
-          maxLength: 50
-          minLength: 1
-          type: string
-        groupsClaim:
-          description: Identifier of the claim which contains IdP Group IDs in the token.
-          type: string
-        idpType:
-          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
-          enum:
-          - WORKFORCE
-          - WORKLOAD
-          type: string
-        issuerUri:
-          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
-          example: urn:idp:default
-          type: string
-        protocol:
-          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
-          enum:
-          - SAML
-          - OIDC
-          type: string
-        userClaim:
-          description: Identifier of the claim which contains the user ID in the token.
-          type: string
-      title: OIDC WORKLOAD
       type: object
-    X509Certificate:
+    FederatedUser:
+      description: MongoDB Cloud user linked to this federated authentication.
       properties:
-        notAfter:
-          description: Latest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
+        emailAddress:
+          description: Email address of the MongoDB Cloud user linked to the federated organization.
+          format: email
           type: string
-        notBefore:
-          description: Earliest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
+        federationSettingsId:
+          description: Unique 24-hexadecimal digit string that identifies the federation to which this MongoDB Cloud user belongs.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           type: string
+        firstName:
+          description: First or given name that belongs to the MongoDB Cloud user.
+          type: string
+        lastName:
+          description: Last name, family name, or surname that belongs to the MongoDB Cloud user.
+          type: string
+        userId:
+          description: Unique 24-hexadecimal digit string that identifies this user.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+      required:
+      - emailAddress
+      - federationSettingsId
+      - firstName
+      - lastName
+      title: Federated User
       type: object
     PemFileInfoUpdate:
       description: PEM file information for the identity provider's current certificates.
@@ -1360,37 +1565,19 @@ components:
           description: Human-readable label given to the file.
           type: string
       type: object
-    ApiError:
+    X509CertificateUpdate:
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
+        content:
+          description: Certificate content.
           type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
+        notAfter:
+          description: Latest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
+        notBefore:
+          description: Earliest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           type: string
-      required:
-      - error
-      - errorCode
       type: object
     PaginatedRoleMappingView:
       description: List role mappings from the specified organization in the specified federation.
@@ -1464,6 +1651,169 @@ components:
           description: Identifier of the claim which contains the user ID in the token.
           type: string
       type: object
+    FederationIdentityProvider:
+      oneOf:
+      - $ref: '#/components/schemas/FederationSamlIdentityProvider'
+      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProvider'
+      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProvider'
+      properties:
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      type: object
+    AuthFederationRoleMapping:
+      description: Mapping settings that link one IdP and MongoDB Cloud.
+      properties:
+        externalGroupName:
+          description: Unique human-readable label that identifies the identity provider group to which this role mapping applies.
+          maxLength: 200
+          minLength: 1
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this role mapping.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        roleAssignments:
+          description: Atlas roles and the unique identifiers of the groups and organizations associated with each role. The array must include at least one element with an Organization role and its respective `orgId`. Each element in the array can have a value for `orgId` or `groupId`, but not both.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfigRoleAssignment'
+          type: array
+          uniqueItems: true
+      required:
+      - externalGroupName
+      - roleAssignments
+      title: Federated Authentication Role Mapping
+      type: object
+    PaginatedConnectedOrgConfigsView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    FederationOidcWorkloadIdentityProviderUpdate:
+      properties:
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          maxLength: 50
+          minLength: 1
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          example: urn:idp:default
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      title: OIDC WORKLOAD
+      type: object
     ConnectedOrgConfig:
       properties:
         dataAccessIdentityProviderIds:
@@ -1521,63 +1871,45 @@ components:
       - domainRestrictionEnabled
       - orgId
       type: object
-    AuthFederationRoleMapping:
-      description: Mapping settings that link one IdP and MongoDB Cloud.
+    FederationOidcIdentityProvider:
+      oneOf:
+      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProvider'
+      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProvider'
       properties:
-        externalGroupName:
-          description: Unique human-readable label that identifies the identity provider group to which this role mapping applies.
-          maxLength: 200
-          minLength: 1
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this role mapping.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        roleAssignments:
-          description: Atlas roles and the unique identifiers of the groups and organizations associated with each role. The array must include at least one element with an Organization role and its respective `orgId`. Each element in the array can have a value for `orgId` or `groupId`, but not both.
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
           items:
-            $ref: '#/components/schemas/ConnectedOrgConfigRoleAssignment'
+            $ref: '#/components/schemas/ConnectedOrgConfig'
           type: array
           uniqueItems: true
-      required:
-      - externalGroupName
-      - roleAssignments
-      title: Federated Authentication Role Mapping
-      type: object
-    ConnectedOrgConfigRoleAssignment:
-      properties:
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project to which this role belongs. Each element within `roleAssignments` can have a value for `groupId` or `orgId`, but not both.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
+        audience:
+          description: Identifier of the intended recipient of the token.
           type: string
-        orgId:
-          description: Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. Each element within `roleAssignments` can have a value for `orgId` or `groupId`, but not both.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
           type: string
-        role:
-          description: Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.
-          externalDocs:
-            description: MongoDB Atlas User Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
           type: string
-      type: object
-    FederationIdentityProviderUpdate:
-      oneOf:
-      - $ref: '#/components/schemas/FederationSamlIdentityProviderUpdate'
-      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProviderUpdate'
-      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProviderUpdate'
-      properties:
         description:
           description: The description of the identity provider.
           type: string
         displayName:
           description: Human-readable label that identifies the identity provider.
-          maxLength: 50
-          minLength: 1
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
           type: string
         idpType:
           description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
@@ -1587,7 +1919,10 @@ components:
           type: string
         issuerUri:
           description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
-          example: urn:idp:default
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
           type: string
         protocol:
           description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
@@ -1595,6 +1930,100 @@ components:
           - SAML
           - OIDC
           type: string
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      type: object
+    FederationOidcWorkforceIdentityProvider:
+      properties:
+        associatedDomains:
+          description: List that contains the domains associated with the identity provider.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        associatedOrgs:
+          description: List that contains the connected organization configurations associated with the identity provider.
+          items:
+            $ref: '#/components/schemas/ConnectedOrgConfig'
+          type: array
+          uniqueItems: true
+        audience:
+          description: Identifier of the intended recipient of the token.
+          type: string
+        authorizationType:
+          description: Indicates whether authorization is granted based on group membership or user ID.
+          enum:
+          - GROUP
+          - USER
+          type: string
+        clientId:
+          description: Client identifier that is assigned to an application by the Identity Provider.
+          type: string
+        createdAt:
+          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: The description of the identity provider.
+          type: string
+        displayName:
+          description: Human-readable label that identifies the identity provider.
+          type: string
+        groupsClaim:
+          description: Identifier of the claim which contains IdP Group IDs in the token.
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the identity provider.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        idpType:
+          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
+          enum:
+          - WORKFORCE
+          - WORKLOAD
+          type: string
+        issuerUri:
+          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
+          type: string
+        oktaIdpId:
+          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
+          pattern: ^([a-f0-9]{20})$
+          type: string
+        protocol:
+          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
+          enum:
+          - SAML
+          - OIDC
+          type: string
+        requestedScopes:
+          description: Scopes that MongoDB applications will request from the authorization endpoint.
+          items:
+            type: string
+          type: array
+        updatedAt:
+          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        userClaim:
+          description: Identifier of the claim which contains the user ID in the token.
+          type: string
+      required:
+      - id
+      - oktaIdpId
+      title: OIDC WORKFORCE
       type: object
     FederationSamlIdentityProvider:
       properties:
@@ -1691,76 +2120,28 @@ components:
       - oktaIdpId
       title: SAML
       type: object
-    FederationOidcIdentityProvider:
-      oneOf:
-      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProvider'
-      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProvider'
+    PemFileInfo:
+      description: PEM file information for the identity provider's current certificates.
       properties:
-        associatedOrgs:
-          description: List that contains the connected organization configurations associated with the identity provider.
+        certificates:
+          description: List of certificates in the file.
           items:
-            $ref: '#/components/schemas/ConnectedOrgConfig'
+            $ref: '#/components/schemas/X509Certificate'
           type: array
-          uniqueItems: true
-        audience:
-          description: Identifier of the intended recipient of the token.
+        fileName:
+          description: Human-readable label given to the file.
           type: string
-        authorizationType:
-          description: Indicates whether authorization is granted based on group membership or user ID.
-          enum:
-          - GROUP
-          - USER
-          type: string
-        createdAt:
-          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+      type: object
+    X509Certificate:
+      properties:
+        notAfter:
+          description: Latest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
           format: date-time
-          readOnly: true
           type: string
-        description:
-          description: The description of the identity provider.
-          type: string
-        displayName:
-          description: Human-readable label that identifies the identity provider.
-          type: string
-        groupsClaim:
-          description: Identifier of the claim which contains IdP Group IDs in the token.
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the identity provider.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        idpType:
-          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
-          enum:
-          - WORKFORCE
-          - WORKLOAD
-          type: string
-        issuerUri:
-          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
-          type: string
-        oktaIdpId:
-          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
-          pattern: ^([a-f0-9]{20})$
-          type: string
-        protocol:
-          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
-          enum:
-          - SAML
-          - OIDC
-          type: string
-        updatedAt:
-          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+        notBefore:
+          description: Earliest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
           format: date-time
-          readOnly: true
           type: string
-        userClaim:
-          description: Identifier of the claim which contains the user ID in the token.
-          type: string
-      required:
-      - id
-      - oktaIdpId
       type: object
     BadRequestDetail:
       description: Bad request detail.
@@ -1772,147 +2153,12 @@ components:
           type: array
       readOnly: true
       type: object
-    X509CertificateUpdate:
+    FederationIdentityProviderUpdate:
+      oneOf:
+      - $ref: '#/components/schemas/FederationSamlIdentityProviderUpdate'
+      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProviderUpdate'
+      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProviderUpdate'
       properties:
-        content:
-          description: Certificate content.
-          type: string
-        notAfter:
-          description: Latest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          type: string
-        notBefore:
-          description: Earliest date that the certificate is valid. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          type: string
-      type: object
-    FederationOidcWorkloadIdentityProvider:
-      properties:
-        associatedOrgs:
-          description: List that contains the connected organization configurations associated with the identity provider.
-          items:
-            $ref: '#/components/schemas/ConnectedOrgConfig'
-          type: array
-          uniqueItems: true
-        audience:
-          description: Identifier of the intended recipient of the token.
-          type: string
-        authorizationType:
-          description: Indicates whether authorization is granted based on group membership or user ID.
-          enum:
-          - GROUP
-          - USER
-          type: string
-        createdAt:
-          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        description:
-          description: The description of the identity provider.
-          type: string
-        displayName:
-          description: Human-readable label that identifies the identity provider.
-          type: string
-        groupsClaim:
-          description: Identifier of the claim which contains IdP Group IDs in the token.
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the identity provider.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        idpType:
-          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
-          enum:
-          - WORKFORCE
-          - WORKLOAD
-          type: string
-        issuerUri:
-          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
-          type: string
-        oktaIdpId:
-          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
-          pattern: ^([a-f0-9]{20})$
-          type: string
-        protocol:
-          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
-          enum:
-          - SAML
-          - OIDC
-          type: string
-        updatedAt:
-          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        userClaim:
-          description: Identifier of the claim which contains the user ID in the token.
-          type: string
-      required:
-      - id
-      - oktaIdpId
-      title: OIDC WORKLOAD
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    PaginatedConnectedOrgConfigsView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/ConnectedOrgConfig'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    FederationOidcWorkforceIdentityProviderUpdate:
-      properties:
-        associatedDomains:
-          description: List that contains the domains associated with the identity provider.
-          items:
-            type: string
-          type: array
-          uniqueItems: true
-        audience:
-          description: Identifier of the intended recipient of the token.
-          type: string
-        authorizationType:
-          description: Indicates whether authorization is granted based on group membership or user ID.
-          enum:
-          - GROUP
-          - USER
-          type: string
-        clientId:
-          description: Client identifier that is assigned to an application by the Identity Provider.
-          type: string
         description:
           description: The description of the identity provider.
           type: string
@@ -1920,9 +2166,6 @@ components:
           description: Human-readable label that identifies the identity provider.
           maxLength: 50
           minLength: 1
-          type: string
-        groupsClaim:
-          description: Identifier of the claim which contains IdP Group IDs in the token.
           type: string
         idpType:
           description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
@@ -1940,250 +2183,8 @@ components:
           - SAML
           - OIDC
           type: string
-        requestedScopes:
-          description: Scopes that MongoDB applications will request from the authorization endpoint.
-          items:
-            type: string
-          type: array
-        userClaim:
-          description: Identifier of the claim which contains the user ID in the token.
-          type: string
-      title: OIDC WORKFORCE
-      type: object
-    FederationOidcWorkforceIdentityProvider:
-      properties:
-        associatedDomains:
-          description: List that contains the domains associated with the identity provider.
-          items:
-            type: string
-          type: array
-          uniqueItems: true
-        associatedOrgs:
-          description: List that contains the connected organization configurations associated with the identity provider.
-          items:
-            $ref: '#/components/schemas/ConnectedOrgConfig'
-          type: array
-          uniqueItems: true
-        audience:
-          description: Identifier of the intended recipient of the token.
-          type: string
-        authorizationType:
-          description: Indicates whether authorization is granted based on group membership or user ID.
-          enum:
-          - GROUP
-          - USER
-          type: string
-        clientId:
-          description: Client identifier that is assigned to an application by the Identity Provider.
-          type: string
-        createdAt:
-          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        description:
-          description: The description of the identity provider.
-          type: string
-        displayName:
-          description: Human-readable label that identifies the identity provider.
-          type: string
-        groupsClaim:
-          description: Identifier of the claim which contains IdP Group IDs in the token.
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the identity provider.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        idpType:
-          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
-          enum:
-          - WORKFORCE
-          - WORKLOAD
-          type: string
-        issuerUri:
-          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
-          type: string
-        oktaIdpId:
-          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
-          pattern: ^([a-f0-9]{20})$
-          type: string
-        protocol:
-          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
-          enum:
-          - SAML
-          - OIDC
-          type: string
-        requestedScopes:
-          description: Scopes that MongoDB applications will request from the authorization endpoint.
-          items:
-            type: string
-          type: array
-        updatedAt:
-          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        userClaim:
-          description: Identifier of the claim which contains the user ID in the token.
-          type: string
-      required:
-      - id
-      - oktaIdpId
-      title: OIDC WORKFORCE
-      type: object
-    FederationIdentityProvider:
-      oneOf:
-      - $ref: '#/components/schemas/FederationSamlIdentityProvider'
-      - $ref: '#/components/schemas/FederationOidcWorkforceIdentityProvider'
-      - $ref: '#/components/schemas/FederationOidcWorkloadIdentityProvider'
-      properties:
-        associatedOrgs:
-          description: List that contains the connected organization configurations associated with the identity provider.
-          items:
-            $ref: '#/components/schemas/ConnectedOrgConfig'
-          type: array
-          uniqueItems: true
-        createdAt:
-          description: Date that the identity provider was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        description:
-          description: The description of the identity provider.
-          type: string
-        displayName:
-          description: Human-readable label that identifies the identity provider.
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the identity provider.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        idpType:
-          description: String enum that indicates the type of the identity provider. Default is WORKFORCE.
-          enum:
-          - WORKFORCE
-          - WORKLOAD
-          type: string
-        issuerUri:
-          description: Unique string that identifies the issuer of the SAML Assertion or OIDC metadata/discovery document URL.
-          type: string
-        oktaIdpId:
-          description: Legacy 20-hexadecimal digit string that identifies the identity provider.
-          pattern: ^([a-f0-9]{20})$
-          type: string
-        protocol:
-          description: String enum that indicates the protocol of the identity provider. Either SAML or OIDC.
-          enum:
-          - SAML
-          - OIDC
-          type: string
-        updatedAt:
-          description: Date that the identity provider was last updated on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-      required:
-      - id
-      - oktaIdpId
-      type: object
-    PemFileInfo:
-      description: PEM file information for the identity provider's current certificates.
-      properties:
-        certificates:
-          description: List of certificates in the file.
-          items:
-            $ref: '#/components/schemas/X509Certificate'
-          type: array
-        fileName:
-          description: Human-readable label given to the file.
-          type: string
-      type: object
-    FederatedUser:
-      description: MongoDB Cloud user linked to this federated authentication.
-      properties:
-        emailAddress:
-          description: Email address of the MongoDB Cloud user linked to the federated organization.
-          format: email
-          type: string
-        federationSettingsId:
-          description: Unique 24-hexadecimal digit string that identifies the federation to which this MongoDB Cloud user belongs.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        firstName:
-          description: First or given name that belongs to the MongoDB Cloud user.
-          type: string
-        lastName:
-          description: Last name, family name, or surname that belongs to the MongoDB Cloud user.
-          type: string
-        userId:
-          description: Unique 24-hexadecimal digit string that identifies this user.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-      required:
-      - emailAddress
-      - federationSettingsId
-      - firstName
-      - lastName
-      title: Federated User
-      type: object
-    OrgFederationSettings:
-      description: Details that define how to connect one MongoDB Cloud organization to one federated authentication service.
-      properties:
-        federatedDomains:
-          description: List of domains associated with the organization's identity provider.
-          items:
-            type: string
-          type: array
-          uniqueItems: true
-        hasRoleMappings:
-          description: Flag that indicates whether this organization has role mappings configured.
-          type: boolean
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this federation.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        identityProviderId:
-          description: Legacy 20-hexadecimal digit string that identifies the identity provider connected to this organization.
-          example: c2777a9eca931f29fc2f
-          pattern: ^([a-f0-9]{20})$
-          type: string
-        identityProviderStatus:
-          description: String enum that indicates whether the identity provider is active.
-          enum:
-          - ACTIVE
-          - INACTIVE
-          type: string
-      required:
-      - federatedDomains
-      title: Organization Federation Settings
       type: object
   parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
     itemsPerPage:
       description: Number of items that the response returns per page.
       in: query
@@ -2191,23 +2192,6 @@ components:
       schema:
         default: 100
         maximum: 500
-        minimum: 1
-        type: integer
-    identityProviderId:
-      description: Legacy 20-hexadecimal digit string that identifies the identity provider. This id can be found within the Federation Management Console > Identity Providers tab by clicking the info icon in the IdP ID row of a configured identity provider.
-      in: path
-      name: identityProviderId
-      required: true
-      schema:
-        example: c2777a9eca931f29fc2f
-        pattern: ^([a-f0-9]{20})$
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
         minimum: 1
         type: integer
     federationSettingsId:
@@ -2219,6 +2203,40 @@ components:
         example: 55fa922fb343282757d9554e
         pattern: ^([a-f0-9]{24})$
         type: string
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    identityProviderId:
+      description: Legacy 20-hexadecimal digit string that identifies the identity provider. This id can be found within the Federation Management Console > Identity Providers tab by clicking the info icon in the IdP ID row of a configured identity provider.
+      in: path
+      name: identityProviderId
+      required: true
+      schema:
+        example: c2777a9eca931f29fc2f
+        pattern: ^([a-f0-9]{20})$
+        type: string
     orgId:
       description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
       in: path
@@ -2229,16 +2247,16 @@ components:
         pattern: ^([a-f0-9]{24})$
         type: string
   headers:
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
   securitySchemes:
