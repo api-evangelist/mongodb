@@ -1,1 +1,0 @@
-# MongoDB GraphQL API
