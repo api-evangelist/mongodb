@@ -705,6 +705,17 @@ paths:
       x-xgen-operation-id-override: getPrivateEndpoint
 components:
   responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     notFound:
       content:
         application/json:
@@ -716,17 +727,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Not Found.
-    forbidden:
+    badRequest:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
+      description: Bad Request.
     internalServerError:
       content:
         application/json:
@@ -738,6 +749,39 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    paymentRequired:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 402
+            errorCode: NO_PAYMENT_INFORMATION_FOUND
+            reason: Payment Required
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Payment Required.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
     tooManyRequests:
       content:
         application/json:
@@ -756,51 +800,56 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    paymentRequired:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 402
-            errorCode: NO_PAYMENT_INFORMATION_FOUND
-            reason: Payment Required
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Payment Required.
   schemas:
+    CloudProviderEndpointServiceRequest:
+      properties:
+        portMappingEnabled:
+          default: false
+          description: Flag that indicates whether this endpoint service uses PSC port-mapping. This is only applicable for GCP Private Endpoint Services.
+          type: boolean
+          writeOnly: true
+        providerName:
+          description: Human-readable label that identifies the cloud service provider for which you want to create the private endpoint service.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+          writeOnly: true
+        region:
+          description: Cloud provider region in which you want to create the private endpoint service. Regions accepted as values differ for [Amazon Web Services](https://docs.atlas.mongodb.com/reference/amazon-aws/), [Google Cloud Platform](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Microsoft Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).
+          type: string
+          writeOnly: true
+        supportedRemoteRegions:
+          description: List of regions that the endpoint service supports. Native cross region support is implemented for AWS only.
+          items:
+            description: AWS region name
+            type: string
+          maxItems: 35
+          type:
+          - array
+          - 'null'
+          writeOnly: true
+      required:
+      - providerName
+      - region
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    CreateEndpointRequest:
+      oneOf:
+      - $ref: '#/components/schemas/CreateAWSEndpointRequest'
+      - $ref: '#/components/schemas/CreateAzureEndpointRequest'
+      - $ref: '#/components/schemas/CreateGCPEndpointGroupRequest'
+      type: object
     CreateGCPEndpointGroupRequest:
       allOf:
       - $ref: '#/components/schemas/CreateEndpointRequest'
@@ -832,135 +881,6 @@ components:
       - endpointGroupName
       - gcpProjectId
       title: GCP
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    CreateEndpointRequest:
-      oneOf:
-      - $ref: '#/components/schemas/CreateAWSEndpointRequest'
-      - $ref: '#/components/schemas/CreateAzureEndpointRequest'
-      - $ref: '#/components/schemas/CreateGCPEndpointGroupRequest'
-      type: object
-    CreateGCPForwardingRuleRequest:
-      properties:
-        endpointName:
-          description: Human-readable label that identifies the Google Cloud consumer forwarding rule that you created.
-          externalDocs:
-            description: Google Cloud Forwarding Rule Concepts
-            url: https://cloud.google.com/load-balancing/docs/forwarding-rule-concepts
-          type: string
-          writeOnly: true
-        ipAddress:
-          description: One Private Internet Protocol version 4 (IPv4) address to which this Google Cloud consumer forwarding rule resolves.
-          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
-          type: string
-          writeOnly: true
-      title: GCP Forwarding Rules
-      type: object
-    CreateAWSEndpointRequest:
-      allOf:
-      - $ref: '#/components/schemas/CreateEndpointRequest'
-      - properties:
-          id:
-            description: Unique string that identifies the private endpoint's network interface that someone added to this private endpoint service.
-            example: vpce-3bf78b0ddee411ba1
-            pattern: ^vpce-[0-9a-f]{17}$
-            type: string
-            writeOnly: true
-        type: object
-      description: Group of Private Endpoint settings.
-      required:
-      - id
-      title: AWS
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    CreateAzureEndpointRequest:
-      allOf:
-      - $ref: '#/components/schemas/CreateEndpointRequest'
-      - properties:
-          id:
-            description: Unique string that identifies the private endpoint's network interface that someone added to this private endpoint service.
-            example: /subscriptions/cba6d9c6-1d3f-3c11-03cb-c705d895e636/resourcegroups/qrRTqi4TSN)7yB5YLRjVDveH3.yLzpNR7Br0D3-SGrU3j0.0/providers/Microsoft.Network/privateEndpoints/pVP(vb(XeckpxtXzP0NaOsDjeWDbOK)DX8A2j2E_vBYL2.GEYIdln
-            type: string
-            writeOnly: true
-          privateEndpointIPAddress:
-            description: IPv4 address of the private endpoint in your Azure VNet that someone added to this private endpoint service.
-            pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
-            type: string
-        type: object
-      description: Group of Private Endpoint settings.
-      required:
-      - id
-      - privateEndpointIPAddress
-      title: AZURE
-      type: object
-    PrivateLinkEndpoint:
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/AWSInterfaceEndpoint'
-          AZURE: '#/components/schemas/AzurePrivateEndpoint'
-          GCP: '#/components/schemas/PrivateGCPEndpointGroup'
-        propertyName: cloudProvider
-      properties:
-        cloudProvider:
-          description: Cloud service provider that serves the requested endpoint.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          readOnly: true
-          type: string
-        deleteRequested:
-          description: Flag that indicates whether MongoDB Cloud received a request to remove the specified private endpoint from the private endpoint service.
-          readOnly: true
-          type: boolean
-        errorMessage:
-          description: Error message returned when requesting private connection resource. The resource returns `null` if the request succeeded.
-          readOnly: true
-          type: string
-      required:
-      - cloudProvider
       type: object
     EndpointService:
       discriminator:
@@ -1005,6 +925,42 @@ components:
       required:
       - cloudProvider
       type: object
+    CreateGCPForwardingRuleRequest:
+      properties:
+        endpointName:
+          description: Human-readable label that identifies the Google Cloud consumer forwarding rule that you created.
+          externalDocs:
+            description: Google Cloud Forwarding Rule Concepts
+            url: https://cloud.google.com/load-balancing/docs/forwarding-rule-concepts
+          type: string
+          writeOnly: true
+        ipAddress:
+          description: One Private Internet Protocol version 4 (IPv4) address to which this Google Cloud consumer forwarding rule resolves.
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+          type: string
+          writeOnly: true
+      title: GCP Forwarding Rules
+      type: object
+    CreateAzureEndpointRequest:
+      allOf:
+      - $ref: '#/components/schemas/CreateEndpointRequest'
+      - properties:
+          id:
+            description: Unique string that identifies the private endpoint's network interface that someone added to this private endpoint service.
+            example: /subscriptions/cba6d9c6-1d3f-3c11-03cb-c705d895e636/resourcegroups/qrRTqi4TSN)7yB5YLRjVDveH3.yLzpNR7Br0D3-SGrU3j0.0/providers/Microsoft.Network/privateEndpoints/pVP(vb(XeckpxtXzP0NaOsDjeWDbOK)DX8A2j2E_vBYL2.GEYIdln
+            type: string
+            writeOnly: true
+          privateEndpointIPAddress:
+            description: IPv4 address of the private endpoint in your Azure VNet that someone added to this private endpoint service.
+            pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+            type: string
+        type: object
+      description: Group of Private Endpoint settings.
+      required:
+      - id
+      - privateEndpointIPAddress
+      title: AZURE
+      type: object
     ProjectSettingItemView:
       properties:
         enabled:
@@ -1012,6 +968,93 @@ components:
           type: boolean
       required:
       - enabled
+      type: object
+    CreateAWSEndpointRequest:
+      allOf:
+      - $ref: '#/components/schemas/CreateEndpointRequest'
+      - properties:
+          id:
+            description: Unique string that identifies the private endpoint's network interface that someone added to this private endpoint service.
+            example: vpce-3bf78b0ddee411ba1
+            pattern: ^vpce-[0-9a-f]{17}$
+            type: string
+            writeOnly: true
+        type: object
+      description: Group of Private Endpoint settings.
+      required:
+      - id
+      title: AWS
+      type: object
+    PrivateLinkEndpoint:
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/AWSInterfaceEndpoint'
+          AZURE: '#/components/schemas/AzurePrivateEndpoint'
+          GCP: '#/components/schemas/PrivateGCPEndpointGroup'
+        propertyName: cloudProvider
+      properties:
+        cloudProvider:
+          description: Cloud service provider that serves the requested endpoint.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          readOnly: true
+          type: string
+        deleteRequested:
+          description: Flag that indicates whether MongoDB Cloud received a request to remove the specified private endpoint from the private endpoint service.
+          readOnly: true
+          type: boolean
+        errorMessage:
+          description: Error message returned when requesting private connection resource. The resource returns `null` if the request succeeded.
+          readOnly: true
+          type: string
+      required:
+      - cloudProvider
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
       type: object
     ApiAtlasModifyEndpointServiceRequestView:
       properties:
@@ -1032,49 +1075,19 @@ components:
       required:
       - cloudProvider
       type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    CloudProviderEndpointServiceRequest:
-      properties:
-        portMappingEnabled:
-          default: false
-          description: Flag that indicates whether this endpoint service uses PSC port-mapping. This is only applicable for GCP Private Endpoint Services.
-          type: boolean
-          writeOnly: true
-        providerName:
-          description: Human-readable label that identifies the cloud service provider for which you want to create the private endpoint service.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-          writeOnly: true
-        region:
-          description: Cloud provider region in which you want to create the private endpoint service. Regions accepted as values differ for [Amazon Web Services](https://docs.atlas.mongodb.com/reference/amazon-aws/), [Google Cloud Platform](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Microsoft Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).
-          type: string
-          writeOnly: true
-        supportedRemoteRegions:
-          description: List of regions that the endpoint service supports. Native cross region support is implemented for AWS only.
-          items:
-            description: AWS region name
-            type: string
-          maxItems: 35
-          type:
-          - array
-          - 'null'
-          writeOnly: true
-      required:
-      - providerName
-      - region
-      type: object
+  headers:
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
   parameters:
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
@@ -1088,6 +1101,13 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
     pretty:
       description: Flag that indicates whether the response body should be in the prettyprint format.
       in: query
@@ -1098,26 +1118,6 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
   securitySchemes:
     DigestAuth:
       scheme: digest

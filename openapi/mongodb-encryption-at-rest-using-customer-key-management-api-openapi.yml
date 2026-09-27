@@ -413,68 +413,6 @@ paths:
       x-xgen-operation-id-override: getRestPrivateEndpoint
 components:
   responses:
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
     unauthorized:
       content:
         application/json:
@@ -497,150 +435,172 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-  parameters:
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
   schemas:
-    AzureKeyVault:
-      description: Details that define the configuration of Encryption at Rest using Azure Key Vault (AKV).
+    AWSKMSConfiguration:
+      description: Amazon Web Services (AWS) KMS configuration details and encryption at rest configuration set for the specified project.
       externalDocs:
-        description: Azure Key Vault
-        url: https://www.mongodb.com/docs/atlas/security-azure-kms/
+        description: Amazon Web Services Key Management Service
+        url: https://www.mongodb.com/docs/atlas/security-aws-kms/
       properties:
-        azureEnvironment:
-          description: Azure environment in which your account credentials reside.
-          enum:
-          - AZURE
-          - AZURE_CHINA
-          - AZURE_US_GOVERNMENT
+        accessKeyID:
+          description: Unique alphanumeric string that identifies an Identity and Access Management (IAM) access key with permissions required to access your Amazon Web Services (AWS) Customer Master Key (CMK).
+          example: 019dd98d94b4bb778e7552e4
+          maxLength: 128
+          minLength: 16
           type: string
-        clientID:
-          description: Unique 36-hexadecimal character string that identifies an Azure application associated with your Azure Active Directory tenant.
-          format: uuid
+        customerMasterKeyID:
+          description: Unique alphanumeric string that identifies the Amazon Web Services (AWS) Customer Master Key (CMK) you used to encrypt and decrypt the MongoDB master keys.
+          maxLength: 2048
+          minLength: 1
           type: string
         enabled:
-          description: Flag that indicates whether someone enabled encryption at rest for the specified  project. To disable encryption at rest using customer key management and remove the configuration details, pass only this parameter with a value of `false`.
+          description: Flag that indicates whether someone enabled encryption at rest for the specified project through Amazon Web Services (AWS) Key Management Service (KMS). To disable encryption at rest using customer key management and remove the configuration details, pass only this parameter with a value of `false`.
           type: boolean
-        keyIdentifier:
-          description: Web address with a unique key that identifies for your Azure Key Vault.
-          example: https://EXAMPLEKeyVault.vault.azure.net/keys/EXAMPLEKey/d891821e3d364e9eb88fbd3d11807b86
-          type: string
-        keyVaultName:
-          description: Unique string that identifies the Azure Key Vault that contains your key. This field cannot be modified when you enable and set up private endpoint connections to your Azure Key Vault.
+        region:
+          description: Physical location where MongoDB Cloud deploys your AWS-hosted MongoDB cluster nodes. The region you choose can affect network latency for clients accessing your databases. When MongoDB Cloud deploys a dedicated cluster, it checks if a VPC or VPC connection exists for that provider and region. If not, MongoDB Cloud creates them as part of the deployment. MongoDB Cloud assigns the VPC a CIDR block. To limit a new VPC peering connection to one CIDR block and region, create the connection first. Deploy the cluster after the connection starts.
+          enum:
+          - US_GOV_WEST_1
+          - US_GOV_EAST_1
+          - US_EAST_1
+          - US_EAST_2
+          - US_WEST_1
+          - US_WEST_2
+          - CA_CENTRAL_1
+          - EU_NORTH_1
+          - EU_WEST_1
+          - EU_WEST_2
+          - EU_WEST_3
+          - EU_CENTRAL_1
+          - EU_CENTRAL_2
+          - AP_EAST_1
+          - AP_EAST_2
+          - AP_NORTHEAST_1
+          - AP_NORTHEAST_2
+          - AP_NORTHEAST_3
+          - AP_SOUTHEAST_1
+          - AP_SOUTHEAST_2
+          - AP_SOUTHEAST_3
+          - AP_SOUTHEAST_4
+          - AP_SOUTHEAST_5
+          - AP_SOUTHEAST_6
+          - AP_SOUTHEAST_7
+          - AP_SOUTH_1
+          - AP_SOUTH_2
+          - SA_EAST_1
+          - CN_NORTH_1
+          - CN_NORTHWEST_1
+          - ME_SOUTH_1
+          - ME_CENTRAL_1
+          - AF_SOUTH_1
+          - EU_SOUTH_1
+          - EU_SOUTH_2
+          - IL_CENTRAL_1
+          - CA_WEST_1
+          - MX_CENTRAL_1
+          - GLOBAL
+          title: AWS Regions
           type: string
         requirePrivateNetworking:
-          description: Enable connection to your Azure Key Vault over private networking.
+          description: Enable connection to your Amazon Web Services (AWS) Key Management Service (KMS) over private networking.
           type: boolean
-        resourceGroupName:
-          description: Name of the Azure resource group that contains your Azure Key Vault. This field cannot be modified when you enable and set up private endpoint connections to your Azure Key Vault.
-          type: string
         roleId:
-          description: Unique 24-hexadecimal digit string that identifies the Azure Service Principal that MongoDB Cloud uses to access the Azure Key Vault.
+          description: Unique 24-hexadecimal digit string that identifies an Amazon Web Services (AWS) Identity and Access Management (IAM) role. This IAM role has the permissions required to manage your AWS customer master key.
           example: 32b6e34b3d91647abb20e7b8
           pattern: ^([a-f0-9]{24})$
           type: string
-        secret:
-          description: Private data that you need secured and that belongs to the specified Azure Key Vault (AKV) tenant (`azureKeyVault.tenantID`). This data can include any type of sensitive data such as passwords, database connection strings, API keys, and the like. AKV stores this information as encrypted binary data.
-          externalDocs:
-            description: Azure Key Vault Secrets
-            url: https://docs.microsoft.com/en-us/azure/key-vault/secrets/about-secrets
+          writeOnly: true
+        secretAccessKey:
+          description: Human-readable label of the Identity and Access Management (IAM) secret access key with permissions required to access your Amazon Web Services (AWS) customer master key.
           type: string
           writeOnly: true
-        subscriptionID:
-          description: Unique 36-hexadecimal character string that identifies your Azure subscription. This field cannot be modified when you enable and set up private endpoint connections to your Azure Key Vault.
-          format: uuid
-          type: string
-        tenantID:
-          description: Unique 36-hexadecimal character string that identifies the Azure Active Directory tenant within your Azure subscription.
-          format: uuid
-          type: string
         valid:
-          description: Flag that indicates whether the Azure encryption key can encrypt and decrypt data.
+          description: Flag that indicates whether the Amazon Web Services (AWS) Key Management Service (KMS) encryption key can encrypt and decrypt data.
           readOnly: true
           type: boolean
       type: object
-    ApiError:
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
+        fields:
+          description: Describes all violations in a client request.
           items:
-            type: object
-          readOnly: true
+            $ref: '#/components/schemas/FieldViolation'
           type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
+      readOnly: true
+      type: object
+    EncryptionAtRest:
+      properties:
+        awsKms:
+          $ref: '#/components/schemas/AWSKMSConfiguration'
+        azureKeyVault:
+          $ref: '#/components/schemas/AzureKeyVault'
+        enabledForSearchNodes:
+          description: Flag that indicates whether Encryption at Rest for Dedicated Search Nodes is enabled in the specified project.
+          type: boolean
+        googleCloudKms:
+          $ref: '#/components/schemas/GoogleCloudKMS'
       type: object
     AWSKMSEARPrivateEndpoint:
       description: AWS Key Management Service Encryption At Rest Private Endpoint.
@@ -786,184 +746,119 @@ components:
           type: string
       title: AWS Key Management Service EAR Private Endpoint
       type: object
-    Link:
+    GoogleCloudKMS:
+      description: Details that define the configuration of Encryption at Rest using Google Cloud Key Management Service (KMS).
+      externalDocs:
+        description: Google Cloud Key Management Service
+        url: https://www.mongodb.com/docs/atlas/security-gcp-kms/
       properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
+        enabled:
+          description: Flag that indicates whether someone enabled encryption at rest for the specified  project. To disable encryption at rest using customer key management and remove the configuration details, pass only this parameter with a value of `false`.
+          type: boolean
+        keyVersionResourceID:
+          description: Resource path that displays the key version resource ID for your Google Cloud KMS.
+          example: projects/my-project-common-0/locations/us-east4/keyRings/my-key-ring-0/cryptoKeys/my-key-0/cryptoKeyVersions/1
           type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    AzureKeyVaultEARPrivateEndpoint:
-      description: Azure Key Vault Encryption At Rest Private Endpoint.
-      properties:
-        cloudProvider:
-          description: Human-readable label that identifies the cloud provider for the Encryption At Rest private endpoint.
-          enum:
-          - AZURE
-          - AWS
-          readOnly: true
-          type: string
-        errorMessage:
-          description: Error message for failures associated with the Encryption At Rest private endpoint.
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the Private Endpoint Service.
+        roleId:
+          description: Unique 24-hexadecimal digit string that identifies the Google Cloud Provider Access Role that MongoDB Cloud uses to access the Google Cloud KMS.
           example: 32b6e34b3d91647abb20e7b8
           pattern: ^([a-f0-9]{24})$
-          readOnly: true
           type: string
-        privateEndpointConnectionName:
-          description: Connection name of the Azure Private Endpoint.
-          readOnly: true
+        serviceAccountKey:
+          description: JavaScript Object Notation (JSON) object that contains the Google Cloud Key Management Service (KMS). Format the JSON as a string and not as an object.
+          externalDocs:
+            description: Google Cloud Authentication
+            url: https://cloud.google.com/docs/authentication/getting-started
           type: string
-        regionName:
-          description: Cloud provider region in which the Encryption At Rest private endpoint is located.
-          oneOf:
-          - description: Microsoft Azure Regions.
-            enum:
-            - US_CENTRAL
-            - US_EAST
-            - US_EAST_2
-            - US_NORTH_CENTRAL
-            - US_WEST
-            - US_SOUTH_CENTRAL
-            - EUROPE_NORTH
-            - EUROPE_WEST
-            - US_WEST_CENTRAL
-            - US_WEST_2
-            - US_WEST_3
-            - CANADA_EAST
-            - CANADA_CENTRAL
-            - BRAZIL_SOUTH
-            - BRAZIL_SOUTHEAST
-            - AUSTRALIA_CENTRAL
-            - AUSTRALIA_CENTRAL_2
-            - AUSTRALIA_EAST
-            - AUSTRALIA_SOUTH_EAST
-            - GERMANY_WEST_CENTRAL
-            - GERMANY_NORTH
-            - SWEDEN_CENTRAL
-            - SWEDEN_SOUTH
-            - SWITZERLAND_NORTH
-            - SWITZERLAND_WEST
-            - UK_SOUTH
-            - UK_WEST
-            - NORWAY_EAST
-            - NORWAY_WEST
-            - INDIA_CENTRAL
-            - INDIA_SOUTH
-            - INDIA_WEST
-            - CHINA_EAST
-            - CHINA_NORTH
-            - ASIA_EAST
-            - JAPAN_EAST
-            - JAPAN_WEST
-            - ASIA_SOUTH_EAST
-            - KOREA_CENTRAL
-            - KOREA_SOUTH
-            - FRANCE_CENTRAL
-            - FRANCE_SOUTH
-            - SOUTH_AFRICA_NORTH
-            - SOUTH_AFRICA_WEST
-            - UAE_CENTRAL
-            - UAE_NORTH
-            - QATAR_CENTRAL
-            - POLAND_CENTRAL
-            - ISRAEL_CENTRAL
-            - ITALY_NORTH
-            - SPAIN_CENTRAL
-            - MEXICO_CENTRAL
-            - NEW_ZEALAND_NORTH
-            - US_GOV_VIRGINIA
-            - US_GOV_ARIZONA
-            - US_GOV_TEXAS
-            title: Azure Regions
-            type: string
-          - description: Physical location where MongoDB Cloud deploys your AWS-hosted MongoDB cluster nodes. The region you choose can affect network latency for clients accessing your databases. When MongoDB Cloud deploys a dedicated cluster, it checks if a VPC or VPC connection exists for that provider and region. If not, MongoDB Cloud creates them as part of the deployment. MongoDB Cloud assigns the VPC a CIDR block. To limit a new VPC peering connection to one CIDR block and region, create the connection first. Deploy the cluster after the connection starts.
-            enum:
-            - US_GOV_WEST_1
-            - US_GOV_EAST_1
-            - US_EAST_1
-            - US_EAST_2
-            - US_WEST_1
-            - US_WEST_2
-            - CA_CENTRAL_1
-            - EU_NORTH_1
-            - EU_WEST_1
-            - EU_WEST_2
-            - EU_WEST_3
-            - EU_CENTRAL_1
-            - EU_CENTRAL_2
-            - AP_EAST_1
-            - AP_EAST_2
-            - AP_NORTHEAST_1
-            - AP_NORTHEAST_2
-            - AP_NORTHEAST_3
-            - AP_SOUTHEAST_1
-            - AP_SOUTHEAST_2
-            - AP_SOUTHEAST_3
-            - AP_SOUTHEAST_4
-            - AP_SOUTHEAST_5
-            - AP_SOUTHEAST_6
-            - AP_SOUTHEAST_7
-            - AP_SOUTH_1
-            - AP_SOUTH_2
-            - SA_EAST_1
-            - CN_NORTH_1
-            - CN_NORTHWEST_1
-            - ME_SOUTH_1
-            - ME_CENTRAL_1
-            - AF_SOUTH_1
-            - EU_SOUTH_1
-            - EU_SOUTH_2
-            - IL_CENTRAL_1
-            - CA_WEST_1
-            - MX_CENTRAL_1
-            - GLOBAL
-            title: AWS Regions
-            type: string
-          type: object
-        status:
-          description: State of the Encryption At Rest private endpoint.
-          enum:
-          - INITIATING
-          - PENDING_ACCEPTANCE
-          - ACTIVE
-          - FAILED
-          - PENDING_RECREATION
-          - DELETING
+          writeOnly: true
+        valid:
+          description: Flag that indicates whether the Google Cloud Key Management Service (KMS) encryption key can encrypt and decrypt data.
           readOnly: true
-          type: string
-      title: Azure Key Vault EAR Private Endpoint
-      type: object
-    EncryptionAtRest:
-      properties:
-        awsKms:
-          $ref: '#/components/schemas/AWSKMSConfiguration'
-        azureKeyVault:
-          $ref: '#/components/schemas/AzureKeyVault'
-        enabledForSearchNodes:
-          description: Flag that indicates whether Encryption at Rest for Dedicated Search Nodes is enabled in the specified project.
           type: boolean
-        googleCloudKms:
-          $ref: '#/components/schemas/GoogleCloudKMS'
       type: object
-    FieldViolation:
+    AzureKeyVault:
+      description: Details that define the configuration of Encryption at Rest using Azure Key Vault (AKV).
+      externalDocs:
+        description: Azure Key Vault
+        url: https://www.mongodb.com/docs/atlas/security-azure-kms/
       properties:
-        description:
-          description: A description of why the request element is bad.
+        azureEnvironment:
+          description: Azure environment in which your account credentials reside.
+          enum:
+          - AZURE
+          - AZURE_CHINA
+          - AZURE_US_GOVERNMENT
           type: string
-        field:
-          description: A path that leads to a field in the request body.
+        clientID:
+          description: Unique 36-hexadecimal character string that identifies an Azure application associated with your Azure Active Directory tenant.
+          format: uuid
           type: string
+        enabled:
+          description: Flag that indicates whether someone enabled encryption at rest for the specified  project. To disable encryption at rest using customer key management and remove the configuration details, pass only this parameter with a value of `false`.
+          type: boolean
+        keyIdentifier:
+          description: Web address with a unique key that identifies for your Azure Key Vault.
+          example: https://EXAMPLEKeyVault.vault.azure.net/keys/EXAMPLEKey/d891821e3d364e9eb88fbd3d11807b86
+          type: string
+        keyVaultName:
+          description: Unique string that identifies the Azure Key Vault that contains your key. This field cannot be modified when you enable and set up private endpoint connections to your Azure Key Vault.
+          type: string
+        requirePrivateNetworking:
+          description: Enable connection to your Azure Key Vault over private networking.
+          type: boolean
+        resourceGroupName:
+          description: Name of the Azure resource group that contains your Azure Key Vault. This field cannot be modified when you enable and set up private endpoint connections to your Azure Key Vault.
+          type: string
+        roleId:
+          description: Unique 24-hexadecimal digit string that identifies the Azure Service Principal that MongoDB Cloud uses to access the Azure Key Vault.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        secret:
+          description: Private data that you need secured and that belongs to the specified Azure Key Vault (AKV) tenant (`azureKeyVault.tenantID`). This data can include any type of sensitive data such as passwords, database connection strings, API keys, and the like. AKV stores this information as encrypted binary data.
+          externalDocs:
+            description: Azure Key Vault Secrets
+            url: https://docs.microsoft.com/en-us/azure/key-vault/secrets/about-secrets
+          type: string
+          writeOnly: true
+        subscriptionID:
+          description: Unique 36-hexadecimal character string that identifies your Azure subscription. This field cannot be modified when you enable and set up private endpoint connections to your Azure Key Vault.
+          format: uuid
+          type: string
+        tenantID:
+          description: Unique 36-hexadecimal character string that identifies the Azure Active Directory tenant within your Azure subscription.
+          format: uuid
+          type: string
+        valid:
+          description: Flag that indicates whether the Azure encryption key can encrypt and decrypt data.
+          readOnly: true
+          type: boolean
+      type: object
+    PaginatedApiAtlasEARPrivateEndpointView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/EARPrivateEndpoint'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
       required:
-      - description
-      - field
+      - results
       type: object
     EARPrivateEndpoint:
       description: Encryption At Rest Private Endpoint.
@@ -1113,159 +1008,206 @@ components:
           type: string
       title: Encryption At Rest Private Endpoint
       type: object
-    GoogleCloudKMS:
-      description: Details that define the configuration of Encryption at Rest using Google Cloud Key Management Service (KMS).
-      externalDocs:
-        description: Google Cloud Key Management Service
-        url: https://www.mongodb.com/docs/atlas/security-gcp-kms/
+    Link:
       properties:
-        enabled:
-          description: Flag that indicates whether someone enabled encryption at rest for the specified  project. To disable encryption at rest using customer key management and remove the configuration details, pass only this parameter with a value of `false`.
-          type: boolean
-        keyVersionResourceID:
-          description: Resource path that displays the key version resource ID for your Google Cloud KMS.
-          example: projects/my-project-common-0/locations/us-east4/keyRings/my-key-ring-0/cryptoKeys/my-key-0/cryptoKeyVersions/1
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
           type: string
-        roleId:
-          description: Unique 24-hexadecimal digit string that identifies the Google Cloud Provider Access Role that MongoDB Cloud uses to access the Google Cloud KMS.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
           type: string
-        serviceAccountKey:
-          description: JavaScript Object Notation (JSON) object that contains the Google Cloud Key Management Service (KMS). Format the JSON as a string and not as an object.
-          externalDocs:
-            description: Google Cloud Authentication
-            url: https://cloud.google.com/docs/authentication/getting-started
-          type: string
-          writeOnly: true
-        valid:
-          description: Flag that indicates whether the Google Cloud Key Management Service (KMS) encryption key can encrypt and decrypt data.
-          readOnly: true
-          type: boolean
       type: object
-    PaginatedApiAtlasEARPrivateEndpointView:
+    ApiError:
       properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
           externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/EARPrivateEndpoint'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
           format: int32
-          minimum: 0
           readOnly: true
           type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
       required:
-      - results
+      - error
+      - errorCode
       type: object
-    AWSKMSConfiguration:
-      description: Amazon Web Services (AWS) KMS configuration details and encryption at rest configuration set for the specified project.
-      externalDocs:
-        description: Amazon Web Services Key Management Service
-        url: https://www.mongodb.com/docs/atlas/security-aws-kms/
+    FieldViolation:
       properties:
-        accessKeyID:
-          description: Unique alphanumeric string that identifies an Identity and Access Management (IAM) access key with permissions required to access your Amazon Web Services (AWS) Customer Master Key (CMK).
-          example: 019dd98d94b4bb778e7552e4
-          maxLength: 128
-          minLength: 16
+        description:
+          description: A description of why the request element is bad.
           type: string
-        customerMasterKeyID:
-          description: Unique alphanumeric string that identifies the Amazon Web Services (AWS) Customer Master Key (CMK) you used to encrypt and decrypt the MongoDB master keys.
-          maxLength: 2048
-          minLength: 1
+        field:
+          description: A path that leads to a field in the request body.
           type: string
-        enabled:
-          description: Flag that indicates whether someone enabled encryption at rest for the specified project through Amazon Web Services (AWS) Key Management Service (KMS). To disable encryption at rest using customer key management and remove the configuration details, pass only this parameter with a value of `false`.
-          type: boolean
-        region:
-          description: Physical location where MongoDB Cloud deploys your AWS-hosted MongoDB cluster nodes. The region you choose can affect network latency for clients accessing your databases. When MongoDB Cloud deploys a dedicated cluster, it checks if a VPC or VPC connection exists for that provider and region. If not, MongoDB Cloud creates them as part of the deployment. MongoDB Cloud assigns the VPC a CIDR block. To limit a new VPC peering connection to one CIDR block and region, create the connection first. Deploy the cluster after the connection starts.
+      required:
+      - description
+      - field
+      type: object
+    AzureKeyVaultEARPrivateEndpoint:
+      description: Azure Key Vault Encryption At Rest Private Endpoint.
+      properties:
+        cloudProvider:
+          description: Human-readable label that identifies the cloud provider for the Encryption At Rest private endpoint.
           enum:
-          - US_GOV_WEST_1
-          - US_GOV_EAST_1
-          - US_EAST_1
-          - US_EAST_2
-          - US_WEST_1
-          - US_WEST_2
-          - CA_CENTRAL_1
-          - EU_NORTH_1
-          - EU_WEST_1
-          - EU_WEST_2
-          - EU_WEST_3
-          - EU_CENTRAL_1
-          - EU_CENTRAL_2
-          - AP_EAST_1
-          - AP_EAST_2
-          - AP_NORTHEAST_1
-          - AP_NORTHEAST_2
-          - AP_NORTHEAST_3
-          - AP_SOUTHEAST_1
-          - AP_SOUTHEAST_2
-          - AP_SOUTHEAST_3
-          - AP_SOUTHEAST_4
-          - AP_SOUTHEAST_5
-          - AP_SOUTHEAST_6
-          - AP_SOUTHEAST_7
-          - AP_SOUTH_1
-          - AP_SOUTH_2
-          - SA_EAST_1
-          - CN_NORTH_1
-          - CN_NORTHWEST_1
-          - ME_SOUTH_1
-          - ME_CENTRAL_1
-          - AF_SOUTH_1
-          - EU_SOUTH_1
-          - EU_SOUTH_2
-          - IL_CENTRAL_1
-          - CA_WEST_1
-          - MX_CENTRAL_1
-          - GLOBAL
-          title: AWS Regions
+          - AZURE
+          - AWS
+          readOnly: true
           type: string
-        requirePrivateNetworking:
-          description: Enable connection to your Amazon Web Services (AWS) Key Management Service (KMS) over private networking.
-          type: boolean
-        roleId:
-          description: Unique 24-hexadecimal digit string that identifies an Amazon Web Services (AWS) Identity and Access Management (IAM) role. This IAM role has the permissions required to manage your AWS customer master key.
+        errorMessage:
+          description: Error message for failures associated with the Encryption At Rest private endpoint.
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the Private Endpoint Service.
           example: 32b6e34b3d91647abb20e7b8
           pattern: ^([a-f0-9]{24})$
-          type: string
-          writeOnly: true
-        secretAccessKey:
-          description: Human-readable label of the Identity and Access Management (IAM) secret access key with permissions required to access your Amazon Web Services (AWS) customer master key.
-          type: string
-          writeOnly: true
-        valid:
-          description: Flag that indicates whether the Amazon Web Services (AWS) Key Management Service (KMS) encryption key can encrypt and decrypt data.
           readOnly: true
-          type: boolean
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
+          type: string
+        privateEndpointConnectionName:
+          description: Connection name of the Azure Private Endpoint.
+          readOnly: true
+          type: string
+        regionName:
+          description: Cloud provider region in which the Encryption At Rest private endpoint is located.
+          oneOf:
+          - description: Microsoft Azure Regions.
+            enum:
+            - US_CENTRAL
+            - US_EAST
+            - US_EAST_2
+            - US_NORTH_CENTRAL
+            - US_WEST
+            - US_SOUTH_CENTRAL
+            - EUROPE_NORTH
+            - EUROPE_WEST
+            - US_WEST_CENTRAL
+            - US_WEST_2
+            - US_WEST_3
+            - CANADA_EAST
+            - CANADA_CENTRAL
+            - BRAZIL_SOUTH
+            - BRAZIL_SOUTHEAST
+            - AUSTRALIA_CENTRAL
+            - AUSTRALIA_CENTRAL_2
+            - AUSTRALIA_EAST
+            - AUSTRALIA_SOUTH_EAST
+            - GERMANY_WEST_CENTRAL
+            - GERMANY_NORTH
+            - SWEDEN_CENTRAL
+            - SWEDEN_SOUTH
+            - SWITZERLAND_NORTH
+            - SWITZERLAND_WEST
+            - UK_SOUTH
+            - UK_WEST
+            - NORWAY_EAST
+            - NORWAY_WEST
+            - INDIA_CENTRAL
+            - INDIA_SOUTH
+            - INDIA_WEST
+            - CHINA_EAST
+            - CHINA_NORTH
+            - ASIA_EAST
+            - JAPAN_EAST
+            - JAPAN_WEST
+            - ASIA_SOUTH_EAST
+            - KOREA_CENTRAL
+            - KOREA_SOUTH
+            - FRANCE_CENTRAL
+            - FRANCE_SOUTH
+            - SOUTH_AFRICA_NORTH
+            - SOUTH_AFRICA_WEST
+            - UAE_CENTRAL
+            - UAE_NORTH
+            - QATAR_CENTRAL
+            - POLAND_CENTRAL
+            - ISRAEL_CENTRAL
+            - ITALY_NORTH
+            - SPAIN_CENTRAL
+            - MEXICO_CENTRAL
+            - NEW_ZEALAND_NORTH
+            - US_GOV_VIRGINIA
+            - US_GOV_ARIZONA
+            - US_GOV_TEXAS
+            title: Azure Regions
+            type: string
+          - description: Physical location where MongoDB Cloud deploys your AWS-hosted MongoDB cluster nodes. The region you choose can affect network latency for clients accessing your databases. When MongoDB Cloud deploys a dedicated cluster, it checks if a VPC or VPC connection exists for that provider and region. If not, MongoDB Cloud creates them as part of the deployment. MongoDB Cloud assigns the VPC a CIDR block. To limit a new VPC peering connection to one CIDR block and region, create the connection first. Deploy the cluster after the connection starts.
+            enum:
+            - US_GOV_WEST_1
+            - US_GOV_EAST_1
+            - US_EAST_1
+            - US_EAST_2
+            - US_WEST_1
+            - US_WEST_2
+            - CA_CENTRAL_1
+            - EU_NORTH_1
+            - EU_WEST_1
+            - EU_WEST_2
+            - EU_WEST_3
+            - EU_CENTRAL_1
+            - EU_CENTRAL_2
+            - AP_EAST_1
+            - AP_EAST_2
+            - AP_NORTHEAST_1
+            - AP_NORTHEAST_2
+            - AP_NORTHEAST_3
+            - AP_SOUTHEAST_1
+            - AP_SOUTHEAST_2
+            - AP_SOUTHEAST_3
+            - AP_SOUTHEAST_4
+            - AP_SOUTHEAST_5
+            - AP_SOUTHEAST_6
+            - AP_SOUTHEAST_7
+            - AP_SOUTH_1
+            - AP_SOUTH_2
+            - SA_EAST_1
+            - CN_NORTH_1
+            - CN_NORTHWEST_1
+            - ME_SOUTH_1
+            - ME_CENTRAL_1
+            - AF_SOUTH_1
+            - EU_SOUTH_1
+            - EU_SOUTH_2
+            - IL_CENTRAL_1
+            - CA_WEST_1
+            - MX_CENTRAL_1
+            - GLOBAL
+            title: AWS Regions
+            type: string
+          type: object
+        status:
+          description: State of the Encryption At Rest private endpoint.
+          enum:
+          - INITIATING
+          - PENDING_ACCEPTANCE
+          - ACTIVE
+          - FAILED
+          - PENDING_RECREATION
+          - DELETING
+          readOnly: true
+          type: string
+      title: Azure Key Vault EAR Private Endpoint
       type: object
   headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
@@ -1274,6 +1216,64 @@ components:
       description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
   securitySchemes:
     DigestAuth:
       scheme: digest

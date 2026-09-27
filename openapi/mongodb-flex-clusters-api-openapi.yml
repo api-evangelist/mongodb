@@ -391,6 +391,17 @@ paths:
       x-xgen-operation-id-override: tenantUpgrade
 components:
   responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     notFound:
       content:
         application/json:
@@ -402,17 +413,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Not Found.
-    forbidden:
+    badRequest:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
+      description: Bad Request.
     internalServerError:
       content:
         application/json:
@@ -424,6 +435,39 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    paymentRequired:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 402
+            errorCode: NO_PAYMENT_INFORMATION_FOUND
+            reason: Payment Required
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Payment Required.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
     tooManyRequests:
       content:
         application/json:
@@ -442,348 +486,37 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    paymentRequired:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 402
-            errorCode: NO_PAYMENT_INFORMATION_FOUND
-            reason: Payment Required
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Payment Required.
-  parameters:
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
   schemas:
-    PaginatedFlexClusters20241113:
+    ClusterDescriptionConnectionStringsPrivateEndpointEndpoint:
+      description: Details of a private endpoint deployed for this cluster.
       properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/FlexClusterDescription20241113'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
+        endpointId:
+          description: Unique string that the cloud provider uses to identify the private endpoint.
           readOnly: true
           type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    AWSRegionConfig20240805:
-      allOf:
-      - $ref: '#/components/schemas/CloudRegionConfig20240805'
-      - properties:
-          analyticsAutoScaling:
-            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
-          analyticsSpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          autoScaling:
-            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
-          effectiveAnalyticsSpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          effectiveElectableSpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          effectiveReadOnlySpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          readOnlySpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-        type: object
-      description: Details that explain how MongoDB Cloud replicates data in one region on the specified MongoDB database.
-      title: AWS Regional Replication Specifications
-      type: object
-    AdvancedAutoScalingSettings:
-      description: Options that determine how this cluster handles resource scaling.
-      properties:
-        compute:
-          $ref: '#/components/schemas/AdvancedComputeAutoScaling'
-        diskGB:
-          $ref: '#/components/schemas/DiskGBAutoScaling'
-      title: Automatic Scaling Settings
-      type: object
-    AdvancedComputeAutoScaling:
-      description: Options that determine how this cluster handles CPU scaling.
-      properties:
-        enabled:
-          description: 'Flag that indicates whether instance size reactive auto-scaling is enabled.
-
-
-            - Set to `true` to enable instance size reactive auto-scaling. If enabled, you must specify a value for `replicationSpecs[n].regionConfigs[m].autoScaling.compute.maxInstanceSize`.
-
-            - Set to `false` to disable instance size reactive auto-scaling.'
-          type: boolean
-        maxInstanceSize:
-          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
-        minInstanceSize:
-          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
-        scaleDownEnabled:
-          description: Flag that indicates whether the instance size may scale down via reactive auto-scaling. MongoDB Cloud requires this parameter if `replicationSpecs[n].regionConfigs[m].autoScaling.compute.enabled` is `true`. If you enable this option, specify a value for `replicationSpecs[n].regionConfigs[m].autoScaling.compute.minInstanceSize`.
-          type: boolean
-      title: Automatic Compute Scaling Settings
-      type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    FlexProviderSettings20241113:
-      description: Group of cloud provider settings that configure the provisioned MongoDB flex cluster.
-      properties:
-        backingProviderName:
-          description: Cloud service provider on which MongoDB Cloud provisioned the flex cluster.
+        providerName:
+          description: Cloud provider in which MongoDB Cloud deploys the private endpoint.
           enum:
           - AWS
           - AZURE
           - GCP
           readOnly: true
           type: string
-        diskSizeGB:
-          description: Storage capacity available to the flex cluster expressed in gigabytes.
-          format: double
-          readOnly: true
-          type: number
-        providerName:
-          default: FLEX
-          description: Human-readable label that identifies the provider type.
-          enum:
-          - FLEX
+        region:
+          description: Region where the private endpoint is deployed.
           readOnly: true
           type: string
-        regionName:
-          description: Human-readable label that identifies the geographic location of your MongoDB flex cluster. The region you choose can affect network latency for clients accessing your databases. For a complete list of region names, see [AWS](https://docs.atlas.mongodb.com/reference/amazon-aws/#std-label-amazon-aws), [GCP](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).
-          readOnly: true
-          type: string
+      title: Cluster Private Endpoint Connection Strings Endpoint
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
       readOnly: true
-      title: Cloud Service Provider Settings for a Flex Cluster
-      type: object
-    ComponentLabel:
-      description: Human-readable labels applied to this MongoDB Cloud component.
-      properties:
-        key:
-          description: Key applied to tag and categorize this component.
-          maxLength: 255
-          minLength: 1
-          type: string
-        value:
-          description: Value set to the Key applied to tag and categorize this component.
-          maxLength: 255
-          minLength: 1
-          type: string
-      title: Component Label
-      type: object
-    FlexClusterDescriptionCreate20241113:
-      description: Settings that you can specify when you create a flex cluster.
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        name:
-          description: Human-readable label that identifies the instance.
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          type: string
-          writeOnly: true
-        providerSettings:
-          $ref: '#/components/schemas/FlexProviderSettingsCreate20241113'
-        tags:
-          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.
-          externalDocs:
-            description: Resource Tags
-            url: https://dochub.mongodb.org/core/add-cluster-tag-atlas
-          items:
-            $ref: '#/components/schemas/ResourceTag'
-          type: array
-        terminationProtectionEnabled:
-          default: false
-          description: Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.
-          type: boolean
-      required:
-      - name
-      - providerSettings
-      title: Flex Cluster Description Create
-      type: object
-    HardwareSpec20240805:
-      description: Hardware specifications for all electable nodes deployed in the region. Electable nodes can become the primary and can enable local reads. If you don't specify this option, MongoDB Cloud deploys no electable nodes to the region.
-      oneOf:
-      - $ref: '#/components/schemas/AWSHardwareSpec20240805'
-      - $ref: '#/components/schemas/AzureHardwareSpec20240805'
-      - $ref: '#/components/schemas/GCPHardwareSpec20240805'
-      - $ref: '#/components/schemas/TenantHardwareSpec20240805'
-      properties:
-        diskSizeGB:
-          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
-          externalDocs:
-            description: Customize Storage
-            url: https://dochub.mongodb.org/core/customize-storage
-          format: double
-          type: number
-      type: object
-    EmployeeAccessGrantView:
-      description: MongoDB employee granted access level and expiration for a cluster.
-      properties:
-        expirationTime:
-          description: Expiration date for the employee access grant. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          type: string
-        grantType:
-          description: Level of access to grant to MongoDB Employees.
-          enum:
-          - CLUSTER_DATABASE_LOGS
-          - CLUSTER_INFRASTRUCTURE
-          - CLUSTER_INFRASTRUCTURE_AND_APP_SERVICES_SYNC_DATA
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-      required:
-      - expirationTime
-      - grantType
       type: object
     AzureHardwareSpec20240805:
       properties:
@@ -845,72 +578,60 @@ components:
           format: int32
           type: integer
       type: object
-    ApiAtlasClusterAdvancedConfigurationView:
-      description: Group of settings that configures a subset of the advanced configuration details.
+    AdvancedAutoScalingSettings:
+      description: Options that determine how this cluster handles resource scaling.
       properties:
-        customOpensslCipherConfigTls12:
-          description: The custom OpenSSL cipher suite list for TLS 1.2. This field is only valid when `tlsCipherConfigMode` is set to `CUSTOM`.
-          externalDocs:
-            description: This option corresponds to the `opensslCipherConfig` `mongod` configuration file option.
-            url: https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.opensslCipherConfig
-          items:
-            enum:
-            - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-            - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-            type: string
-          type: array
-        customOpensslCipherConfigTls13:
-          description: The custom OpenSSL cipher suite list for TLS 1.3. This field is only valid when `tlsCipherConfigMode` is set to `CUSTOM`.
-          externalDocs:
-            description: This option corresponds to the `opensslCipherSuiteConfig` `mongod` configuration file option.
-            url: https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.opensslCipherSuiteConfig
-          items:
-            enum:
-            - TLS_AES_256_GCM_SHA384
-            - TLS_CHACHA20_POLY1305_SHA256
-            - TLS_AES_128_GCM_SHA256
-            - TLS_AES_128_CCM_SHA256
-            type: string
-          maxItems: 4
-          type: array
-        minimumEnabledTlsProtocol:
-          description: Minimum Transport Layer Security (TLS) version that the cluster accepts for incoming connections. Clusters using TLS 1.0 or 1.1 should consider setting TLS 1.2 as the minimum TLS protocol version.
-          enum:
-          - TLS1_0
-          - TLS1_1
-          - TLS1_2
-          - TLS1_3
-          externalDocs:
-            description: This option corresponds to the `net.ssl.disabledProtocols` `mongod` configuration file option.
-            url: https://docs.mongodb.com/upcoming/reference/configuration-options/#mongodb-setting-net.ssl.disabledProtocols
-          type: string
-        tlsCipherConfigMode:
-          description: The TLS cipher suite configuration mode. The default mode uses the default cipher suites. The custom mode allows you to specify custom cipher suites for both TLS 1.2 and TLS 1.3.
-          enum:
-          - CUSTOM
-          - DEFAULT
-          type: string
+        compute:
+          $ref: '#/components/schemas/AdvancedComputeAutoScaling'
+        diskGB:
+          $ref: '#/components/schemas/DiskGBAutoScaling'
+      title: Automatic Scaling Settings
       type: object
-    BiConnector:
-      description: Settings needed to configure the MongoDB Connector for Business Intelligence for this cluster.
-      externalDocs:
-        description: MongoDB Connector for Business Intelligence
-        url: https://docs.mongodb.com/bi-connector/current/
+    AdvancedComputeAutoScaling:
+      description: Options that determine how this cluster handles CPU scaling.
       properties:
         enabled:
-          description: Flag that indicates whether MongoDB Connector for Business Intelligence is enabled on the specified cluster.
+          description: 'Flag that indicates whether instance size reactive auto-scaling is enabled.
+
+
+            - Set to `true` to enable instance size reactive auto-scaling. If enabled, you must specify a value for `replicationSpecs[n].regionConfigs[m].autoScaling.compute.maxInstanceSize`.
+
+            - Set to `false` to disable instance size reactive auto-scaling.'
           type: boolean
-        readPreference:
-          description: Data source node designated for the MongoDB Connector for Business Intelligence on MongoDB Cloud. The MongoDB Connector for Business Intelligence on MongoDB Cloud reads data from the primary, secondary, or analytics node based on your read preferences. Defaults to `ANALYTICS` node, or `SECONDARY` if there are no `ANALYTICS` nodes.
-          enum:
-          - PRIMARY
-          - SECONDARY
-          - ANALYTICS
+        maxInstanceSize:
+          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
+        minInstanceSize:
+          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
+        scaleDownEnabled:
+          description: Flag that indicates whether the instance size may scale down via reactive auto-scaling. MongoDB Cloud requires this parameter if `replicationSpecs[n].regionConfigs[m].autoScaling.compute.enabled` is `true`. If you enable this option, specify a value for `replicationSpecs[n].regionConfigs[m].autoScaling.compute.minInstanceSize`.
+          type: boolean
+      title: Automatic Compute Scaling Settings
+      type: object
+    PaginatedFlexClusters20241113:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
           externalDocs:
-            description: Read preferences for BI Connector
-            url: https://docs.atlas.mongodb.com/cluster-config/enable-bic/#std-label-bic-read-preferences
-          type: string
-      title: MongoDB Connector for Business Intelligence Settings
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/FlexClusterDescription20241113'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
       type: object
     DiskGBAutoScaling:
       description: Setting that enables disk auto-scaling.
@@ -918,63 +639,6 @@ components:
         enabled:
           description: Flag that indicates whether this cluster enables disk auto-scaling. The maximum memory allowed for the selected cluster tier and the oplog size can limit storage auto-scaling.
           type: boolean
-      type: object
-    AWSHardwareSpec20240805:
-      description: Hardware specifications for nodes deployed in the region.
-      properties:
-        diskIOPS:
-          description: "Target IOPS (Input/Output Operations Per Second) desired for storage attached to this hardware.\n\n You can set different IOPS values on different shards when provisioned IOPS are supported.\n\n Change this parameter if you:\n\n- set `replicationSpecs[n].regionConfigs[m].providerName` to `AWS`.\n- set `replicationSpecs[n].regionConfigs[m].electableSpecs.instanceSize` to `M30` or greater (not including `Mxx_NVME` tiers).\n\n- set `replicationSpecs[n].regionConfigs[m].electableSpecs.ebsVolumeType` to `PROVISIONED`.\n\nThe maximum input/output operations per second (IOPS) depend on the selected `.instanceSize` and `.diskSizeGB`.\nThis parameter defaults to the cluster tier's standard IOPS value.\nChanging this value impacts cluster cost.\nMongoDB Cloud enforces minimum ratios of storage capacity to system memory for given cluster tiers. This keeps cluster performance consistent with large datasets.\n\n- Instance sizes `M10` to `M40` have a ratio of disk capacity to system memory of 60:1.\n- Instance sizes greater than `M40` have a ratio of 120:1."
-          format: int32
-          type: integer
-        diskSizeGB:
-          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
-          externalDocs:
-            description: Customize Storage
-            url: https://dochub.mongodb.org/core/customize-storage
-          format: double
-          type: number
-        ebsVolumeType:
-          default: STANDARD
-          description: "Type of storage you want to attach to your AWS-provisioned cluster.\n\n- `STANDARD` volume types can't exceed the default input/output operations per second (IOPS) rate for the selected volume size. \n\n- `PROVISIONED` volume types must fall within the allowable IOPS range for the selected volume size. You must set this value to (`PROVISIONED`) for NVMe clusters."
-          enum:
-          - STANDARD
-          - PROVISIONED
-          type: string
-        instanceSize:
-          description: Hardware specification for the instance sizes in this region in this shard. Each instance size has a default storage and memory capacity. Electable nodes and read-only nodes (known as "base nodes") within a single shard must use the same instance size. Analytics nodes can scale independently from base nodes within a shard. Both base nodes and analytics nodes can scale independently from their equivalents in other shards.
-          enum:
-          - M10
-          - M20
-          - M30
-          - M40
-          - M50
-          - M60
-          - M80
-          - M100
-          - M140
-          - M200
-          - M300
-          - R40
-          - R50
-          - R60
-          - R80
-          - R200
-          - R300
-          - R400
-          - R700
-          - M40_NVME
-          - M50_NVME
-          - M60_NVME
-          - M80_NVME
-          - M200_NVME
-          - M400_NVME
-          title: AWS Instance Sizes
-          type: string
-        nodeCount:
-          description: Number of nodes of the given type for MongoDB Cloud to deploy to the region.
-          format: int32
-          type: integer
-      title: AWS Cluster Hardware Settings
       type: object
     GCPRegionConfig20240805:
       allOf:
@@ -1258,123 +922,20 @@ components:
       - name
       title: Tenant Cluster Upgrade Request
       type: object
-    FieldViolation:
+    EmployeeAccessGrantView:
+      description: MongoDB employee granted access level and expiration for a cluster.
       properties:
-        description:
-          description: A description of why the request element is bad.
+        expirationTime:
+          description: Expiration date for the employee access grant. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    ClusterDescriptionConnectionStringsPrivateEndpointEndpoint:
-      description: Details of a private endpoint deployed for this cluster.
-      properties:
-        endpointId:
-          description: Unique string that the cloud provider uses to identify the private endpoint.
-          readOnly: true
-          type: string
-        providerName:
-          description: Cloud provider in which MongoDB Cloud deploys the private endpoint.
+        grantType:
+          description: Level of access to grant to MongoDB Employees.
           enum:
-          - AWS
-          - AZURE
-          - GCP
-          readOnly: true
+          - CLUSTER_DATABASE_LOGS
+          - CLUSTER_INFRASTRUCTURE
+          - CLUSTER_INFRASTRUCTURE_AND_APP_SERVICES_SYNC_DATA
           type: string
-        region:
-          description: Region where the private endpoint is deployed.
-          readOnly: true
-          type: string
-      title: Cluster Private Endpoint Connection Strings Endpoint
-      type: object
-    BaseCloudProviderInstanceSize:
-      description: Instance size boundary to which your cluster can automatically scale.
-      oneOf:
-      - enum:
-        - M10
-        - M20
-        - M30
-        - M40
-        - M50
-        - M60
-        - M80
-        - M100
-        - M140
-        - M200
-        - M300
-        - R40
-        - R50
-        - R60
-        - R80
-        - R200
-        - R300
-        - R400
-        - R700
-        - M40_NVME
-        - M50_NVME
-        - M60_NVME
-        - M80_NVME
-        - M200_NVME
-        - M400_NVME
-        title: AWS Instance Sizes
-        type: string
-      - enum:
-        - M10
-        - M20
-        - M30
-        - M40
-        - M50
-        - M60
-        - M80
-        - M90
-        - M200
-        - R40
-        - R50
-        - R60
-        - R80
-        - R200
-        - R300
-        - R400
-        - M60_NVME
-        - M80_NVME
-        - M200_NVME
-        - M300_NVME
-        - M400_NVME
-        - M600_NVME
-        title: Azure Instance Sizes
-        type: string
-      - enum:
-        - M10
-        - M20
-        - M30
-        - M40
-        - M50
-        - M60
-        - M80
-        - M140
-        - M200
-        - M250
-        - M300
-        - M400
-        - R40
-        - R50
-        - R60
-        - R80
-        - R200
-        - R300
-        - R400
-        - R600
-        title: GCP Instance Sizes
-        type: string
-      readOnly: true
-      type: object
-    FlexClusterDescriptionUpdate20241113:
-      description: Settings that you can specify when you update a flex cluster.
-      properties:
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
           externalDocs:
@@ -1384,39 +945,9 @@ components:
             $ref: '#/components/schemas/Link'
           readOnly: true
           type: array
-        tags:
-          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.
-          externalDocs:
-            description: Resource Tags
-            url: https://dochub.mongodb.org/core/add-cluster-tag-atlas
-          items:
-            $ref: '#/components/schemas/ResourceTag'
-          type: array
-        terminationProtectionEnabled:
-          default: false
-          description: Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.
-          type: boolean
-      title: Flex Cluster Description Update
-      type: object
-    DedicatedHardwareSpec20240805:
-      description: The current hardware specifications for read only nodes in the region.
-      oneOf:
-      - $ref: '#/components/schemas/AWSHardwareSpec20240805'
-      - $ref: '#/components/schemas/AzureHardwareSpec20240805'
-      - $ref: '#/components/schemas/GCPHardwareSpec20240805'
-      properties:
-        diskSizeGB:
-          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
-          externalDocs:
-            description: Customize Storage
-            url: https://dochub.mongodb.org/core/customize-storage
-          format: double
-          type: number
-        nodeCount:
-          description: Number of nodes of the given type for MongoDB Cloud to deploy to the region.
-          format: int32
-          type: integer
-      readOnly: true
+      required:
+      - expirationTime
+      - grantType
       type: object
     TenantHardwareSpec20240805:
       properties:
@@ -1444,118 +975,6 @@ components:
           - M5
           title: Tenant Instance Sizes
           type: string
-      type: object
-    AzureRegionConfig20240805:
-      allOf:
-      - $ref: '#/components/schemas/CloudRegionConfig20240805'
-      - properties:
-          analyticsAutoScaling:
-            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
-          analyticsSpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          autoScaling:
-            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
-          effectiveAnalyticsSpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          effectiveElectableSpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          effectiveReadOnlySpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-          readOnlySpecs:
-            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
-        type: object
-      description: Details that explain how MongoDB Cloud replicates data in one region on the specified MongoDB database.
-      title: Azure Regional Replication Specifications
-      type: object
-    TenantRegionConfig20240805:
-      allOf:
-      - $ref: '#/components/schemas/CloudRegionConfig20240805'
-      - properties:
-          backingProviderName:
-            description: "Cloud service provider on which MongoDB Cloud provisioned the multi-tenant cluster. The resource returns this parameter when `providerName` is `TENANT` and `electableSpecs.instanceSize` is `M0`, `M2` or `M5`. \n\nPlease note that  using an `instanceSize` of `M2` or `M5` will create a Flex cluster instead. Support for the `instanceSize` of `M2` or `M5` will be discontinued in January 2026. We recommend using the Create Flex Cluster API for such configurations moving forward."
-            enum:
-            - AWS
-            - GCP
-            - AZURE
-            externalDocs:
-              description: Create Flex Cluster API
-              url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Flex-Clusters/operation/createFlexCluster
-            type: string
-        type: object
-      description: Details that explain how MongoDB Cloud replicates data in one region on the specified MongoDB database.
-      title: Tenant Regional Replication Specifications
-      type: object
-    GCPHardwareSpec20240805:
-      properties:
-        diskSizeGB:
-          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
-          externalDocs:
-            description: Customize Storage
-            url: https://dochub.mongodb.org/core/customize-storage
-          format: double
-          type: number
-        instanceSize:
-          description: Hardware specification for the instance sizes in this region in this shard. Each instance size has a default storage and memory capacity. Electable nodes and read-only nodes (known as "base nodes") within a single shard must use the same instance size. Analytics nodes can scale independently from base nodes within a shard. Both base nodes and analytics nodes can scale independently from their equivalents in other shards.
-          enum:
-          - M10
-          - M20
-          - M30
-          - M40
-          - M50
-          - M60
-          - M80
-          - M140
-          - M200
-          - M250
-          - M300
-          - M400
-          - R40
-          - R50
-          - R60
-          - R80
-          - R200
-          - R300
-          - R400
-          - R600
-          title: GCP Instance Sizes
-          type: string
-        nodeCount:
-          description: Number of nodes of the given type for MongoDB Cloud to deploy to the region.
-          format: int32
-          type: integer
-      type: object
-    ClusterDescriptionConnectionStringsPrivateEndpoint:
-      description: Private endpoint-aware connection string that you can use to connect to this cluster through a private endpoint.
-      externalDocs:
-        description: Private Endpoint for Dedicated Cluster
-        url: https://docs.atlas.mongodb.com/security-private-endpoint/
-      properties:
-        connectionString:
-          description: Private endpoint-aware connection string that uses the `mongodb://` protocol to connect to MongoDB Cloud through a private endpoint.
-          readOnly: true
-          type: string
-        endpoints:
-          description: List that contains the private endpoints through which you connect to MongoDB Cloud when you use `connectionStrings.privateEndpoint[n].connectionString` or `connectionStrings.privateEndpoint[n].srvConnectionString`.
-          items:
-            $ref: '#/components/schemas/ClusterDescriptionConnectionStringsPrivateEndpointEndpoint'
-          readOnly: true
-          type: array
-        srvConnectionString:
-          description: Private endpoint-aware connection string that uses the `mongodb+srv://` protocol to connect to MongoDB Cloud through a private endpoint. The `mongodb+srv` protocol tells the driver to look up the seed list of hosts in the Domain Name System (DNS). This list synchronizes with the nodes in a cluster. If the connection string uses this Uniform Resource Identifier (URI) format, you don't need to append the seed list or change the Uniform Resource Identifier (URI) if the nodes change. Use this Uniform Resource Identifier (URI) format if your application supports it. If it doesn't, use `connectionStrings.privateEndpoint[n].connectionString`.
-          readOnly: true
-          type: string
-        srvShardOptimizedConnectionString:
-          description: Private endpoint-aware connection string optimized for sharded clusters that uses the `mongodb+srv://` protocol to connect to MongoDB Cloud through a private endpoint. If the connection string uses this Uniform Resource Identifier (URI) format, you don't need to change the Uniform Resource Identifier (URI) if the nodes change. Use this Uniform Resource Identifier (URI) format if your application and Atlas cluster supports it. If it doesn't, use and consult the documentation for `connectionStrings.privateEndpoint[n].srvConnectionString`.
-          readOnly: true
-          type: string
-        type:
-          description: MongoDB process type to which your application connects. Use `MONGOD` for replica sets and `MONGOS` for sharded clusters.
-          enum:
-          - MONGOD
-          - MONGOS
-          readOnly: true
-          type: string
-      title: Cluster Private Endpoint Connection String
       type: object
     FlexBackupSettings20241113:
       description: Flex backup configuration.
@@ -1768,28 +1187,320 @@ components:
           type: object
       title: Cloud Service Provider Settings
       type: object
-    FlexConnectionStrings20241113:
-      description: Collection of Uniform Resource Locators that point to the MongoDB database.
-      externalDocs:
-        description: Connection string URI format.
-        url: https://docs.mongodb.com/manual/reference/connection-string/
+    AzureRegionConfig20240805:
+      allOf:
+      - $ref: '#/components/schemas/CloudRegionConfig20240805'
+      - properties:
+          analyticsAutoScaling:
+            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
+          analyticsSpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          autoScaling:
+            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
+          effectiveAnalyticsSpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          effectiveElectableSpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          effectiveReadOnlySpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          readOnlySpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+        type: object
+      description: Details that explain how MongoDB Cloud replicates data in one region on the specified MongoDB database.
+      title: Azure Regional Replication Specifications
+      type: object
+    AWSRegionConfig20240805:
+      allOf:
+      - $ref: '#/components/schemas/CloudRegionConfig20240805'
+      - properties:
+          analyticsAutoScaling:
+            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
+          analyticsSpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          autoScaling:
+            $ref: '#/components/schemas/AdvancedAutoScalingSettings'
+          effectiveAnalyticsSpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          effectiveElectableSpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          effectiveReadOnlySpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+          readOnlySpecs:
+            $ref: '#/components/schemas/DedicatedHardwareSpec20240805'
+        type: object
+      description: Details that explain how MongoDB Cloud replicates data in one region on the specified MongoDB database.
+      title: AWS Regional Replication Specifications
+      type: object
+    BaseCloudProviderInstanceSize:
+      description: Instance size boundary to which your cluster can automatically scale.
+      oneOf:
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M100
+        - M140
+        - M200
+        - M300
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - R700
+        - M40_NVME
+        - M50_NVME
+        - M60_NVME
+        - M80_NVME
+        - M200_NVME
+        - M400_NVME
+        title: AWS Instance Sizes
+        type: string
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M90
+        - M200
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - M60_NVME
+        - M80_NVME
+        - M200_NVME
+        - M300_NVME
+        - M400_NVME
+        - M600_NVME
+        title: Azure Instance Sizes
+        type: string
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M140
+        - M200
+        - M250
+        - M300
+        - M400
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - R600
+        title: GCP Instance Sizes
+        type: string
+      readOnly: true
+      type: object
+    FlexClusterDescription20241113:
+      description: Group of settings that configure a MongoDB Flex cluster.
       properties:
-        standard:
-          description: Public connection string that you can use to connect to this cluster. This connection string uses the `mongodb://` protocol.
-          externalDocs:
-            description: Connection String URI Format
-            url: https://docs.mongodb.com/manual/reference/connection-string/
+        backupSettings:
+          $ref: '#/components/schemas/FlexBackupSettings20241113'
+        clusterType:
+          default: REPLICASET
+          description: Flex cluster topology.
+          enum:
+          - REPLICASET
           readOnly: true
           type: string
-        standardSrv:
-          description: Public connection string that you can use to connect to this flex cluster. This connection string uses the `mongodb+srv://` protocol.
+        connectionStrings:
+          $ref: '#/components/schemas/FlexConnectionStrings20241113'
+        createDate:
+          description: Date and time when MongoDB Cloud created this instance. This parameter expresses its value in ISO 8601 format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal character string that identifies the project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the instance.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
           externalDocs:
-            description: Connection String URI Format
-            url: https://docs.mongodb.com/manual/reference/connection-string/
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        mongoDBVersion:
+          description: Version of MongoDB that the instance runs.
+          pattern: ([\d]+\.[\d]+\.[\d]+)
+          readOnly: true
+          type: string
+        name:
+          description: Human-readable label that identifies the instance.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          readOnly: true
+          type: string
+        providerSettings:
+          $ref: '#/components/schemas/FlexProviderSettings20241113'
+        stateName:
+          description: "Human-readable label that indicates any current activity being taken on this cluster by the Atlas control plane. With the exception of CREATING and DELETING states, clusters should always be available and have a Primary node even when in states indicating ongoing activity.\n\n - `IDLE`: Atlas is making no changes to this cluster and all changes requested via the UI or API can be assumed to have been applied.\n - `CREATING`: A cluster being provisioned for the very first time returns state CREATING until it is ready for connections. Ensure IP Access List and DB Users are configured before attempting to connect.\n - `UPDATING`: A change requested via the UI, API, AutoScaling, or other scheduled activity is taking place.\n - `DELETING`: The cluster is in the process of deletion and will soon be deleted.\n - `REPAIRING`: One or more nodes in the cluster are being returned to service by the Atlas control plane. Other nodes should continue to provide service as normal."
+          enum:
+          - IDLE
+          - CREATING
+          - UPDATING
+          - DELETING
+          - REPAIRING
+          readOnly: true
+          type: string
+        tags:
+          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.
+          externalDocs:
+            description: Resource Tags
+            url: https://dochub.mongodb.org/core/add-cluster-tag-atlas
+          items:
+            $ref: '#/components/schemas/ResourceTag'
+          type: array
+        terminationProtectionEnabled:
+          default: false
+          description: Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.
+          type: boolean
+        versionReleaseSystem:
+          default: LTS
+          description: Method by which the cluster maintains the MongoDB versions.
+          enum:
+          - LTS
+          readOnly: true
+          type: string
+      required:
+      - providerSettings
+      title: Flex Cluster Description
+      type: object
+    DedicatedHardwareSpec20240805:
+      description: The current hardware specifications for read only nodes in the region.
+      oneOf:
+      - $ref: '#/components/schemas/AWSHardwareSpec20240805'
+      - $ref: '#/components/schemas/AzureHardwareSpec20240805'
+      - $ref: '#/components/schemas/GCPHardwareSpec20240805'
+      properties:
+        diskSizeGB:
+          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
+          externalDocs:
+            description: Customize Storage
+            url: https://dochub.mongodb.org/core/customize-storage
+          format: double
+          type: number
+        nodeCount:
+          description: Number of nodes of the given type for MongoDB Cloud to deploy to the region.
+          format: int32
+          type: integer
+      readOnly: true
+      type: object
+    BiConnector:
+      description: Settings needed to configure the MongoDB Connector for Business Intelligence for this cluster.
+      externalDocs:
+        description: MongoDB Connector for Business Intelligence
+        url: https://docs.mongodb.com/bi-connector/current/
+      properties:
+        enabled:
+          description: Flag that indicates whether MongoDB Connector for Business Intelligence is enabled on the specified cluster.
+          type: boolean
+        readPreference:
+          description: Data source node designated for the MongoDB Connector for Business Intelligence on MongoDB Cloud. The MongoDB Connector for Business Intelligence on MongoDB Cloud reads data from the primary, secondary, or analytics node based on your read preferences. Defaults to `ANALYTICS` node, or `SECONDARY` if there are no `ANALYTICS` nodes.
+          enum:
+          - PRIMARY
+          - SECONDARY
+          - ANALYTICS
+          externalDocs:
+            description: Read preferences for BI Connector
+            url: https://docs.atlas.mongodb.com/cluster-config/enable-bic/#std-label-bic-read-preferences
+          type: string
+      title: MongoDB Connector for Business Intelligence Settings
+      type: object
+    HardwareSpec20240805:
+      description: Hardware specifications for all electable nodes deployed in the region. Electable nodes can become the primary and can enable local reads. If you don't specify this option, MongoDB Cloud deploys no electable nodes to the region.
+      oneOf:
+      - $ref: '#/components/schemas/AWSHardwareSpec20240805'
+      - $ref: '#/components/schemas/AzureHardwareSpec20240805'
+      - $ref: '#/components/schemas/GCPHardwareSpec20240805'
+      - $ref: '#/components/schemas/TenantHardwareSpec20240805'
+      properties:
+        diskSizeGB:
+          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
+          externalDocs:
+            description: Customize Storage
+            url: https://dochub.mongodb.org/core/customize-storage
+          format: double
+          type: number
+      type: object
+    FlexProviderSettings20241113:
+      description: Group of cloud provider settings that configure the provisioned MongoDB flex cluster.
+      properties:
+        backingProviderName:
+          description: Cloud service provider on which MongoDB Cloud provisioned the flex cluster.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          readOnly: true
+          type: string
+        diskSizeGB:
+          description: Storage capacity available to the flex cluster expressed in gigabytes.
+          format: double
+          readOnly: true
+          type: number
+        providerName:
+          default: FLEX
+          description: Human-readable label that identifies the provider type.
+          enum:
+          - FLEX
+          readOnly: true
+          type: string
+        regionName:
+          description: Human-readable label that identifies the geographic location of your MongoDB flex cluster. The region you choose can affect network latency for clients accessing your databases. For a complete list of region names, see [AWS](https://docs.atlas.mongodb.com/reference/amazon-aws/#std-label-amazon-aws), [GCP](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).
           readOnly: true
           type: string
       readOnly: true
-      title: Flex Cluster Connection Strings
+      title: Cloud Service Provider Settings for a Flex Cluster
+      type: object
+    ResourceTag:
+      description: 'Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.'
+      properties:
+        key:
+          description: 'Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.'
+          maxLength: 255
+          minLength: 1
+          type: string
+        value:
+          description: 'Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.'
+          maxLength: 255
+          minLength: 1
+          type: string
+      required:
+      - key
+      - value
+      title: Resource Tag
       type: object
     ReplicationSpec20240805:
       description: Details that explain how MongoDB Cloud replicates data on the specified MongoDB database.
@@ -1822,33 +1533,353 @@ components:
           type: string
       title: Replication Specifications
       type: object
-    ResourceTag:
-      description: 'Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.'
+    TenantRegionConfig20240805:
+      allOf:
+      - $ref: '#/components/schemas/CloudRegionConfig20240805'
+      - properties:
+          backingProviderName:
+            description: "Cloud service provider on which MongoDB Cloud provisioned the multi-tenant cluster. The resource returns this parameter when `providerName` is `TENANT` and `electableSpecs.instanceSize` is `M0`, `M2` or `M5`. \n\nPlease note that  using an `instanceSize` of `M2` or `M5` will create a Flex cluster instead. Support for the `instanceSize` of `M2` or `M5` will be discontinued in January 2026. We recommend using the Create Flex Cluster API for such configurations moving forward."
+            enum:
+            - AWS
+            - GCP
+            - AZURE
+            externalDocs:
+              description: Create Flex Cluster API
+              url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Flex-Clusters/operation/createFlexCluster
+            type: string
+        type: object
+      description: Details that explain how MongoDB Cloud replicates data in one region on the specified MongoDB database.
+      title: Tenant Regional Replication Specifications
+      type: object
+    FlexClusterDescriptionCreate20241113:
+      description: Settings that you can specify when you create a flex cluster.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable label that identifies the instance.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+          writeOnly: true
+        providerSettings:
+          $ref: '#/components/schemas/FlexProviderSettingsCreate20241113'
+        tags:
+          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.
+          externalDocs:
+            description: Resource Tags
+            url: https://dochub.mongodb.org/core/add-cluster-tag-atlas
+          items:
+            $ref: '#/components/schemas/ResourceTag'
+          type: array
+        terminationProtectionEnabled:
+          default: false
+          description: Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.
+          type: boolean
+      required:
+      - name
+      - providerSettings
+      title: Flex Cluster Description Create
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    ApiAtlasClusterAdvancedConfigurationView:
+      description: Group of settings that configures a subset of the advanced configuration details.
+      properties:
+        customOpensslCipherConfigTls12:
+          description: The custom OpenSSL cipher suite list for TLS 1.2. This field is only valid when `tlsCipherConfigMode` is set to `CUSTOM`.
+          externalDocs:
+            description: This option corresponds to the `opensslCipherConfig` `mongod` configuration file option.
+            url: https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.opensslCipherConfig
+          items:
+            enum:
+            - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+            - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+            type: string
+          type: array
+        customOpensslCipherConfigTls13:
+          description: The custom OpenSSL cipher suite list for TLS 1.3. This field is only valid when `tlsCipherConfigMode` is set to `CUSTOM`.
+          externalDocs:
+            description: This option corresponds to the `opensslCipherSuiteConfig` `mongod` configuration file option.
+            url: https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.opensslCipherSuiteConfig
+          items:
+            enum:
+            - TLS_AES_256_GCM_SHA384
+            - TLS_CHACHA20_POLY1305_SHA256
+            - TLS_AES_128_GCM_SHA256
+            - TLS_AES_128_CCM_SHA256
+            type: string
+          maxItems: 4
+          type: array
+        minimumEnabledTlsProtocol:
+          description: Minimum Transport Layer Security (TLS) version that the cluster accepts for incoming connections. Clusters using TLS 1.0 or 1.1 should consider setting TLS 1.2 as the minimum TLS protocol version.
+          enum:
+          - TLS1_0
+          - TLS1_1
+          - TLS1_2
+          - TLS1_3
+          externalDocs:
+            description: This option corresponds to the `net.ssl.disabledProtocols` `mongod` configuration file option.
+            url: https://docs.mongodb.com/upcoming/reference/configuration-options/#mongodb-setting-net.ssl.disabledProtocols
+          type: string
+        tlsCipherConfigMode:
+          description: The TLS cipher suite configuration mode. The default mode uses the default cipher suites. The custom mode allows you to specify custom cipher suites for both TLS 1.2 and TLS 1.3.
+          enum:
+          - CUSTOM
+          - DEFAULT
+          type: string
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    AWSHardwareSpec20240805:
+      description: Hardware specifications for nodes deployed in the region.
+      properties:
+        diskIOPS:
+          description: "Target IOPS (Input/Output Operations Per Second) desired for storage attached to this hardware.\n\n You can set different IOPS values on different shards when provisioned IOPS are supported.\n\n Change this parameter if you:\n\n- set `replicationSpecs[n].regionConfigs[m].providerName` to `AWS`.\n- set `replicationSpecs[n].regionConfigs[m].electableSpecs.instanceSize` to `M30` or greater (not including `Mxx_NVME` tiers).\n\n- set `replicationSpecs[n].regionConfigs[m].electableSpecs.ebsVolumeType` to `PROVISIONED`.\n\nThe maximum input/output operations per second (IOPS) depend on the selected `.instanceSize` and `.diskSizeGB`.\nThis parameter defaults to the cluster tier's standard IOPS value.\nChanging this value impacts cluster cost.\nMongoDB Cloud enforces minimum ratios of storage capacity to system memory for given cluster tiers. This keeps cluster performance consistent with large datasets.\n\n- Instance sizes `M10` to `M40` have a ratio of disk capacity to system memory of 60:1.\n- Instance sizes greater than `M40` have a ratio of 120:1."
+          format: int32
+          type: integer
+        diskSizeGB:
+          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
+          externalDocs:
+            description: Customize Storage
+            url: https://dochub.mongodb.org/core/customize-storage
+          format: double
+          type: number
+        ebsVolumeType:
+          default: STANDARD
+          description: "Type of storage you want to attach to your AWS-provisioned cluster.\n\n- `STANDARD` volume types can't exceed the default input/output operations per second (IOPS) rate for the selected volume size. \n\n- `PROVISIONED` volume types must fall within the allowable IOPS range for the selected volume size. You must set this value to (`PROVISIONED`) for NVMe clusters."
+          enum:
+          - STANDARD
+          - PROVISIONED
+          type: string
+        instanceSize:
+          description: Hardware specification for the instance sizes in this region in this shard. Each instance size has a default storage and memory capacity. Electable nodes and read-only nodes (known as "base nodes") within a single shard must use the same instance size. Analytics nodes can scale independently from base nodes within a shard. Both base nodes and analytics nodes can scale independently from their equivalents in other shards.
+          enum:
+          - M10
+          - M20
+          - M30
+          - M40
+          - M50
+          - M60
+          - M80
+          - M100
+          - M140
+          - M200
+          - M300
+          - R40
+          - R50
+          - R60
+          - R80
+          - R200
+          - R300
+          - R400
+          - R700
+          - M40_NVME
+          - M50_NVME
+          - M60_NVME
+          - M80_NVME
+          - M200_NVME
+          - M400_NVME
+          title: AWS Instance Sizes
+          type: string
+        nodeCount:
+          description: Number of nodes of the given type for MongoDB Cloud to deploy to the region.
+          format: int32
+          type: integer
+      title: AWS Cluster Hardware Settings
+      type: object
+    FlexClusterDescriptionUpdate20241113:
+      description: Settings that you can specify when you update a flex cluster.
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        tags:
+          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.
+          externalDocs:
+            description: Resource Tags
+            url: https://dochub.mongodb.org/core/add-cluster-tag-atlas
+          items:
+            $ref: '#/components/schemas/ResourceTag'
+          type: array
+        terminationProtectionEnabled:
+          default: false
+          description: Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.
+          type: boolean
+      title: Flex Cluster Description Update
+      type: object
+    FlexConnectionStrings20241113:
+      description: Collection of Uniform Resource Locators that point to the MongoDB database.
+      externalDocs:
+        description: Connection string URI format.
+        url: https://docs.mongodb.com/manual/reference/connection-string/
+      properties:
+        standard:
+          description: Public connection string that you can use to connect to this cluster. This connection string uses the `mongodb://` protocol.
+          externalDocs:
+            description: Connection String URI Format
+            url: https://docs.mongodb.com/manual/reference/connection-string/
+          readOnly: true
+          type: string
+        standardSrv:
+          description: Public connection string that you can use to connect to this flex cluster. This connection string uses the `mongodb+srv://` protocol.
+          externalDocs:
+            description: Connection String URI Format
+            url: https://docs.mongodb.com/manual/reference/connection-string/
+          readOnly: true
+          type: string
+      readOnly: true
+      title: Flex Cluster Connection Strings
+      type: object
+    ClusterDescriptionConnectionStringsPrivateEndpoint:
+      description: Private endpoint-aware connection string that you can use to connect to this cluster through a private endpoint.
+      externalDocs:
+        description: Private Endpoint for Dedicated Cluster
+        url: https://docs.atlas.mongodb.com/security-private-endpoint/
+      properties:
+        connectionString:
+          description: Private endpoint-aware connection string that uses the `mongodb://` protocol to connect to MongoDB Cloud through a private endpoint.
+          readOnly: true
+          type: string
+        endpoints:
+          description: List that contains the private endpoints through which you connect to MongoDB Cloud when you use `connectionStrings.privateEndpoint[n].connectionString` or `connectionStrings.privateEndpoint[n].srvConnectionString`.
+          items:
+            $ref: '#/components/schemas/ClusterDescriptionConnectionStringsPrivateEndpointEndpoint'
+          readOnly: true
+          type: array
+        srvConnectionString:
+          description: Private endpoint-aware connection string that uses the `mongodb+srv://` protocol to connect to MongoDB Cloud through a private endpoint. The `mongodb+srv` protocol tells the driver to look up the seed list of hosts in the Domain Name System (DNS). This list synchronizes with the nodes in a cluster. If the connection string uses this Uniform Resource Identifier (URI) format, you don't need to append the seed list or change the Uniform Resource Identifier (URI) if the nodes change. Use this Uniform Resource Identifier (URI) format if your application supports it. If it doesn't, use `connectionStrings.privateEndpoint[n].connectionString`.
+          readOnly: true
+          type: string
+        srvShardOptimizedConnectionString:
+          description: Private endpoint-aware connection string optimized for sharded clusters that uses the `mongodb+srv://` protocol to connect to MongoDB Cloud through a private endpoint. If the connection string uses this Uniform Resource Identifier (URI) format, you don't need to change the Uniform Resource Identifier (URI) if the nodes change. Use this Uniform Resource Identifier (URI) format if your application and Atlas cluster supports it. If it doesn't, use and consult the documentation for `connectionStrings.privateEndpoint[n].srvConnectionString`.
+          readOnly: true
+          type: string
+        type:
+          description: MongoDB process type to which your application connects. Use `MONGOD` for replica sets and `MONGOS` for sharded clusters.
+          enum:
+          - MONGOD
+          - MONGOS
+          readOnly: true
+          type: string
+      title: Cluster Private Endpoint Connection String
+      type: object
+    ComponentLabel:
+      description: Human-readable labels applied to this MongoDB Cloud component.
       properties:
         key:
-          description: 'Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.'
+          description: Key applied to tag and categorize this component.
           maxLength: 255
           minLength: 1
           type: string
         value:
-          description: 'Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.'
+          description: Value set to the Key applied to tag and categorize this component.
           maxLength: 255
           minLength: 1
           type: string
-      required:
-      - key
-      - value
-      title: Resource Tag
+      title: Component Label
       type: object
-    BadRequestDetail:
-      description: Bad request detail.
+    FieldViolation:
       properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    GCPHardwareSpec20240805:
+      properties:
+        diskSizeGB:
+          description: "Storage capacity of instance data volumes expressed in gigabytes. Increase this number to add capacity.\n\n This value must be equal for all shards and node types.\n\n This value is not configurable on M0/M2/M5 clusters.\n\n MongoDB Cloud requires this parameter if you set `replicationSpecs`.\n\n If you specify a disk size below the minimum (10 GB), this parameter defaults to the minimum disk size value. \n\n Storage charge calculations depend on whether you choose the default value or a custom value.\n\n The maximum value for disk storage cannot exceed 50 times the maximum RAM for the selected cluster. If you require more storage space, consider upgrading your cluster to a higher tier."
+          externalDocs:
+            description: Customize Storage
+            url: https://dochub.mongodb.org/core/customize-storage
+          format: double
+          type: number
+        instanceSize:
+          description: Hardware specification for the instance sizes in this region in this shard. Each instance size has a default storage and memory capacity. Electable nodes and read-only nodes (known as "base nodes") within a single shard must use the same instance size. Analytics nodes can scale independently from base nodes within a shard. Both base nodes and analytics nodes can scale independently from their equivalents in other shards.
+          enum:
+          - M10
+          - M20
+          - M30
+          - M40
+          - M50
+          - M60
+          - M80
+          - M140
+          - M200
+          - M250
+          - M300
+          - M400
+          - R40
+          - R50
+          - R60
+          - R80
+          - R200
+          - R300
+          - R400
+          - R600
+          title: GCP Instance Sizes
+          type: string
+        nodeCount:
+          description: Number of nodes of the given type for MongoDB Cloud to deploy to the region.
+          format: int32
+          type: integer
       type: object
     FlexProviderSettingsCreate20241113:
       description: Group of cloud provider settings that configure the provisioned MongoDB flex cluster.
@@ -1954,104 +1985,73 @@ components:
       readOnly: true
       title: Cluster Connection Strings
       type: object
-    FlexClusterDescription20241113:
-      description: Group of settings that configure a MongoDB Flex cluster.
-      properties:
-        backupSettings:
-          $ref: '#/components/schemas/FlexBackupSettings20241113'
-        clusterType:
-          default: REPLICASET
-          description: Flex cluster topology.
-          enum:
-          - REPLICASET
-          readOnly: true
-          type: string
-        connectionStrings:
-          $ref: '#/components/schemas/FlexConnectionStrings20241113'
-        createDate:
-          description: Date and time when MongoDB Cloud created this instance. This parameter expresses its value in ISO 8601 format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        groupId:
-          description: Unique 24-hexadecimal character string that identifies the project.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the instance.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        mongoDBVersion:
-          description: Version of MongoDB that the instance runs.
-          pattern: ([\d]+\.[\d]+\.[\d]+)
-          readOnly: true
-          type: string
-        name:
-          description: Human-readable label that identifies the instance.
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          readOnly: true
-          type: string
-        providerSettings:
-          $ref: '#/components/schemas/FlexProviderSettings20241113'
-        stateName:
-          description: "Human-readable label that indicates any current activity being taken on this cluster by the Atlas control plane. With the exception of CREATING and DELETING states, clusters should always be available and have a Primary node even when in states indicating ongoing activity.\n\n - `IDLE`: Atlas is making no changes to this cluster and all changes requested via the UI or API can be assumed to have been applied.\n - `CREATING`: A cluster being provisioned for the very first time returns state CREATING until it is ready for connections. Ensure IP Access List and DB Users are configured before attempting to connect.\n - `UPDATING`: A change requested via the UI, API, AutoScaling, or other scheduled activity is taking place.\n - `DELETING`: The cluster is in the process of deletion and will soon be deleted.\n - `REPAIRING`: One or more nodes in the cluster are being returned to service by the Atlas control plane. Other nodes should continue to provide service as normal."
-          enum:
-          - IDLE
-          - CREATING
-          - UPDATING
-          - DELETING
-          - REPAIRING
-          readOnly: true
-          type: string
-        tags:
-          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.
-          externalDocs:
-            description: Resource Tags
-            url: https://dochub.mongodb.org/core/add-cluster-tag-atlas
-          items:
-            $ref: '#/components/schemas/ResourceTag'
-          type: array
-        terminationProtectionEnabled:
-          default: false
-          description: Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.
-          type: boolean
-        versionReleaseSystem:
-          default: LTS
-          description: Method by which the cluster maintains the MongoDB versions.
-          enum:
-          - LTS
-          readOnly: true
-          type: string
-      required:
-      - providerSettings
-      title: Flex Cluster Description
-      type: object
   headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
     HeaderRetryAfter:
       description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
   securitySchemes:
     DigestAuth:
       scheme: digest

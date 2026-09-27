@@ -542,6 +542,17 @@ paths:
       x-xgen-operation-id-override: createLogExport
 components:
   responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     notFound:
       content:
         application/json:
@@ -553,17 +564,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Not Found.
-    forbidden:
+    badRequest:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
+      description: Bad Request.
     internalServerError:
       content:
         application/json:
@@ -575,6 +586,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
     tooManyRequests:
       content:
         application/json:
@@ -593,125 +615,32 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-  parameters:
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
   schemas:
-    ApiError:
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
+        fields:
+          description: Describes all violations in a client request.
           items:
-            type: object
-          readOnly: true
+            $ref: '#/components/schemas/FieldViolation'
           type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
+      readOnly: true
+      type: object
+    Header:
+      description: HTTP header with name and value.
+      properties:
+        name:
+          description: Header name.
+          example: Authorization
+          type: string
+        value:
+          description: Header value.
+          example: Bearer token123
+          format: password
           type: string
       required:
-      - error
-      - errorCode
-      type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
+      - name
+      - value
       type: object
     S3LogIntegrationRequest:
       allOf:
@@ -755,85 +684,6 @@ components:
       - prefixPath
       - type
       title: S3 Log Export Integration Request
-      type: object
-    S3LogIntegrationResponse:
-      allOf:
-      - $ref: '#/components/schemas/LogIntegrationResponse'
-      - properties:
-          bucketName:
-            description: Name of the bucket to store log files.
-            example: my-log-bucket
-            type: string
-          iamRoleId:
-            description: Unique 24-character hexadecimal string that identifies the AWS IAM role that Atlas uses to access the S3 bucket.
-            example: 507f1f77bcf86cd799439011
-            pattern: ^[a-fA-F0-9]{24}$
-            type: string
-          kmsKey:
-            description: AWS KMS key ID or ARN for server-side encryption (optional). If not provided, uses bucket default encryption settings.
-            example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
-            type:
-            - string
-            - 'null'
-          prefixPath:
-            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
-            example: mongo-logs/
-            type: string
-          type:
-            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
-            enum:
-            - S3_LOG_EXPORT
-            type: string
-          useLegacyPathStructure:
-            description: 'When true, uses the legacy daily-folder path structure compatible with Push-Based Log Export: `{prefix}/{cluster}/{hostname}/{logType}/{YYYY-MM-DD}/{timestamp}-{logType}.log`. When false (default), uses the flat timestamped structure: `{prefix}/{cluster}/{hostname}/{logType}/{timestamp}-{logType}.log`.'
-            type:
-            - boolean
-            - 'null'
-        type: object
-      description: Details to integrate S3 log export with one Atlas project.
-      required:
-      - bucketName
-      - iamRoleId
-      - id
-      - logTypes
-      - prefixPath
-      - type
-      title: S3 Log Export Integration Response
-      type: object
-    DatadogLogIntegrationRequest:
-      allOf:
-      - $ref: '#/components/schemas/LogIntegrationRequest'
-      - properties:
-          apiKey:
-            description: API key for authentication.
-            example: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
-            format: password
-            type: string
-          region:
-            description: 'Datadog site/region for log ingestion. Valid values: US1, US3, US5, EU, AP1, AP2, US1_FED.'
-            enum:
-            - US1
-            - US3
-            - US5
-            - EU
-            - AP1
-            - AP2
-            - US1_FED
-            example: US1
-            type: string
-          type:
-            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
-            enum:
-            - DATADOG_LOG_EXPORT
-            type: string
-        type: object
-      description: Request schema for creating or updating a Datadog log export integration.
-      required:
-      - apiKey
-      - logTypes
-      - region
-      - type
-      title: Datadog Log Export Integration Request
       type: object
     PaginatedLogIntegrationResponse:
       properties:
@@ -891,33 +741,6 @@ components:
       - type
       title: OTel Log Export Integration Response
       type: object
-    SplunkLogIntegrationRequest:
-      allOf:
-      - $ref: '#/components/schemas/LogIntegrationRequest'
-      - properties:
-          hecToken:
-            description: HTTP Event Collector (HEC) token for authentication.
-            example: 12345678-1234-1234-1234-123456789012
-            format: password
-            type: string
-          hecUrl:
-            description: HTTP Event Collector (HEC) endpoint URL.
-            example: https://http-inputs-acme.splunkcloud.com:8088/services/collector/event
-            type: string
-          type:
-            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
-            enum:
-            - SPLUNK_LOG_EXPORT
-            type: string
-        type: object
-      description: Request schema for creating or updating a Splunk log export integration.
-      required:
-      - hecToken
-      - hecUrl
-      - logTypes
-      - type
-      title: Splunk Log Export Integration Request
-      type: object
     AzureLogIntegrationResponse:
       allOf:
       - $ref: '#/components/schemas/LogIntegrationResponse'
@@ -956,37 +779,105 @@ components:
       - type
       title: Azure Log Export Integration Response
       type: object
-    GcsLogIntegrationRequest:
+    SplunkLogIntegrationRequest:
       allOf:
       - $ref: '#/components/schemas/LogIntegrationRequest'
       - properties:
-          bucketName:
-            description: Name of the bucket to store log files.
-            example: my-gcs-log-bucket
+          hecToken:
+            description: HTTP Event Collector (HEC) token for authentication.
+            example: 12345678-1234-1234-1234-123456789012
+            format: password
             type: string
+          hecUrl:
+            description: HTTP Event Collector (HEC) endpoint URL.
+            example: https://http-inputs-acme.splunkcloud.com:8088/services/collector/event
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - SPLUNK_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating a Splunk log export integration.
+      required:
+      - hecToken
+      - hecUrl
+      - logTypes
+      - type
+      title: Splunk Log Export Integration Request
+      type: object
+    DatadogLogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          apiKey:
+            description: API key for authentication.
+            example: '****************************o5p6'
+            format: password
+            type: string
+          region:
+            description: 'Datadog site/region for log ingestion. Valid values: US1, US3, US5, EU, AP1, AP2, US1_FED.'
+            enum:
+            - US1
+            - US3
+            - US5
+            - EU
+            - AP1
+            - AP2
+            - US1_FED
+            example: US1
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - DATADOG_LOG_EXPORT
+            type: string
+        type: object
+      description: Details to integrate Datadog log export with one Atlas project.
+      required:
+      - apiKey
+      - id
+      - logTypes
+      - region
+      - type
+      title: Datadog Log Export Integration Response
+      type: object
+    AzureLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
           prefixPath:
             description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
-            example: mongodb-logs/
+            example: logs/mongodb/
             type: string
           roleId:
             description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
             example: 507f1f77bcf86cd799439011
             pattern: ^[a-fA-F0-9]{24}$
             type: string
+          storageAccountName:
+            description: Storage account name where logs will be stored.
+            example: mylogstorageaccount
+            type: string
+          storageContainerName:
+            description: Storage container name for log files.
+            example: mongodb-logs
+            type: string
           type:
             description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
             enum:
-            - GCS_LOG_EXPORT
+            - AZURE_LOG_EXPORT
             type: string
         type: object
-      description: Request schema for creating or updating a Google Cloud Storage log export integration.
+      description: Request schema for creating or updating an Azure Blob Storage log export integration.
       required:
-      - bucketName
       - logTypes
       - prefixPath
       - roleId
+      - storageAccountName
+      - storageContainerName
       - type
-      title: GCS Log Export Integration Request
+      title: Azure Log Export Integration Request
       type: object
     PushBasedLogExportProject:
       properties:
@@ -1027,72 +918,40 @@ components:
           readOnly: true
           type: string
       type: object
-    CreatePushBasedLogExportProjectRequest:
-      properties:
-        bucketName:
-          description: The name of the bucket to which the agent will send the logs to.
-          type: string
-        iamRoleId:
-          description: ID of the AWS IAM role that will be used to write to the S3 bucket.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        prefixPath:
-          description: S3 directory in which vector will write to in order to store the logs. An empty string denotes the root directory.
-          type: string
-      required:
-      - bucketName
-      - iamRoleId
-      - prefixPath
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    AzureLogIntegrationRequest:
+    DatadogLogIntegrationRequest:
       allOf:
       - $ref: '#/components/schemas/LogIntegrationRequest'
       - properties:
-          prefixPath:
-            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
-            example: logs/mongodb/
+          apiKey:
+            description: API key for authentication.
+            example: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
+            format: password
             type: string
-          roleId:
-            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
-            example: 507f1f77bcf86cd799439011
-            pattern: ^[a-fA-F0-9]{24}$
-            type: string
-          storageAccountName:
-            description: Storage account name where logs will be stored.
-            example: mylogstorageaccount
-            type: string
-          storageContainerName:
-            description: Storage container name for log files.
-            example: mongodb-logs
+          region:
+            description: 'Datadog site/region for log ingestion. Valid values: US1, US3, US5, EU, AP1, AP2, US1_FED.'
+            enum:
+            - US1
+            - US3
+            - US5
+            - EU
+            - AP1
+            - AP2
+            - US1_FED
+            example: US1
             type: string
           type:
             description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
             enum:
-            - AZURE_LOG_EXPORT
+            - DATADOG_LOG_EXPORT
             type: string
         type: object
-      description: Request schema for creating or updating an Azure Blob Storage log export integration.
+      description: Request schema for creating or updating a Datadog log export integration.
       required:
+      - apiKey
       - logTypes
-      - prefixPath
-      - roleId
-      - storageAccountName
-      - storageContainerName
+      - region
       - type
-      title: Azure Log Export Integration Request
+      title: Datadog Log Export Integration Request
       type: object
     LogIntegrationRequest:
       description: Request schema for creating or updating a log integration.
@@ -1143,6 +1002,123 @@ components:
       - type
       title: Log Export Integration Request
       type: object
+    GcsLogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          bucketName:
+            description: Name of the bucket to store log files.
+            example: my-gcs-log-bucket
+            type: string
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: mongodb-logs/
+            type: string
+          roleId:
+            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - GCS_LOG_EXPORT
+            type: string
+        type: object
+      description: Details to integrate Google Cloud Storage log export with one Atlas project.
+      required:
+      - bucketName
+      - id
+      - logTypes
+      - prefixPath
+      - roleId
+      - type
+      title: GCS Log Export Integration Response
+      type: object
+    OtelLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          otelEndpoint:
+            description: OpenTelemetry collector endpoint URL. Must be HTTPS and not exceed 2048 characters.
+            example: https://otel-collector.example.com:4318/v1/logs
+            type: string
+          otelSuppliedHeaders:
+            description: HTTP headers for authentication and configuration. Maximum 10 headers, total size limit 2KB.
+            items:
+              $ref: '#/components/schemas/Header'
+            maxItems: 10
+            minItems: 1
+            type: array
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - OTEL_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating an OpenTelemetry log export integration.
+      required:
+      - logTypes
+      - otelEndpoint
+      - otelSuppliedHeaders
+      - type
+      title: OTel Log Export Integration Request
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    S3LogIntegrationResponse:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationResponse'
+      - properties:
+          bucketName:
+            description: Name of the bucket to store log files.
+            example: my-log-bucket
+            type: string
+          iamRoleId:
+            description: Unique 24-character hexadecimal string that identifies the AWS IAM role that Atlas uses to access the S3 bucket.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          kmsKey:
+            description: AWS KMS key ID or ARN for server-side encryption (optional). If not provided, uses bucket default encryption settings.
+            example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+            type:
+            - string
+            - 'null'
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: mongo-logs/
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - S3_LOG_EXPORT
+            type: string
+          useLegacyPathStructure:
+            description: 'When true, uses the legacy daily-folder path structure compatible with Push-Based Log Export: `{prefix}/{cluster}/{hostname}/{logType}/{YYYY-MM-DD}/{timestamp}-{logType}.log`. When false (default), uses the flat timestamped structure: `{prefix}/{cluster}/{hostname}/{logType}/{timestamp}-{logType}.log`.'
+            type:
+            - boolean
+            - 'null'
+        type: object
+      description: Details to integrate S3 log export with one Atlas project.
+      required:
+      - bucketName
+      - iamRoleId
+      - id
+      - logTypes
+      - prefixPath
+      - type
+      title: S3 Log Export Integration Response
+      type: object
     SplunkLogIntegrationResponse:
       allOf:
       - $ref: '#/components/schemas/LogIntegrationResponse'
@@ -1170,6 +1146,70 @@ components:
       - logTypes
       - type
       title: Splunk Log Export Integration Response
+      type: object
+    GcsLogIntegrationRequest:
+      allOf:
+      - $ref: '#/components/schemas/LogIntegrationRequest'
+      - properties:
+          bucketName:
+            description: Name of the bucket to store log files.
+            example: my-gcs-log-bucket
+            type: string
+          prefixPath:
+            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
+            example: mongodb-logs/
+            type: string
+          roleId:
+            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
+            example: 507f1f77bcf86cd799439011
+            pattern: ^[a-fA-F0-9]{24}$
+            type: string
+          type:
+            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
+            enum:
+            - GCS_LOG_EXPORT
+            type: string
+        type: object
+      description: Request schema for creating or updating a Google Cloud Storage log export integration.
+      required:
+      - bucketName
+      - logTypes
+      - prefixPath
+      - roleId
+      - type
+      title: GCS Log Export Integration Request
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
       type: object
     LogIntegrationResponse:
       description: Response schema for log integration operations.
@@ -1225,135 +1265,37 @@ components:
       - type
       title: Log Integration Response
       type: object
-    OtelLogIntegrationRequest:
-      allOf:
-      - $ref: '#/components/schemas/LogIntegrationRequest'
-      - properties:
-          otelEndpoint:
-            description: OpenTelemetry collector endpoint URL. Must be HTTPS and not exceed 2048 characters.
-            example: https://otel-collector.example.com:4318/v1/logs
-            type: string
-          otelSuppliedHeaders:
-            description: HTTP headers for authentication and configuration. Maximum 10 headers, total size limit 2KB.
-            items:
-              $ref: '#/components/schemas/Header'
-            maxItems: 10
-            minItems: 1
-            type: array
-          type:
-            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
-            enum:
-            - OTEL_LOG_EXPORT
-            type: string
-        type: object
-      description: Request schema for creating or updating an OpenTelemetry log export integration.
-      required:
-      - logTypes
-      - otelEndpoint
-      - otelSuppliedHeaders
-      - type
-      title: OTel Log Export Integration Request
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
+    CreatePushBasedLogExportProjectRequest:
       properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    DatadogLogIntegrationResponse:
-      allOf:
-      - $ref: '#/components/schemas/LogIntegrationResponse'
-      - properties:
-          apiKey:
-            description: API key for authentication.
-            example: '****************************o5p6'
-            format: password
-            type: string
-          region:
-            description: 'Datadog site/region for log ingestion. Valid values: US1, US3, US5, EU, AP1, AP2, US1_FED.'
-            enum:
-            - US1
-            - US3
-            - US5
-            - EU
-            - AP1
-            - AP2
-            - US1_FED
-            example: US1
-            type: string
-          type:
-            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
-            enum:
-            - DATADOG_LOG_EXPORT
-            type: string
-        type: object
-      description: Details to integrate Datadog log export with one Atlas project.
-      required:
-      - apiKey
-      - id
-      - logTypes
-      - region
-      - type
-      title: Datadog Log Export Integration Response
-      type: object
-    Header:
-      description: HTTP header with name and value.
-      properties:
-        name:
-          description: Header name.
-          example: Authorization
+        bucketName:
+          description: The name of the bucket to which the agent will send the logs to.
           type: string
-        value:
-          description: Header value.
-          example: Bearer token123
-          format: password
+        iamRoleId:
+          description: ID of the AWS IAM role that will be used to write to the S3 bucket.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           type: string
-      required:
-      - name
-      - value
-      type: object
-    GcsLogIntegrationResponse:
-      allOf:
-      - $ref: '#/components/schemas/LogIntegrationResponse'
-      - properties:
-          bucketName:
-            description: Name of the bucket to store log files.
-            example: my-gcs-log-bucket
-            type: string
-          prefixPath:
-            description: Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.
-            example: mongodb-logs/
-            type: string
-          roleId:
-            description: Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.
-            example: 507f1f77bcf86cd799439011
-            pattern: ^[a-fA-F0-9]{24}$
-            type: string
-          type:
-            description: Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.
-            enum:
-            - GCS_LOG_EXPORT
-            type: string
-        type: object
-      description: Details to integrate Google Cloud Storage log export with one Atlas project.
+        prefixPath:
+          description: S3 directory in which vector will write to in order to store the logs. An empty string denotes the root directory.
+          type: string
       required:
       - bucketName
-      - id
-      - logTypes
+      - iamRoleId
       - prefixPath
-      - roleId
-      - type
-      title: GCS Log Export Integration Response
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
       type: object
   headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
@@ -1362,6 +1304,64 @@ components:
       description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
   securitySchemes:
     DigestAuth:
       scheme: digest

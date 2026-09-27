@@ -333,6 +333,17 @@ paths:
       x-xgen-operation-id-override: authorizeProviderAccessRole
 components:
   responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     notFound:
       content:
         application/json:
@@ -344,17 +355,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Not Found.
-    forbidden:
+    badRequest:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
+      description: Bad Request.
     internalServerError:
       content:
         application/json:
@@ -366,6 +377,28 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
     tooManyRequests:
       content:
         application/json:
@@ -384,107 +417,36 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
   schemas:
-    CloudProviderAccessFeatureUsage:
-      description: MongoDB Cloud features associated with this Amazon Web Services (AWS) Identity and Access Management (IAM) role.
-      discriminator:
-        mapping:
-          ATLAS_DATA_LAKE: '#/components/schemas/CloudProviderAccessDataLakeFeatureUsage'
-          ATLAS_LOG_INTEGRATION: '#/components/schemas/CloudProviderAccessAtlasLogIntegrationFeatureUsage'
-          ENCRYPTION_AT_REST: '#/components/schemas/CloudProviderAccessEncryptionAtRestFeatureUsage'
-          EXPORT_SNAPSHOT: '#/components/schemas/CloudProviderAccessExportSnapshotFeatureUsage'
-          PUSH_BASED_LOG_EXPORT: '#/components/schemas/CloudProviderAccessPushBasedLogExportFeatureUsage'
-        propertyName: featureType
+    CloudProviderAccessAzureServicePrincipalRequest:
+      description: Details that describe the features linked to the Azure Service Principal.
       properties:
-        featureType:
-          description: Human-readable label that describes one MongoDB Cloud feature linked to this Amazon Web Services (AWS) Identity and Access Management (IAM) role.
-          enum:
-          - ATLAS_DATA_LAKE
-          - ENCRYPTION_AT_REST
-          - EXPORT_SNAPSHOT
-          - PUSH_BASED_LOG_EXPORT
-          - ATLAS_LOG_INTEGRATION
+        _id:
+          description: Unique 24-hexadecimal digit string that identifies the role.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           readOnly: true
           type: string
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
+        atlasAzureAppId:
+          description: Azure Active Directory Application ID of Atlas. This field is optional and will be derived from the Azure subscription if not provided.
+          format: uuid
           type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
+        createdDate:
+          description: Date and time when this Azure Service Principal was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           readOnly: true
           type: string
-        parameters:
-          description: Parameters used to give more information about the error.
+        featureUsages:
+          description: List that contains application features associated with this Azure Service Principal.
           items:
-            type: object
+            $ref: '#/components/schemas/CloudProviderAccessFeatureUsage'
           readOnly: true
           type: array
-        reason:
-          description: Application error message returned with this error.
+        lastUpdatedDate:
+          description: Date and time when this Azure Service Principal was last updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           readOnly: true
           type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    CloudProviderAccessRole:
-      description: Cloud provider access role.
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/CloudProviderAccessAWSIAMRole'
-          AZURE: '#/components/schemas/CloudProviderAccessAzureServicePrincipal'
-          GCP: '#/components/schemas/CloudProviderAccessGCPServiceAccount'
-        propertyName: providerName
-      oneOf:
-      - $ref: '#/components/schemas/CloudProviderAccessAWSIAMRole'
-      - $ref: '#/components/schemas/CloudProviderAccessAzureServicePrincipal'
-      - $ref: '#/components/schemas/CloudProviderAccessGCPServiceAccount'
-      properties:
         providerName:
           description: Human-readable label that identifies the cloud provider of the role.
           enum:
@@ -492,51 +454,26 @@ components:
           - AZURE
           - GCP
           type: string
+        servicePrincipalId:
+          description: UUID string that identifies the Azure Service Principal.
+          format: uuid
+          type: string
+        tenantId:
+          description: UUID String that identifies the Azure Active Directory Tenant ID.
+          format: uuid
+          type: string
       required:
       - providerName
       type: object
-    CloudProviderAccessAzureServicePrincipal:
-      allOf:
-      - $ref: '#/components/schemas/CloudProviderAccessRole'
-      - properties:
-          _id:
-            description: Unique 24-hexadecimal digit string that identifies the role.
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            readOnly: true
-            type: string
-          atlasAzureAppId:
-            description: Azure Active Directory Application ID of Atlas. This field is optional and will be derived from the Azure subscription if not provided.
-            format: uuid
-            type: string
-          createdDate:
-            description: Date and time when this Azure Service Principal was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-            format: date-time
-            readOnly: true
-            type: string
-          featureUsages:
-            description: List that contains application features associated with this Azure Service Principal.
-            items:
-              $ref: '#/components/schemas/CloudProviderAccessFeatureUsage'
-            readOnly: true
-            type: array
-          lastUpdatedDate:
-            description: Date and time when this Azure Service Principal was last updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-            format: date-time
-            readOnly: true
-            type: string
-          servicePrincipalId:
-            description: UUID string that identifies the Azure Service Principal.
-            format: uuid
-            type: string
-          tenantId:
-            description: UUID String that identifies the Azure Active Directory Tenant ID.
-            format: uuid
-            type: string
-        type: object
-      description: Details that describe the features linked to the Azure Service Principal.
-      required:
-      - providerName
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
       type: object
     CloudProviderAccessAWSIAMRoleRequest:
       description: Details that describe the features linked to the Amazon Web Services (AWS) Identity and Access Management (IAM) role.
@@ -585,115 +522,46 @@ components:
       required:
       - providerName
       type: object
-    CloudProviderAccessGCPServiceAccountRequest:
-      description: Details that describe the features linked to the GCP Service Account.
-      properties:
-        createdDate:
-          description: Date and time when this GCP Service Account was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        featureUsages:
-          description: List that contains application features associated with this GCP Service Account.
-          items:
-            $ref: '#/components/schemas/CloudProviderAccessFeatureUsage'
-          readOnly: true
-          type: array
-        gcpServiceAccountForAtlas:
-          description: ID string that identifies the GCP Service Account used by Atlas.
-          readOnly: true
-          type: string
-        providerName:
-          description: Human-readable label that identifies the cloud provider of the role.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-        roleId:
-          description: Unique 24-hexadecimal digit string that identifies the role.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-      required:
-      - providerName
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    CloudProviderAccessAzureServicePrincipalRequest:
+    CloudProviderAccessAzureServicePrincipal:
+      allOf:
+      - $ref: '#/components/schemas/CloudProviderAccessRole'
+      - properties:
+          _id:
+            description: Unique 24-hexadecimal digit string that identifies the role.
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            readOnly: true
+            type: string
+          atlasAzureAppId:
+            description: Azure Active Directory Application ID of Atlas. This field is optional and will be derived from the Azure subscription if not provided.
+            format: uuid
+            type: string
+          createdDate:
+            description: Date and time when this Azure Service Principal was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+            format: date-time
+            readOnly: true
+            type: string
+          featureUsages:
+            description: List that contains application features associated with this Azure Service Principal.
+            items:
+              $ref: '#/components/schemas/CloudProviderAccessFeatureUsage'
+            readOnly: true
+            type: array
+          lastUpdatedDate:
+            description: Date and time when this Azure Service Principal was last updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+            format: date-time
+            readOnly: true
+            type: string
+          servicePrincipalId:
+            description: UUID string that identifies the Azure Service Principal.
+            format: uuid
+            type: string
+          tenantId:
+            description: UUID String that identifies the Azure Active Directory Tenant ID.
+            format: uuid
+            type: string
+        type: object
       description: Details that describe the features linked to the Azure Service Principal.
-      properties:
-        _id:
-          description: Unique 24-hexadecimal digit string that identifies the role.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        atlasAzureAppId:
-          description: Azure Active Directory Application ID of Atlas. This field is optional and will be derived from the Azure subscription if not provided.
-          format: uuid
-          type: string
-        createdDate:
-          description: Date and time when this Azure Service Principal was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        featureUsages:
-          description: List that contains application features associated with this Azure Service Principal.
-          items:
-            $ref: '#/components/schemas/CloudProviderAccessFeatureUsage'
-          readOnly: true
-          type: array
-        lastUpdatedDate:
-          description: Date and time when this Azure Service Principal was last updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        providerName:
-          description: Human-readable label that identifies the cloud provider of the role.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-        servicePrincipalId:
-          description: UUID string that identifies the Azure Service Principal.
-          format: uuid
-          type: string
-        tenantId:
-          description: UUID String that identifies the Azure Active Directory Tenant ID.
-          format: uuid
-          type: string
-      required:
-      - providerName
-      type: object
-    CloudProviderAccessRoleRequestUpdate:
-      description: Cloud provider access role.
-      discriminator:
-        mapping:
-          AWS: '#/components/schemas/CloudProviderAccessAWSIAMRoleRequestUpdate'
-          AZURE: '#/components/schemas/CloudProviderAccessAzureServicePrincipalRequestUpdate'
-          GCP: '#/components/schemas/CloudProviderAccessGCPServiceAccountRequestUpdate'
-        propertyName: providerName
-      properties:
-        providerName:
-          description: Human-readable label that identifies the cloud provider of the role.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
       required:
       - providerName
       type: object
@@ -769,16 +637,6 @@ components:
       required:
       - providerName
       type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
     CloudProviderAccessGCPServiceAccount:
       allOf:
       - $ref: '#/components/schemas/CloudProviderAccessRole'
@@ -818,6 +676,25 @@ components:
       required:
       - providerName
       type: object
+    CloudProviderAccessRoleRequestUpdate:
+      description: Cloud provider access role.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/CloudProviderAccessAWSIAMRoleRequestUpdate'
+          AZURE: '#/components/schemas/CloudProviderAccessAzureServicePrincipalRequestUpdate'
+          GCP: '#/components/schemas/CloudProviderAccessGCPServiceAccountRequestUpdate'
+        propertyName: providerName
+      properties:
+        providerName:
+          description: Human-readable label that identifies the cloud provider of the role.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+      required:
+      - providerName
+      type: object
     CloudProviderAccessRoles:
       properties:
         awsIamRoles:
@@ -836,6 +713,142 @@ components:
             $ref: '#/components/schemas/CloudProviderAccessGCPServiceAccount'
           type: array
       type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    CloudProviderAccessFeatureUsage:
+      description: MongoDB Cloud features associated with this Amazon Web Services (AWS) Identity and Access Management (IAM) role.
+      discriminator:
+        mapping:
+          ATLAS_DATA_LAKE: '#/components/schemas/CloudProviderAccessDataLakeFeatureUsage'
+          ATLAS_LOG_INTEGRATION: '#/components/schemas/CloudProviderAccessAtlasLogIntegrationFeatureUsage'
+          ENCRYPTION_AT_REST: '#/components/schemas/CloudProviderAccessEncryptionAtRestFeatureUsage'
+          EXPORT_SNAPSHOT: '#/components/schemas/CloudProviderAccessExportSnapshotFeatureUsage'
+          PUSH_BASED_LOG_EXPORT: '#/components/schemas/CloudProviderAccessPushBasedLogExportFeatureUsage'
+        propertyName: featureType
+      properties:
+        featureType:
+          description: Human-readable label that describes one MongoDB Cloud feature linked to this Amazon Web Services (AWS) Identity and Access Management (IAM) role.
+          enum:
+          - ATLAS_DATA_LAKE
+          - ENCRYPTION_AT_REST
+          - EXPORT_SNAPSHOT
+          - PUSH_BASED_LOG_EXPORT
+          - ATLAS_LOG_INTEGRATION
+          readOnly: true
+          type: string
+      type: object
+    CloudProviderAccessRole:
+      description: Cloud provider access role.
+      discriminator:
+        mapping:
+          AWS: '#/components/schemas/CloudProviderAccessAWSIAMRole'
+          AZURE: '#/components/schemas/CloudProviderAccessAzureServicePrincipal'
+          GCP: '#/components/schemas/CloudProviderAccessGCPServiceAccount'
+        propertyName: providerName
+      oneOf:
+      - $ref: '#/components/schemas/CloudProviderAccessAWSIAMRole'
+      - $ref: '#/components/schemas/CloudProviderAccessAzureServicePrincipal'
+      - $ref: '#/components/schemas/CloudProviderAccessGCPServiceAccount'
+      properties:
+        providerName:
+          description: Human-readable label that identifies the cloud provider of the role.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+      required:
+      - providerName
+      type: object
+    CloudProviderAccessGCPServiceAccountRequest:
+      description: Details that describe the features linked to the GCP Service Account.
+      properties:
+        createdDate:
+          description: Date and time when this GCP Service Account was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        featureUsages:
+          description: List that contains application features associated with this GCP Service Account.
+          items:
+            $ref: '#/components/schemas/CloudProviderAccessFeatureUsage'
+          readOnly: true
+          type: array
+        gcpServiceAccountForAtlas:
+          description: ID string that identifies the GCP Service Account used by Atlas.
+          readOnly: true
+          type: string
+        providerName:
+          description: Human-readable label that identifies the cloud provider of the role.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+        roleId:
+          description: Unique 24-hexadecimal digit string that identifies the role.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+      required:
+      - providerName
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+  headers:
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
   parameters:
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
@@ -849,6 +862,13 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
     pretty:
       description: Flag that indicates whether the response body should be in the prettyprint format.
       in: query
@@ -859,26 +879,6 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
   securitySchemes:
     DigestAuth:
       scheme: digest

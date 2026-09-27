@@ -294,6 +294,17 @@ paths:
       x-xgen-operation-id-override: acknowledgeAlert
 components:
   responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     notFound:
       content:
         application/json:
@@ -305,17 +316,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Not Found.
-    forbidden:
+    badRequest:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
+      description: Bad Request.
     internalServerError:
       content:
         application/json:
@@ -327,6 +338,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
     tooManyRequests:
       content:
         application/json:
@@ -345,164 +367,16 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-  parameters:
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
   schemas:
-    ReplicaSetEventTypeViewForNdsGroupAlertable:
-      description: Incident that triggered this alert.
-      enum:
-      - REPLICATION_OPLOG_WINDOW_RUNNING_OUT
-      - NO_PRIMARY
-      - PRIMARY_ELECTED
-      - TOO_MANY_ELECTIONS
-      - TOO_FEW_HEALTHY_MEMBERS
-      - TOO_MANY_UNHEALTHY_MEMBERS
-      example: NO_PRIMARY
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
       readOnly: true
-      title: ReplicaSet Event Types
-      type: string
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    PaginatedAlertView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/AlertViewForNdsGroup'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
       type: object
     AlertViewForNdsGroup:
       oneOf:
@@ -513,355 +387,6 @@ components:
       - $ref: '#/components/schemas/ReplicaSetAlertViewForNdsGroup'
       - $ref: '#/components/schemas/StreamProcessorAlertViewForNdsGroup'
       - $ref: '#/components/schemas/DefaultAlertViewForNdsGroup'
-      type: object
-    HostMetricValue:
-      description: Value of the metric that triggered the alert. The resource returns this parameter for alerts of events impacting hosts.
-      properties:
-        number:
-          description: Amount of the `metricName` recorded at the time of the event. This value triggered the alert.
-          format: double
-          readOnly: true
-          type: number
-        units:
-          description: Element used to express the quantity in `currentValue.number`. This can be an element of time, storage capacity, and the like. This metric triggered the alert.
-          enum:
-          - bits
-          - Kbits
-          - Mbits
-          - Gbits
-          - bytes
-          - KB
-          - MB
-          - GB
-          - TB
-          - PB
-          - nsec
-          - msec
-          - sec
-          - min
-          - hours
-          - million minutes
-          - days
-          - requests
-          - 1000 requests
-          - tokens
-          - million tokens
-          - pixels
-          - billion pixels
-          - GB seconds
-          - GB hours
-          - GB days
-          - RPU
-          - thousand RPU
-          - million RPU
-          - WPU
-          - thousand WPU
-          - million WPU
-          - count
-          - thousand
-          - million
-          - billion
-          readOnly: true
-          type: string
-      readOnly: true
-      type: object
-    DefaultAlertViewForNdsGroup:
-      description: Other alerts which don't have extra details beside of basic one.
-      properties:
-        acknowledgedUntil:
-          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
-
-
-            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
-
-
-            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          type: string
-        acknowledgementComment:
-          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
-          example: Expiration on 3/19.  Silencing for 7days.
-          maxLength: 200
-          type: string
-        acknowledgingUsername:
-          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
-          format: email
-          readOnly: true
-          type: string
-        alertConfigId:
-          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        created:
-          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        eventTypeName:
-          description: Incident that triggered this alert.
-          oneOf:
-          - enum:
-            - CREDIT_CARD_ABOUT_TO_EXPIRE
-            - PENDING_INVOICE_OVER_THRESHOLD
-            - DAILY_BILL_OVER_THRESHOLD
-            - DAILY_BILLING_CHANGE_OVER_THRESHOLD
-            - WEEKLY_BILLING_CHANGE_OVER_THRESHOLD
-            - MONTHLY_BILLING_CHANGE_OVER_THRESHOLD
-            title: Billing Event Types
-            type: string
-          - enum:
-            - CPS_SNAPSHOT_STARTED
-            - CPS_SNAPSHOT_SUCCESSFUL
-            - CPS_SNAPSHOT_FAILED
-            - CPS_CONCURRENT_SNAPSHOT_FAILED_WILL_RETRY
-            - CPS_SNAPSHOT_BEHIND
-            - CPS_COPY_SNAPSHOT_STARTED
-            - CPS_COPY_SNAPSHOT_FAILED
-            - CPS_COPY_SNAPSHOT_FAILED_WILL_RETRY
-            - CPS_COPY_SNAPSHOT_SUCCESSFUL
-            - CPS_PREV_SNAPSHOT_OLD
-            - CPS_SNAPSHOT_FALLBACK_SUCCESSFUL
-            - CPS_SNAPSHOT_FALLBACK_FAILED
-            - CPS_RESTORE_SUCCESSFUL
-            - CPS_EXPORT_SUCCESSFUL
-            - CPS_RESTORE_FAILED
-            - CPS_EXPORT_FAILED
-            - CPS_COLLECTION_RESTORE_SUCCESSFUL
-            - CPS_COLLECTION_RESTORE_FAILED
-            - CPS_COLLECTION_RESTORE_PARTIAL_SUCCESS
-            - CPS_COLLECTION_RESTORE_CANCELED
-            - CPS_AUTO_EXPORT_FAILED
-            - CPS_SNAPSHOT_DOWNLOAD_REQUEST_FAILED
-            - CPS_OPLOG_BEHIND
-            - CPS_OPLOG_CAUGHT_UP
-            title: Cps Backup Event Types
-            type: string
-          - enum:
-            - AWS_ENCRYPTION_KEY_NEEDS_ROTATION
-            - AZURE_ENCRYPTION_KEY_NEEDS_ROTATION
-            - GCP_ENCRYPTION_KEY_NEEDS_ROTATION
-            - AWS_ENCRYPTION_KEY_INVALID
-            - AZURE_ENCRYPTION_KEY_INVALID
-            - GCP_ENCRYPTION_KEY_INVALID
-            title: Encryption Event Types
-            type: string
-          - enum:
-            - FTS_INDEX_DELETION_FAILED
-            - FTS_INDEX_BUILD_COMPLETE
-            - FTS_INDEX_BUILD_FAILED
-            - FTS_INDEX_CLEANED_UP
-            - FTS_INDEX_STALE
-            - FTS_INDEXES_RESTORE_FAILED
-            - FTS_INDEXES_SYNONYM_MAPPING_INVALID
-            title: FTS Index Audit Types
-            type: string
-          - enum:
-            - USERS_WITHOUT_MULTI_FACTOR_AUTH
-            - ENCRYPTION_AT_REST_KMS_NETWORK_ACCESS_DENIED
-            - ENCRYPTION_AT_REST_CONFIG_NO_LONGER_VALID
-            - GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRING
-            - GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRED
-            - ACTIVE_LEGACY_TLS_CONNECTIONS
-            title: Group Event Types
-            type: string
-          - enum:
-            - MONGOTUNE_ALERT
-            title: Mongotune Event Types
-            type: string
-          - enum:
-            - CLUSTER_INSTANCE_STOP_START
-            - CLUSTER_INSTANCE_RESYNC_REQUESTED
-            - CLUSTER_INSTANCE_UPDATE_REQUESTED
-            - SAMPLE_DATASET_LOAD_REQUESTED
-            - TENANT_UPGRADE_TO_SERVERLESS_SUCCESSFUL
-            - TENANT_UPGRADE_TO_SERVERLESS_FAILED
-            - NETWORK_PERMISSION_ENTRY_ADDED
-            - NETWORK_PERMISSION_ENTRY_REMOVED
-            - NETWORK_PERMISSION_ENTRY_UPDATED
-            - CLUSTER_BLOCK_WRITE
-            - CLUSTER_UNBLOCK_WRITE
-            title: Atlas Audit Types
-            type: string
-          - enum:
-            - MAINTENANCE_IN_ADVANCED
-            - MAINTENANCE_AUTO_DEFERRED
-            - MAINTENANCE_STARTED
-            - MAINTENANCE_COMPLETED
-            - MAINTENANCE_NO_LONGER_NEEDED
-            title: Maintenance Window Audit Types
-            type: string
-          - enum:
-            - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CA_EXPIRATION_CHECK
-            - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CRL_EXPIRATION_CHECK
-            - NDS_X509_USER_AUTHENTICATION_MANAGED_USER_CERTS_EXPIRATION_CHECK
-            title: x509 User Auth Event Types
-            type: string
-          - enum:
-            - ONLINE_ARCHIVE_INSUFFICIENT_INDEXES_CHECK
-            - ONLINE_ARCHIVE_MAX_CONSECUTIVE_OFFLOAD_WINDOWS_CHECK
-            title: Online Archive Event Types
-            type: string
-          - enum:
-            - OUTSIDE_SERVERLESS_METRIC_THRESHOLD
-            title: Serverless Event Types
-            type: string
-          - enum:
-            - OUTSIDE_FLEX_METRIC_THRESHOLD
-            title: Flex Metric Event Types
-            type: string
-          - enum:
-            - JOINED_GROUP
-            - REMOVED_FROM_GROUP
-            - USER_ROLES_CHANGED_AUDIT
-            title: User Event Types
-            type: string
-          - enum:
-            - TAGS_MODIFIED
-            - CLUSTER_TAGS_MODIFIED
-            - GROUP_TAGS_MODIFIED
-            title: Resource Event Types
-            type: string
-          - enum:
-            - STREAM_PROCESSOR_STATE_IS_FAILED
-            - OUTSIDE_STREAM_PROCESSOR_METRIC_THRESHOLD
-            title: Stream Processor Event Types
-            type: string
-          - enum:
-            - COMPUTE_AUTO_SCALE_INITIATED_BASE
-            - COMPUTE_AUTO_SCALE_INITIATED_ANALYTICS
-            - COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_BASE
-            - COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_ANALYTICS
-            - COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE
-            - COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_ANALYTICS
-            - COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE
-            - COMPUTE_AUTO_SCALE_OPLOG_FAIL_ANALYTICS
-            - DISK_AUTO_SCALE_INITIATED
-            - DISK_AUTO_SCALE_MAX_DISK_SIZE_FAIL
-            - DISK_AUTO_SCALE_OPLOG_FAIL
-            - PREDICTIVE_COMPUTE_AUTO_SCALE_INITIATED_BASE
-            - PREDICTIVE_COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE
-            - PREDICTIVE_COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE
-            - CLUSTER_AUTO_SHARDING_INITIATED
-            - COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_BASE
-            - COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_ANALYTICS
-            title: Auto Scaling Audit Types
-            type: string
-          - enum:
-            - CPS_DATA_PROTECTION_ENABLE_REQUESTED
-            - CPS_DATA_PROTECTION_ENABLED
-            - CPS_DATA_PROTECTION_UPDATE_REQUESTED
-            - CPS_DATA_PROTECTION_UPDATED
-            - CPS_DATA_PROTECTION_DISABLE_REQUESTED
-            - CPS_DATA_PROTECTION_DISABLED
-            - CPS_DATA_PROTECTION_APPROVED_FOR_DISABLEMENT
-            title: Data Protection Event Types
-            type: string
-          - enum:
-            - RESOURCE_POLICY_VIOLATED
-            title: Atlas Resource Policy Audit Types
-            type: string
-          - enum:
-            - HOST_DOWN
-            - HOST_HAS_INDEX_SUGGESTIONS
-            - HOST_MONGOT_CRASHING_OOM
-            - HOST_MONGOT_STOP_REPLICATION
-            - HOST_MONGOT_APPROACHING_STOP_REPLICATION
-            - HOST_MONGOT_PAUSE_INITIAL_SYNC
-            - HOST_SEARCH_NODE_INDEX_FAILED
-            - HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN
-            - HOST_NOT_ENOUGH_DISK_SPACE
-            - SSH_KEY_NDS_HOST_ACCESS_REQUESTED
-            - SSH_KEY_NDS_HOST_ACCESS_REFRESHED
-            - PUSH_BASED_LOG_EXPORT_STOPPED
-            - PUSH_BASED_LOG_EXPORT_DROPPED_LOG
-            - HOST_VERSION_BEHIND
-            - VERSION_BEHIND
-            - HOST_EXPOSED
-            - HOST_SSL_CERTIFICATE_STALE
-            - HOST_SECURITY_CHECKUP_NOT_MET
-            - ALERT_HOST_SSH_SESSION_STARTED
-            - PROFILER_CONFIGURED_TOO_WIDELY
-            title: Host Event Types
-            type: string
-          readOnly: true
-          type: object
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        lastNotified:
-          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        orgId:
-          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resolved:
-          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        status:
-          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
-          enum:
-          - CANCELLED
-          - CLOSED
-          - OPEN
-          - TRACKING
-          example: OPEN
-          readOnly: true
-          type: string
-        updated:
-          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-      required:
-      - alertConfigId
-      - created
-      - eventTypeName
-      - id
-      - status
-      - updated
-      title: Any Other Alerts
       type: object
     HostMetricAlert:
       description: Host Metric Alert notifies about changes of measurements or metrics for mongod host.
@@ -1302,17 +827,462 @@ components:
       - updated
       title: Host Alerts
       type: object
-    FieldViolation:
+    AppServiceEventTypeViewAlertable:
+      description: Incident that triggered this alert.
+      enum:
+      - URL_CONFIRMATION
+      - SUCCESSFUL_DEPLOY
+      - DEPLOYMENT_FAILURE
+      - DEPLOYMENT_MODEL_CHANGE_SUCCESS
+      - DEPLOYMENT_MODEL_CHANGE_FAILURE
+      - REQUEST_RATE_LIMIT
+      - LOG_FORWARDER_FAILURE
+      - OUTSIDE_REALM_METRIC_THRESHOLD
+      - SYNC_FAILURE
+      - TRIGGER_FAILURE
+      - TRIGGER_AUTO_RESUMED
+      example: DEPLOYMENT_FAILURE
+      readOnly: true
+      title: App Services Event Types
+      type: string
+    DefaultAlertViewForNdsGroup:
+      description: Other alerts which don't have extra details beside of basic one.
       properties:
-        description:
-          description: A description of why the request element is bad.
+        acknowledgedUntil:
+          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
+
+
+            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
+
+
+            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
           type: string
-        field:
-          description: A path that leads to a field in the request body.
+        acknowledgementComment:
+          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
+          example: Expiration on 3/19.  Silencing for 7days.
+          maxLength: 200
+          type: string
+        acknowledgingUsername:
+          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
+          format: email
+          readOnly: true
+          type: string
+        alertConfigId:
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        eventTypeName:
+          description: Incident that triggered this alert.
+          oneOf:
+          - enum:
+            - CREDIT_CARD_ABOUT_TO_EXPIRE
+            - PENDING_INVOICE_OVER_THRESHOLD
+            - DAILY_BILL_OVER_THRESHOLD
+            - DAILY_BILLING_CHANGE_OVER_THRESHOLD
+            - WEEKLY_BILLING_CHANGE_OVER_THRESHOLD
+            - MONTHLY_BILLING_CHANGE_OVER_THRESHOLD
+            title: Billing Event Types
+            type: string
+          - enum:
+            - CPS_SNAPSHOT_STARTED
+            - CPS_SNAPSHOT_SUCCESSFUL
+            - CPS_SNAPSHOT_FAILED
+            - CPS_CONCURRENT_SNAPSHOT_FAILED_WILL_RETRY
+            - CPS_SNAPSHOT_BEHIND
+            - CPS_COPY_SNAPSHOT_STARTED
+            - CPS_COPY_SNAPSHOT_FAILED
+            - CPS_COPY_SNAPSHOT_FAILED_WILL_RETRY
+            - CPS_COPY_SNAPSHOT_SUCCESSFUL
+            - CPS_PREV_SNAPSHOT_OLD
+            - CPS_SNAPSHOT_FALLBACK_SUCCESSFUL
+            - CPS_SNAPSHOT_FALLBACK_FAILED
+            - CPS_RESTORE_SUCCESSFUL
+            - CPS_EXPORT_SUCCESSFUL
+            - CPS_RESTORE_FAILED
+            - CPS_EXPORT_FAILED
+            - CPS_COLLECTION_RESTORE_SUCCESSFUL
+            - CPS_COLLECTION_RESTORE_FAILED
+            - CPS_COLLECTION_RESTORE_PARTIAL_SUCCESS
+            - CPS_COLLECTION_RESTORE_CANCELED
+            - CPS_AUTO_EXPORT_FAILED
+            - CPS_SNAPSHOT_DOWNLOAD_REQUEST_FAILED
+            - CPS_OPLOG_BEHIND
+            - CPS_OPLOG_CAUGHT_UP
+            title: Cps Backup Event Types
+            type: string
+          - enum:
+            - AWS_ENCRYPTION_KEY_NEEDS_ROTATION
+            - AZURE_ENCRYPTION_KEY_NEEDS_ROTATION
+            - GCP_ENCRYPTION_KEY_NEEDS_ROTATION
+            - AWS_ENCRYPTION_KEY_INVALID
+            - AZURE_ENCRYPTION_KEY_INVALID
+            - GCP_ENCRYPTION_KEY_INVALID
+            title: Encryption Event Types
+            type: string
+          - enum:
+            - FTS_INDEX_DELETION_FAILED
+            - FTS_INDEX_BUILD_COMPLETE
+            - FTS_INDEX_BUILD_FAILED
+            - FTS_INDEX_CLEANED_UP
+            - FTS_INDEX_STALE
+            - FTS_INDEXES_RESTORE_FAILED
+            - FTS_INDEXES_SYNONYM_MAPPING_INVALID
+            title: FTS Index Audit Types
+            type: string
+          - enum:
+            - USERS_WITHOUT_MULTI_FACTOR_AUTH
+            - ENCRYPTION_AT_REST_KMS_NETWORK_ACCESS_DENIED
+            - ENCRYPTION_AT_REST_CONFIG_NO_LONGER_VALID
+            - GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRING
+            - GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRED
+            - ACTIVE_LEGACY_TLS_CONNECTIONS
+            title: Group Event Types
+            type: string
+          - enum:
+            - MONGOTUNE_ALERT
+            title: Mongotune Event Types
+            type: string
+          - enum:
+            - CLUSTER_INSTANCE_STOP_START
+            - CLUSTER_INSTANCE_RESYNC_REQUESTED
+            - CLUSTER_INSTANCE_UPDATE_REQUESTED
+            - SAMPLE_DATASET_LOAD_REQUESTED
+            - TENANT_UPGRADE_TO_SERVERLESS_SUCCESSFUL
+            - TENANT_UPGRADE_TO_SERVERLESS_FAILED
+            - NETWORK_PERMISSION_ENTRY_ADDED
+            - NETWORK_PERMISSION_ENTRY_REMOVED
+            - NETWORK_PERMISSION_ENTRY_UPDATED
+            - CLUSTER_BLOCK_WRITE
+            - CLUSTER_UNBLOCK_WRITE
+            title: Atlas Audit Types
+            type: string
+          - enum:
+            - MAINTENANCE_IN_ADVANCED
+            - MAINTENANCE_AUTO_DEFERRED
+            - MAINTENANCE_STARTED
+            - MAINTENANCE_COMPLETED
+            - MAINTENANCE_NO_LONGER_NEEDED
+            title: Maintenance Window Audit Types
+            type: string
+          - enum:
+            - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CA_EXPIRATION_CHECK
+            - NDS_X509_USER_AUTHENTICATION_CUSTOMER_CRL_EXPIRATION_CHECK
+            - NDS_X509_USER_AUTHENTICATION_MANAGED_USER_CERTS_EXPIRATION_CHECK
+            title: x509 User Auth Event Types
+            type: string
+          - enum:
+            - ONLINE_ARCHIVE_INSUFFICIENT_INDEXES_CHECK
+            - ONLINE_ARCHIVE_MAX_CONSECUTIVE_OFFLOAD_WINDOWS_CHECK
+            title: Online Archive Event Types
+            type: string
+          - enum:
+            - OUTSIDE_SERVERLESS_METRIC_THRESHOLD
+            title: Serverless Event Types
+            type: string
+          - enum:
+            - OUTSIDE_FLEX_METRIC_THRESHOLD
+            title: Flex Metric Event Types
+            type: string
+          - enum:
+            - JOINED_GROUP
+            - REMOVED_FROM_GROUP
+            - USER_ROLES_CHANGED_AUDIT
+            title: User Event Types
+            type: string
+          - enum:
+            - TAGS_MODIFIED
+            - CLUSTER_TAGS_MODIFIED
+            - GROUP_TAGS_MODIFIED
+            title: Resource Event Types
+            type: string
+          - enum:
+            - STREAM_PROCESSOR_STATE_IS_FAILED
+            - OUTSIDE_STREAM_PROCESSOR_METRIC_THRESHOLD
+            title: Stream Processor Event Types
+            type: string
+          - enum:
+            - COMPUTE_AUTO_SCALE_INITIATED_BASE
+            - COMPUTE_AUTO_SCALE_INITIATED_ANALYTICS
+            - COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_BASE
+            - COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_ANALYTICS
+            - COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE
+            - COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_ANALYTICS
+            - COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE
+            - COMPUTE_AUTO_SCALE_OPLOG_FAIL_ANALYTICS
+            - DISK_AUTO_SCALE_INITIATED
+            - DISK_AUTO_SCALE_MAX_DISK_SIZE_FAIL
+            - DISK_AUTO_SCALE_OPLOG_FAIL
+            - PREDICTIVE_COMPUTE_AUTO_SCALE_INITIATED_BASE
+            - PREDICTIVE_COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE
+            - PREDICTIVE_COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE
+            - CLUSTER_AUTO_SHARDING_INITIATED
+            - COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_BASE
+            - COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_ANALYTICS
+            title: Auto Scaling Audit Types
+            type: string
+          - enum:
+            - CPS_DATA_PROTECTION_ENABLE_REQUESTED
+            - CPS_DATA_PROTECTION_ENABLED
+            - CPS_DATA_PROTECTION_UPDATE_REQUESTED
+            - CPS_DATA_PROTECTION_UPDATED
+            - CPS_DATA_PROTECTION_DISABLE_REQUESTED
+            - CPS_DATA_PROTECTION_DISABLED
+            - CPS_DATA_PROTECTION_APPROVED_FOR_DISABLEMENT
+            title: Data Protection Event Types
+            type: string
+          - enum:
+            - RESOURCE_POLICY_VIOLATED
+            title: Atlas Resource Policy Audit Types
+            type: string
+          - enum:
+            - HOST_DOWN
+            - HOST_HAS_INDEX_SUGGESTIONS
+            - HOST_MONGOT_CRASHING_OOM
+            - HOST_MONGOT_STOP_REPLICATION
+            - HOST_MONGOT_APPROACHING_STOP_REPLICATION
+            - HOST_MONGOT_PAUSE_INITIAL_SYNC
+            - HOST_SEARCH_NODE_INDEX_FAILED
+            - HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN
+            - HOST_NOT_ENOUGH_DISK_SPACE
+            - SSH_KEY_NDS_HOST_ACCESS_REQUESTED
+            - SSH_KEY_NDS_HOST_ACCESS_REFRESHED
+            - PUSH_BASED_LOG_EXPORT_STOPPED
+            - PUSH_BASED_LOG_EXPORT_DROPPED_LOG
+            - HOST_VERSION_BEHIND
+            - VERSION_BEHIND
+            - HOST_EXPOSED
+            - HOST_SSL_CERTIFICATE_STALE
+            - HOST_SECURITY_CHECKUP_NOT_MET
+            - ALERT_HOST_SSH_SESSION_STARTED
+            - PROFILER_CONFIGURED_TOO_WIDELY
+            title: Host Event Types
+            type: string
+          readOnly: true
+          type: object
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        lastNotified:
+          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        orgId:
+          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resolved:
+          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        status:
+          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
+          enum:
+          - CANCELLED
+          - CLOSED
+          - OPEN
+          - TRACKING
+          example: OPEN
+          readOnly: true
+          type: string
+        updated:
+          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
           type: string
       required:
-      - description
-      - field
+      - alertConfigId
+      - created
+      - eventTypeName
+      - id
+      - status
+      - updated
+      title: Any Other Alerts
+      type: object
+    AcknowledgeAlert:
+      description: Acknowledging an alert prevents successive notifications. Specify the `acknowledgeUntil` date and optional comment or `unacknowledgeAlert` boolean.
+      properties:
+        acknowledgedUntil:
+          description: Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+        acknowledgementComment:
+          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
+          example: Expiration on 3/19.  Silencing for 7days.
+          maxLength: 200
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        unacknowledgeAlert:
+          description: Flag that indicates to unacknowledge a previously acknowledged alert. By default this value is set to false. If set to true, it will override the `acknowledgedUntil` parameter.
+          type: boolean
+      title: Acknowledge Alert
+      type: object
+    AppServiceAlertView:
+      description: App Services alert notifies different activities about a BAAS application.
+      properties:
+        acknowledgedUntil:
+          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
+
+
+            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
+
+
+            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+        acknowledgementComment:
+          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
+          example: Expiration on 3/19.  Silencing for 7days.
+          maxLength: 200
+          type: string
+        acknowledgingUsername:
+          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
+          format: email
+          readOnly: true
+          type: string
+        alertConfigId:
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        eventTypeName:
+          $ref: '#/components/schemas/AppServiceEventTypeViewAlertable'
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        lastNotified:
+          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        orgId:
+          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resolved:
+          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        status:
+          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
+          enum:
+          - CANCELLED
+          - CLOSED
+          - OPEN
+          - TRACKING
+          example: OPEN
+          readOnly: true
+          type: string
+        updated:
+          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+      required:
+      - alertConfigId
+      - created
+      - eventTypeName
+      - id
+      - status
+      - updated
+      title: App Services Alerts
       type: object
     StreamProcessorAlertViewForNdsGroup:
       description: Stream Processor alert notifies about activities on Stream Processor in Atlas Streams.
@@ -1446,23 +1416,15 @@ components:
       - updated
       title: Stream Processor Alerts
       type: object
-    AppServiceEventTypeViewAlertable:
-      description: Incident that triggered this alert.
+    HostMetricEventTypeViewAlertable:
+      description: Event type that triggers an alert.
       enum:
-      - URL_CONFIRMATION
-      - SUCCESSFUL_DEPLOY
-      - DEPLOYMENT_FAILURE
-      - DEPLOYMENT_MODEL_CHANGE_SUCCESS
-      - DEPLOYMENT_MODEL_CHANGE_FAILURE
-      - REQUEST_RATE_LIMIT
-      - LOG_FORWARDER_FAILURE
-      - OUTSIDE_REALM_METRIC_THRESHOLD
-      - SYNC_FAILURE
-      - TRIGGER_FAILURE
-      - TRIGGER_AUTO_RESUMED
-      example: DEPLOYMENT_FAILURE
-      readOnly: true
-      title: App Services Event Types
+      - OUTSIDE_METRIC_THRESHOLD
+      example: OUTSIDE_METRIC_THRESHOLD
+      externalDocs:
+        description: Atlas Alert Event Types
+        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
+      title: Host Metric Event Types
       type: string
     ReplicaSetAlertViewForNdsGroup:
       description: Replica Set alert notifies about different activities on replica set of mongod instances.
@@ -1606,146 +1568,177 @@ components:
       - updated
       title: ReplicaSet Alerts
       type: object
-    AcknowledgeAlert:
-      description: Acknowledging an alert prevents successive notifications. Specify the `acknowledgeUntil` date and optional comment or `unacknowledgeAlert` boolean.
+    Link:
       properties:
-        acknowledgedUntil:
-          description: Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
           type: string
-        acknowledgementComment:
-          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
-          example: Expiration on 3/19.  Silencing for 7days.
-          maxLength: 200
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
           type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        unacknowledgeAlert:
-          description: Flag that indicates to unacknowledge a previously acknowledged alert. By default this value is set to false. If set to true, it will override the `acknowledgedUntil` parameter.
-          type: boolean
-      title: Acknowledge Alert
       type: object
-    AppServiceAlertView:
-      description: App Services alert notifies different activities about a BAAS application.
+    HostEventTypeViewForNdsGroupAlertable:
+      description: Event type that triggers an alert.
+      enum:
+      - HOST_DOWN
+      - HOST_HAS_INDEX_SUGGESTIONS
+      - HOST_MONGOT_CRASHING_OOM
+      - HOST_MONGOT_STOP_REPLICATION
+      - HOST_MONGOT_APPROACHING_STOP_REPLICATION
+      - HOST_MONGOT_PAUSE_INITIAL_SYNC
+      - HOST_SEARCH_NODE_INDEX_FAILED
+      - HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN
+      - HOST_NOT_ENOUGH_DISK_SPACE
+      - SSH_KEY_NDS_HOST_ACCESS_REQUESTED
+      - SSH_KEY_NDS_HOST_ACCESS_REFRESHED
+      - PUSH_BASED_LOG_EXPORT_STOPPED
+      - PUSH_BASED_LOG_EXPORT_DROPPED_LOG
+      - HOST_VERSION_BEHIND
+      - VERSION_BEHIND
+      - HOST_EXPOSED
+      - HOST_SSL_CERTIFICATE_STALE
+      - HOST_SECURITY_CHECKUP_NOT_MET
+      - ALERT_HOST_SSH_SESSION_STARTED
+      - PROFILER_CONFIGURED_TOO_WIDELY
+      example: HOST_DOWN
+      externalDocs:
+        description: Atlas Alert Event Types
+        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
+      title: Host Event Types
+      type: string
+    ApiError:
       properties:
-        acknowledgedUntil:
-          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
-
-
-            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
-
-
-            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
           externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          type: string
-        acknowledgementComment:
-          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
-          example: Expiration on 3/19.  Silencing for 7days.
-          maxLength: 200
-          type: string
-        acknowledgingUsername:
-          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
-          format: email
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
           readOnly: true
           type: string
-        alertConfigId:
-          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        created:
-          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        eventTypeName:
-          $ref: '#/components/schemas/AppServiceEventTypeViewAlertable'
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        lastNotified:
-          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
+        parameters:
+          description: Parameters used to give more information about the error.
           items:
-            $ref: '#/components/schemas/Link'
+            type: object
           readOnly: true
           type: array
-        orgId:
-          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resolved:
-          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        status:
-          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
-          enum:
-          - CANCELLED
-          - CLOSED
-          - OPEN
-          - TRACKING
-          example: OPEN
-          readOnly: true
-          type: string
-        updated:
-          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
+        reason:
+          description: Application error message returned with this error.
           readOnly: true
           type: string
       required:
-      - alertConfigId
-      - created
-      - eventTypeName
-      - id
-      - status
-      - updated
-      title: App Services Alerts
+      - error
+      - errorCode
+      type: object
+    ClusterEventTypeViewForNdsGroupAlertable:
+      description: Event type that triggers an alert.
+      enum:
+      - CLUSTER_MONGOS_IS_MISSING
+      example: CLUSTER_MONGOS_IS_MISSING
+      externalDocs:
+        description: Atlas Alert Event Types
+        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
+      title: Cluster Event Types
+      type: string
+    ReplicaSetEventTypeViewForNdsGroupAlertable:
+      description: Incident that triggered this alert.
+      enum:
+      - REPLICATION_OPLOG_WINDOW_RUNNING_OUT
+      - NO_PRIMARY
+      - PRIMARY_ELECTED
+      - TOO_MANY_ELECTIONS
+      - TOO_FEW_HEALTHY_MEMBERS
+      - TOO_MANY_UNHEALTHY_MEMBERS
+      example: NO_PRIMARY
+      readOnly: true
+      title: ReplicaSet Event Types
+      type: string
+    HostMetricValue:
+      description: Value of the metric that triggered the alert. The resource returns this parameter for alerts of events impacting hosts.
+      properties:
+        number:
+          description: Amount of the `metricName` recorded at the time of the event. This value triggered the alert.
+          format: double
+          readOnly: true
+          type: number
+        units:
+          description: Element used to express the quantity in `currentValue.number`. This can be an element of time, storage capacity, and the like. This metric triggered the alert.
+          enum:
+          - bits
+          - Kbits
+          - Mbits
+          - Gbits
+          - bytes
+          - KB
+          - MB
+          - GB
+          - TB
+          - PB
+          - nsec
+          - msec
+          - sec
+          - min
+          - hours
+          - million minutes
+          - days
+          - requests
+          - 1000 requests
+          - tokens
+          - million tokens
+          - pixels
+          - billion pixels
+          - GB seconds
+          - GB hours
+          - GB days
+          - RPU
+          - thousand RPU
+          - million RPU
+          - WPU
+          - thousand WPU
+          - million WPU
+          - count
+          - thousand
+          - million
+          - billion
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    PaginatedAlertView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/AlertViewForNdsGroup'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
       type: object
     ClusterAlertViewForNdsGroup:
       description: Cluster alert notifies different activities and conditions about cluster of mongod hosts.
@@ -1865,78 +1858,85 @@ components:
       - updated
       title: Cluster Alerts
       type: object
-    HostMetricEventTypeViewAlertable:
-      description: Event type that triggers an alert.
-      enum:
-      - OUTSIDE_METRIC_THRESHOLD
-      example: OUTSIDE_METRIC_THRESHOLD
-      externalDocs:
-        description: Atlas Alert Event Types
-        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
-      title: Host Metric Event Types
-      type: string
-    BadRequestDetail:
-      description: Bad request detail.
+    FieldViolation:
       properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
       type: object
-    HostEventTypeViewForNdsGroupAlertable:
-      description: Event type that triggers an alert.
-      enum:
-      - HOST_DOWN
-      - HOST_HAS_INDEX_SUGGESTIONS
-      - HOST_MONGOT_CRASHING_OOM
-      - HOST_MONGOT_STOP_REPLICATION
-      - HOST_MONGOT_APPROACHING_STOP_REPLICATION
-      - HOST_MONGOT_PAUSE_INITIAL_SYNC
-      - HOST_SEARCH_NODE_INDEX_FAILED
-      - HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN
-      - HOST_NOT_ENOUGH_DISK_SPACE
-      - SSH_KEY_NDS_HOST_ACCESS_REQUESTED
-      - SSH_KEY_NDS_HOST_ACCESS_REFRESHED
-      - PUSH_BASED_LOG_EXPORT_STOPPED
-      - PUSH_BASED_LOG_EXPORT_DROPPED_LOG
-      - HOST_VERSION_BEHIND
-      - VERSION_BEHIND
-      - HOST_EXPOSED
-      - HOST_SSL_CERTIFICATE_STALE
-      - HOST_SECURITY_CHECKUP_NOT_MET
-      - ALERT_HOST_SSH_SESSION_STARTED
-      - PROFILER_CONFIGURED_TOO_WIDELY
-      example: HOST_DOWN
-      externalDocs:
-        description: Atlas Alert Event Types
-        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
-      title: Host Event Types
-      type: string
-    ClusterEventTypeViewForNdsGroupAlertable:
-      description: Event type that triggers an alert.
-      enum:
-      - CLUSTER_MONGOS_IS_MISSING
-      example: CLUSTER_MONGOS_IS_MISSING
-      externalDocs:
-        description: Atlas Alert Event Types
-        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
-      title: Cluster Event Types
-      type: string
   headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
     HeaderRetryAfter:
       description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
   securitySchemes:
     DigestAuth:
       scheme: digest

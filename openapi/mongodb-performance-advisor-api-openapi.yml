@@ -827,57 +827,6 @@ paths:
       x-xgen-operation-id-override: setServerlessAutoIndexing
 components:
   responses:
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
     unauthorized:
       content:
         application/json:
@@ -900,148 +849,135 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Bad Request.
-  parameters:
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
   schemas:
-    ApiError:
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
+        fields:
+          description: Describes all violations in a client request.
           items:
-            type: object
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    SchemaAdvisorNamespaceTriggers:
+      properties:
+        namespace:
+          description: Namespace of the affected collection. Will be null for `REDUCE_NUMBER_OF_NAMESPACE` recommendation.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        triggers:
+          description: List of triggers that specify why the collection activated the recommendation.
+          items:
+            $ref: '#/components/schemas/SchemaAdvisorTriggerDetails'
           readOnly: true
           type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
       type: object
-    PerformanceAdvisorShape:
+    NamespaceObj:
+      description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
       properties:
-        avgMs:
-          description: Average duration in milliseconds for the queries examined that match this shape.
-          format: int64
-          readOnly: true
-          type: integer
-        count:
-          description: Number of queries examined that match this shape.
-          format: int64
-          readOnly: true
-          type: integer
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this shape. This string exists only for the duration of this API request.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        inefficiencyScore:
-          description: Average number of documents read for every document that the query returns.
-          externalDocs:
-            description: Understanding the Query Inefficiency Score
-            url: https://www.mongodb.com/docs/atlas/performance-advisor/#std-label-query-inefficiency-score
-          format: int64
-          readOnly: true
-          type: integer
         namespace:
           description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
           readOnly: true
           type: string
-        operations:
-          description: List that contains specific about individual queries.
+        type:
+          default: collection
+          description: Human-readable label that identifies the type of namespace.
+          enum:
+          - collection
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    PerformanceAdvisorSlowQueryList:
+      properties:
+        slowQueries:
+          description: List of operations that the Performance Advisor detected that took longer to execute than a specified threshold.
           items:
-            $ref: '#/components/schemas/PerformanceAdvisorOperationView'
+            $ref: '#/components/schemas/PerformanceAdvisorSlowQuery'
           readOnly: true
           type: array
       type: object
-    SchemaAdvisorTriggerDetails:
+    PerformanceAdvisorOpStats:
+      description: Details that this resource returned about the specified query.
       properties:
-        description:
-          description: Description of the trigger type.
+        ms:
+          description: Length of time expressed during which the query finds suggested indexes among the managed namespaces in the cluster. This parameter expresses its value in milliseconds. This parameter relates to the **duration** query parameter.
+          format: int64
           readOnly: true
-          type: string
-        triggerType:
-          description: Type of trigger.
-          enum:
-          - PERCENT_QUERIES_USE_LOOKUP
-          - NUMBER_OF_QUERIES_USE_LOOKUP
-          - DOCS_CONTAIN_UNBOUNDED_ARRAY
-          - NUMBER_OF_NAMESPACES
-          - DOC_SIZE_TOO_LARGE
-          - NUM_INDEXES
-          - QUERIES_CONTAIN_CASE_INSENSITIVE_REGEX
+          type: integer
+        nReturned:
+          description: Number of results that the query returns.
+          format: int64
           readOnly: true
-          type: string
+          type: integer
+        nScanned:
+          description: Number of documents that the query read.
+          format: int64
+          readOnly: true
+          type: integer
+        ts:
+          description: Date and time from which the query retrieves the suggested indexes. This parameter expresses its value in the number of seconds that have elapsed since the UNIX epoch. This parameter relates to the **since** query parameter.
+          externalDocs:
+            description: UNIX Epoch
+            url: https://en.wikipedia.org/wiki/Unix_time
+          format: int64
+          readOnly: true
+          type: integer
+      readOnly: true
       type: object
     PerformanceAdvisorIndex:
       properties:
@@ -1086,6 +1022,133 @@ components:
           format: double
           readOnly: true
           type: number
+      type: object
+    SchemaAdvisorItemRecommendation:
+      properties:
+        affectedNamespaces:
+          description: List that contains the namespaces and information on why those namespaces triggered the recommendation.
+          items:
+            $ref: '#/components/schemas/SchemaAdvisorNamespaceTriggers'
+          readOnly: true
+          type: array
+        description:
+          description: Description of the specified recommendation.
+          readOnly: true
+          type: string
+        recommendation:
+          description: Type of recommendation.
+          enum:
+          - REDUCE_LOOKUP_OPS
+          - AVOID_UNBOUNDED_ARRAY
+          - REDUCE_DOCUMENT_SIZE
+          - REMOVE_UNNECESSARY_INDEXES
+          - REDUCE_NUMBER_OF_NAMESPACES
+          - OPTIMIZE_CASE_INSENSITIVE_REGEX_QUERIES
+          - OPTIMIZE_TEXT_QUERIES
+          readOnly: true
+          type: string
+      type: object
+    PerformanceAdvisorShape:
+      properties:
+        avgMs:
+          description: Average duration in milliseconds for the queries examined that match this shape.
+          format: int64
+          readOnly: true
+          type: integer
+        count:
+          description: Number of queries examined that match this shape.
+          format: int64
+          readOnly: true
+          type: integer
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this shape. This string exists only for the duration of this API request.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        inefficiencyScore:
+          description: Average number of documents read for every document that the query returns.
+          externalDocs:
+            description: Understanding the Query Inefficiency Score
+            url: https://www.mongodb.com/docs/atlas/performance-advisor/#std-label-query-inefficiency-score
+          format: int64
+          readOnly: true
+          type: integer
+        namespace:
+          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+          readOnly: true
+          type: string
+        operations:
+          description: List that contains specific about individual queries.
+          items:
+            $ref: '#/components/schemas/PerformanceAdvisorOperationView'
+          readOnly: true
+          type: array
+      type: object
+    Namespaces:
+      properties:
+        namespaces:
+          description: List that contains each combination of database, collection, and type on the specified host.
+          items:
+            $ref: '#/components/schemas/NamespaceObj'
+          readOnly: true
+          type: array
+          uniqueItems: true
+      type: object
+    PerformanceAdvisorResponse:
+      properties:
+        shapes:
+          description: List of query predicates, sorts, and projections that the Performance Advisor suggests.
+          items:
+            $ref: '#/components/schemas/PerformanceAdvisorShape'
+          readOnly: true
+          type: array
+        suggestedIndexes:
+          description: List that contains the documents with information about the indexes that the Performance Advisor suggests.
+          items:
+            $ref: '#/components/schemas/PerformanceAdvisorIndex'
+          readOnly: true
+          type: array
+      type: object
+    DropIndexSuggestionsResponse:
+      properties:
+        hiddenIndexes:
+          description: List that contains the documents with information about the hidden indexes that the Performance Advisor suggests to remove.
+          items:
+            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
+          readOnly: true
+          type: array
+        redundantIndexes:
+          description: List that contains the documents with information about the redundant indexes that the Performance Advisor suggests to remove.
+          items:
+            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
+          readOnly: true
+          type: array
+        unusedIndexes:
+          description: List that contains the documents with information about the unused indexes that the Performance Advisor suggests to remove.
+          items:
+            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
+          readOnly: true
+          type: array
+      type: object
+    SchemaAdvisorTriggerDetails:
+      properties:
+        description:
+          description: Description of the trigger type.
+          readOnly: true
+          type: string
+        triggerType:
+          description: Type of trigger.
+          enum:
+          - PERCENT_QUERIES_USE_LOOKUP
+          - NUMBER_OF_QUERIES_USE_LOOKUP
+          - DOCS_CONTAIN_UNBOUNDED_ARRAY
+          - NUMBER_OF_NAMESPACES
+          - DOC_SIZE_TOO_LARGE
+          - NUM_INDEXES
+          - QUERIES_CONTAIN_CASE_INSENSITIVE_REGEX
+          readOnly: true
+          type: string
       type: object
     PerformanceAdvisorSlowQueryMetrics:
       description: Metrics from a slow query log.
@@ -1144,170 +1207,18 @@ components:
           type: integer
       readOnly: true
       type: object
-    PerformanceAdvisorSlowQueryList:
+    PerformanceAdvisorOperationView:
       properties:
-        slowQueries:
-          description: List of operations that the Performance Advisor detected that took longer to execute than a specified threshold.
+        predicates:
+          description: List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.
           items:
-            $ref: '#/components/schemas/PerformanceAdvisorSlowQuery'
+            description: List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.
+            readOnly: true
+            type: object
           readOnly: true
           type: array
-      type: object
-    SchemaAdvisorNamespaceTriggers:
-      properties:
-        namespace:
-          description: Namespace of the affected collection. Will be null for `REDUCE_NUMBER_OF_NAMESPACE` recommendation.
-          readOnly: true
-          type:
-          - string
-          - 'null'
-        triggers:
-          description: List of triggers that specify why the collection activated the recommendation.
-          items:
-            $ref: '#/components/schemas/SchemaAdvisorTriggerDetails'
-          readOnly: true
-          type: array
-      type: object
-    NamespaceObj:
-      description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
-      properties:
-        namespace:
-          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
-          readOnly: true
-          type: string
-        type:
-          default: collection
-          description: Human-readable label that identifies the type of namespace.
-          enum:
-          - collection
-          readOnly: true
-          type: string
-      readOnly: true
-      type: object
-    PerformanceAdvisorResponse:
-      properties:
-        shapes:
-          description: List of query predicates, sorts, and projections that the Performance Advisor suggests.
-          items:
-            $ref: '#/components/schemas/PerformanceAdvisorShape'
-          readOnly: true
-          type: array
-        suggestedIndexes:
-          description: List that contains the documents with information about the indexes that the Performance Advisor suggests.
-          items:
-            $ref: '#/components/schemas/PerformanceAdvisorIndex'
-          readOnly: true
-          type: array
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    Namespaces:
-      properties:
-        namespaces:
-          description: List that contains each combination of database, collection, and type on the specified host.
-          items:
-            $ref: '#/components/schemas/NamespaceObj'
-          readOnly: true
-          type: array
-          uniqueItems: true
-      type: object
-    PerformanceAdvisorSlowQuery:
-      description: Details of one slow query that the Performance Advisor detected.
-      properties:
-        line:
-          description: Text of the MongoDB log related to this slow query.
-          readOnly: true
-          type: string
-        metrics:
-          $ref: '#/components/schemas/PerformanceAdvisorSlowQueryMetrics'
-        namespace:
-          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
-          readOnly: true
-          type: string
-        opType:
-          description: Operation type (read/write/command) associated with this slow query log.
-          readOnly: true
-          type: string
-        replicaState:
-          description: Replica state associated with this slow query log.
-          readOnly: true
-          type: string
-      readOnly: true
-      type: object
-    DropIndexSuggestionsResponse:
-      properties:
-        hiddenIndexes:
-          description: List that contains the documents with information about the hidden indexes that the Performance Advisor suggests to remove.
-          items:
-            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
-          readOnly: true
-          type: array
-        redundantIndexes:
-          description: List that contains the documents with information about the redundant indexes that the Performance Advisor suggests to remove.
-          items:
-            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
-          readOnly: true
-          type: array
-        unusedIndexes:
-          description: List that contains the documents with information about the unused indexes that the Performance Advisor suggests to remove.
-          items:
-            $ref: '#/components/schemas/DropIndexSuggestionsIndex'
-          readOnly: true
-          type: array
-      type: object
-    SchemaAdvisorItemRecommendation:
-      properties:
-        affectedNamespaces:
-          description: List that contains the namespaces and information on why those namespaces triggered the recommendation.
-          items:
-            $ref: '#/components/schemas/SchemaAdvisorNamespaceTriggers'
-          readOnly: true
-          type: array
-        description:
-          description: Description of the specified recommendation.
-          readOnly: true
-          type: string
-        recommendation:
-          description: Type of recommendation.
-          enum:
-          - REDUCE_LOOKUP_OPS
-          - AVOID_UNBOUNDED_ARRAY
-          - REDUCE_DOCUMENT_SIZE
-          - REMOVE_UNNECESSARY_INDEXES
-          - REDUCE_NUMBER_OF_NAMESPACES
-          - OPTIMIZE_CASE_INSENSITIVE_REGEX_QUERIES
-          - OPTIMIZE_TEXT_QUERIES
-          readOnly: true
-          type: string
-      type: object
-    SchemaAdvisorResponse:
-      properties:
-        recommendations:
-          description: List that contains the documents with information about the schema advice that Performance Advisor suggests.
-          items:
-            $ref: '#/components/schemas/SchemaAdvisorItemRecommendation'
-          readOnly: true
-          type: array
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
+        stats:
+          $ref: '#/components/schemas/PerformanceAdvisorOpStats'
       type: object
     DropIndexSuggestionsIndex:
       properties:
@@ -1342,60 +1253,149 @@ components:
           format: int64
           type: integer
       type: object
-    PerformanceAdvisorOperationView:
+    SchemaAdvisorResponse:
       properties:
-        predicates:
-          description: List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.
+        recommendations:
+          description: List that contains the documents with information about the schema advice that Performance Advisor suggests.
           items:
-            description: List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.
-            readOnly: true
+            $ref: '#/components/schemas/SchemaAdvisorItemRecommendation'
+          readOnly: true
+          type: array
+      type: object
+    PerformanceAdvisorSlowQuery:
+      description: Details of one slow query that the Performance Advisor detected.
+      properties:
+        line:
+          description: Text of the MongoDB log related to this slow query.
+          readOnly: true
+          type: string
+        metrics:
+          $ref: '#/components/schemas/PerformanceAdvisorSlowQueryMetrics'
+        namespace:
+          description: Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.
+          readOnly: true
+          type: string
+        opType:
+          description: Operation type (read/write/command) associated with this slow query log.
+          readOnly: true
+          type: string
+        replicaState:
+          description: Replica state associated with this slow query log.
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
             type: object
           readOnly: true
           type: array
-        stats:
-          $ref: '#/components/schemas/PerformanceAdvisorOpStats'
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
       type: object
-    PerformanceAdvisorOpStats:
-      description: Details that this resource returned about the specified query.
+    FieldViolation:
       properties:
-        ms:
-          description: Length of time expressed during which the query finds suggested indexes among the managed namespaces in the cluster. This parameter expresses its value in milliseconds. This parameter relates to the **duration** query parameter.
-          format: int64
-          readOnly: true
-          type: integer
-        nReturned:
-          description: Number of results that the query returns.
-          format: int64
-          readOnly: true
-          type: integer
-        nScanned:
-          description: Number of documents that the query read.
-          format: int64
-          readOnly: true
-          type: integer
-        ts:
-          description: Date and time from which the query retrieves the suggested indexes. This parameter expresses its value in the number of seconds that have elapsed since the UNIX epoch. This parameter relates to the **since** query parameter.
-          externalDocs:
-            description: UNIX Epoch
-            url: https://en.wikipedia.org/wiki/Unix_time
-          format: int64
-          readOnly: true
-          type: integer
-      readOnly: true
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
       type: object
   headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
       schema:
         type: integer
     HeaderRetryAfter:
       description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
         type: integer
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
   securitySchemes:
     DigestAuth:
       scheme: digest

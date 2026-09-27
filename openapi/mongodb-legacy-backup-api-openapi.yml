@@ -794,6 +794,17 @@ paths:
       x-xgen-operation-id-override: updateClusterSnapshot
 components:
   responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
     notFound:
       content:
         application/json:
@@ -805,17 +816,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Not Found.
-    forbidden:
+    badRequest:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
+      description: Bad Request.
     internalServerError:
       content:
         application/json:
@@ -827,6 +838,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
     tooManyRequests:
       content:
         application/json:
@@ -845,29 +867,77 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
   schemas:
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    ApiAtlasCheckpointView:
+      properties:
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster that contains the checkpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        completed:
+          description: Date and time when the checkpoint completed and the balancer restarted. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns the checkpoints.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies checkpoint.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        parts:
+          description: 'Metadata that describes the complete snapshot.
+
+
+            - For a replica set, this array contains a single document.
+
+            - For a sharded cluster, this array contains one document for each shard plus one document for the config host.'
+          items:
+            $ref: '#/components/schemas/ApiCheckpointPartView'
+          readOnly: true
+          type: array
+        restorable:
+          description: Flag that indicates whether MongoDB Cloud can use the checkpoint for a restore.
+          readOnly: true
+          type: boolean
+        started:
+          description: Date and time when the balancer stopped and began the checkpoint. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        timestamp:
+          description: Date and time to which the checkpoint restores. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
     PaginatedRestoreJobView:
       properties:
         links:
@@ -893,6 +963,404 @@ components:
           type: integer
       required:
       - results
+      type: object
+    BackupRestoreJob:
+      properties:
+        batchId:
+          description: Unique 24-hexadecimal digit string that identifies the batch to which this restore job belongs. This parameter exists only for a sharded cluster restore.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        checkpointId:
+          description: 'Unique 24-hexadecimal digit string that identifies the sharded cluster checkpoint. The checkpoint represents the point in time back to which you want to restore you data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`. Use this parameter with sharded clusters only.
+
+
+            - If you set `checkpointId`, you can''t set `oplogInc`, `oplogTs`, `snapshotId`, or `pointInTimeUTCMillis`.
+
+            - If you provide this parameter, this endpoint restores all data up to this checkpoint to the database you specify in the `delivery` object.'
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+          writeOnly: true
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshot you want to return. This parameter returns for restore clusters.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        clusterName:
+          description: Human-readable label that identifies the cluster containing the snapshots you want to retrieve.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when someone requested this restore job. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        delivery:
+          $ref: '#/components/schemas/BackupRestoreJobDelivery'
+        deploymentJobId:
+          description: Unique 24-hexadecimal digit string that identifies the an imported deployment job. This parameter exists when restoring from an imported snapshot/cluster shot.
+          readOnly: true
+          type: string
+        encryptionEnabled:
+          description: Flag that indicates whether someone encrypted the data in the restored snapshot.
+          readOnly: true
+          type: boolean
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns the snapshots.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        hashes:
+          description: 'List that contains documents mapping each restore file to a hashed checksum. This parameter applies after you download the corresponding `delivery.url`. If `"methodName" : "HTTP"`, this list contains one object that represents the hash of the `.tar.gz` file.'
+          items:
+            $ref: '#/components/schemas/RestoreJobFileHash'
+          readOnly: true
+          type: array
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the restore job.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        masterKeyUUID:
+          description: 'Universally Unique Identifier (UUID) that identifies the Key Management Interoperability (KMIP) master key used to encrypt the snapshot data. This parameter applies only when `"encryptionEnabled" : "true"`.'
+          format: uuid
+          readOnly: true
+          type: string
+        oplogInc:
+          description: 'Thirty-two-bit incrementing ordinal that represents operations within a given second. When paired with `oplogTs`, this represents the point in time to which MongoDB Cloud restores your data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
+
+
+            - If you set `oplogInc`, you must set `oplogTs`, and can''t set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.
+
+            - If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.'
+          format: int32
+          minimum: 1
+          type: integer
+          writeOnly: true
+        oplogTs:
+          description: 'Date and time from which you want to restore this snapshot. This parameter expresses its value in ISO 8601 format in UTC. This represents the first part of an Oplog timestamp. When paired with `oplogInc`, they represent the last database operation to which you want to restore your data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`. Run a query against `local.oplog.rs` on your replica set to find the desired timestamp.
+
+
+            - If you set `oplogTs`, you must set `oplogInc`, and you can''t set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.
+
+            - If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.'
+          pattern: ^(?:[1-9]\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,9})?(?:Z|[+-][01]\\d:[0-5]\\d)$
+          type: string
+          writeOnly: true
+        pointInTimeUTCMillis:
+          description: 'Timestamp from which you want to restore this snapshot. This parameter expresses its value in the number of milliseconds elapsed since the UNIX epoch. This timestamp must fall within the last 24 hours of the current time. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
+
+
+            - If you provide this parameter, this endpoint restores all data up to this point in time to the database you specified in the `delivery` object.
+
+            - If you set `pointInTimeUTCMillis`, you can''t set `oplogInc`, `oplogTs`, `snapshotId`, or `checkpointId`.'
+          externalDocs:
+            description: UNIX Epoch
+            url: https://en.wikipedia.org/wiki/Unix_time
+          format: int64
+          minimum: 1199145600000
+          type: integer
+          writeOnly: true
+        snapshotId:
+          description: Unique 24-hexadecimal digit string that identifies the snapshot to restore. If you set `snapshotId`, you can't set `oplogInc`, `oplogTs`, `pointInTimeUTCMillis`, or `checkpointId`.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        statusName:
+          description: Human-readable label that identifies the status of the downloadable file at the time of the request.
+          enum:
+          - IN_PROGRESS
+          - BROKEN
+          - KILLED
+          - FINISHED
+          readOnly: true
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/ApiBSONTimestampView'
+      required:
+      - delivery
+      type: object
+    RestoreJobFileHash:
+      description: Key and value pair that map one restore file to one hashed checksum. This parameter applies after you download the corresponding `delivery.url`.
+      properties:
+        fileName:
+          description: Human-readable label that identifies the hashed file.
+          readOnly: true
+          type: string
+        hash:
+          description: Hashed checksum that maps to the restore file.
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        typeName:
+          description: Human-readable label that identifies the hashing algorithm used to compute the hash value.
+          enum:
+          - SHA1
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    ApiBSONTimestampView:
+      description: BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.
+      properties:
+        date:
+          description: Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        increment:
+          description: Order of the database operation that the oplog recorded at specific date and time.
+          example: 1199145600
+          format: int32
+          minimum: 1199145600
+          readOnly: true
+          type: integer
+      readOnly: true
+      title: BSON Timestamp
+      type: object
+    ApiAtlasSnapshotScheduleView:
+      properties:
+        clusterCheckpointIntervalMin:
+          description: Quantity of time expressed in minutes between successive cluster checkpoints. This parameter applies only to sharded clusters. This number determines the granularity of continuous cloud backups for sharded clusters.
+          enum:
+          - 15
+          - 30
+          - 60
+          format: int32
+          type: integer
+        clusterId:
+          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshot you want to return.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        dailySnapshotRetentionDays:
+          description: Quantity of time to keep daily snapshots. MongoDB Cloud expresses this value in days. Set this value to `0` to disable daily snapshot retention.
+          enum:
+          - 0
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 15
+          - 30
+          - 60
+          - 90
+          - 120
+          - 180
+          - 360
+          format: int32
+          type: integer
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that contains the cluster.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        monthlySnapshotRetentionMonths:
+          description: Number of months that MongoDB Cloud must keep monthly snapshots. Set this value to `0` to disable monthly snapshot retention.
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 13
+          - 18
+          - 24
+          - 36
+          format: int32
+          type: integer
+        pointInTimeWindowHours:
+          description: Number of hours before the current time from which MongoDB Cloud can create a Continuous Cloud Backup snapshot.
+          format: int32
+          type: integer
+        snapshotIntervalHours:
+          description: Number of hours that must elapse before taking another snapshot.
+          enum:
+          - 6
+          - 8
+          - 12
+          - 24
+          format: int32
+          type: integer
+        snapshotRetentionDays:
+          description: Number of days that MongoDB Cloud must keep recent snapshots.
+          enum:
+          - 2
+          - 3
+          - 4
+          - 5
+          format: int32
+          type: integer
+        weeklySnapshotRetentionWeeks:
+          description: Number of weeks that MongoDB Cloud must keep weekly snapshots. Set this value to `0` to disable weekly snapshot retention.
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 12
+          - 16
+          - 20
+          - 24
+          - 52
+          format: int32
+          type: integer
+      required:
+      - clusterCheckpointIntervalMin
+      - clusterId
+      - dailySnapshotRetentionDays
+      - groupId
+      - monthlySnapshotRetentionMonths
+      - pointInTimeWindowHours
+      - snapshotIntervalHours
+      - snapshotRetentionDays
+      - weeklySnapshotRetentionWeeks
+      type: object
+    BackupRestoreJobDelivery:
+      description: Method and details that indicate how to deliver the restored snapshot data.
+      properties:
+        authHeader:
+          description: 'Header name to use when downloading the restore, used with `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+        authValue:
+          description: 'Header value to use when downloading the restore, used with `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+        expirationHours:
+          description: 'Number of hours after the restore job completes that indicates when the Uniform Resource Locator (URL) for the snapshot download file expires. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          format: int32
+          minimum: 1
+          type: integer
+        expires:
+          description: 'Date and time when the Uniform Resource Locator (URL) for the snapshot download file expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          format: date-time
+          readOnly: true
+          type: string
+        maxDownloads:
+          description: 'Positive integer that indicates how many times you can use the Uniform Resource Locator (URL) for the snapshot download file. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          format: int32
+          minimum: 1
+          type: integer
+        methodName:
+          description: 'Human-readable label that identifies the means for delivering the data. If you set `"delivery.methodName" : "AUTOMATED_RESTORE"`, you must also set: `delivery.targetGroupId` and `delivery.targetClusterName` or `delivery.targetClusterId`. The response returns `"delivery.methodName" : "HTTP"` as an automated restore uses HyperText Transport Protocol (HTTP) to deliver the restore job to the target host.'
+          enum:
+          - CLIENT_PIT_HTTP
+          - QUERY
+          - AUTOMATED_RESTORE
+          - HTTP
+          - THIRD_PARTY_COPY
+          - CLIENT_PIT_SCP
+          - SCP
+          type: string
+        statusName:
+          description: State of the downloadable snapshot file when MongoDB Cloud received this request.
+          enum:
+          - NOT_STARTED
+          - IN_PROGRESS
+          - READY
+          - FAILED
+          - INTERRUPTED
+          - EXPIRED
+          - MAX_DOWNLOADS_EXCEEDED
+          - PENDING
+          readOnly: true
+          type: string
+        targetClusterId:
+          description: "Unique 24-hexadecimal digit string that identifies the target cluster. Use the `clusterId` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.\n\n If the target cluster doesn't have backup enabled, two resources return parameters with empty values:\n\n- **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements\n- **Get a Snapshot** endpoint doesn't return a `clusterId` parameter.\n\nTo return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster."
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        targetClusterName:
+          description: 'Human-readable label that identifies the target cluster. Use the `clusterName` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints.  This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
+
+
+            If the target cluster doesn''t have backup enabled, two resources return parameters with empty values:
+
+
+            - **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements
+
+            - **Get a Snapshot** endpoint doesn''t return a `clusterId` parameter.
+
+
+            To return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster.'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          type: string
+        targetGroupId:
+          description: 'Unique 24-hexadecimal digit string that identifies the project that contains the destination cluster for the restore job. The resource returns this parameter when `"delivery.methodName" : "AUTOMATED_RESTORE"`.'
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        url:
+          deprecated: true
+          description: 'Uniform Resource Locator (URL) from which you can download the restored snapshot data. URL includes the verification key. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+        urlV2:
+          description: 'Uniform Resource Locator (URL) from which you can download the restored snapshot data. This should be preferred over `url`. The verification key must be sent as an HTTP header. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
+          readOnly: true
+          type: string
+      required:
+      - methodName
+      title: Restore Snapshot Delivery Metadata
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
       type: object
     PaginatedApiAtlasCheckpointView:
       properties:
@@ -1031,175 +1499,6 @@ components:
       - error
       - errorCode
       type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    ApiCheckpointPartView:
-      description: Metadata contained in one document that describes the complete snapshot taken for this node.
-      properties:
-        replicaSetName:
-          description: Human-readable label that identifies the replica set to which this checkpoint applies.
-          readOnly: true
-          type: string
-        shardName:
-          description: Human-readable label that identifies the shard to which this checkpoint applies.
-          readOnly: true
-          type: string
-        tokenDiscovered:
-          description: Flag that indicates whether the token exists.
-          readOnly: true
-          type: boolean
-        tokenTimestamp:
-          $ref: '#/components/schemas/ApiBSONTimestampView'
-        typeName:
-          description: Human-readable label that identifies the type of host that the part represents.
-          enum:
-          - REPLICA_SET
-          - CONFIG_SERVER
-          - CONFIG_SERVER_REPLICA_SET
-          readOnly: true
-          type: string
-      readOnly: true
-      type: object
-    BackupRestoreJob:
-      properties:
-        batchId:
-          description: Unique 24-hexadecimal digit string that identifies the batch to which this restore job belongs. This parameter exists only for a sharded cluster restore.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        checkpointId:
-          description: 'Unique 24-hexadecimal digit string that identifies the sharded cluster checkpoint. The checkpoint represents the point in time back to which you want to restore you data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`. Use this parameter with sharded clusters only.
-
-
-            - If you set `checkpointId`, you can''t set `oplogInc`, `oplogTs`, `snapshotId`, or `pointInTimeUTCMillis`.
-
-            - If you provide this parameter, this endpoint restores all data up to this checkpoint to the database you specify in the `delivery` object.'
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-          writeOnly: true
-        clusterId:
-          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshot you want to return. This parameter returns for restore clusters.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        clusterName:
-          description: Human-readable label that identifies the cluster containing the snapshots you want to retrieve.
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          readOnly: true
-          type: string
-        created:
-          description: Date and time when someone requested this restore job. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        delivery:
-          $ref: '#/components/schemas/BackupRestoreJobDelivery'
-        deploymentJobId:
-          description: Unique 24-hexadecimal digit string that identifies the an imported deployment job. This parameter exists when restoring from an imported snapshot/cluster shot.
-          readOnly: true
-          type: string
-        encryptionEnabled:
-          description: Flag that indicates whether someone encrypted the data in the restored snapshot.
-          readOnly: true
-          type: boolean
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project that owns the snapshots.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        hashes:
-          description: 'List that contains documents mapping each restore file to a hashed checksum. This parameter applies after you download the corresponding `delivery.url`. If `"methodName" : "HTTP"`, this list contains one object that represents the hash of the `.tar.gz` file.'
-          items:
-            $ref: '#/components/schemas/RestoreJobFileHash'
-          readOnly: true
-          type: array
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the restore job.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        masterKeyUUID:
-          description: 'Universally Unique Identifier (UUID) that identifies the Key Management Interoperability (KMIP) master key used to encrypt the snapshot data. This parameter applies only when `"encryptionEnabled" : "true"`.'
-          format: uuid
-          readOnly: true
-          type: string
-        oplogInc:
-          description: 'Thirty-two-bit incrementing ordinal that represents operations within a given second. When paired with `oplogTs`, this represents the point in time to which MongoDB Cloud restores your data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
-
-
-            - If you set `oplogInc`, you must set `oplogTs`, and can''t set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.
-
-            - If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.'
-          format: int32
-          minimum: 1
-          type: integer
-          writeOnly: true
-        oplogTs:
-          description: 'Date and time from which you want to restore this snapshot. This parameter expresses its value in ISO 8601 format in UTC. This represents the first part of an Oplog timestamp. When paired with `oplogInc`, they represent the last database operation to which you want to restore your data. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`. Run a query against `local.oplog.rs` on your replica set to find the desired timestamp.
-
-
-            - If you set `oplogTs`, you must set `oplogInc`, and you can''t set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.
-
-            - If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.'
-          pattern: ^(?:[1-9]\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,9})?(?:Z|[+-][01]\\d:[0-5]\\d)$
-          type: string
-          writeOnly: true
-        pointInTimeUTCMillis:
-          description: 'Timestamp from which you want to restore this snapshot. This parameter expresses its value in the number of milliseconds elapsed since the UNIX epoch. This timestamp must fall within the last 24 hours of the current time. This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
-
-
-            - If you provide this parameter, this endpoint restores all data up to this point in time to the database you specified in the `delivery` object.
-
-            - If you set `pointInTimeUTCMillis`, you can''t set `oplogInc`, `oplogTs`, `snapshotId`, or `checkpointId`.'
-          externalDocs:
-            description: UNIX Epoch
-            url: https://en.wikipedia.org/wiki/Unix_time
-          format: int64
-          minimum: 1199145600000
-          type: integer
-          writeOnly: true
-        snapshotId:
-          description: Unique 24-hexadecimal digit string that identifies the snapshot to restore. If you set `snapshotId`, you can't set `oplogInc`, `oplogTs`, `pointInTimeUTCMillis`, or `checkpointId`.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        statusName:
-          description: Human-readable label that identifies the status of the downloadable file at the time of the request.
-          enum:
-          - IN_PROGRESS
-          - BROKEN
-          - KILLED
-          - FINISHED
-          readOnly: true
-          type: string
-        timestamp:
-          $ref: '#/components/schemas/ApiBSONTimestampView'
-      required:
-      - delivery
-      type: object
     PaginatedSnapshotView:
       properties:
         links:
@@ -1225,256 +1524,6 @@ components:
           type: integer
       required:
       - results
-      type: object
-    BackupRestoreJobDelivery:
-      description: Method and details that indicate how to deliver the restored snapshot data.
-      properties:
-        authHeader:
-          description: 'Header name to use when downloading the restore, used with `"delivery.methodName" : "HTTP"`.'
-          readOnly: true
-          type: string
-        authValue:
-          description: 'Header value to use when downloading the restore, used with `"delivery.methodName" : "HTTP"`.'
-          readOnly: true
-          type: string
-        expirationHours:
-          description: 'Number of hours after the restore job completes that indicates when the Uniform Resource Locator (URL) for the snapshot download file expires. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
-          format: int32
-          minimum: 1
-          type: integer
-        expires:
-          description: 'Date and time when the Uniform Resource Locator (URL) for the snapshot download file expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
-          format: date-time
-          readOnly: true
-          type: string
-        maxDownloads:
-          description: 'Positive integer that indicates how many times you can use the Uniform Resource Locator (URL) for the snapshot download file. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
-          format: int32
-          minimum: 1
-          type: integer
-        methodName:
-          description: 'Human-readable label that identifies the means for delivering the data. If you set `"delivery.methodName" : "AUTOMATED_RESTORE"`, you must also set: `delivery.targetGroupId` and `delivery.targetClusterName` or `delivery.targetClusterId`. The response returns `"delivery.methodName" : "HTTP"` as an automated restore uses HyperText Transport Protocol (HTTP) to deliver the restore job to the target host.'
-          enum:
-          - CLIENT_PIT_HTTP
-          - QUERY
-          - AUTOMATED_RESTORE
-          - HTTP
-          - THIRD_PARTY_COPY
-          - CLIENT_PIT_SCP
-          - SCP
-          type: string
-        statusName:
-          description: State of the downloadable snapshot file when MongoDB Cloud received this request.
-          enum:
-          - NOT_STARTED
-          - IN_PROGRESS
-          - READY
-          - FAILED
-          - INTERRUPTED
-          - EXPIRED
-          - MAX_DOWNLOADS_EXCEEDED
-          - PENDING
-          readOnly: true
-          type: string
-        targetClusterId:
-          description: "Unique 24-hexadecimal digit string that identifies the target cluster. Use the `clusterId` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.\n\n If the target cluster doesn't have backup enabled, two resources return parameters with empty values:\n\n- **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements\n- **Get a Snapshot** endpoint doesn't return a `clusterId` parameter.\n\nTo return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster."
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        targetClusterName:
-          description: 'Human-readable label that identifies the target cluster. Use the `clusterName` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints.  This parameter applies when `"delivery.methodName" : "AUTOMATED_RESTORE"`.
-
-
-            If the target cluster doesn''t have backup enabled, two resources return parameters with empty values:
-
-
-            - **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements
-
-            - **Get a Snapshot** endpoint doesn''t return a `clusterId` parameter.
-
-
-            To return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster.'
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          type: string
-        targetGroupId:
-          description: 'Unique 24-hexadecimal digit string that identifies the project that contains the destination cluster for the restore job. The resource returns this parameter when `"delivery.methodName" : "AUTOMATED_RESTORE"`.'
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        url:
-          deprecated: true
-          description: 'Uniform Resource Locator (URL) from which you can download the restored snapshot data. URL includes the verification key. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
-          readOnly: true
-          type: string
-        urlV2:
-          description: 'Uniform Resource Locator (URL) from which you can download the restored snapshot data. This should be preferred over `url`. The verification key must be sent as an HTTP header. The resource returns this parameter when `"delivery.methodName" : "HTTP"`.'
-          readOnly: true
-          type: string
-      required:
-      - methodName
-      title: Restore Snapshot Delivery Metadata
-      type: object
-    ApiAtlasSnapshotScheduleView:
-      properties:
-        clusterCheckpointIntervalMin:
-          description: Quantity of time expressed in minutes between successive cluster checkpoints. This parameter applies only to sharded clusters. This number determines the granularity of continuous cloud backups for sharded clusters.
-          enum:
-          - 15
-          - 30
-          - 60
-          format: int32
-          type: integer
-        clusterId:
-          description: Unique 24-hexadecimal digit string that identifies the cluster with the snapshot you want to return.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        dailySnapshotRetentionDays:
-          description: Quantity of time to keep daily snapshots. MongoDB Cloud expresses this value in days. Set this value to `0` to disable daily snapshot retention.
-          enum:
-          - 0
-          - 3
-          - 4
-          - 5
-          - 6
-          - 7
-          - 15
-          - 30
-          - 60
-          - 90
-          - 120
-          - 180
-          - 360
-          format: int32
-          type: integer
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project that contains the cluster.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        monthlySnapshotRetentionMonths:
-          description: Number of months that MongoDB Cloud must keep monthly snapshots. Set this value to `0` to disable monthly snapshot retention.
-          enum:
-          - 0
-          - 1
-          - 2
-          - 3
-          - 4
-          - 5
-          - 6
-          - 7
-          - 8
-          - 9
-          - 10
-          - 11
-          - 12
-          - 13
-          - 18
-          - 24
-          - 36
-          format: int32
-          type: integer
-        pointInTimeWindowHours:
-          description: Number of hours before the current time from which MongoDB Cloud can create a Continuous Cloud Backup snapshot.
-          format: int32
-          type: integer
-        snapshotIntervalHours:
-          description: Number of hours that must elapse before taking another snapshot.
-          enum:
-          - 6
-          - 8
-          - 12
-          - 24
-          format: int32
-          type: integer
-        snapshotRetentionDays:
-          description: Number of days that MongoDB Cloud must keep recent snapshots.
-          enum:
-          - 2
-          - 3
-          - 4
-          - 5
-          format: int32
-          type: integer
-        weeklySnapshotRetentionWeeks:
-          description: Number of weeks that MongoDB Cloud must keep weekly snapshots. Set this value to `0` to disable weekly snapshot retention.
-          enum:
-          - 0
-          - 1
-          - 2
-          - 3
-          - 4
-          - 5
-          - 6
-          - 7
-          - 8
-          - 12
-          - 16
-          - 20
-          - 24
-          - 52
-          format: int32
-          type: integer
-      required:
-      - clusterCheckpointIntervalMin
-      - clusterId
-      - dailySnapshotRetentionDays
-      - groupId
-      - monthlySnapshotRetentionMonths
-      - pointInTimeWindowHours
-      - snapshotIntervalHours
-      - snapshotRetentionDays
-      - weeklySnapshotRetentionWeeks
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    RestoreJobFileHash:
-      description: Key and value pair that map one restore file to one hashed checksum. This parameter applies after you download the corresponding `delivery.url`.
-      properties:
-        fileName:
-          description: Human-readable label that identifies the hashed file.
-          readOnly: true
-          type: string
-        hash:
-          description: Hashed checksum that maps to the restore file.
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        typeName:
-          description: Human-readable label that identifies the hashing algorithm used to compute the hash value.
-          enum:
-          - SHA1
-          readOnly: true
-          type: string
-      readOnly: true
       type: object
     BackupSnapshot:
       properties:
@@ -1540,94 +1589,58 @@ components:
           readOnly: true
           type: array
       type: object
-    ApiBSONTimestampView:
-      description: BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.
+    FieldViolation:
       properties:
-        date:
-          description: Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
+        description:
+          description: A description of why the request element is bad.
           type: string
-        increment:
-          description: Order of the database operation that the oplog recorded at specific date and time.
-          example: 1199145600
-          format: int32
-          minimum: 1199145600
-          readOnly: true
-          type: integer
-      readOnly: true
-      title: BSON Timestamp
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
       type: object
-    ApiAtlasCheckpointView:
+    ApiCheckpointPartView:
+      description: Metadata contained in one document that describes the complete snapshot taken for this node.
       properties:
-        clusterId:
-          description: Unique 24-hexadecimal digit string that identifies the cluster that contains the checkpoint.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
+        replicaSetName:
+          description: Human-readable label that identifies the replica set to which this checkpoint applies.
           readOnly: true
           type: string
-        completed:
-          description: Date and time when the checkpoint completed and the balancer restarted. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
+        shardName:
+          description: Human-readable label that identifies the shard to which this checkpoint applies.
           readOnly: true
           type: string
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project that owns the checkpoints.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies checkpoint.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        parts:
-          description: 'Metadata that describes the complete snapshot.
-
-
-            - For a replica set, this array contains a single document.
-
-            - For a sharded cluster, this array contains one document for each shard plus one document for the config host.'
-          items:
-            $ref: '#/components/schemas/ApiCheckpointPartView'
-          readOnly: true
-          type: array
-        restorable:
-          description: Flag that indicates whether MongoDB Cloud can use the checkpoint for a restore.
+        tokenDiscovered:
+          description: Flag that indicates whether the token exists.
           readOnly: true
           type: boolean
-        started:
-          description: Date and time when the balancer stopped and began the checkpoint. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
+        tokenTimestamp:
+          $ref: '#/components/schemas/ApiBSONTimestampView'
+        typeName:
+          description: Human-readable label that identifies the type of host that the part represents.
+          enum:
+          - REPLICA_SET
+          - CONFIG_SERVER
+          - CONFIG_SERVER_REPLICA_SET
           readOnly: true
           type: string
-        timestamp:
-          description: Date and time to which the checkpoint restores. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
       readOnly: true
       type: object
+  headers:
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
   parameters:
     itemsPerPage:
       description: Number of items that the response returns per page.
@@ -1638,13 +1651,6 @@ components:
         maximum: 500
         minimum: 1
         type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
 
@@ -1657,6 +1663,13 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
     pageNum:
       description: Number of the page that displays the current set of the total objects that the response returns.
       in: query
@@ -1665,6 +1678,13 @@ components:
         default: 1
         minimum: 1
         type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
     pretty:
       description: Flag that indicates whether the response body should be in the prettyprint format.
       in: query
@@ -1675,26 +1695,6 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
   securitySchemes:
     DigestAuth:
       scheme: digest

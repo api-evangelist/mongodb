@@ -651,204 +651,377 @@ paths:
       - Organization Billing Viewer
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/getSku
 components:
-  responses:
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-  parameters:
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    orgId:
-      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
-      in: path
-      name: orgId
-      required: true
-      schema:
-        example: 4888442a3354817a7320eb61
-        pattern: ^([a-f0-9]{24})$
-        type: string
   schemas:
-    ApiError:
+    UsageDetailsFilterRequest:
+      description: Request body which contains various fields to filter line items as part of certain Invoice Usage Details queries.
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
+        billEndDate:
+          description: The inclusive billing start date for usage details filter.
+          format: date
           type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
+        billStartDate:
+          description: The inclusive billing start date for usage details filter.
+          format: date
           type: string
-        parameters:
-          description: Parameters used to give more information about the error.
+        clusterIds:
+          description: The list of unique cluster ids to be included in the Usage Details filter.
           items:
-            type: object
-          readOnly: true
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
           type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
+          uniqueItems: true
+        groupIds:
+          description: The list of groups to be included in the Usage Details filter.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+          uniqueItems: true
+        includeZeroCentLineItems:
+          description: Whether zero cent line items should be included.
+          type: boolean
+        skuServices:
+          description: The list of projects to be included in the Cost Explorer Query.
+          items:
+            enum:
+            - Atlas
+            - Clusters
+            - Storage
+            - Serverless Instances
+            - Backup
+            - Data Transfer
+            - BI Connector
+            - DSC Compute
+            - DSC Storage
+            - Premium Features
+            - Atlas Data Federation
+            - Atlas Stream Processing
+            - App Services
+            - Charts
+            - Cloud Manager
+            - Cloud Manager Standard/Premium
+            - Legacy Backup
+            - AI Models
+            - Automated Embedding
+            - Native Reranking
+            - Flex Consulting
+            - Support
+            - Credits
+            type: string
+          type: array
+          uniqueItems: true
+        usageEndDate:
+          description: The inclusive billing start date for usage details filter.
+          format: date
           type: string
-      required:
-      - error
-      - errorCode
+        usageStartDate:
+          description: The inclusive usage start date for usage details filter.
+          format: date
+          type: string
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
       type: object
     CostExplorerQueryResult:
       type: object
-    Link:
+    CostExplorerFilterResponseView:
+      description: Response object to give information about created query.
       properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
+        token:
+          description: The token used to identify the created Cost Explorer query.
+          example: d9ab638a801efe182f98ae3e18ea4bb47b9fda808a28a8c7de205bb0e94f7d71
+          maxLength: 64
+          minLength: 64
           type: string
       type: object
-    ApiPublicUsageDetailsQueryRequest:
-      description: Request body for an Invoice Usage Details query with filtering, pagination, and sort.
+    PaginatedPublicApiUsageDetailsLineItemView:
       properties:
-        filters:
-          $ref: '#/components/schemas/UsageDetailsFilterRequest'
-        sortField:
-          description: Specify the field used to specify how to sort query results. Default to bill date.
-          enum:
-          - USAGE_DATES
-          - BILL_DATES
-          - TOTAL_PRICE_CENTS
-          type: string
-        sortOrder:
-          description: Specify the sort order (ascending / descending) used to specify how to sort query results. Defaults to descending.
-          enum:
-          - ASCENDING
-          - DESCENDING
-          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/PublicApiUsageDetailsLineItemView'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
       type: object
-    SkuResponse:
+    InvoiceLineItem:
+      description: One service included in this invoice.
       properties:
-        description:
-          description: Human-readable short summary of what this SKU represents.
+        clusterName:
+          description: Human-readable label that identifies the cluster that incurred the charge.
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when MongoDB Cloud created this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        discountCents:
+          description: Sum by which MongoDB discounted this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar). The resource returns this parameter when a discount applies.
+          format: int64
+          readOnly: true
+          type: integer
+        endDate:
+          description: Date and time when when MongoDB Cloud finished charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project associated to this line item.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        groupName:
+          description: Human-readable label that identifies the project.
+          type: string
+        note:
+          description: Comment that applies to this line item.
+          readOnly: true
+          type: string
+        percentDiscount:
+          description: Percentage by which MongoDB discounted this line item. The resource returns this parameter when a discount applies.
+          format: float
+          readOnly: true
+          type: number
+        quantity:
+          description: Number of units included for the line item. These can be expressions of storage (GB), time (hours), or other units.
+          format: double
+          readOnly: true
+          type: number
+        sku:
+          description: Human-readable description of the service that this line item provided. This Stock Keeping Unit (SKU) could be the instance type, a support charge, advanced security, or another service.
+          externalDocs:
+            description: To see how to list all possible values, click here.
+            url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/listSkus
+          readOnly: true
+          type: string
+        startDate:
+          description: Date and time when MongoDB Cloud began charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        stitchAppName:
+          description: Human-readable label that identifies the Atlas App Services application associated with this line item.
+          externalDocs:
+            description: Create a new Atlas App Service
+            url: https://www.mongodb.com/docs/atlas/app-services/manage-apps/create/create-with-ui/
+          readOnly: true
+          type: string
+        tags:
+          additionalProperties:
+            description: A map of key-value pairs corresponding to the tags associated with the line item resource.
+            items:
+              description: A map of key-value pairs corresponding to the tags associated with the line item resource.
+              readOnly: true
+              type: string
+            readOnly: true
+            type: array
+          description: A map of key-value pairs corresponding to the tags associated with the line item resource.
+          readOnly: true
+          type: object
+        tierLowerBound:
+          description: "Lower bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierLowerBound` appears only if your `lineItems[n].sku` is tiered."
+          format: double
+          readOnly: true
+          type: number
+        tierUpperBound:
+          description: "Upper bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierUpperBound` appears only if your `lineItems[n].sku` is tiered."
+          format: double
+          readOnly: true
+          type: number
+        totalPriceCents:
+          description: Sum of the cost set for this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar) and calculates this value as `unitPriceDollars` * `quantity` * 100.
+          format: int64
+          readOnly: true
+          type: integer
+        unit:
+          description: Element used to express what **quantity** this line item measures. This value can be elements of time, storage capacity, and the like.
+          readOnly: true
+          type: string
+        unitPriceDollars:
+          description: Value per **unit** for this line item expressed in US Dollars.
+          format: double
+          readOnly: true
+          type: number
+      title: Line Item
+      type: object
+    PaginatedApiInvoiceMetadataView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/BillingInvoiceMetadata'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    BillingInvoice:
+      properties:
+        amountBilledCents:
+          description: Sum of services that the specified organization consumed in the period covered in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        amountPaidCents:
+          description: Sum that the specified organization paid toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        created:
+          description: Date and time when MongoDB Cloud created this invoice. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        creditsCents:
+          description: Sum that MongoDB credited the specified organization toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        endDate:
+          description: Date and time when MongoDB Cloud finished the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           readOnly: true
           type: string
         id:
-          description: Unique string that identifies the SKU.
+          description: Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        lineItems:
+          description: List that contains individual services included in this invoice.
+          items:
+            $ref: '#/components/schemas/InvoiceLineItem'
+          readOnly: true
+          type: array
+        linkedInvoices:
+          description: List that contains the invoices for organizations linked to the paying organization.
+          items:
+            $ref: '#/components/schemas/BillingInvoice'
+          readOnly: true
+          type: array
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the organization charged for services consumed from MongoDB Cloud.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        payments:
+          description: List that contains funds transferred to MongoDB to cover the specified service noted in this invoice.
+          items:
+            $ref: '#/components/schemas/BillingPayment'
+          readOnly: true
+          type: array
+        refunds:
+          description: List that contains payments that MongoDB returned to the organization for this invoice.
+          items:
+            $ref: '#/components/schemas/BillingRefund'
+          readOnly: true
+          type: array
+        salesTaxCents:
+          description: Sum of sales tax applied to this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        startDate:
+          description: Date and time when MongoDB Cloud began the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        startingBalanceCents:
+          description: Sum that the specified organization owed to MongoDB when MongoDB issued this invoice. This parameter expresses its value in US Dollars.
+          format: int64
+          readOnly: true
+          type: integer
+        statusName:
+          description: 'Phase of payment processing in which this invoice exists when you made this request. Accepted phases include:
+
+
+            - `CLOSED`: MongoDB finalized all charges in the billing cycle but has yet to charge the customer.
+
+            - `FAILED`: MongoDB attempted to charge the provided credit card but charge for that amount failed.
+
+            - `FORGIVEN`: Customer initiated payment which MongoDB later forgave.
+
+            - `FREE`: All charges totalled zero so the customer won''t be charged.
+
+            - `INVOICED`: MongoDB handled these charges using elastic invoicing.
+
+            - `PAID`: MongoDB succeeded in charging the provided credit card.
+
+            - `PENDING`: Invoice includes charges for the current billing cycle.
+
+            - `PREPAID`: Customer has a pre-paid plan so they won''t be charged.'
+          enum:
+          - PENDING
+          - CLOSED
+          - FORGIVEN
+          - FAILED
+          - PAID
+          - FREE
+          - PREPAID
+          - INVOICED
+          type: string
+        subtotalCents:
+          description: Sum of all positive invoice line items contained in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
+          format: int64
+          readOnly: true
+          type: integer
+        updated:
+          description: Date and time when MongoDB Cloud last updated the value of this payment. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
           readOnly: true
           type: string
       type: object
@@ -996,7 +1169,7 @@ components:
           format: date-time
           type: string
       type: object
-    PaginatedPublicApiUsageDetailsLineItemView:
+    PaginatedApiSKUView:
       properties:
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
@@ -1010,7 +1183,7 @@ components:
         results:
           description: List of returned documents that MongoDB Cloud provides when completing this request.
           items:
-            $ref: '#/components/schemas/PublicApiUsageDetailsLineItemView'
+            $ref: '#/components/schemas/SkuResponse'
           readOnly: true
           type: array
         totalCount:
@@ -1021,6 +1194,138 @@ components:
           type: integer
       required:
       - results
+      type: object
+    PaginatedApiInvoiceView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/BillingInvoice'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    ApiPublicUsageDetailsQueryRequest:
+      description: Request body for an Invoice Usage Details query with filtering, pagination, and sort.
+      properties:
+        filters:
+          $ref: '#/components/schemas/UsageDetailsFilterRequest'
+        sortField:
+          description: Specify the field used to specify how to sort query results. Default to bill date.
+          enum:
+          - USAGE_DATES
+          - BILL_DATES
+          - TOTAL_PRICE_CENTS
+          type: string
+        sortOrder:
+          description: Specify the sort order (ascending / descending) used to specify how to sort query results. Defaults to descending.
+          enum:
+          - ASCENDING
+          - DESCENDING
+          type: string
+      type: object
+    CostExplorerFilterRequestBody:
+      description: Request body for a cost explorer query.
+      properties:
+        clusters:
+          description: The list of clusters to be included in the Cost Explorer Query.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+        endDate:
+          description: The exclusive ending date for the Cost Explorer query. The date must be the start of a month.
+          format: date
+          type: string
+        groupBy:
+          description: The dimension to group the returned usage results by. At least one filter value needs to be provided for a dimension to be used.
+          enum:
+          - organizations
+          - projects
+          - clusters
+          - services
+          type: string
+        includePartialMatches:
+          description: Flag to control whether usage that matches the filter criteria, but does not have values for all filter criteria is included in response. Default is false, which excludes the partially matching data.
+          type: boolean
+        organizations:
+          description: The list of organizations to be included in the Cost Explorer Query.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+        projects:
+          description: The list of projects to be included in the Cost Explorer Query.
+          items:
+            example: 32b6e34b3d91647abb20e7b8
+            pattern: ^([a-f0-9]{24})$
+            type: string
+          type: array
+        services:
+          description: The list of SKU services to be included in the Cost Explorer Query.
+          items:
+            enum:
+            - Atlas
+            - Clusters
+            - Storage
+            - Serverless Instances
+            - Backup
+            - Data Transfer
+            - BI Connector
+            - DSC Compute
+            - DSC Storage
+            - Premium Features
+            - Atlas Data Federation
+            - Atlas Stream Processing
+            - App Services
+            - Charts
+            - Cloud Manager
+            - Cloud Manager Standard/Premium
+            - Legacy Backup
+            - AI Models
+            - Automated Embedding
+            - Native Reranking
+            - Flex Consulting
+            - Support
+            - Credits
+            type: string
+          type: array
+        startDate:
+          description: The inclusive starting date for the Cost Explorer query. The date must be the start of a month.
+          format: date
+          type: string
+      required:
+      - endDate
+      - startDate
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
       type: object
     BillingPayment:
       description: Funds transferred to MongoDB to cover the specified service in this invoice.
@@ -1130,6 +1435,49 @@ components:
           type: string
       title: Refund
       type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    SkuResponse:
+      properties:
+        description:
+          description: Human-readable short summary of what this SKU represents.
+          readOnly: true
+          type: string
+        id:
+          description: Unique string that identifies the SKU.
+          readOnly: true
+          type: string
+      type: object
     FieldViolation:
       properties:
         description:
@@ -1142,484 +1490,81 @@ components:
       - description
       - field
       type: object
-    PaginatedApiInvoiceView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/BillingInvoice'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    PaginatedApiInvoiceMetadataView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/BillingInvoiceMetadata'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    UsageDetailsFilterRequest:
-      description: Request body which contains various fields to filter line items as part of certain Invoice Usage Details queries.
-      properties:
-        billEndDate:
-          description: The inclusive billing start date for usage details filter.
-          format: date
-          type: string
-        billStartDate:
-          description: The inclusive billing start date for usage details filter.
-          format: date
-          type: string
-        clusterIds:
-          description: The list of unique cluster ids to be included in the Usage Details filter.
-          items:
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            type: string
-          type: array
-          uniqueItems: true
-        groupIds:
-          description: The list of groups to be included in the Usage Details filter.
-          items:
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            type: string
-          type: array
-          uniqueItems: true
-        includeZeroCentLineItems:
-          description: Whether zero cent line items should be included.
-          type: boolean
-        skuServices:
-          description: The list of projects to be included in the Cost Explorer Query.
-          items:
-            enum:
-            - Atlas
-            - Clusters
-            - Storage
-            - Serverless Instances
-            - Backup
-            - Data Transfer
-            - BI Connector
-            - DSC Compute
-            - DSC Storage
-            - Premium Features
-            - Atlas Data Federation
-            - Atlas Stream Processing
-            - App Services
-            - Charts
-            - Cloud Manager
-            - Cloud Manager Standard/Premium
-            - Legacy Backup
-            - AI Models
-            - Automated Embedding
-            - Native Reranking
-            - Flex Consulting
-            - Support
-            - Credits
-            type: string
-          type: array
-          uniqueItems: true
-        usageEndDate:
-          description: The inclusive billing start date for usage details filter.
-          format: date
-          type: string
-        usageStartDate:
-          description: The inclusive usage start date for usage details filter.
-          format: date
-          type: string
-      type: object
-    BillingInvoice:
-      properties:
-        amountBilledCents:
-          description: Sum of services that the specified organization consumed in the period covered in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
-          format: int64
-          readOnly: true
-          type: integer
-        amountPaidCents:
-          description: Sum that the specified organization paid toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
-          format: int64
-          readOnly: true
-          type: integer
-        created:
-          description: Date and time when MongoDB Cloud created this invoice. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        creditsCents:
-          description: Sum that MongoDB credited the specified organization toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
-          format: int64
-          readOnly: true
-          type: integer
-        endDate:
-          description: Date and time when MongoDB Cloud finished the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        lineItems:
-          description: List that contains individual services included in this invoice.
-          items:
-            $ref: '#/components/schemas/InvoiceLineItem'
-          readOnly: true
-          type: array
-        linkedInvoices:
-          description: List that contains the invoices for organizations linked to the paying organization.
-          items:
-            $ref: '#/components/schemas/BillingInvoice'
-          readOnly: true
-          type: array
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        orgId:
-          description: Unique 24-hexadecimal digit string that identifies the organization charged for services consumed from MongoDB Cloud.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        payments:
-          description: List that contains funds transferred to MongoDB to cover the specified service noted in this invoice.
-          items:
-            $ref: '#/components/schemas/BillingPayment'
-          readOnly: true
-          type: array
-        refunds:
-          description: List that contains payments that MongoDB returned to the organization for this invoice.
-          items:
-            $ref: '#/components/schemas/BillingRefund'
-          readOnly: true
-          type: array
-        salesTaxCents:
-          description: Sum of sales tax applied to this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
-          format: int64
-          readOnly: true
-          type: integer
-        startDate:
-          description: Date and time when MongoDB Cloud began the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        startingBalanceCents:
-          description: Sum that the specified organization owed to MongoDB when MongoDB issued this invoice. This parameter expresses its value in US Dollars.
-          format: int64
-          readOnly: true
-          type: integer
-        statusName:
-          description: 'Phase of payment processing in which this invoice exists when you made this request. Accepted phases include:
-
-
-            - `CLOSED`: MongoDB finalized all charges in the billing cycle but has yet to charge the customer.
-
-            - `FAILED`: MongoDB attempted to charge the provided credit card but charge for that amount failed.
-
-            - `FORGIVEN`: Customer initiated payment which MongoDB later forgave.
-
-            - `FREE`: All charges totalled zero so the customer won''t be charged.
-
-            - `INVOICED`: MongoDB handled these charges using elastic invoicing.
-
-            - `PAID`: MongoDB succeeded in charging the provided credit card.
-
-            - `PENDING`: Invoice includes charges for the current billing cycle.
-
-            - `PREPAID`: Customer has a pre-paid plan so they won''t be charged.'
-          enum:
-          - PENDING
-          - CLOSED
-          - FORGIVEN
-          - FAILED
-          - PAID
-          - FREE
-          - PREPAID
-          - INVOICED
-          type: string
-        subtotalCents:
-          description: Sum of all positive invoice line items contained in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).
-          format: int64
-          readOnly: true
-          type: integer
-        updated:
-          description: Date and time when MongoDB Cloud last updated the value of this payment. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-      type: object
-    CostExplorerFilterRequestBody:
-      description: Request body for a cost explorer query.
-      properties:
-        clusters:
-          description: The list of clusters to be included in the Cost Explorer Query.
-          items:
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            type: string
-          type: array
-        endDate:
-          description: The exclusive ending date for the Cost Explorer query. The date must be the start of a month.
-          format: date
-          type: string
-        groupBy:
-          description: The dimension to group the returned usage results by. At least one filter value needs to be provided for a dimension to be used.
-          enum:
-          - organizations
-          - projects
-          - clusters
-          - services
-          type: string
-        includePartialMatches:
-          description: Flag to control whether usage that matches the filter criteria, but does not have values for all filter criteria is included in response. Default is false, which excludes the partially matching data.
-          type: boolean
-        organizations:
-          description: The list of organizations to be included in the Cost Explorer Query.
-          items:
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            type: string
-          type: array
-        projects:
-          description: The list of projects to be included in the Cost Explorer Query.
-          items:
-            example: 32b6e34b3d91647abb20e7b8
-            pattern: ^([a-f0-9]{24})$
-            type: string
-          type: array
-        services:
-          description: The list of SKU services to be included in the Cost Explorer Query.
-          items:
-            enum:
-            - Atlas
-            - Clusters
-            - Storage
-            - Serverless Instances
-            - Backup
-            - Data Transfer
-            - BI Connector
-            - DSC Compute
-            - DSC Storage
-            - Premium Features
-            - Atlas Data Federation
-            - Atlas Stream Processing
-            - App Services
-            - Charts
-            - Cloud Manager
-            - Cloud Manager Standard/Premium
-            - Legacy Backup
-            - AI Models
-            - Automated Embedding
-            - Native Reranking
-            - Flex Consulting
-            - Support
-            - Credits
-            type: string
-          type: array
-        startDate:
-          description: The inclusive starting date for the Cost Explorer query. The date must be the start of a month.
-          format: date
-          type: string
-      required:
-      - endDate
-      - startDate
-      type: object
-    InvoiceLineItem:
-      description: One service included in this invoice.
-      properties:
-        clusterName:
-          description: Human-readable label that identifies the cluster that incurred the charge.
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          readOnly: true
-          type: string
-        created:
-          description: Date and time when MongoDB Cloud created this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        discountCents:
-          description: Sum by which MongoDB discounted this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar). The resource returns this parameter when a discount applies.
-          format: int64
-          readOnly: true
-          type: integer
-        endDate:
-          description: Date and time when when MongoDB Cloud finished charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project associated to this line item.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        groupName:
-          description: Human-readable label that identifies the project.
-          type: string
-        note:
-          description: Comment that applies to this line item.
-          readOnly: true
-          type: string
-        percentDiscount:
-          description: Percentage by which MongoDB discounted this line item. The resource returns this parameter when a discount applies.
-          format: float
-          readOnly: true
-          type: number
-        quantity:
-          description: Number of units included for the line item. These can be expressions of storage (GB), time (hours), or other units.
-          format: double
-          readOnly: true
-          type: number
-        sku:
-          description: Human-readable description of the service that this line item provided. This Stock Keeping Unit (SKU) could be the instance type, a support charge, advanced security, or another service.
-          externalDocs:
-            description: To see how to list all possible values, click here.
-            url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Invoices/operation/listSkus
-          readOnly: true
-          type: string
-        startDate:
-          description: Date and time when MongoDB Cloud began charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        stitchAppName:
-          description: Human-readable label that identifies the Atlas App Services application associated with this line item.
-          externalDocs:
-            description: Create a new Atlas App Service
-            url: https://www.mongodb.com/docs/atlas/app-services/manage-apps/create/create-with-ui/
-          readOnly: true
-          type: string
-        tags:
-          additionalProperties:
-            description: A map of key-value pairs corresponding to the tags associated with the line item resource.
-            items:
-              description: A map of key-value pairs corresponding to the tags associated with the line item resource.
-              readOnly: true
-              type: string
-            readOnly: true
-            type: array
-          description: A map of key-value pairs corresponding to the tags associated with the line item resource.
-          readOnly: true
-          type: object
-        tierLowerBound:
-          description: "Lower bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierLowerBound` appears only if your `lineItems[n].sku` is tiered."
-          format: double
-          readOnly: true
-          type: number
-        tierUpperBound:
-          description: "Upper bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierUpperBound` appears only if your `lineItems[n].sku` is tiered."
-          format: double
-          readOnly: true
-          type: number
-        totalPriceCents:
-          description: Sum of the cost set for this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar) and calculates this value as `unitPriceDollars` * `quantity` * 100.
-          format: int64
-          readOnly: true
-          type: integer
-        unit:
-          description: Element used to express what **quantity** this line item measures. This value can be elements of time, storage capacity, and the like.
-          readOnly: true
-          type: string
-        unitPriceDollars:
-          description: Value per **unit** for this line item expressed in US Dollars.
-          format: double
-          readOnly: true
-          type: number
-      title: Line Item
-      type: object
-    PaginatedApiSKUView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/SkuResponse'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    CostExplorerFilterResponseView:
-      description: Response object to give information about created query.
-      properties:
-        token:
-          description: The token used to identify the created Cost Explorer query.
-          example: d9ab638a801efe182f98ae3e18ea4bb47b9fda808a28a8c7de205bb0e94f7d71
-          maxLength: 64
-          minLength: 64
-          type: string
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
+  responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
   headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
     HeaderRateLimitLimit:
       description: The maximum number of requests that a user can make within a specific time window.
       schema:
@@ -1628,6 +1573,61 @@ components:
       description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
       schema:
         type: integer
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+  parameters:
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    orgId:
+      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
+      in: path
+      name: orgId
+      required: true
+      schema:
+        example: 4888442a3354817a7320eb61
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
   securitySchemes:
     DigestAuth:
       scheme: digest
