@@ -317,135 +317,20 @@ paths:
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Custom-Database-Roles/operation/updateGroupCustomDbRoleRole
       x-xgen-operation-id-override: updateCustomDbRole
 components:
-  responses:
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    conflict:
-      content:
-        application/json:
-          example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Conflict.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
   schemas:
-    UpdateCustomDBRole:
-      properties:
-        actions:
-          description: List of the individual privilege actions that the role grants.
-          items:
-            $ref: '#/components/schemas/DatabasePrivilegeAction'
-          type: array
-        inheritedRoles:
-          description: List of the built-in roles that this custom role inherits.
-          items:
-            $ref: '#/components/schemas/DatabaseInheritedRole'
-          type: array
-          uniqueItems: true
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    UserCustomDBRole:
-      properties:
-        actions:
-          description: List of the individual privilege actions that the role grants.
-          items:
-            $ref: '#/components/schemas/DatabasePrivilegeAction'
-          type: array
-        inheritedRoles:
-          description: List of the built-in roles that this custom role inherits.
-          items:
-            $ref: '#/components/schemas/DatabaseInheritedRole'
-          type: array
-          uniqueItems: true
-        roleName:
-          description: Human-readable label that identifies the role for the request. This name must be unique for this custom role in this project.
-          type: string
-      required:
-      - roleName
-      type: object
     DatabasePermittedNamespaceResource:
       description: Namespace to which this database user has access.
       externalDocs:
@@ -466,6 +351,77 @@ components:
       - collection
       - db
       title: Permitted Namespace
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    DatabaseInheritedRole:
+      description: Role inherited from another context for this database user.
+      externalDocs:
+        description: Built-in MongoDB Roles
+        url: https://docs.mongodb.com/manual/reference/built-in-roles/
+      properties:
+        db:
+          description: Human-readable label that identifies the database on which someone grants the action to one MongoDB user.
+          type: string
+        role:
+          description: Human-readable label that identifies the role inherited. Set this value to `admin` for every role except `read` or `readWrite`.
+          externalDocs:
+            description: MongoDB Built-In Roles
+            url: https://docs.mongodb.com/manual/reference/built-in-roles/
+          type: string
+      required:
+      - db
+      - role
+      title: Inherited Role
+      type: object
+    UserCustomDBRole:
+      properties:
+        actions:
+          description: List of the individual privilege actions that the role grants.
+          items:
+            $ref: '#/components/schemas/DatabasePrivilegeAction'
+          type: array
+        inheritedRoles:
+          description: List of the built-in roles that this custom role inherits.
+          items:
+            $ref: '#/components/schemas/DatabaseInheritedRole'
+          type: array
+          uniqueItems: true
+        roleName:
+          description: Human-readable label that identifies the role for the request. This name must be unique for this custom role in this project.
+          type: string
+      required:
+      - roleName
       type: object
     DatabasePrivilegeAction:
       description: Privilege action that the role grants.
@@ -559,57 +515,15 @@ components:
       - resources
       title: Database Privilege Action
       type: object
-    ApiError:
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
+        fields:
+          description: Describes all violations in a client request.
           items:
-            type: object
-          readOnly: true
+            $ref: '#/components/schemas/FieldViolation'
           type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    DatabaseInheritedRole:
-      description: Role inherited from another context for this database user.
-      externalDocs:
-        description: Built-in MongoDB Roles
-        url: https://docs.mongodb.com/manual/reference/built-in-roles/
-      properties:
-        db:
-          description: Human-readable label that identifies the database on which someone grants the action to one MongoDB user.
-          type: string
-        role:
-          description: Human-readable label that identifies the role inherited. Set this value to `admin` for every role except `read` or `readWrite`.
-          externalDocs:
-            description: MongoDB Built-In Roles
-            url: https://docs.mongodb.com/manual/reference/built-in-roles/
-          type: string
-      required:
-      - db
-      - role
-      title: Inherited Role
+      readOnly: true
       type: object
     FieldViolation:
       properties:
@@ -623,20 +537,113 @@ components:
       - description
       - field
       type: object
-  headers:
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
+    UpdateCustomDBRole:
+      properties:
+        actions:
+          description: List of the individual privilege actions that the role grants.
+          items:
+            $ref: '#/components/schemas/DatabasePrivilegeAction'
+          type: array
+        inheritedRoles:
+          description: List of the built-in roles that this custom role inherits.
+          items:
+            $ref: '#/components/schemas/DatabaseInheritedRole'
+          type: array
+          uniqueItems: true
+      type: object
+  responses:
+    conflict:
+      content:
+        application/json:
+          example:
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Conflict.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
   parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
 
@@ -649,13 +656,6 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
     pretty:
       description: Flag that indicates whether the response body should be in the prettyprint format.
       in: query

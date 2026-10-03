@@ -473,81 +473,186 @@ paths:
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Resource-Policies/operation/validateOrgResourcePolicies
       x-xgen-operation-id-override: validateResourcePolicies
 components:
-  responses:
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
   schemas:
+    ApiAtlasResourcePolicyEditView:
+      properties:
+        description:
+          description: Description of the atlas resource policy.
+          type: string
+        name:
+          description: Human-readable label that describes the atlas resource policy.
+          type: string
+        policies:
+          description: List of policies that make up the atlas resource policy.
+          items:
+            $ref: '#/components/schemas/ApiAtlasPolicyCreateView'
+          type: array
+      type: object
+    ApiAtlasPolicyView:
+      properties:
+        body:
+          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
+          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal character string that identifies the policy.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+      type: object
+    ApiAtlasInvalidPolicyView:
+      properties:
+        body:
+          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
+          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
+          readOnly: true
+          type: string
+        errors:
+          description: List of validation errors.
+          items:
+            $ref: '#/components/schemas/ApiAtlasInvalidPolicyErrorDetailView'
+          readOnly: true
+          type: array
+      type: object
+    ApiAtlasInvalidPolicyErrorDetailView:
+      properties:
+        detail:
+          description: A string that provides a detailed description of a validation error.
+          readOnly: true
+          type: string
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    ApiAtlasNonCompliantResourceView:
+      properties:
+        orgId:
+          description: Unique 24-hexadecimal character string that identifies the organization the resource belongs to.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resourceId:
+          description: Unique 24-hexadecimal character string that identifies the non-compliant resource.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resourceName:
+          description: Unique human readable string that identifies the non-compliant resource.
+          readOnly: true
+          type: string
+        resourcePoliciesCausingNonCompliance:
+          description: List of resource policies causing the resource to be considered non-compliant.
+          items:
+            $ref: '#/components/schemas/ApiAtlasResourcePolicyMetadataView'
+          readOnly: true
+          type: array
+        resourceType:
+          description: Human-readable label that displays the type of a resource.
+          enum:
+          - DEPRECATED_PROJECT
+          - DEPRECATED_CLUSTER
+          - PROJECT
+          - CLUSTER
+          readOnly: true
+          type: string
+      type: object
+    ApiAtlasPolicyCreateView:
+      properties:
+        body:
+          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
+          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
+          minLength: 1
+          type: string
+      required:
+      - body
+      type: object
+    ApiAtlasUserMetadataView:
+      description: The user that last updated the atlas resource policy.
+      properties:
+        id:
+          description: Unique 24-hexadecimal character string that identifies a user.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        name:
+          description: Human-readable label that describes a user.
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    ApiAtlasResourcePolicyCreateView:
+      properties:
+        description:
+          description: Description of the atlas resource policy.
+          type: string
+        name:
+          description: Human-readable label that describes the atlas resource policy.
+          type: string
+        policies:
+          description: List of policies that make up the atlas resource policy.
+          items:
+            $ref: '#/components/schemas/ApiAtlasPolicyCreateView'
+          type: array
+      required:
+      - name
+      - policies
+      type: object
+    ApiAtlasPolicyMetadataView:
+      properties:
+        policyId:
+          description: Unique 24-hexadecimal character string that identifies the policy.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+      type: object
     BadRequestDetail:
       description: Bad request detail.
       properties:
@@ -557,6 +662,18 @@ components:
             $ref: '#/components/schemas/FieldViolation'
           type: array
       readOnly: true
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
       type: object
     ApiAtlasInvalidResourcePolicyCreateErrorView:
       properties:
@@ -576,15 +693,6 @@ components:
           readOnly: true
           type: array
       type: object
-    ApiAtlasPolicyMetadataView:
-      properties:
-        policyId:
-          description: Unique 24-hexadecimal character string that identifies the policy.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-      type: object
     ApiAtlasResourcePolicyMetadataView:
       properties:
         policiesCausingNonCompliance:
@@ -603,52 +711,6 @@ components:
           description: Human-readable label that describes the atlas resource policy.
           readOnly: true
           type: string
-      type: object
-    ApiAtlasResourcePolicyCreateView:
-      properties:
-        description:
-          description: Description of the atlas resource policy.
-          type: string
-        name:
-          description: Human-readable label that describes the atlas resource policy.
-          type: string
-        policies:
-          description: List of policies that make up the atlas resource policy.
-          items:
-            $ref: '#/components/schemas/ApiAtlasPolicyCreateView'
-          type: array
-      required:
-      - name
-      - policies
-      type: object
-    ApiAtlasUserMetadataView:
-      description: The user that last updated the atlas resource policy.
-      properties:
-        id:
-          description: Unique 24-hexadecimal character string that identifies a user.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        name:
-          description: Human-readable label that describes a user.
-          readOnly: true
-          type: string
-      readOnly: true
-      type: object
-    ApiAtlasInvalidPolicyView:
-      properties:
-        body:
-          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
-          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
-          readOnly: true
-          type: string
-        errors:
-          description: List of validation errors.
-          items:
-            $ref: '#/components/schemas/ApiAtlasInvalidPolicyErrorDetailView'
-          readOnly: true
-          type: array
       type: object
     ApiAtlasResourcePolicyView:
       properties:
@@ -698,142 +760,6 @@ components:
           readOnly: true
           type: string
       type: object
-    ApiAtlasNonCompliantResourceView:
-      properties:
-        orgId:
-          description: Unique 24-hexadecimal character string that identifies the organization the resource belongs to.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resourceId:
-          description: Unique 24-hexadecimal character string that identifies the non-compliant resource.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resourceName:
-          description: Unique human readable string that identifies the non-compliant resource.
-          readOnly: true
-          type: string
-        resourcePoliciesCausingNonCompliance:
-          description: List of resource policies causing the resource to be considered non-compliant.
-          items:
-            $ref: '#/components/schemas/ApiAtlasResourcePolicyMetadataView'
-          readOnly: true
-          type: array
-        resourceType:
-          description: Human-readable label that displays the type of a resource.
-          enum:
-          - DEPRECATED_PROJECT
-          - DEPRECATED_CLUSTER
-          - PROJECT
-          - CLUSTER
-          readOnly: true
-          type: string
-      type: object
-    ApiAtlasInvalidPolicyErrorDetailView:
-      properties:
-        detail:
-          description: A string that provides a detailed description of a validation error.
-          readOnly: true
-          type: string
-      type: object
-    ApiAtlasPolicyView:
-      properties:
-        body:
-          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
-          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal character string that identifies the policy.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    ApiAtlasPolicyCreateView:
-      properties:
-        body:
-          description: A string that defines the permissions for the policy. The syntax used is the Cedar Policy language.
-          example: "  forbid (\n    principal,\n    action == cloud::Action::\"cluster.createEdit\",\n    resource\n  ) when {\n   context.cluster.regions.contains(cloud::region::\"aws:us-east-1\")\n  };\n"
-          minLength: 1
-          type: string
-      required:
-      - body
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    ApiAtlasResourcePolicyEditView:
-      properties:
-        description:
-          description: Description of the atlas resource policy.
-          type: string
-        name:
-          description: Human-readable label that describes the atlas resource policy.
-          type: string
-        policies:
-          description: List of policies that make up the atlas resource policy.
-          items:
-            $ref: '#/components/schemas/ApiAtlasPolicyCreateView'
-          type: array
-      type: object
-  headers:
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
   parameters:
     orgId:
       description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
@@ -861,6 +787,80 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
+  responses:
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
   securitySchemes:
     DigestAuth:
       scheme: digest

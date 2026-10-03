@@ -195,81 +195,413 @@ paths:
       - Organization Member
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Activity-Feed/operation/getOrgActivityFeed
 components:
-  responses:
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
   schemas:
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    ActivityFeedLinkResponse:
+      description: Response containing a shareable activity feed link.
+      properties:
+        link:
+          description: Shareable link to the activity feed with pre-applied filters.
+          example: https://cloud.mongodb.com/redirect/1234567890abcdef12345678
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      required:
+      - link
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    EventTypeForOrg:
+      oneOf:
+      - enum:
+        - ALERT_ACKNOWLEDGED_AUDIT
+        - ALERT_UNACKNOWLEDGED_AUDIT
+        title: Alert Audit Types
+        type: string
+      - enum:
+        - ALERT_CONFIG_DISABLED_AUDIT
+        - ALERT_CONFIG_ENABLED_AUDIT
+        - ALERT_CONFIG_ADDED_AUDIT
+        - ALERT_CONFIG_DELETED_AUDIT
+        - ALERT_CONFIG_CHANGED_AUDIT
+        title: Alert Audit Types
+        type: string
+      - enum:
+        - API_KEY_CREATED
+        - API_KEY_DELETED
+        - API_KEY_ACCESS_LIST_ENTRY_ADDED
+        - API_KEY_ACCESS_LIST_ENTRY_DELETED
+        - API_KEY_ROLES_CHANGED
+        - API_KEY_DESCRIPTION_CHANGED
+        - API_KEY_ADDED_TO_GROUP
+        - API_KEY_REMOVED_FROM_GROUP
+        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
+        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
+        title: API User Event Types
+        type: string
+      - enum:
+        - SERVICE_ACCOUNT_CREATED
+        - SERVICE_ACCOUNT_DELETED
+        - SERVICE_ACCOUNT_ROLES_CHANGED
+        - SERVICE_ACCOUNT_DETAILS_CHANGED
+        - SERVICE_ACCOUNT_ADDED_TO_GROUP
+        - SERVICE_ACCOUNT_REMOVED_FROM_GROUP
+        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_ADDED
+        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_DELETED
+        - SERVICE_ACCOUNT_SECRET_ADDED
+        - SERVICE_ACCOUNT_SECRET_DELETED
+        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
+        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
+        title: Service Account Event Types
+        type: string
+      - enum:
+        - AWS_PAYMENT_PAID
+        - CHARGE_SUCCEEDED
+        - CHARGE_FAILED
+        - CHARGE_PROCESSING
+        - CHARGE_PENDING_REVERSAL
+        - BRAINTREE_CHARGE_FAILED
+        - INVOICE_CLOSED
+        - CHECK_PAYMENT_RECEIVED
+        - WIRE_TRANSFER_PAYMENT_RECEIVED
+        - DISCOUNT_APPLIED
+        - CREDIT_ISSUED
+        - CREDIT_PULLED_FWD
+        - CREDIT_END_DATE_MODIFIED
+        - PROMO_CODE_APPLIED
+        - PAYMENT_FORGIVEN
+        - REFUND_ISSUED
+        - ACCOUNT_DOWNGRADED
+        - ACCOUNT_UPGRADED
+        - ACCOUNT_MODIFIED
+        - SUPPORT_PLAN_ACTIVATED
+        - SUPPORT_PLAN_CANCELLED
+        - SUPPORT_PLAN_CANCELLATION_SCHEDULED
+        - INITIATE_SALESFORCE_SERVICE_CLOUD_SYNC
+        - INVOICE_ADDRESS_CHANGED
+        - INVOICE_ADDRESS_ADDED
+        - PREPAID_PLAN_ACTIVATED
+        - ELASTIC_INVOICING_MODE_ACTIVATED
+        - ELASTIC_INVOICING_MODE_DEACTIVATED
+        - TERMINATE_PAID_SERVICES
+        - BILLING_EMAIL_ADDRESS_ADDED
+        - BILLING_EMAIL_ADDRESS_CHANGED
+        - BILLING_EMAIL_ADDRESS_REMOVED
+        - AWS_BILLING_ACCOUNT_CREDIT_ISSUED
+        - GCP_BILLING_ACCOUNT_CREDIT_ISSUED
+        - CREDIT_SFOLID_MODIFIED
+        - PREPAID_PLAN_MODIFIED
+        - AWS_USAGE_REPORTED
+        - AZURE_USAGE_REPORTED
+        - GCP_USAGE_REPORTED
+        - VERCEL_USAGE_REPORTED
+        - BECAME_PAYING_ORG
+        - BECAME_LINKED_ORG
+        - NEW_LINKED_ORG
+        - UNLINKED_ORG
+        - ORG_LINKED_TO_PAYING_ORG
+        - ORG_UNLINKED_FROM_PAYING_ORG
+        - ORG_UNLINK_REQUESTED
+        - ORG_UNLINK_CANCELLED
+        - PAYMENT_UPDATED_THROUGH_API
+        - AZURE_BILLING_ACCOUNT_CREDIT_ISSUED
+        - CREDIT_START_DATE_MODIFIED
+        - CREDIT_ELASTIC_INVOICING_MODIFIED
+        - CREDIT_TYPE_MODIFIED
+        - CREDIT_AMOUNT_CENTS_MODIFIED
+        - CREDIT_AMOUNT_REMAINING_CENTS_MODIFIED
+        - CREDIT_TOTAL_BILLED_CENTS_MODIFIED
+        - CREDIT_AWS_CUSTOMER_ID_MODIFIED
+        - CREDIT_AWS_PRODUCT_CODE_MODIFIED
+        - CREDIT_GCP_MARKETPLACE_ENTITLEMENT_ID_MODIFIED
+        - CREDIT_AZURE_SUBSCRIPTION_ID_MODIFIED
+        - CREDIT_AZURE_PRIVATE_PLAN_ID_MODIFIED
+        - TARGETED_REBILL_EXECUTED
+        - LEGACY_REBILL_EXECUTED
+        - EVERGREEN_DEAL_CANCELLED
+        - GRACE_PERIOD_ACTIVATED
+        - GRACE_PERIOD_NO_LONGER_IN_EFFECT
+        - PENDING_DEAL_ACTIVATION_ADDED
+        - PENDING_DEAL_ACTIVATION_CANCELED
+        - PENDING_DEAL_APPLIED
+        - PENDING_DEAL_ACTIVATION_FAILED
+        - EVERGREEN_PRIORITY_MODIFIED
+        - CROSS_ORG_OPERATION_TICKET_TRACKING
+        - ADMIN_OVERRIDE_PAYMENT_METHOD_DELETED
+        - ADMIN_OVERRIDE_PAYMENT_METHOD_EXPIRED
+        - PAYMENT_METHOD_FLAGGED
+        - PAYMENT_METHOD_UNFLAGGED
+        - MARKETPLACE_REFUND_ISSUED
+        - PAYMENT_DUE_DATE_EXTENDED
+        title: Billing Event Types
+        type: string
+      - enum:
+        - FEDERATION_SETTINGS_CREATED
+        - FEDERATION_SETTINGS_DELETED
+        - FEDERATION_SETTINGS_UPDATED
+        - IDENTITY_PROVIDER_CREATED
+        - IDENTITY_PROVIDER_UPDATED
+        - IDENTITY_PROVIDER_DELETED
+        - IDENTITY_PROVIDER_ACTIVATED
+        - OIDC_IDENTITY_PROVIDER_UPDATED
+        - IDENTITY_PROVIDER_DEACTIVATED
+        - IDENTITY_PROVIDER_JWKS_REVOKED
+        - OIDC_IDENTITY_PROVIDER_ENABLED
+        - OIDC_IDENTITY_PROVIDER_DISABLED
+        - DOMAINS_ASSOCIATED
+        - DOMAIN_CREATED
+        - DOMAIN_DELETED
+        - DOMAIN_VERIFIED
+        - ORG_SETTINGS_CONFIGURED
+        - ORG_SETTINGS_UPDATED
+        - ORG_SETTINGS_DELETED
+        - RESTRICT_ORG_MEMBERSHIP_ENABLED
+        - RESTRICT_ORG_MEMBERSHIP_DISABLED
+        - ROLE_MAPPING_CREATED
+        - ROLE_MAPPING_UPDATED
+        - ROLE_MAPPING_DELETED
+        title: Federation Settings Event Types
+        type: string
+      - enum:
+        - GROUP_DELETED
+        - GROUP_CREATED
+        - GROUP_MOVED
+        title: Group Audit Types
+        type: string
+      - enum:
+        - MLAB_MIGRATION_COMPLETED
+        - MLAB_MIGRATION_TARGET_CLUSTER_CREATED
+        - MLAB_MIGRATION_DATABASE_USERS_IMPORTED
+        - MLAB_MIGRATION_IP_WHITELIST_IMPORTED
+        - MLAB_MIGRATION_TARGET_CLUSTER_SET
+        - MLAB_MIGRATION_DATABASE_RENAMED
+        - MLAB_MIGRATION_LIVE_IMPORT_STARTED
+        - MLAB_MIGRATION_LIVE_IMPORT_READY_FOR_CUTOVER
+        - MLAB_MIGRATION_LIVE_IMPORT_CUTOVER_COMPLETE
+        - MLAB_MIGRATION_LIVE_IMPORT_ERROR
+        - MLAB_MIGRATION_LIVE_IMPORT_CANCELLED
+        - MLAB_MIGRATION_DUMP_AND_RESTORE_TEST_STARTED
+        - MLAB_MIGRATION_DUMP_AND_RESTORE_TEST_SKIPPED
+        - MLAB_MIGRATION_DUMP_AND_RESTORE_STARTED
+        - MLAB_MIGRATION_SUPPORT_PLAN_SELECTED
+        - MLAB_MIGRATION_SUPPORT_PLAN_OPTED_OUT
+        title: Mlab Migration Audit Types
+        type: string
+      - enum:
+        - ORG_LIMIT_UPDATED
+        - SHADOW_CLUSTER_ORG_OPT_IN
+        - SHADOW_CLUSTER_ORG_OPT_OUT
+        title: Atlas Audit Types
+        type: string
+      - enum:
+        - ORG_CREATED
+        - CUSTOM_SESSION_TIMEOUT_MODIFIED
+        - SECURITY_CONTACT_MODIFIED
+        - ORG_CREDIT_CARD_ADDED
+        - ORG_CREDIT_CARD_UPDATED
+        - ORG_CREDIT_CARD_CURRENT
+        - ORG_CREDIT_CARD_ABOUT_TO_EXPIRE
+        - ORG_PAYPAL_LINKED
+        - ORG_PAYPAL_UPDATED
+        - ORG_PAYPAL_CANCELLED
+        - ORG_OVERRIDE_PAYMENT_METHOD_ADDED
+        - ORG_BANK_ACCOUNT_ADDED
+        - ORG_BANK_ACCOUNT_UPDATED
+        - ORG_WALLET_ADDED
+        - ORG_WALLET_UPDATED
+        - ORG_ACTIVATED
+        - ORG_TEMPORARILY_ACTIVATED
+        - ORG_SUSPENSION_DATE_CHANGED
+        - ORG_SUSPENDED
+        - ORG_ADMIN_SUSPENDED
+        - ORG_ADMIN_LOCKED
+        - ORG_CLUSTERS_DELETED
+        - ORG_CLUSTERS_PAUSED
+        - ORG_LOCKED
+        - ORG_LOCKED_ACCELERATED
+        - ORG_UNDER_FINANCIAL_PROTECTION
+        - ORG_NO_FINANCIAL_PROTECTION
+        - ORG_RENAMED
+        - ALL_ORG_USERS_HAVE_MFA
+        - ORG_USERS_WITHOUT_MFA
+        - ORG_INVOICE_UNDER_THRESHOLD
+        - ORG_INVOICE_OVER_THRESHOLD
+        - ORG_DAILY_BILL_UNDER_THRESHOLD
+        - ORG_DAILY_BILL_OVER_THRESHOLD
+        - ORG_DAILY_BILLING_CHANGE_NORMAL
+        - ORG_DAILY_BILLING_CHANGE_OVER_THRESHOLD
+        - ORG_WEEKLY_BILLING_CHANGE_NORMAL
+        - ORG_WEEKLY_BILLING_CHANGE_OVER_THRESHOLD
+        - ORG_MONTHLY_BILLING_CHANGE_NORMAL
+        - ORG_MONTHLY_BILLING_CHANGE_OVER_THRESHOLD
+        - ORG_GROUP_CHARGES_UNDER_THRESHOLD
+        - ORG_GROUP_CHARGES_OVER_THRESHOLD
+        - ORG_TWO_FACTOR_AUTH_REQUIRED
+        - ORG_TWO_FACTOR_AUTH_OPTIONAL
+        - ORG_PUBLIC_API_ACCESS_LIST_REQUIRED
+        - ORG_PUBLIC_API_ACCESS_LIST_NOT_REQUIRED
+        - ORG_EMPLOYEE_ACCESS_RESTRICTED
+        - ORG_EMPLOYEE_ACCESS_UNRESTRICTED
+        - ORG_CONNECTED_TO_MLAB
+        - ORG_DISCONNECTED_FROM_MLAB
+        - ORG_IDP_CERTIFICATE_CURRENT
+        - ORG_IDP_CERTIFICATE_ABOUT_TO_EXPIRE
+        - ORG_CONNECTED_TO_VERCEL
+        - ORG_DISCONNECTED_TO_VERCEL
+        - ORG_CONNECTION_UNINSTALLED_FROM_VERCEL
+        - ORG_UI_IP_ACCESS_LIST_ENABLED
+        - ORG_UI_IP_ACCESS_LIST_DISABLED
+        - ORG_EDITED_UI_IP_ACCESS_LIST_ENTRIES
+        - ORG_SERVICE_ACCOUNT_MAX_SECRET_VALIDITY_EDITED
+        - ORG_SERVICE_ACCOUNT_SECRETS_EXPIRED
+        - ORG_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRED
+        - ORG_SERVICE_ACCOUNT_SECRETS_EXPIRING
+        - ORG_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRING
+        - ORG_MONGODB_VERSION_EOL_EXTENSION_ACCEPTED
+        - ORG_MONGODB_VERSION_EOL_EXTENSION_PENDING
+        - ORG_MONGODB_VERSION_EOL_EXTENSION_CANCELLED
+        - ORG_BAAS_EOL_EXTENSION_ACCEPTED
+        - ORG_BAAS_EOL_EXTENSION_PENDING
+        - ORG_BAAS_EOL_EXTENSION_CANCELED
+        - GROUP_MOVED_FROM_ORG
+        - SANDBOX_ENABLED_FOR_ORG
+        - SANDBOX_DISABLED_FOR_ORG
+        - SANDBOX_CONFIG_DELETED
+        - SANDBOX_TEMPLATE_UPDATED
+        - ORGANIZATION_VOYAGE_SETTINGS_CREATED
+        - ORGANIZATION_VOYAGE_SETTINGS_DELETED
+        - PROJECT_CREATED_VIA_ANIS
+        title: Org Event Types
+        type: string
+      - enum:
+        - AWS_SELF_SERVE_ACCOUNT_LINKED
+        - AWS_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - AWS_SELF_SERVE_ACCOUNT_CANCELLED
+        - AWS_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - GCP_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - GCP_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - AZURE_SELF_SERVE_ACCOUNT_LINKED
+        - AZURE_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - AZURE_SELF_SERVE_ACCOUNT_CANCELLED
+        - AZURE_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - GCP_SELF_SERVE_ACCOUNT_LINKED
+        - GCP_SELF_SERVE_ACCOUNT_CANCELLED
+        - VERCEL_SELF_SERVE_ACCOUNT_LINKED
+        - VERCEL_SELF_SERVE_ACCOUNT_LINK_PENDING
+        - VERCEL_SELF_SERVE_ACCOUNT_CANCELLED
+        - VERCEL_SELF_SERVE_ACCOUNT_LINK_FAILED
+        - VERCEL_INVOICE_CREATED
+        - VERCEL_INVOICE_NOT_PAID
+        - VERCEL_INVOICE_OVERDUE
+        - VERCEL_INVOICE_PAID
+        - VERCEL_INVOICE_REFUNDED
+        title: Partner Event Types
+        type: string
+      - enum:
+        - SUPPORT_EMAILS_SENT_SUCCESSFULLY
+        - SUPPORT_EMAILS_SENT_FAILURE
+        title: Support Event Types
+        type: string
+      - enum:
+        - TEAM_CREATED
+        - TEAM_DELETED
+        - TEAM_UPDATED
+        - TEAM_NAME_CHANGED
+        - TEAM_ADDED_TO_GROUP
+        - TEAM_REMOVED_FROM_GROUP
+        - TEAM_ROLES_MODIFIED
+        title: Team Event Types
+        type: string
+      - enum:
+        - JOINED_ORG
+        - JOINED_TEAM
+        - INVITED_TO_ORG
+        - ORG_INVITATION_DELETED
+        - REMOVED_FROM_ORG
+        - REMOVED_FROM_TEAM
+        - USER_ROLES_CHANGED_AUDIT
+        - ORG_FLEX_CONSULTING_PURCHASED
+        - ORG_FLEX_CONSULTING_PURCHASE_FAILED
+        - INVITED_TO_TEAM
+        title: User Event Types
+        type: string
+      - enum:
+        - TAGS_MODIFIED
+        - GROUP_TAGS_MODIFIED
+        title: Resource Event Types
+        type: string
+      - enum:
+        - RESOURCE_POLICY_CREATED
+        - RESOURCE_POLICY_MODIFIED
+        - RESOURCE_POLICY_DELETED
+        - RESOURCE_POLICY_VIOLATED
+        title: Atlas Resource Policy Audit Types
+        type: string
+      - enum:
+        - AI_MODELS_USAGE_TIER_UPDATED
+        title: Ai Models Event Types
+        type: string
+      type: object
     BadRequestDetail:
       description: Bad request detail.
       properties:
@@ -279,6 +611,18 @@ components:
             $ref: '#/components/schemas/FieldViolation'
           type: array
       readOnly: true
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
       type: object
     EventTypeForNdsGroup:
       oneOf:
@@ -1138,425 +1482,16 @@ components:
         title: Ai Models Event Types
         type: string
       type: object
-    ActivityFeedLinkResponse:
-      description: Response containing a shareable activity feed link.
-      properties:
-        link:
-          description: Shareable link to the activity feed with pre-applied filters.
-          example: https://cloud.mongodb.com/redirect/1234567890abcdef12345678
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-      required:
-      - link
-      type: object
-    EventTypeForOrg:
-      oneOf:
-      - enum:
-        - ALERT_ACKNOWLEDGED_AUDIT
-        - ALERT_UNACKNOWLEDGED_AUDIT
-        title: Alert Audit Types
-        type: string
-      - enum:
-        - ALERT_CONFIG_DISABLED_AUDIT
-        - ALERT_CONFIG_ENABLED_AUDIT
-        - ALERT_CONFIG_ADDED_AUDIT
-        - ALERT_CONFIG_DELETED_AUDIT
-        - ALERT_CONFIG_CHANGED_AUDIT
-        title: Alert Audit Types
-        type: string
-      - enum:
-        - API_KEY_CREATED
-        - API_KEY_DELETED
-        - API_KEY_ACCESS_LIST_ENTRY_ADDED
-        - API_KEY_ACCESS_LIST_ENTRY_DELETED
-        - API_KEY_ROLES_CHANGED
-        - API_KEY_DESCRIPTION_CHANGED
-        - API_KEY_ADDED_TO_GROUP
-        - API_KEY_REMOVED_FROM_GROUP
-        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
-        - API_KEY_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
-        title: API User Event Types
-        type: string
-      - enum:
-        - SERVICE_ACCOUNT_CREATED
-        - SERVICE_ACCOUNT_DELETED
-        - SERVICE_ACCOUNT_ROLES_CHANGED
-        - SERVICE_ACCOUNT_DETAILS_CHANGED
-        - SERVICE_ACCOUNT_ADDED_TO_GROUP
-        - SERVICE_ACCOUNT_REMOVED_FROM_GROUP
-        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_ADDED
-        - SERVICE_ACCOUNT_ACCESS_LIST_ENTRY_DELETED
-        - SERVICE_ACCOUNT_SECRET_ADDED
-        - SERVICE_ACCOUNT_SECRET_DELETED
-        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_ENABLED
-        - SERVICE_ACCOUNT_UI_IP_ACCESS_LIST_INHERITANCE_DISABLED
-        title: Service Account Event Types
-        type: string
-      - enum:
-        - AWS_PAYMENT_PAID
-        - CHARGE_SUCCEEDED
-        - CHARGE_FAILED
-        - CHARGE_PROCESSING
-        - CHARGE_PENDING_REVERSAL
-        - BRAINTREE_CHARGE_FAILED
-        - INVOICE_CLOSED
-        - CHECK_PAYMENT_RECEIVED
-        - WIRE_TRANSFER_PAYMENT_RECEIVED
-        - DISCOUNT_APPLIED
-        - CREDIT_ISSUED
-        - CREDIT_PULLED_FWD
-        - CREDIT_END_DATE_MODIFIED
-        - PROMO_CODE_APPLIED
-        - PAYMENT_FORGIVEN
-        - REFUND_ISSUED
-        - ACCOUNT_DOWNGRADED
-        - ACCOUNT_UPGRADED
-        - ACCOUNT_MODIFIED
-        - SUPPORT_PLAN_ACTIVATED
-        - SUPPORT_PLAN_CANCELLED
-        - SUPPORT_PLAN_CANCELLATION_SCHEDULED
-        - INITIATE_SALESFORCE_SERVICE_CLOUD_SYNC
-        - INVOICE_ADDRESS_CHANGED
-        - INVOICE_ADDRESS_ADDED
-        - PREPAID_PLAN_ACTIVATED
-        - ELASTIC_INVOICING_MODE_ACTIVATED
-        - ELASTIC_INVOICING_MODE_DEACTIVATED
-        - TERMINATE_PAID_SERVICES
-        - BILLING_EMAIL_ADDRESS_ADDED
-        - BILLING_EMAIL_ADDRESS_CHANGED
-        - BILLING_EMAIL_ADDRESS_REMOVED
-        - AWS_BILLING_ACCOUNT_CREDIT_ISSUED
-        - GCP_BILLING_ACCOUNT_CREDIT_ISSUED
-        - CREDIT_SFOLID_MODIFIED
-        - PREPAID_PLAN_MODIFIED
-        - AWS_USAGE_REPORTED
-        - AZURE_USAGE_REPORTED
-        - GCP_USAGE_REPORTED
-        - VERCEL_USAGE_REPORTED
-        - BECAME_PAYING_ORG
-        - BECAME_LINKED_ORG
-        - NEW_LINKED_ORG
-        - UNLINKED_ORG
-        - ORG_LINKED_TO_PAYING_ORG
-        - ORG_UNLINKED_FROM_PAYING_ORG
-        - ORG_UNLINK_REQUESTED
-        - ORG_UNLINK_CANCELLED
-        - PAYMENT_UPDATED_THROUGH_API
-        - AZURE_BILLING_ACCOUNT_CREDIT_ISSUED
-        - CREDIT_START_DATE_MODIFIED
-        - CREDIT_ELASTIC_INVOICING_MODIFIED
-        - CREDIT_TYPE_MODIFIED
-        - CREDIT_AMOUNT_CENTS_MODIFIED
-        - CREDIT_AMOUNT_REMAINING_CENTS_MODIFIED
-        - CREDIT_TOTAL_BILLED_CENTS_MODIFIED
-        - CREDIT_AWS_CUSTOMER_ID_MODIFIED
-        - CREDIT_AWS_PRODUCT_CODE_MODIFIED
-        - CREDIT_GCP_MARKETPLACE_ENTITLEMENT_ID_MODIFIED
-        - CREDIT_AZURE_SUBSCRIPTION_ID_MODIFIED
-        - CREDIT_AZURE_PRIVATE_PLAN_ID_MODIFIED
-        - TARGETED_REBILL_EXECUTED
-        - LEGACY_REBILL_EXECUTED
-        - EVERGREEN_DEAL_CANCELLED
-        - GRACE_PERIOD_ACTIVATED
-        - GRACE_PERIOD_NO_LONGER_IN_EFFECT
-        - PENDING_DEAL_ACTIVATION_ADDED
-        - PENDING_DEAL_ACTIVATION_CANCELED
-        - PENDING_DEAL_APPLIED
-        - PENDING_DEAL_ACTIVATION_FAILED
-        - EVERGREEN_PRIORITY_MODIFIED
-        - CROSS_ORG_OPERATION_TICKET_TRACKING
-        - ADMIN_OVERRIDE_PAYMENT_METHOD_DELETED
-        - ADMIN_OVERRIDE_PAYMENT_METHOD_EXPIRED
-        - PAYMENT_METHOD_FLAGGED
-        - PAYMENT_METHOD_UNFLAGGED
-        - MARKETPLACE_REFUND_ISSUED
-        - PAYMENT_DUE_DATE_EXTENDED
-        title: Billing Event Types
-        type: string
-      - enum:
-        - FEDERATION_SETTINGS_CREATED
-        - FEDERATION_SETTINGS_DELETED
-        - FEDERATION_SETTINGS_UPDATED
-        - IDENTITY_PROVIDER_CREATED
-        - IDENTITY_PROVIDER_UPDATED
-        - IDENTITY_PROVIDER_DELETED
-        - IDENTITY_PROVIDER_ACTIVATED
-        - OIDC_IDENTITY_PROVIDER_UPDATED
-        - IDENTITY_PROVIDER_DEACTIVATED
-        - IDENTITY_PROVIDER_JWKS_REVOKED
-        - OIDC_IDENTITY_PROVIDER_ENABLED
-        - OIDC_IDENTITY_PROVIDER_DISABLED
-        - DOMAINS_ASSOCIATED
-        - DOMAIN_CREATED
-        - DOMAIN_DELETED
-        - DOMAIN_VERIFIED
-        - ORG_SETTINGS_CONFIGURED
-        - ORG_SETTINGS_UPDATED
-        - ORG_SETTINGS_DELETED
-        - RESTRICT_ORG_MEMBERSHIP_ENABLED
-        - RESTRICT_ORG_MEMBERSHIP_DISABLED
-        - ROLE_MAPPING_CREATED
-        - ROLE_MAPPING_UPDATED
-        - ROLE_MAPPING_DELETED
-        title: Federation Settings Event Types
-        type: string
-      - enum:
-        - GROUP_DELETED
-        - GROUP_CREATED
-        - GROUP_MOVED
-        title: Group Audit Types
-        type: string
-      - enum:
-        - MLAB_MIGRATION_COMPLETED
-        - MLAB_MIGRATION_TARGET_CLUSTER_CREATED
-        - MLAB_MIGRATION_DATABASE_USERS_IMPORTED
-        - MLAB_MIGRATION_IP_WHITELIST_IMPORTED
-        - MLAB_MIGRATION_TARGET_CLUSTER_SET
-        - MLAB_MIGRATION_DATABASE_RENAMED
-        - MLAB_MIGRATION_LIVE_IMPORT_STARTED
-        - MLAB_MIGRATION_LIVE_IMPORT_READY_FOR_CUTOVER
-        - MLAB_MIGRATION_LIVE_IMPORT_CUTOVER_COMPLETE
-        - MLAB_MIGRATION_LIVE_IMPORT_ERROR
-        - MLAB_MIGRATION_LIVE_IMPORT_CANCELLED
-        - MLAB_MIGRATION_DUMP_AND_RESTORE_TEST_STARTED
-        - MLAB_MIGRATION_DUMP_AND_RESTORE_TEST_SKIPPED
-        - MLAB_MIGRATION_DUMP_AND_RESTORE_STARTED
-        - MLAB_MIGRATION_SUPPORT_PLAN_SELECTED
-        - MLAB_MIGRATION_SUPPORT_PLAN_OPTED_OUT
-        title: Mlab Migration Audit Types
-        type: string
-      - enum:
-        - ORG_LIMIT_UPDATED
-        - SHADOW_CLUSTER_ORG_OPT_IN
-        - SHADOW_CLUSTER_ORG_OPT_OUT
-        title: Atlas Audit Types
-        type: string
-      - enum:
-        - ORG_CREATED
-        - CUSTOM_SESSION_TIMEOUT_MODIFIED
-        - SECURITY_CONTACT_MODIFIED
-        - ORG_CREDIT_CARD_ADDED
-        - ORG_CREDIT_CARD_UPDATED
-        - ORG_CREDIT_CARD_CURRENT
-        - ORG_CREDIT_CARD_ABOUT_TO_EXPIRE
-        - ORG_PAYPAL_LINKED
-        - ORG_PAYPAL_UPDATED
-        - ORG_PAYPAL_CANCELLED
-        - ORG_OVERRIDE_PAYMENT_METHOD_ADDED
-        - ORG_BANK_ACCOUNT_ADDED
-        - ORG_BANK_ACCOUNT_UPDATED
-        - ORG_WALLET_ADDED
-        - ORG_WALLET_UPDATED
-        - ORG_ACTIVATED
-        - ORG_TEMPORARILY_ACTIVATED
-        - ORG_SUSPENSION_DATE_CHANGED
-        - ORG_SUSPENDED
-        - ORG_ADMIN_SUSPENDED
-        - ORG_ADMIN_LOCKED
-        - ORG_CLUSTERS_DELETED
-        - ORG_CLUSTERS_PAUSED
-        - ORG_LOCKED
-        - ORG_LOCKED_ACCELERATED
-        - ORG_UNDER_FINANCIAL_PROTECTION
-        - ORG_NO_FINANCIAL_PROTECTION
-        - ORG_RENAMED
-        - ALL_ORG_USERS_HAVE_MFA
-        - ORG_USERS_WITHOUT_MFA
-        - ORG_INVOICE_UNDER_THRESHOLD
-        - ORG_INVOICE_OVER_THRESHOLD
-        - ORG_DAILY_BILL_UNDER_THRESHOLD
-        - ORG_DAILY_BILL_OVER_THRESHOLD
-        - ORG_DAILY_BILLING_CHANGE_NORMAL
-        - ORG_DAILY_BILLING_CHANGE_OVER_THRESHOLD
-        - ORG_WEEKLY_BILLING_CHANGE_NORMAL
-        - ORG_WEEKLY_BILLING_CHANGE_OVER_THRESHOLD
-        - ORG_MONTHLY_BILLING_CHANGE_NORMAL
-        - ORG_MONTHLY_BILLING_CHANGE_OVER_THRESHOLD
-        - ORG_GROUP_CHARGES_UNDER_THRESHOLD
-        - ORG_GROUP_CHARGES_OVER_THRESHOLD
-        - ORG_TWO_FACTOR_AUTH_REQUIRED
-        - ORG_TWO_FACTOR_AUTH_OPTIONAL
-        - ORG_PUBLIC_API_ACCESS_LIST_REQUIRED
-        - ORG_PUBLIC_API_ACCESS_LIST_NOT_REQUIRED
-        - ORG_EMPLOYEE_ACCESS_RESTRICTED
-        - ORG_EMPLOYEE_ACCESS_UNRESTRICTED
-        - ORG_CONNECTED_TO_MLAB
-        - ORG_DISCONNECTED_FROM_MLAB
-        - ORG_IDP_CERTIFICATE_CURRENT
-        - ORG_IDP_CERTIFICATE_ABOUT_TO_EXPIRE
-        - ORG_CONNECTED_TO_VERCEL
-        - ORG_DISCONNECTED_TO_VERCEL
-        - ORG_CONNECTION_UNINSTALLED_FROM_VERCEL
-        - ORG_UI_IP_ACCESS_LIST_ENABLED
-        - ORG_UI_IP_ACCESS_LIST_DISABLED
-        - ORG_EDITED_UI_IP_ACCESS_LIST_ENTRIES
-        - ORG_SERVICE_ACCOUNT_MAX_SECRET_VALIDITY_EDITED
-        - ORG_SERVICE_ACCOUNT_SECRETS_EXPIRED
-        - ORG_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRED
-        - ORG_SERVICE_ACCOUNT_SECRETS_EXPIRING
-        - ORG_SERVICE_ACCOUNT_SECRETS_NO_LONGER_EXPIRING
-        - ORG_MONGODB_VERSION_EOL_EXTENSION_ACCEPTED
-        - ORG_MONGODB_VERSION_EOL_EXTENSION_PENDING
-        - ORG_MONGODB_VERSION_EOL_EXTENSION_CANCELLED
-        - ORG_BAAS_EOL_EXTENSION_ACCEPTED
-        - ORG_BAAS_EOL_EXTENSION_PENDING
-        - ORG_BAAS_EOL_EXTENSION_CANCELED
-        - GROUP_MOVED_FROM_ORG
-        - SANDBOX_ENABLED_FOR_ORG
-        - SANDBOX_DISABLED_FOR_ORG
-        - SANDBOX_CONFIG_DELETED
-        - SANDBOX_TEMPLATE_UPDATED
-        - ORGANIZATION_VOYAGE_SETTINGS_CREATED
-        - ORGANIZATION_VOYAGE_SETTINGS_DELETED
-        - PROJECT_CREATED_VIA_ANIS
-        title: Org Event Types
-        type: string
-      - enum:
-        - AWS_SELF_SERVE_ACCOUNT_LINKED
-        - AWS_SELF_SERVE_ACCOUNT_LINK_PENDING
-        - AWS_SELF_SERVE_ACCOUNT_CANCELLED
-        - AWS_SELF_SERVE_ACCOUNT_LINK_FAILED
-        - GCP_SELF_SERVE_ACCOUNT_LINK_PENDING
-        - GCP_SELF_SERVE_ACCOUNT_LINK_FAILED
-        - AZURE_SELF_SERVE_ACCOUNT_LINKED
-        - AZURE_SELF_SERVE_ACCOUNT_LINK_PENDING
-        - AZURE_SELF_SERVE_ACCOUNT_CANCELLED
-        - AZURE_SELF_SERVE_ACCOUNT_LINK_FAILED
-        - GCP_SELF_SERVE_ACCOUNT_LINKED
-        - GCP_SELF_SERVE_ACCOUNT_CANCELLED
-        - VERCEL_SELF_SERVE_ACCOUNT_LINKED
-        - VERCEL_SELF_SERVE_ACCOUNT_LINK_PENDING
-        - VERCEL_SELF_SERVE_ACCOUNT_CANCELLED
-        - VERCEL_SELF_SERVE_ACCOUNT_LINK_FAILED
-        - VERCEL_INVOICE_CREATED
-        - VERCEL_INVOICE_NOT_PAID
-        - VERCEL_INVOICE_OVERDUE
-        - VERCEL_INVOICE_PAID
-        - VERCEL_INVOICE_REFUNDED
-        title: Partner Event Types
-        type: string
-      - enum:
-        - SUPPORT_EMAILS_SENT_SUCCESSFULLY
-        - SUPPORT_EMAILS_SENT_FAILURE
-        title: Support Event Types
-        type: string
-      - enum:
-        - TEAM_CREATED
-        - TEAM_DELETED
-        - TEAM_UPDATED
-        - TEAM_NAME_CHANGED
-        - TEAM_ADDED_TO_GROUP
-        - TEAM_REMOVED_FROM_GROUP
-        - TEAM_ROLES_MODIFIED
-        title: Team Event Types
-        type: string
-      - enum:
-        - JOINED_ORG
-        - JOINED_TEAM
-        - INVITED_TO_ORG
-        - ORG_INVITATION_DELETED
-        - REMOVED_FROM_ORG
-        - REMOVED_FROM_TEAM
-        - USER_ROLES_CHANGED_AUDIT
-        - ORG_FLEX_CONSULTING_PURCHASED
-        - ORG_FLEX_CONSULTING_PURCHASE_FAILED
-        - INVITED_TO_TEAM
-        title: User Event Types
-        type: string
-      - enum:
-        - TAGS_MODIFIED
-        - GROUP_TAGS_MODIFIED
-        title: Resource Event Types
-        type: string
-      - enum:
-        - RESOURCE_POLICY_CREATED
-        - RESOURCE_POLICY_MODIFIED
-        - RESOURCE_POLICY_DELETED
-        - RESOURCE_POLICY_VIOLATED
-        title: Atlas Resource Policy Audit Types
-        type: string
-      - enum:
-        - AI_MODELS_USAGE_TIER_UPDATED
-        title: Ai Models Event Types
-        type: string
-      type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-  headers:
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
   parameters:
+    orgId:
+      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
+      in: path
+      name: orgId
+      required: true
+      schema:
+        example: 4888442a3354817a7320eb61
+        pattern: ^([a-f0-9]{24})$
+        type: string
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
 
@@ -1569,15 +1504,6 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
-    orgId:
-      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
-      in: path
-      name: orgId
-      required: true
-      schema:
-        example: 4888442a3354817a7320eb61
-        pattern: ^([a-f0-9]{24})$
-        type: string
     pretty:
       description: Flag that indicates whether the response body should be in the prettyprint format.
       in: query
@@ -1588,6 +1514,80 @@ components:
           description: Prettyprint
           url: https://en.wikipedia.org/wiki/Prettyprint
         type: boolean
+  responses:
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
   securitySchemes:
     DigestAuth:
       scheme: digest

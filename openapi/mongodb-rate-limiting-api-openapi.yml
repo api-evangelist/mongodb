@@ -192,90 +192,31 @@ paths:
         source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/rateLimits/{endpointSetId}?pretty=true\""
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Rate-Limiting/operation/getRateLimit
 components:
-  responses:
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
   schemas:
-    BadRequestDetail:
-      description: Bad request detail.
+    RateLimitEndpointSetCapacity:
+      description: The rate limit capacity for the endpoint set.
       properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
+        defaultValue:
+          description: The default request capacity of the endpoint set. Returned if there is a capacity override set for the requested entity.
+          format: int64
+          type: integer
+        value:
+          description: The applied request capacity of the endpoint set.
+          format: int64
+          type: integer
       type: object
     RateLimitEndpointSetRefillDurationSeconds:
       description: The rate limit refill duration for the endpoint set.
@@ -286,18 +227,6 @@ components:
           type: integer
         value:
           description: The applied rate limit refill duration of the endpoint set.
-          format: int64
-          type: integer
-      type: object
-    RateLimitEndpointSetRefillRate:
-      description: The rate limit refill rate for the endpoint set.
-      properties:
-        defaultValue:
-          description: The default rate limit refill rate of the endpoint set. Returned if there is a rate limit refill rate override set for the requested entity.
-          format: int64
-          type: integer
-        value:
-          description: The applied rate limit refill rate of the endpoint set.
           format: int64
           type: integer
       type: object
@@ -327,54 +256,6 @@ components:
           type: integer
       required:
       - results
-      type: object
-    RateLimitEndpointSetResponse:
-      properties:
-        capacity:
-          $ref: '#/components/schemas/RateLimitEndpointSetCapacity'
-        endpointSetId:
-          description: The ID of the endpoint set.
-          example: rateLimitsInspection_group
-          type: string
-        endpointSetName:
-          description: The endpoint set name.
-          example: Rate Limits Inspection
-          type: string
-        endpoints:
-          description: A list of endpoints associated with the specified endpoint set.
-          items:
-            $ref: '#/components/schemas/RateLimitEndpointSetEndpoint'
-          maxItems: 100
-          type: array
-          uniqueItems: true
-        refillDurationSeconds:
-          $ref: '#/components/schemas/RateLimitEndpointSetRefillDurationSeconds'
-        refillRate:
-          $ref: '#/components/schemas/RateLimitEndpointSetRefillRate'
-        scope:
-          description: The scope of the endpoint set.
-          enum:
-          - IP
-          - GROUP
-          - ORGANIZATION
-          - USER
-          type: string
-      type: object
-    RateLimitEndpointSetEndpoint:
-      properties:
-        method:
-          description: The HTTP method of the endpoint.
-          enum:
-          - GET
-          - POST
-          - PUT
-          - DELETE
-          - PATCH
-          type: string
-        path:
-          description: The URL path of the endpoint.
-          example: /api/atlas/v2/rateLimits
-          type: string
       type: object
     Link:
       properties:
@@ -419,17 +300,47 @@ components:
       - error
       - errorCode
       type: object
-    RateLimitEndpointSetCapacity:
-      description: The rate limit capacity for the endpoint set.
+    BadRequestDetail:
+      description: Bad request detail.
       properties:
-        defaultValue:
-          description: The default request capacity of the endpoint set. Returned if there is a capacity override set for the requested entity.
-          format: int64
-          type: integer
-        value:
-          description: The applied request capacity of the endpoint set.
-          format: int64
-          type: integer
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    RateLimitEndpointSetResponse:
+      properties:
+        capacity:
+          $ref: '#/components/schemas/RateLimitEndpointSetCapacity'
+        endpointSetId:
+          description: The ID of the endpoint set.
+          example: rateLimitsInspection_group
+          type: string
+        endpointSetName:
+          description: The endpoint set name.
+          example: Rate Limits Inspection
+          type: string
+        endpoints:
+          description: A list of endpoints associated with the specified endpoint set.
+          items:
+            $ref: '#/components/schemas/RateLimitEndpointSetEndpoint'
+          maxItems: 100
+          type: array
+          uniqueItems: true
+        refillDurationSeconds:
+          $ref: '#/components/schemas/RateLimitEndpointSetRefillDurationSeconds'
+        refillRate:
+          $ref: '#/components/schemas/RateLimitEndpointSetRefillRate'
+        scope:
+          description: The scope of the endpoint set.
+          enum:
+          - IP
+          - GROUP
+          - ORGANIZATION
+          - USER
+          type: string
       type: object
     FieldViolation:
       properties:
@@ -443,27 +354,115 @@ components:
       - description
       - field
       type: object
-  headers:
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
+    RateLimitEndpointSetRefillRate:
+      description: The rate limit refill rate for the endpoint set.
+      properties:
+        defaultValue:
+          description: The default rate limit refill rate of the endpoint set. Returned if there is a rate limit refill rate override set for the requested entity.
+          format: int64
+          type: integer
+        value:
+          description: The applied rate limit refill rate of the endpoint set.
+          format: int64
+          type: integer
+      type: object
+    RateLimitEndpointSetEndpoint:
+      properties:
+        method:
+          description: The HTTP method of the endpoint.
+          enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+          type: string
+        path:
+          description: The URL path of the endpoint.
+          example: /api/atlas/v2/rateLimits
+          type: string
+      type: object
+  responses:
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
   parameters:
-    itemsPerPage:
-      description: Number of items that the response returns per page.
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
       in: query
-      name: itemsPerPage
+      name: pageNum
       schema:
-        default: 100
-        maximum: 500
+        default: 1
         minimum: 1
         type: integer
     envelope:
@@ -473,12 +472,13 @@ components:
       schema:
         default: false
         type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
+    itemsPerPage:
+      description: Number of items that the response returns per page.
       in: query
-      name: pageNum
+      name: itemsPerPage
       schema:
-        default: 1
+        default: 100
+        maximum: 500
         minimum: 1
         type: integer
     pretty:

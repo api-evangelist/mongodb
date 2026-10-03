@@ -293,100 +293,30 @@ paths:
         verb: acknowledge
       x-xgen-operation-id-override: acknowledgeAlert
 components:
-  responses:
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
   schemas:
-    BadRequestDetail:
-      description: Bad request detail.
+    Link:
       properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    AlertViewForNdsGroup:
-      oneOf:
-      - $ref: '#/components/schemas/AppServiceAlertView'
-      - $ref: '#/components/schemas/ClusterAlertViewForNdsGroup'
-      - $ref: '#/components/schemas/HostAlertViewForNdsGroup'
-      - $ref: '#/components/schemas/HostMetricAlert'
-      - $ref: '#/components/schemas/ReplicaSetAlertViewForNdsGroup'
-      - $ref: '#/components/schemas/StreamProcessorAlertViewForNdsGroup'
-      - $ref: '#/components/schemas/DefaultAlertViewForNdsGroup'
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
       type: object
     HostMetricAlert:
       description: Host Metric Alert notifies about changes of measurements or metrics for mongod host.
@@ -699,6 +629,51 @@ components:
       - updated
       title: Host Metric Alerts
       type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    ReplicaSetEventTypeViewForNdsGroupAlertable:
+      description: Incident that triggered this alert.
+      enum:
+      - REPLICATION_OPLOG_WINDOW_RUNNING_OUT
+      - NO_PRIMARY
+      - PRIMARY_ELECTED
+      - TOO_MANY_ELECTIONS
+      - TOO_FEW_HEALTHY_MEMBERS
+      - TOO_MANY_UNHEALTHY_MEMBERS
+      example: NO_PRIMARY
+      readOnly: true
+      title: ReplicaSet Event Types
+      type: string
     HostAlertViewForNdsGroup:
       description: Host alert notifies about activities on mongod host.
       properties:
@@ -827,6 +802,32 @@ components:
       - updated
       title: Host Alerts
       type: object
+    PaginatedAlertView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/AlertViewForNdsGroup'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
     AppServiceEventTypeViewAlertable:
       description: Incident that triggered this alert.
       enum:
@@ -845,6 +846,128 @@ components:
       readOnly: true
       title: App Services Event Types
       type: string
+    ClusterEventTypeViewForNdsGroupAlertable:
+      description: Event type that triggers an alert.
+      enum:
+      - CLUSTER_MONGOS_IS_MISSING
+      example: CLUSTER_MONGOS_IS_MISSING
+      externalDocs:
+        description: Atlas Alert Event Types
+        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
+      title: Cluster Event Types
+      type: string
+    AppServiceAlertView:
+      description: App Services alert notifies different activities about a BAAS application.
+      properties:
+        acknowledgedUntil:
+          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
+
+
+            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
+
+
+            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+        acknowledgementComment:
+          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
+          example: Expiration on 3/19.  Silencing for 7days.
+          maxLength: 200
+          type: string
+        acknowledgingUsername:
+          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
+          format: email
+          readOnly: true
+          type: string
+        alertConfigId:
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        eventTypeName:
+          $ref: '#/components/schemas/AppServiceEventTypeViewAlertable'
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        lastNotified:
+          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        orgId:
+          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resolved:
+          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        status:
+          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
+          enum:
+          - CANCELLED
+          - CLOSED
+          - OPEN
+          - TRACKING
+          example: OPEN
+          readOnly: true
+          type: string
+        updated:
+          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+      required:
+      - alertConfigId
+      - created
+      - eventTypeName
+      - id
+      - status
+      - updated
+      title: App Services Alerts
+      type: object
     DefaultAlertViewForNdsGroup:
       description: Other alerts which don't have extra details beside of basic one.
       properties:
@@ -1172,118 +1295,6 @@ components:
           type: boolean
       title: Acknowledge Alert
       type: object
-    AppServiceAlertView:
-      description: App Services alert notifies different activities about a BAAS application.
-      properties:
-        acknowledgedUntil:
-          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
-
-
-            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
-
-
-            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          type: string
-        acknowledgementComment:
-          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
-          example: Expiration on 3/19.  Silencing for 7days.
-          maxLength: 200
-          type: string
-        acknowledgingUsername:
-          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
-          format: email
-          readOnly: true
-          type: string
-        alertConfigId:
-          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        created:
-          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        eventTypeName:
-          $ref: '#/components/schemas/AppServiceEventTypeViewAlertable'
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        lastNotified:
-          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        orgId:
-          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resolved:
-          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        status:
-          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
-          enum:
-          - CANCELLED
-          - CLOSED
-          - OPEN
-          - TRACKING
-          example: OPEN
-          readOnly: true
-          type: string
-        updated:
-          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-      required:
-      - alertConfigId
-      - created
-      - eventTypeName
-      - id
-      - status
-      - updated
-      title: App Services Alerts
-      type: object
     StreamProcessorAlertViewForNdsGroup:
       description: Stream Processor alert notifies about activities on Stream Processor in Atlas Streams.
       properties:
@@ -1416,6 +1427,16 @@ components:
       - updated
       title: Stream Processor Alerts
       type: object
+    AlertViewForNdsGroup:
+      oneOf:
+      - $ref: '#/components/schemas/AppServiceAlertView'
+      - $ref: '#/components/schemas/ClusterAlertViewForNdsGroup'
+      - $ref: '#/components/schemas/HostAlertViewForNdsGroup'
+      - $ref: '#/components/schemas/HostMetricAlert'
+      - $ref: '#/components/schemas/ReplicaSetAlertViewForNdsGroup'
+      - $ref: '#/components/schemas/StreamProcessorAlertViewForNdsGroup'
+      - $ref: '#/components/schemas/DefaultAlertViewForNdsGroup'
+      type: object
     HostMetricEventTypeViewAlertable:
       description: Event type that triggers an alert.
       enum:
@@ -1425,6 +1446,175 @@ components:
         description: Atlas Alert Event Types
         url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
       title: Host Metric Event Types
+      type: string
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    ClusterAlertViewForNdsGroup:
+      description: Cluster alert notifies different activities and conditions about cluster of mongod hosts.
+      properties:
+        acknowledgedUntil:
+          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
+
+
+            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
+
+
+            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          type: string
+        acknowledgementComment:
+          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
+          example: Expiration on 3/19.  Silencing for 7days.
+          maxLength: 200
+          type: string
+        acknowledgingUsername:
+          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
+          format: email
+          readOnly: true
+          type: string
+        alertConfigId:
+          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        clusterName:
+          description: Human-readable label that identifies the cluster to which this alert applies. This resource returns this parameter for alerts of events impacting backups, replica sets, or sharded clusters.
+          example: cluster1
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
+          readOnly: true
+          type: string
+        created:
+          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        eventTypeName:
+          $ref: '#/components/schemas/ClusterEventTypeViewForNdsGroupAlertable'
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this alert.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        lastNotified:
+          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        orgId:
+          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        resolved:
+          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+        status:
+          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
+          enum:
+          - CANCELLED
+          - CLOSED
+          - OPEN
+          - TRACKING
+          example: OPEN
+          readOnly: true
+          type: string
+        updated:
+          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          externalDocs:
+            description: ISO 8601
+            url: https://en.wikipedia.org/wiki/ISO_8601
+          format: date-time
+          readOnly: true
+          type: string
+      required:
+      - alertConfigId
+      - created
+      - eventTypeName
+      - id
+      - status
+      - updated
+      title: Cluster Alerts
+      type: object
+    HostEventTypeViewForNdsGroupAlertable:
+      description: Event type that triggers an alert.
+      enum:
+      - HOST_DOWN
+      - HOST_HAS_INDEX_SUGGESTIONS
+      - HOST_MONGOT_CRASHING_OOM
+      - HOST_MONGOT_STOP_REPLICATION
+      - HOST_MONGOT_APPROACHING_STOP_REPLICATION
+      - HOST_MONGOT_PAUSE_INITIAL_SYNC
+      - HOST_SEARCH_NODE_INDEX_FAILED
+      - HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN
+      - HOST_NOT_ENOUGH_DISK_SPACE
+      - SSH_KEY_NDS_HOST_ACCESS_REQUESTED
+      - SSH_KEY_NDS_HOST_ACCESS_REFRESHED
+      - PUSH_BASED_LOG_EXPORT_STOPPED
+      - PUSH_BASED_LOG_EXPORT_DROPPED_LOG
+      - HOST_VERSION_BEHIND
+      - VERSION_BEHIND
+      - HOST_EXPOSED
+      - HOST_SSL_CERTIFICATE_STALE
+      - HOST_SECURITY_CHECKUP_NOT_MET
+      - ALERT_HOST_SSH_SESSION_STARTED
+      - PROFILER_CONFIGURED_TOO_WIDELY
+      example: HOST_DOWN
+      externalDocs:
+        description: Atlas Alert Event Types
+        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
+      title: Host Event Types
       type: string
     ReplicaSetAlertViewForNdsGroup:
       description: Replica Set alert notifies about different activities on replica set of mongod instances.
@@ -1568,101 +1758,6 @@ components:
       - updated
       title: ReplicaSet Alerts
       type: object
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    HostEventTypeViewForNdsGroupAlertable:
-      description: Event type that triggers an alert.
-      enum:
-      - HOST_DOWN
-      - HOST_HAS_INDEX_SUGGESTIONS
-      - HOST_MONGOT_CRASHING_OOM
-      - HOST_MONGOT_STOP_REPLICATION
-      - HOST_MONGOT_APPROACHING_STOP_REPLICATION
-      - HOST_MONGOT_PAUSE_INITIAL_SYNC
-      - HOST_SEARCH_NODE_INDEX_FAILED
-      - HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN
-      - HOST_NOT_ENOUGH_DISK_SPACE
-      - SSH_KEY_NDS_HOST_ACCESS_REQUESTED
-      - SSH_KEY_NDS_HOST_ACCESS_REFRESHED
-      - PUSH_BASED_LOG_EXPORT_STOPPED
-      - PUSH_BASED_LOG_EXPORT_DROPPED_LOG
-      - HOST_VERSION_BEHIND
-      - VERSION_BEHIND
-      - HOST_EXPOSED
-      - HOST_SSL_CERTIFICATE_STALE
-      - HOST_SECURITY_CHECKUP_NOT_MET
-      - ALERT_HOST_SSH_SESSION_STARTED
-      - PROFILER_CONFIGURED_TOO_WIDELY
-      example: HOST_DOWN
-      externalDocs:
-        description: Atlas Alert Event Types
-        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
-      title: Host Event Types
-      type: string
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    ClusterEventTypeViewForNdsGroupAlertable:
-      description: Event type that triggers an alert.
-      enum:
-      - CLUSTER_MONGOS_IS_MISSING
-      example: CLUSTER_MONGOS_IS_MISSING
-      externalDocs:
-        description: Atlas Alert Event Types
-        url: https://www.mongodb.com/docs/atlas/reference/atlas-alert-event-types/
-      title: Cluster Event Types
-      type: string
-    ReplicaSetEventTypeViewForNdsGroupAlertable:
-      description: Incident that triggered this alert.
-      enum:
-      - REPLICATION_OPLOG_WINDOW_RUNNING_OUT
-      - NO_PRIMARY
-      - PRIMARY_ELECTED
-      - TOO_MANY_ELECTIONS
-      - TOO_FEW_HEALTHY_MEMBERS
-      - TOO_MANY_UNHEALTHY_MEMBERS
-      example: NO_PRIMARY
-      readOnly: true
-      title: ReplicaSet Event Types
-      type: string
     HostMetricValue:
       description: Value of the metric that triggered the alert. The resource returns this parameter for alerts of events impacting hosts.
       properties:
@@ -1714,176 +1809,96 @@ components:
           type: string
       readOnly: true
       type: object
-    PaginatedAlertView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/AlertViewForNdsGroup'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    ClusterAlertViewForNdsGroup:
-      description: Cluster alert notifies different activities and conditions about cluster of mongod hosts.
-      properties:
-        acknowledgedUntil:
-          description: 'Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.
-
-
-            - To acknowledge this alert forever, set the parameter value to 100 years in the future.
-
-
-            - To unacknowledge a previously acknowledged alert, do not set this parameter value.'
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          type: string
-        acknowledgementComment:
-          description: Comment that a MongoDB Cloud user submitted when acknowledging the alert.
-          example: Expiration on 3/19.  Silencing for 7days.
-          maxLength: 200
-          type: string
-        acknowledgingUsername:
-          description: MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.
-          format: email
-          readOnly: true
-          type: string
-        alertConfigId:
-          description: Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        clusterName:
-          description: Human-readable label that identifies the cluster to which this alert applies. This resource returns this parameter for alerts of events impacting backups, replica sets, or sharded clusters.
-          example: cluster1
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*$
-          readOnly: true
-          type: string
-        created:
-          description: Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        eventTypeName:
-          $ref: '#/components/schemas/ClusterEventTypeViewForNdsGroupAlertable'
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project that owns this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this alert.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        lastNotified:
-          description: Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        orgId:
-          description: Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        resolved:
-          description: 'Date and time that this alert changed to `"status" : "CLOSED"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `"status" : "CLOSED"`.'
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-        status:
-          description: State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.
-          enum:
-          - CANCELLED
-          - CLOSED
-          - OPEN
-          - TRACKING
-          example: OPEN
-          readOnly: true
-          type: string
-        updated:
-          description: Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          externalDocs:
-            description: ISO 8601
-            url: https://en.wikipedia.org/wiki/ISO_8601
-          format: date-time
-          readOnly: true
-          type: string
-      required:
-      - alertConfigId
-      - created
-      - eventTypeName
-      - id
-      - status
-      - updated
-      title: Cluster Alerts
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-  headers:
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
+  responses:
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
   parameters:
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
     itemsPerPage:
       description: Number of items that the response returns per page.
       in: query
@@ -1905,21 +1920,6 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
     includeCount:
       description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
       in: query
