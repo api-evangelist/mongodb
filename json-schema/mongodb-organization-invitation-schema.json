@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-organization-invitation-schema.json",
+  "title": "OrganizationInvitation",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-organizations-api-openapi.yml#/components/schemas/OrganizationInvitation",
+  "properties": {
+    "createdAt": {
+      "description": "Date and time when MongoDB Cloud sent the invitation. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "expiresAt": {
+      "description": "Date and time when the invitation from MongoDB Cloud expires. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "groupRoleAssignments": {
+      "description": "List of projects that the user will be added to when they accept their invitation to the organization.",
+      "items": {
+        "$ref": "#/$defs/GroupRole"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies this invitation.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "inviterUsername": {
+      "description": "Email address of the MongoDB Cloud user who sent the invitation to join the organization.",
+      "format": "email",
+      "readOnly": true,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "orgId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the organization.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "orgName": {
+      "description": "Human-readable label that identifies this organization.",
+      "pattern": "^[\\p{L}\\p{N}\\-_.(),:&@+']{1,64}$",
+      "type": "string"
+    },
+    "roles": {
+      "description": "One or more organization-level roles to assign to the MongoDB Cloud user.",
+      "items": {
+        "enum": [
+          "ORG_OWNER",
+          "ORG_MEMBER",
+          "ORG_GROUP_CREATOR",
+          "ORG_BILLING_ADMIN",
+          "ORG_BILLING_READ_ONLY",
+          "ORG_STREAM_PROCESSING_ADMIN",
+          "ORG_READ_ONLY"
+        ],
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "teamIds": {
+      "description": "List of unique 24-hexadecimal digit strings that identifies each team.",
+      "items": {
+        "description": "Unique 24-hexadecimal digit string that identifies the team.",
+        "type": "string"
+      },
+      "readOnly": true,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "username": {
+      "description": "Email address of the MongoDB Cloud user invited to join the organization.",
+      "format": "email",
+      "type": "string"
+    }
+  },
+  "required": [
+    "orgName"
+  ],
+  "type": "object",
+  "$defs": {
+    "GroupRole": {
+      "properties": {
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project to which this role belongs.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "groupRole": {
+          "description": "Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include project-level roles.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

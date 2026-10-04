@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-disk-backup-replica-set-schema.json",
+  "title": "Replica Set Snapshot",
+  "description": "Details of the replica set snapshot that MongoDB Cloud created.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-cloud-backups-api-openapi.yml#/components/schemas/DiskBackupReplicaSet",
+  "properties": {
+    "cloudProvider": {
+      "description": "Human-readable label that identifies the cloud provider.",
+      "enum": [
+        "AWS",
+        "AZURE",
+        "GCP"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "copyRegions": {
+      "description": "List that identifies the regions to which MongoDB Cloud copies the snapshot.",
+      "items": {
+        "type": "string"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "createdAt": {
+      "description": "Date and time when MongoDB Cloud took the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "description": {
+      "description": "Human-readable phrase or sentence that explains the purpose of the snapshot. The resource returns this parameter when `\"status\": \"onDemand\"`.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "expiresAt": {
+      "description": "Date and time when MongoDB Cloud deletes the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "frequencyType": {
+      "description": "Human-readable label that identifies how often this snapshot triggers.",
+      "enum": [
+        "hourly",
+        "daily",
+        "weekly",
+        "monthly",
+        "yearly"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the snapshot.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "masterKeyUUID": {
+      "description": "Unique string that identifies the Amazon Web Services (AWS) Key Management Service (KMS) Customer Master Key (CMK) used to encrypt the snapshot. The resource returns this value when `\"encryptionEnabled\" : true`.",
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    },
+    "mongodVersion": {
+      "description": "Version of the MongoDB host that this snapshot backs up.",
+      "pattern": "([\\d]+\\.[\\d]+\\.[\\d]+)",
+      "readOnly": true,
+      "type": "string"
+    },
+    "policyItems": {
+      "description": "List that contains unique identifiers for the policy items.",
+      "items": {
+        "description": "Unique 24-hexadecimal digit string that identifies one policy item.",
+        "pattern": "^([a-f0-9]{24})$",
+        "type": "string"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "replicaSetName": {
+      "description": "Human-readable label that identifies the replica set from which MongoDB Cloud took this snapshot. The resource returns this parameter when `\"type\": \"replicaSet\"`.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "snapshotType": {
+      "description": "Human-readable label that identifies when this snapshot triggers.",
+      "enum": [
+        "onDemand",
+        "scheduled",
+        "fallback"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "status": {
+      "description": "Human-readable label that indicates the stage of the backup process for this snapshot.",
+      "enum": [
+        "queued",
+        "inProgress",
+        "completed",
+        "failed"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "storageSizeBytes": {
+      "description": "Number of bytes taken to store the backup at time of snapshot.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+    },
+    "type": {
+      "description": "Human-readable label that categorizes the cluster as a replica set or sharded cluster.",
+      "enum": [
+        "replicaSet",
+        "shardedCluster"
+      ],
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-trigger-ingestion-pipeline-request-schema.json",
+  "title": "TriggerIngestionPipelineRequest",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-data-lake-pipelines-api-openapi.yml#/components/schemas/TriggerIngestionPipelineRequest",
+  "properties": {
+    "datasetRetentionPolicy": {
+      "$ref": "#/$defs/DatasetRetentionPolicy"
+    },
+    "snapshotId": {
+      "description": "Unique 24-hexadecimal character string that identifies the snapshot.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string",
+      "writeOnly": true
+    }
+  },
+  "required": [
+    "snapshotId"
+  ],
+  "type": "object",
+  "$defs": {
+    "DatasetRetentionPolicy": {
+      "description": "Dataset Retention Policy for a Scheduled Data Lake Pipeline.",
+      "properties": {
+        "lastModifiedDate": {
+          "description": "Date when retention policy was last modified. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "units": {
+          "description": "Quantity of time in which the Data Lake Pipeline measures dataset retention.",
+          "enum": [
+            "DAYS",
+            "WEEKS",
+            "MONTHS"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "description": "Number that indicates the amount of days, weeks, or months that the Data Lake Pipeline will retain datasets.",
+          "format": "int32",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "units",
+        "value"
+      ],
+      "title": "Dataset Retention Policy",
+      "type": "object"
+    }
+  }
+}

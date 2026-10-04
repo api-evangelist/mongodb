@@ -1,0 +1,1259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-alert-view-schema.json",
+  "title": "PaginatedAlertView",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-alerts-api-openapi.yml#/components/schemas/PaginatedAlertView",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/AlertViewForNdsGroup"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "AlertViewForNdsGroup": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AppServiceAlertView"
+        },
+        {
+          "$ref": "#/$defs/ClusterAlertViewForNdsGroup"
+        },
+        {
+          "$ref": "#/$defs/HostAlertViewForNdsGroup"
+        },
+        {
+          "$ref": "#/$defs/HostMetricAlert"
+        },
+        {
+          "$ref": "#/$defs/ReplicaSetAlertViewForNdsGroup"
+        },
+        {
+          "$ref": "#/$defs/StreamProcessorAlertViewForNdsGroup"
+        },
+        {
+          "$ref": "#/$defs/DefaultAlertViewForNdsGroup"
+        }
+      ],
+      "type": "object"
+    },
+    "AppServiceAlertView": {
+      "description": "App Services alert notifies different activities about a BAAS application.",
+      "properties": {
+        "acknowledgedUntil": {
+          "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.\n\n- To acknowledge this alert forever, set the parameter value to 100 years in the future.\n\n- To unacknowledge a previously acknowledged alert, do not set this parameter value.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "acknowledgementComment": {
+          "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "acknowledgingUsername": {
+          "description": "MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.",
+          "format": "email",
+          "readOnly": true,
+          "type": "string"
+        },
+        "alertConfigId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "eventTypeName": {
+          "$ref": "#/$defs/AppServiceEventTypeViewAlertable"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastNotified": {
+          "description": "Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolved": {
+          "description": "Date and time that this alert changed to `\"status\" : \"CLOSED\"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `\"status\" : \"CLOSED\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.",
+          "enum": [
+            "CANCELLED",
+            "CLOSED",
+            "OPEN",
+            "TRACKING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "alertConfigId",
+        "created",
+        "eventTypeName",
+        "id",
+        "status",
+        "updated"
+      ],
+      "title": "App Services Alerts",
+      "type": "object"
+    },
+    "AppServiceEventTypeViewAlertable": {
+      "description": "Incident that triggered this alert.",
+      "enum": [
+        "URL_CONFIRMATION",
+        "SUCCESSFUL_DEPLOY",
+        "DEPLOYMENT_FAILURE",
+        "DEPLOYMENT_MODEL_CHANGE_SUCCESS",
+        "DEPLOYMENT_MODEL_CHANGE_FAILURE",
+        "REQUEST_RATE_LIMIT",
+        "LOG_FORWARDER_FAILURE",
+        "OUTSIDE_REALM_METRIC_THRESHOLD",
+        "SYNC_FAILURE",
+        "TRIGGER_FAILURE",
+        "TRIGGER_AUTO_RESUMED"
+      ],
+      "readOnly": true,
+      "title": "App Services Event Types",
+      "type": "string"
+    },
+    "ClusterAlertViewForNdsGroup": {
+      "description": "Cluster alert notifies different activities and conditions about cluster of mongod hosts.",
+      "properties": {
+        "acknowledgedUntil": {
+          "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.\n\n- To acknowledge this alert forever, set the parameter value to 100 years in the future.\n\n- To unacknowledge a previously acknowledged alert, do not set this parameter value.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "acknowledgementComment": {
+          "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "acknowledgingUsername": {
+          "description": "MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.",
+          "format": "email",
+          "readOnly": true,
+          "type": "string"
+        },
+        "alertConfigId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "clusterName": {
+          "description": "Human-readable label that identifies the cluster to which this alert applies. This resource returns this parameter for alerts of events impacting backups, replica sets, or sharded clusters.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "eventTypeName": {
+          "$ref": "#/$defs/ClusterEventTypeViewForNdsGroupAlertable"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastNotified": {
+          "description": "Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolved": {
+          "description": "Date and time that this alert changed to `\"status\" : \"CLOSED\"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `\"status\" : \"CLOSED\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.",
+          "enum": [
+            "CANCELLED",
+            "CLOSED",
+            "OPEN",
+            "TRACKING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "alertConfigId",
+        "created",
+        "eventTypeName",
+        "id",
+        "status",
+        "updated"
+      ],
+      "title": "Cluster Alerts",
+      "type": "object"
+    },
+    "ClusterEventTypeViewForNdsGroupAlertable": {
+      "description": "Event type that triggers an alert.",
+      "enum": [
+        "CLUSTER_MONGOS_IS_MISSING"
+      ],
+      "title": "Cluster Event Types",
+      "type": "string"
+    },
+    "DefaultAlertViewForNdsGroup": {
+      "description": "Other alerts which don't have extra details beside of basic one.",
+      "properties": {
+        "acknowledgedUntil": {
+          "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.\n\n- To acknowledge this alert forever, set the parameter value to 100 years in the future.\n\n- To unacknowledge a previously acknowledged alert, do not set this parameter value.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "acknowledgementComment": {
+          "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "acknowledgingUsername": {
+          "description": "MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.",
+          "format": "email",
+          "readOnly": true,
+          "type": "string"
+        },
+        "alertConfigId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "eventTypeName": {
+          "description": "Incident that triggered this alert.",
+          "oneOf": [
+            {
+              "enum": [
+                "CREDIT_CARD_ABOUT_TO_EXPIRE",
+                "PENDING_INVOICE_OVER_THRESHOLD",
+                "DAILY_BILL_OVER_THRESHOLD",
+                "DAILY_BILLING_CHANGE_OVER_THRESHOLD",
+                "WEEKLY_BILLING_CHANGE_OVER_THRESHOLD",
+                "MONTHLY_BILLING_CHANGE_OVER_THRESHOLD"
+              ],
+              "title": "Billing Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "CPS_SNAPSHOT_STARTED",
+                "CPS_SNAPSHOT_SUCCESSFUL",
+                "CPS_SNAPSHOT_FAILED",
+                "CPS_CONCURRENT_SNAPSHOT_FAILED_WILL_RETRY",
+                "CPS_SNAPSHOT_BEHIND",
+                "CPS_COPY_SNAPSHOT_STARTED",
+                "CPS_COPY_SNAPSHOT_FAILED",
+                "CPS_COPY_SNAPSHOT_FAILED_WILL_RETRY",
+                "CPS_COPY_SNAPSHOT_SUCCESSFUL",
+                "CPS_PREV_SNAPSHOT_OLD",
+                "CPS_SNAPSHOT_FALLBACK_SUCCESSFUL",
+                "CPS_SNAPSHOT_FALLBACK_FAILED",
+                "CPS_RESTORE_SUCCESSFUL",
+                "CPS_EXPORT_SUCCESSFUL",
+                "CPS_RESTORE_FAILED",
+                "CPS_EXPORT_FAILED",
+                "CPS_COLLECTION_RESTORE_SUCCESSFUL",
+                "CPS_COLLECTION_RESTORE_FAILED",
+                "CPS_COLLECTION_RESTORE_PARTIAL_SUCCESS",
+                "CPS_COLLECTION_RESTORE_CANCELED",
+                "CPS_AUTO_EXPORT_FAILED",
+                "CPS_SNAPSHOT_DOWNLOAD_REQUEST_FAILED",
+                "CPS_OPLOG_BEHIND",
+                "CPS_OPLOG_CAUGHT_UP"
+              ],
+              "title": "Cps Backup Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "AWS_ENCRYPTION_KEY_NEEDS_ROTATION",
+                "AZURE_ENCRYPTION_KEY_NEEDS_ROTATION",
+                "GCP_ENCRYPTION_KEY_NEEDS_ROTATION",
+                "AWS_ENCRYPTION_KEY_INVALID",
+                "AZURE_ENCRYPTION_KEY_INVALID",
+                "GCP_ENCRYPTION_KEY_INVALID"
+              ],
+              "title": "Encryption Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "FTS_INDEX_DELETION_FAILED",
+                "FTS_INDEX_BUILD_COMPLETE",
+                "FTS_INDEX_BUILD_FAILED",
+                "FTS_INDEX_CLEANED_UP",
+                "FTS_INDEX_STALE",
+                "FTS_INDEXES_RESTORE_FAILED",
+                "FTS_INDEXES_SYNONYM_MAPPING_INVALID"
+              ],
+              "title": "FTS Index Audit Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "USERS_WITHOUT_MULTI_FACTOR_AUTH",
+                "ENCRYPTION_AT_REST_KMS_NETWORK_ACCESS_DENIED",
+                "ENCRYPTION_AT_REST_CONFIG_NO_LONGER_VALID",
+                "GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRING",
+                "GROUP_SERVICE_ACCOUNT_SECRETS_EXPIRED",
+                "ACTIVE_LEGACY_TLS_CONNECTIONS"
+              ],
+              "title": "Group Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "MONGOTUNE_ALERT"
+              ],
+              "title": "Mongotune Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "CLUSTER_INSTANCE_STOP_START",
+                "CLUSTER_INSTANCE_RESYNC_REQUESTED",
+                "CLUSTER_INSTANCE_UPDATE_REQUESTED",
+                "SAMPLE_DATASET_LOAD_REQUESTED",
+                "TENANT_UPGRADE_TO_SERVERLESS_SUCCESSFUL",
+                "TENANT_UPGRADE_TO_SERVERLESS_FAILED",
+                "NETWORK_PERMISSION_ENTRY_ADDED",
+                "NETWORK_PERMISSION_ENTRY_REMOVED",
+                "NETWORK_PERMISSION_ENTRY_UPDATED",
+                "CLUSTER_BLOCK_WRITE",
+                "CLUSTER_UNBLOCK_WRITE"
+              ],
+              "title": "Atlas Audit Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "MAINTENANCE_IN_ADVANCED",
+                "MAINTENANCE_AUTO_DEFERRED",
+                "MAINTENANCE_STARTED",
+                "MAINTENANCE_COMPLETED",
+                "MAINTENANCE_NO_LONGER_NEEDED"
+              ],
+              "title": "Maintenance Window Audit Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "NDS_X509_USER_AUTHENTICATION_CUSTOMER_CA_EXPIRATION_CHECK",
+                "NDS_X509_USER_AUTHENTICATION_CUSTOMER_CRL_EXPIRATION_CHECK",
+                "NDS_X509_USER_AUTHENTICATION_MANAGED_USER_CERTS_EXPIRATION_CHECK"
+              ],
+              "title": "x509 User Auth Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "ONLINE_ARCHIVE_INSUFFICIENT_INDEXES_CHECK",
+                "ONLINE_ARCHIVE_MAX_CONSECUTIVE_OFFLOAD_WINDOWS_CHECK"
+              ],
+              "title": "Online Archive Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "OUTSIDE_SERVERLESS_METRIC_THRESHOLD"
+              ],
+              "title": "Serverless Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "OUTSIDE_FLEX_METRIC_THRESHOLD"
+              ],
+              "title": "Flex Metric Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "JOINED_GROUP",
+                "REMOVED_FROM_GROUP",
+                "USER_ROLES_CHANGED_AUDIT"
+              ],
+              "title": "User Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "TAGS_MODIFIED",
+                "CLUSTER_TAGS_MODIFIED",
+                "GROUP_TAGS_MODIFIED"
+              ],
+              "title": "Resource Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "STREAM_PROCESSOR_STATE_IS_FAILED",
+                "OUTSIDE_STREAM_PROCESSOR_METRIC_THRESHOLD"
+              ],
+              "title": "Stream Processor Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "COMPUTE_AUTO_SCALE_INITIATED_BASE",
+                "COMPUTE_AUTO_SCALE_INITIATED_ANALYTICS",
+                "COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_BASE",
+                "COMPUTE_AUTO_SCALE_SCALE_DOWN_FAIL_ANALYTICS",
+                "COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE",
+                "COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_ANALYTICS",
+                "COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE",
+                "COMPUTE_AUTO_SCALE_OPLOG_FAIL_ANALYTICS",
+                "DISK_AUTO_SCALE_INITIATED",
+                "DISK_AUTO_SCALE_MAX_DISK_SIZE_FAIL",
+                "DISK_AUTO_SCALE_OPLOG_FAIL",
+                "PREDICTIVE_COMPUTE_AUTO_SCALE_INITIATED_BASE",
+                "PREDICTIVE_COMPUTE_AUTO_SCALE_MAX_INSTANCE_SIZE_FAIL_BASE",
+                "PREDICTIVE_COMPUTE_AUTO_SCALE_OPLOG_FAIL_BASE",
+                "CLUSTER_AUTO_SHARDING_INITIATED",
+                "COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_BASE",
+                "COMPUTE_AUTO_SCALE_DOWNSCALE_SKIPPED_FALLBACK_ANALYTICS"
+              ],
+              "title": "Auto Scaling Audit Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "CPS_DATA_PROTECTION_ENABLE_REQUESTED",
+                "CPS_DATA_PROTECTION_ENABLED",
+                "CPS_DATA_PROTECTION_UPDATE_REQUESTED",
+                "CPS_DATA_PROTECTION_UPDATED",
+                "CPS_DATA_PROTECTION_DISABLE_REQUESTED",
+                "CPS_DATA_PROTECTION_DISABLED",
+                "CPS_DATA_PROTECTION_APPROVED_FOR_DISABLEMENT"
+              ],
+              "title": "Data Protection Event Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "RESOURCE_POLICY_VIOLATED"
+              ],
+              "title": "Atlas Resource Policy Audit Types",
+              "type": "string"
+            },
+            {
+              "enum": [
+                "HOST_DOWN",
+                "HOST_HAS_INDEX_SUGGESTIONS",
+                "HOST_MONGOT_CRASHING_OOM",
+                "HOST_MONGOT_STOP_REPLICATION",
+                "HOST_MONGOT_APPROACHING_STOP_REPLICATION",
+                "HOST_MONGOT_PAUSE_INITIAL_SYNC",
+                "HOST_SEARCH_NODE_INDEX_FAILED",
+                "HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN",
+                "HOST_NOT_ENOUGH_DISK_SPACE",
+                "SSH_KEY_NDS_HOST_ACCESS_REQUESTED",
+                "SSH_KEY_NDS_HOST_ACCESS_REFRESHED",
+                "PUSH_BASED_LOG_EXPORT_STOPPED",
+                "PUSH_BASED_LOG_EXPORT_DROPPED_LOG",
+                "HOST_VERSION_BEHIND",
+                "VERSION_BEHIND",
+                "HOST_EXPOSED",
+                "HOST_SSL_CERTIFICATE_STALE",
+                "HOST_SECURITY_CHECKUP_NOT_MET",
+                "ALERT_HOST_SSH_SESSION_STARTED",
+                "PROFILER_CONFIGURED_TOO_WIDELY"
+              ],
+              "title": "Host Event Types",
+              "type": "string"
+            }
+          ],
+          "readOnly": true,
+          "type": "object"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastNotified": {
+          "description": "Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolved": {
+          "description": "Date and time that this alert changed to `\"status\" : \"CLOSED\"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `\"status\" : \"CLOSED\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.",
+          "enum": [
+            "CANCELLED",
+            "CLOSED",
+            "OPEN",
+            "TRACKING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "alertConfigId",
+        "created",
+        "eventTypeName",
+        "id",
+        "status",
+        "updated"
+      ],
+      "title": "Any Other Alerts",
+      "type": "object"
+    },
+    "HostAlertViewForNdsGroup": {
+      "description": "Host alert notifies about activities on mongod host.",
+      "properties": {
+        "acknowledgedUntil": {
+          "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.\n\n- To acknowledge this alert forever, set the parameter value to 100 years in the future.\n\n- To unacknowledge a previously acknowledged alert, do not set this parameter value.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "acknowledgementComment": {
+          "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "acknowledgingUsername": {
+          "description": "MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.",
+          "format": "email",
+          "readOnly": true,
+          "type": "string"
+        },
+        "alertConfigId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "clusterName": {
+          "description": "Human-readable label that identifies the cluster to which this alert applies. This resource returns this parameter for alerts of events impacting backups, replica sets, or sharded clusters.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "eventTypeName": {
+          "$ref": "#/$defs/HostEventTypeViewForNdsGroupAlertable"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "hostnameAndPort": {
+          "description": "Hostname and port of the host to which this alert applies. The resource returns this parameter for alerts of events impacting hosts or replica sets.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastNotified": {
+          "description": "Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "replicaSetName": {
+          "description": "Name of the replica set to which this alert applies. The response returns this parameter for alerts of events impacting backups, hosts, or replica sets.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolved": {
+          "description": "Date and time that this alert changed to `\"status\" : \"CLOSED\"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `\"status\" : \"CLOSED\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.",
+          "enum": [
+            "CANCELLED",
+            "CLOSED",
+            "OPEN",
+            "TRACKING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "alertConfigId",
+        "created",
+        "eventTypeName",
+        "id",
+        "status",
+        "updated"
+      ],
+      "title": "Host Alerts",
+      "type": "object"
+    },
+    "HostEventTypeViewForNdsGroupAlertable": {
+      "description": "Event type that triggers an alert.",
+      "enum": [
+        "HOST_DOWN",
+        "HOST_HAS_INDEX_SUGGESTIONS",
+        "HOST_MONGOT_CRASHING_OOM",
+        "HOST_MONGOT_STOP_REPLICATION",
+        "HOST_MONGOT_APPROACHING_STOP_REPLICATION",
+        "HOST_MONGOT_PAUSE_INITIAL_SYNC",
+        "HOST_SEARCH_NODE_INDEX_FAILED",
+        "HOST_EXTERNAL_LOG_SINK_EXPORT_DOWN",
+        "HOST_NOT_ENOUGH_DISK_SPACE",
+        "SSH_KEY_NDS_HOST_ACCESS_REQUESTED",
+        "SSH_KEY_NDS_HOST_ACCESS_REFRESHED",
+        "PUSH_BASED_LOG_EXPORT_STOPPED",
+        "PUSH_BASED_LOG_EXPORT_DROPPED_LOG",
+        "HOST_VERSION_BEHIND",
+        "VERSION_BEHIND",
+        "HOST_EXPOSED",
+        "HOST_SSL_CERTIFICATE_STALE",
+        "HOST_SECURITY_CHECKUP_NOT_MET",
+        "ALERT_HOST_SSH_SESSION_STARTED",
+        "PROFILER_CONFIGURED_TOO_WIDELY"
+      ],
+      "title": "Host Event Types",
+      "type": "string"
+    },
+    "HostMetricAlert": {
+      "description": "Host Metric Alert notifies about changes of measurements or metrics for mongod host.",
+      "properties": {
+        "acknowledgedUntil": {
+          "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.\n\n- To acknowledge this alert forever, set the parameter value to 100 years in the future.\n\n- To unacknowledge a previously acknowledged alert, do not set this parameter value.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "acknowledgementComment": {
+          "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "acknowledgingUsername": {
+          "description": "MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.",
+          "format": "email",
+          "readOnly": true,
+          "type": "string"
+        },
+        "alertConfigId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "clusterName": {
+          "description": "Human-readable label that identifies the cluster to which this alert applies. This resource returns this parameter for alerts of events impacting backups, replica sets, or sharded clusters.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "currentValue": {
+          "$ref": "#/$defs/HostMetricValue"
+        },
+        "eventTypeName": {
+          "$ref": "#/$defs/HostMetricEventTypeViewAlertable"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "hostnameAndPort": {
+          "description": "Hostname and port of the host to which this alert applies. The resource returns this parameter for alerts of events impacting hosts or replica sets.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastNotified": {
+          "description": "Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "metricName": {
+          "description": "Name of the metric against which Atlas checks the configured `metricThreshold.threshold`.\n\nTo learn more about the available metrics, see <a href=\"https://www.mongodb.com/docs/atlas/reference/alert-host-metrics/#std-label-measurement-types\" target=\"_blank\">Host Metrics</a>.\n\n**NOTE**: If you set `eventTypeName` to `OUTSIDE_SERVERLESS_METRIC_THRESHOLD`, you can specify only metrics available for serverless. To learn more, see <a href=\"https://dochub.mongodb.org/core/alert-config-serverless-measurements\" target=\"_blank\">Serverless Measurements</a>.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "replicaSetName": {
+          "description": "Name of the replica set to which this alert applies. The response returns this parameter for alerts of events impacting backups, hosts, or replica sets.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolved": {
+          "description": "Date and time that this alert changed to `\"status\" : \"CLOSED\"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `\"status\" : \"CLOSED\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.",
+          "enum": [
+            "CANCELLED",
+            "CLOSED",
+            "OPEN",
+            "TRACKING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "alertConfigId",
+        "created",
+        "eventTypeName",
+        "id",
+        "status",
+        "updated"
+      ],
+      "title": "Host Metric Alerts",
+      "type": "object"
+    },
+    "HostMetricEventTypeViewAlertable": {
+      "description": "Event type that triggers an alert.",
+      "enum": [
+        "OUTSIDE_METRIC_THRESHOLD"
+      ],
+      "title": "Host Metric Event Types",
+      "type": "string"
+    },
+    "HostMetricValue": {
+      "description": "Value of the metric that triggered the alert. The resource returns this parameter for alerts of events impacting hosts.",
+      "properties": {
+        "number": {
+          "description": "Amount of the `metricName` recorded at the time of the event. This value triggered the alert.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "units": {
+          "description": "Element used to express the quantity in `currentValue.number`. This can be an element of time, storage capacity, and the like. This metric triggered the alert.",
+          "enum": [
+            "bits",
+            "Kbits",
+            "Mbits",
+            "Gbits",
+            "bytes",
+            "KB",
+            "MB",
+            "GB",
+            "TB",
+            "PB",
+            "nsec",
+            "msec",
+            "sec",
+            "min",
+            "hours",
+            "million minutes",
+            "days",
+            "requests",
+            "1000 requests",
+            "tokens",
+            "million tokens",
+            "pixels",
+            "billion pixels",
+            "GB seconds",
+            "GB hours",
+            "GB days",
+            "RPU",
+            "thousand RPU",
+            "million RPU",
+            "WPU",
+            "thousand WPU",
+            "million WPU",
+            "count",
+            "thousand",
+            "million",
+            "billion"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ReplicaSetAlertViewForNdsGroup": {
+      "description": "Replica Set alert notifies about different activities on replica set of mongod instances.",
+      "properties": {
+        "acknowledgedUntil": {
+          "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.\n\n- To acknowledge this alert forever, set the parameter value to 100 years in the future.\n\n- To unacknowledge a previously acknowledged alert, do not set this parameter value.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "acknowledgementComment": {
+          "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "acknowledgingUsername": {
+          "description": "MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.",
+          "format": "email",
+          "readOnly": true,
+          "type": "string"
+        },
+        "alertConfigId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "clusterName": {
+          "description": "Human-readable label that identifies the cluster to which this alert applies. This resource returns this parameter for alerts of events impacting backups, replica sets, or sharded clusters.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "eventTypeName": {
+          "$ref": "#/$defs/ReplicaSetEventTypeViewForNdsGroupAlertable"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "hostnameAndPort": {
+          "description": "Hostname and port of the host to which this alert applies. The resource returns this parameter for alerts of events impacting hosts or replica sets.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastNotified": {
+          "description": "Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "nonRunningHostIds": {
+          "description": "List of unique 24-hexadecimal character strings that identify the replica set members that are not in PRIMARY nor SECONDARY state.",
+          "items": {
+            "pattern": "^([a-f0-9]{8,32})$",
+            "type": "string"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "parentClusterId": {
+          "description": "Unique 24-hexadecimal character string that identifies the parent cluster to which this alert applies. The parent cluster contains the sharded nodes. MongoDB Cloud returns this parameter only for alerts of events impacting sharded clusters.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "replicaSetName": {
+          "description": "Name of the replica set to which this alert applies. The response returns this parameter for alerts of events impacting backups, hosts, or replica sets.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolved": {
+          "description": "Date and time that this alert changed to `\"status\" : \"CLOSED\"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `\"status\" : \"CLOSED\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.",
+          "enum": [
+            "CANCELLED",
+            "CLOSED",
+            "OPEN",
+            "TRACKING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "alertConfigId",
+        "created",
+        "eventTypeName",
+        "id",
+        "status",
+        "updated"
+      ],
+      "title": "ReplicaSet Alerts",
+      "type": "object"
+    },
+    "ReplicaSetEventTypeViewForNdsGroupAlertable": {
+      "description": "Incident that triggered this alert.",
+      "enum": [
+        "REPLICATION_OPLOG_WINDOW_RUNNING_OUT",
+        "NO_PRIMARY",
+        "PRIMARY_ELECTED",
+        "TOO_MANY_ELECTIONS",
+        "TOO_FEW_HEALTHY_MEMBERS",
+        "TOO_MANY_UNHEALTHY_MEMBERS"
+      ],
+      "readOnly": true,
+      "title": "ReplicaSet Event Types",
+      "type": "string"
+    },
+    "StreamProcessorAlertViewForNdsGroup": {
+      "description": "Stream Processor alert notifies about activities on Stream Processor in Atlas Streams.",
+      "properties": {
+        "acknowledgedUntil": {
+          "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.\n\n- To acknowledge this alert forever, set the parameter value to 100 years in the future.\n\n- To unacknowledge a previously acknowledged alert, do not set this parameter value.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "acknowledgementComment": {
+          "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "acknowledgingUsername": {
+          "description": "MongoDB Cloud username of the person who acknowledged the alert. The response returns this parameter if a MongoDB Cloud user previously acknowledged this alert.",
+          "format": "email",
+          "readOnly": true,
+          "type": "string"
+        },
+        "alertConfigId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the alert configuration that sets this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "eventTypeName": {
+          "$ref": "#/$defs/HostEventTypeViewForNdsGroupAlertable"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this alert.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "instanceName": {
+          "description": "The name of the Stream Processing Workspace to which this alert applies. The resource returns this parameter for alerts of events impacting Stream Processing Workspaces.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastNotified": {
+          "description": "Date and time that any notifications were last sent for this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if MongoDB Cloud has sent notifications for this alert.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal character string that identifies the organization that owns the project to which this alert applies.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "processorErrorMsg": {
+          "description": "The error message associated with the Stream Processor to which this alert applies.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "processorName": {
+          "description": "The name of the Stream Processor to which this alert applies. The resource returns this parameter for alerts of events impacting Stream Processors.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "processorState": {
+          "description": "The state of the Stream Processor to which this alert applies. The resource returns this parameter for alerts of events impacting Stream Processors.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolved": {
+          "description": "Date and time that this alert changed to `\"status\" : \"CLOSED\"`. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter once `\"status\" : \"CLOSED\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "State of this alert at the time you requested its details. TRACKING indicates the alert condition exists but has not persisted for the minimum notification delay. OPEN indicates the alert condition currently exists. CLOSED indicates the alert condition has been resolved.",
+          "enum": [
+            "CANCELLED",
+            "CLOSED",
+            "OPEN",
+            "TRACKING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when someone last updated this alert. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "alertConfigId",
+        "created",
+        "eventTypeName",
+        "id",
+        "status",
+        "updated"
+      ],
+      "title": "Stream Processor Alerts",
+      "type": "object"
+    }
+  }
+}

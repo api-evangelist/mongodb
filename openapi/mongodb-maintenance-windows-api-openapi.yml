@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
+  title: Mongodb Maintenance Windows API
+  version: '2.0'
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Maintenance Windows API
-  version: '2.0'
-  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+  x-refined-note:
+  - x-xgen-sha differs across the merged source definitions and was not carried
+  description: 'Operations tagged Maintenance Windows across 2 of this provider''s published API definitions: mongodb-atlas-openapi.yaml, mongodb-openapi.yaml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://cloud.mongodb.com
 security:
@@ -176,6 +177,8 @@ paths:
       - Project Owner
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Maintenance-Windows/operation/updateGroupMaintenanceWindow
       x-xgen-operation-id-override: updateMaintenanceWindow
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/maintenanceWindow/autoDefer:
     post:
       description: Toggles automatic deferral of the maintenance window for the specified project. When automatic deferral is enabled, all maintenance windows are deferred for one week. This endpoint controls the same underlying feature as the `autoDeferOnceEnabled` field in the PATCH `/maintenanceWindow` endpoint. The difference is that this endpoint toggles the current value (switches from enabled to disabled or vice versa), while the `autoDeferOnceEnabled` field allows you to set a specific value. For most use cases, the PATCH endpoint with `autoDeferOnceEnabled` is recommended because it allows setting an explicit value rather than toggling. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
@@ -229,6 +232,8 @@ paths:
         customMethod: 'True'
         verb: toggle
       x-xgen-operation-id-override: toggleMaintenanceAutoDefer
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/maintenanceWindow/defer:
     post:
       description: Defers the maintenance window for the specified project. Urgent maintenance activities such as security patches can't wait for your chosen window. MongoDB Cloud starts those maintenance activities when needed. After you schedule maintenance for your cluster, you can't change your maintenance window until the current maintenance efforts complete. The maintenance procedure that MongoDB Cloud performs requires at least one replica set election during the maintenance window per replica set. Maintenance always begins as close to the scheduled hour as possible, but in-progress cluster updates or unexpected system issues could delay the start time. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
@@ -281,133 +286,10 @@ paths:
       x-xgen-method-verb-override:
         customMethod: 'True'
       x-xgen-operation-id-override: deferMaintenanceWindow
+    servers:
+    - url: https://cloud.mongodb.com
 components:
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
-  responses:
-    forbidden:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 403
-            errorCode: CANNOT_CHANGE_GROUP_NAME
-            reason: Forbidden
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Forbidden.
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    internalServerError:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 500
-            errorCode: UNEXPECTED_ERROR
-            reason: Internal Server Error
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Internal Server Error.
-    notFound:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
-    tooManyRequests:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 429
-            errorCode: RATE_LIMITED
-            reason: Too Many Requests
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Too Many Requests.
-      headers:
-        RateLimit-Limit:
-          $ref: '#/components/headers/HeaderRateLimitLimit'
-        RateLimit-Remaining:
-          $ref: '#/components/headers/HeaderRateLimitRemaining'
-        Retry-After:
-          $ref: '#/components/headers/HeaderRetryAfter'
   schemas:
-    ProtectedHours:
-      description: Defines the a window where maintenance will not begin within.
-      properties:
-        endHourOfDay:
-          description: Zero-based integer that represents the end hour of the of the day that the maintenance will not begin in.
-          format: int32
-          maximum: 23
-          minimum: 0
-          type: integer
-        startHourOfDay:
-          description: Zero-based integer that represents the beginning hour of the of the day that the maintenance will not begin in.
-          format: int32
-          maximum: 23
-          minimum: 0
-          type: integer
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
     GroupMaintenanceWindow:
       properties:
         autoDeferOnceEnabled:
@@ -489,7 +371,250 @@ components:
       - error
       - errorCode
       type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    ProtectedHours:
+      description: Defines the a window where maintenance will not begin within.
+      properties:
+        endHourOfDay:
+          description: Zero-based integer that represents the end hour of the of the day that the maintenance will not begin in.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+        startHourOfDay:
+          description: Zero-based integer that represents the beginning hour of the of the day that the maintenance will not begin in.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+      type: object
+    GroupMaintenanceWindow_2:
+      properties:
+        autoDeferOnceEnabled:
+          description: Flag that indicates whether MongoDB Cloud should defer all maintenance windows for one week after you enable them. This setting controls the same underlying auto-deferral feature as the `/maintenanceWindow/autoDefer` endpoint. Use either this field (to set a specific value) or that endpoint (to toggle the current value). For most use cases, this field in the PATCH request is preferred because it allows setting an explicit value rather than toggling.
+          type: boolean
+        dayOfWeek:
+          description: 'One-based integer that represents the day of the week, in the project''s configured time zone (see `timeZoneId`), that the maintenance window starts.
+
+
+            - `1`: Sunday.
+
+            - `2`: Monday.
+
+            - `3`: Tuesday.
+
+            - `4`: Wednesday.
+
+            - `5`: Thursday.
+
+            - `6`: Friday.
+
+            - `7`: Saturday.'
+          format: int32
+          maximum: 7
+          minimum: 1
+          type: integer
+        effectiveWaveAssignment:
+          description: 'Maintenance wave that Atlas uses when scheduling maintenance for this project. This read-only value can differ from `waveAssignment` in two scenarios: (1) when the organization''s `effectiveWaveAssignmentMode` is `ENV_TAG_MAPPING`, the effective wave is derived from environment tags regardless of any explicit assignment; (2) when cross-organization maintenance sequencing is active and this project''s organization is a linked non-paying organization, the effective wave reflects the paying organization''s mode.'
+          format: int32
+          maximum: 3
+          minimum: 1
+          readOnly: true
+          type: integer
+        hourOfDay:
+          description: Zero-based integer that represents the hour of the day, in the project's configured time zone (see `timeZoneId`), that the maintenance window starts according to a 24-hour clock. Use `0` for midnight and `12` for noon. If you haven't changed your project's time zone, this defaults to UTC.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+        numberOfDeferrals:
+          description: Number of times the current maintenance event for this project has been deferred.
+          format: int32
+          readOnly: true
+          type: integer
+        protectedHours:
+          $ref: '#/components/schemas/ProtectedHours_2'
+        startASAP:
+          description: Flag that indicates whether MongoDB Cloud starts the maintenance window immediately upon receiving this request. To start the maintenance window immediately for your project, MongoDB Cloud must have maintenance scheduled and you must set a maintenance window. This flag resets to `false` after MongoDB Cloud completes maintenance.
+          type: boolean
+        timeZoneId:
+          description: Identifier for the current time zone of the maintenance window. This can only be updated via the Project Settings UI.
+          readOnly: true
+          type: string
+        waveAssignment:
+          description: Maintenance wave explicitly assigned to this project. Always returned in GET responses when a value has been set, regardless of the organization's `effectiveWaveAssignmentMode`. When the mode is `ENV_TAG_MAPPING`, this stored assignment is preserved but not used for scheduling — the effective wave is derived from environment tags instead. Not editable when the mode is `ENV_TAG_MAPPING`. Switching back to `MANUAL` restores this value as the effective wave. Must be between 1 and 3, inclusive. Pass `null` to clear an explicit assignment.
+          format: int32
+          maximum: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      type: object
+    ApiError_2:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type:
+          - string
+          - 'null'
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - error
+      - errorCode
+      type: object
+    ProtectedHours_2:
+      description: Defines the a window where maintenance will not begin within.
+      properties:
+        endHourOfDay:
+          description: Zero-based integer, in the project's configured time zone (see `timeZoneId`), that represents the end hour of the day that maintenance will not begin in.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+        startHourOfDay:
+          description: Zero-based integer, in the project's configured time zone (see `timeZoneId`), that represents the beginning hour of the day that maintenance will not begin in.
+          format: int32
+          maximum: 23
+          minimum: 0
+          type: integer
+      type: object
+  responses:
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
   parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
     groupId:
       description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
 
@@ -502,23 +627,19 @@ components:
         example: 32b6e34b3d91647abb20e7b8
         pattern: ^([a-f0-9]{24})$
         type: string
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
       schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
       schema:
-        default: false
-        type: boolean
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
   securitySchemes:
     DigestAuth:
       scheme: digest
@@ -530,6 +651,9 @@ components:
           scopes: {}
           tokenUrl: https://cloud.mongodb.com/api/oauth/token
       type: oauth2
+x-refined-from:
+- mongodb-atlas-openapi.yaml
+- mongodb-openapi.yaml
 x-externalLinks:
 - label: Back to Atlas Docs
   url: https://www.mongodb.com/docs/atlas/

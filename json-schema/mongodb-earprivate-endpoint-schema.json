@@ -1,0 +1,491 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-earprivate-endpoint-schema.json",
+  "title": "Encryption At Rest Private Endpoint",
+  "description": "Encryption At Rest Private Endpoint.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-encryption-at-rest-using-customer-key-management-api-openapi.yml#/components/schemas/EARPrivateEndpoint",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/AzureKeyVaultEARPrivateEndpoint"
+    },
+    {
+      "$ref": "#/$defs/AWSKMSEARPrivateEndpoint"
+    }
+  ],
+  "properties": {
+    "cloudProvider": {
+      "description": "Human-readable label that identifies the cloud provider for the Encryption At Rest private endpoint.",
+      "enum": [
+        "AZURE",
+        "AWS"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "errorMessage": {
+      "description": "Error message for failures associated with the Encryption At Rest private endpoint.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the Private Endpoint Service.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "regionName": {
+      "description": "Cloud provider region in which the Encryption At Rest private endpoint is located.",
+      "oneOf": [
+        {
+          "description": "Microsoft Azure Regions.",
+          "enum": [
+            "US_CENTRAL",
+            "US_EAST",
+            "US_EAST_2",
+            "US_NORTH_CENTRAL",
+            "US_WEST",
+            "US_SOUTH_CENTRAL",
+            "EUROPE_NORTH",
+            "EUROPE_WEST",
+            "US_WEST_CENTRAL",
+            "US_WEST_2",
+            "US_WEST_3",
+            "CANADA_EAST",
+            "CANADA_CENTRAL",
+            "BRAZIL_SOUTH",
+            "BRAZIL_SOUTHEAST",
+            "AUSTRALIA_CENTRAL",
+            "AUSTRALIA_CENTRAL_2",
+            "AUSTRALIA_EAST",
+            "AUSTRALIA_SOUTH_EAST",
+            "GERMANY_WEST_CENTRAL",
+            "GERMANY_NORTH",
+            "SWEDEN_CENTRAL",
+            "SWEDEN_SOUTH",
+            "SWITZERLAND_NORTH",
+            "SWITZERLAND_WEST",
+            "UK_SOUTH",
+            "UK_WEST",
+            "NORWAY_EAST",
+            "NORWAY_WEST",
+            "INDIA_CENTRAL",
+            "INDIA_SOUTH",
+            "INDIA_WEST",
+            "CHINA_EAST",
+            "CHINA_NORTH",
+            "ASIA_EAST",
+            "JAPAN_EAST",
+            "JAPAN_WEST",
+            "ASIA_SOUTH_EAST",
+            "KOREA_CENTRAL",
+            "KOREA_SOUTH",
+            "FRANCE_CENTRAL",
+            "FRANCE_SOUTH",
+            "SOUTH_AFRICA_NORTH",
+            "SOUTH_AFRICA_WEST",
+            "UAE_CENTRAL",
+            "UAE_NORTH",
+            "QATAR_CENTRAL",
+            "POLAND_CENTRAL",
+            "ISRAEL_CENTRAL",
+            "ITALY_NORTH",
+            "SPAIN_CENTRAL",
+            "MEXICO_CENTRAL",
+            "NEW_ZEALAND_NORTH",
+            "US_GOV_VIRGINIA",
+            "US_GOV_ARIZONA",
+            "US_GOV_TEXAS"
+          ],
+          "title": "Azure Regions",
+          "type": "string"
+        },
+        {
+          "description": "Physical location where MongoDB Cloud deploys your AWS-hosted MongoDB cluster nodes. The region you choose can affect network latency for clients accessing your databases. When MongoDB Cloud deploys a dedicated cluster, it checks if a VPC or VPC connection exists for that provider and region. If not, MongoDB Cloud creates them as part of the deployment. MongoDB Cloud assigns the VPC a CIDR block. To limit a new VPC peering connection to one CIDR block and region, create the connection first. Deploy the cluster after the connection starts.",
+          "enum": [
+            "US_GOV_WEST_1",
+            "US_GOV_EAST_1",
+            "US_EAST_1",
+            "US_EAST_2",
+            "US_WEST_1",
+            "US_WEST_2",
+            "CA_CENTRAL_1",
+            "EU_NORTH_1",
+            "EU_WEST_1",
+            "EU_WEST_2",
+            "EU_WEST_3",
+            "EU_CENTRAL_1",
+            "EU_CENTRAL_2",
+            "AP_EAST_1",
+            "AP_EAST_2",
+            "AP_NORTHEAST_1",
+            "AP_NORTHEAST_2",
+            "AP_NORTHEAST_3",
+            "AP_SOUTHEAST_1",
+            "AP_SOUTHEAST_2",
+            "AP_SOUTHEAST_3",
+            "AP_SOUTHEAST_4",
+            "AP_SOUTHEAST_5",
+            "AP_SOUTHEAST_6",
+            "AP_SOUTHEAST_7",
+            "AP_SOUTH_1",
+            "AP_SOUTH_2",
+            "SA_EAST_1",
+            "CN_NORTH_1",
+            "CN_NORTHWEST_1",
+            "ME_SOUTH_1",
+            "ME_CENTRAL_1",
+            "AF_SOUTH_1",
+            "EU_SOUTH_1",
+            "EU_SOUTH_2",
+            "IL_CENTRAL_1",
+            "CA_WEST_1",
+            "MX_CENTRAL_1",
+            "GLOBAL"
+          ],
+          "title": "AWS Regions",
+          "type": "string"
+        }
+      ],
+      "type": "object"
+    },
+    "status": {
+      "description": "State of the Encryption At Rest private endpoint.",
+      "enum": [
+        "INITIATING",
+        "PENDING_ACCEPTANCE",
+        "ACTIVE",
+        "FAILED",
+        "PENDING_RECREATION",
+        "DELETING"
+      ],
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "AWSKMSEARPrivateEndpoint": {
+      "description": "AWS Key Management Service Encryption At Rest Private Endpoint.",
+      "properties": {
+        "cloudProvider": {
+          "description": "Human-readable label that identifies the cloud provider for the Encryption At Rest private endpoint.",
+          "enum": [
+            "AZURE",
+            "AWS"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "errorMessage": {
+          "description": "Error message for failures associated with the Encryption At Rest private endpoint.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the Private Endpoint Service.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "privateEndpointConnectionName": {
+          "description": "Resource Id of the Aws Private Endpoint.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "regionName": {
+          "description": "Cloud provider region in which the Encryption At Rest private endpoint is located.",
+          "oneOf": [
+            {
+              "description": "Microsoft Azure Regions.",
+              "enum": [
+                "US_CENTRAL",
+                "US_EAST",
+                "US_EAST_2",
+                "US_NORTH_CENTRAL",
+                "US_WEST",
+                "US_SOUTH_CENTRAL",
+                "EUROPE_NORTH",
+                "EUROPE_WEST",
+                "US_WEST_CENTRAL",
+                "US_WEST_2",
+                "US_WEST_3",
+                "CANADA_EAST",
+                "CANADA_CENTRAL",
+                "BRAZIL_SOUTH",
+                "BRAZIL_SOUTHEAST",
+                "AUSTRALIA_CENTRAL",
+                "AUSTRALIA_CENTRAL_2",
+                "AUSTRALIA_EAST",
+                "AUSTRALIA_SOUTH_EAST",
+                "GERMANY_WEST_CENTRAL",
+                "GERMANY_NORTH",
+                "SWEDEN_CENTRAL",
+                "SWEDEN_SOUTH",
+                "SWITZERLAND_NORTH",
+                "SWITZERLAND_WEST",
+                "UK_SOUTH",
+                "UK_WEST",
+                "NORWAY_EAST",
+                "NORWAY_WEST",
+                "INDIA_CENTRAL",
+                "INDIA_SOUTH",
+                "INDIA_WEST",
+                "CHINA_EAST",
+                "CHINA_NORTH",
+                "ASIA_EAST",
+                "JAPAN_EAST",
+                "JAPAN_WEST",
+                "ASIA_SOUTH_EAST",
+                "KOREA_CENTRAL",
+                "KOREA_SOUTH",
+                "FRANCE_CENTRAL",
+                "FRANCE_SOUTH",
+                "SOUTH_AFRICA_NORTH",
+                "SOUTH_AFRICA_WEST",
+                "UAE_CENTRAL",
+                "UAE_NORTH",
+                "QATAR_CENTRAL",
+                "POLAND_CENTRAL",
+                "ISRAEL_CENTRAL",
+                "ITALY_NORTH",
+                "SPAIN_CENTRAL",
+                "MEXICO_CENTRAL",
+                "NEW_ZEALAND_NORTH",
+                "US_GOV_VIRGINIA",
+                "US_GOV_ARIZONA",
+                "US_GOV_TEXAS"
+              ],
+              "title": "Azure Regions",
+              "type": "string"
+            },
+            {
+              "description": "Physical location where MongoDB Cloud deploys your AWS-hosted MongoDB cluster nodes. The region you choose can affect network latency for clients accessing your databases. When MongoDB Cloud deploys a dedicated cluster, it checks if a VPC or VPC connection exists for that provider and region. If not, MongoDB Cloud creates them as part of the deployment. MongoDB Cloud assigns the VPC a CIDR block. To limit a new VPC peering connection to one CIDR block and region, create the connection first. Deploy the cluster after the connection starts.",
+              "enum": [
+                "US_GOV_WEST_1",
+                "US_GOV_EAST_1",
+                "US_EAST_1",
+                "US_EAST_2",
+                "US_WEST_1",
+                "US_WEST_2",
+                "CA_CENTRAL_1",
+                "EU_NORTH_1",
+                "EU_WEST_1",
+                "EU_WEST_2",
+                "EU_WEST_3",
+                "EU_CENTRAL_1",
+                "EU_CENTRAL_2",
+                "AP_EAST_1",
+                "AP_EAST_2",
+                "AP_NORTHEAST_1",
+                "AP_NORTHEAST_2",
+                "AP_NORTHEAST_3",
+                "AP_SOUTHEAST_1",
+                "AP_SOUTHEAST_2",
+                "AP_SOUTHEAST_3",
+                "AP_SOUTHEAST_4",
+                "AP_SOUTHEAST_5",
+                "AP_SOUTHEAST_6",
+                "AP_SOUTHEAST_7",
+                "AP_SOUTH_1",
+                "AP_SOUTH_2",
+                "SA_EAST_1",
+                "CN_NORTH_1",
+                "CN_NORTHWEST_1",
+                "ME_SOUTH_1",
+                "ME_CENTRAL_1",
+                "AF_SOUTH_1",
+                "EU_SOUTH_1",
+                "EU_SOUTH_2",
+                "IL_CENTRAL_1",
+                "CA_WEST_1",
+                "MX_CENTRAL_1",
+                "GLOBAL"
+              ],
+              "title": "AWS Regions",
+              "type": "string"
+            }
+          ],
+          "type": "object"
+        },
+        "status": {
+          "description": "State of the Encryption At Rest private endpoint.",
+          "enum": [
+            "INITIATING",
+            "PENDING_ACCEPTANCE",
+            "ACTIVE",
+            "FAILED",
+            "PENDING_RECREATION",
+            "DELETING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "AWS Key Management Service EAR Private Endpoint",
+      "type": "object"
+    },
+    "AzureKeyVaultEARPrivateEndpoint": {
+      "description": "Azure Key Vault Encryption At Rest Private Endpoint.",
+      "properties": {
+        "cloudProvider": {
+          "description": "Human-readable label that identifies the cloud provider for the Encryption At Rest private endpoint.",
+          "enum": [
+            "AZURE",
+            "AWS"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "errorMessage": {
+          "description": "Error message for failures associated with the Encryption At Rest private endpoint.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the Private Endpoint Service.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "privateEndpointConnectionName": {
+          "description": "Connection name of the Azure Private Endpoint.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "regionName": {
+          "description": "Cloud provider region in which the Encryption At Rest private endpoint is located.",
+          "oneOf": [
+            {
+              "description": "Microsoft Azure Regions.",
+              "enum": [
+                "US_CENTRAL",
+                "US_EAST",
+                "US_EAST_2",
+                "US_NORTH_CENTRAL",
+                "US_WEST",
+                "US_SOUTH_CENTRAL",
+                "EUROPE_NORTH",
+                "EUROPE_WEST",
+                "US_WEST_CENTRAL",
+                "US_WEST_2",
+                "US_WEST_3",
+                "CANADA_EAST",
+                "CANADA_CENTRAL",
+                "BRAZIL_SOUTH",
+                "BRAZIL_SOUTHEAST",
+                "AUSTRALIA_CENTRAL",
+                "AUSTRALIA_CENTRAL_2",
+                "AUSTRALIA_EAST",
+                "AUSTRALIA_SOUTH_EAST",
+                "GERMANY_WEST_CENTRAL",
+                "GERMANY_NORTH",
+                "SWEDEN_CENTRAL",
+                "SWEDEN_SOUTH",
+                "SWITZERLAND_NORTH",
+                "SWITZERLAND_WEST",
+                "UK_SOUTH",
+                "UK_WEST",
+                "NORWAY_EAST",
+                "NORWAY_WEST",
+                "INDIA_CENTRAL",
+                "INDIA_SOUTH",
+                "INDIA_WEST",
+                "CHINA_EAST",
+                "CHINA_NORTH",
+                "ASIA_EAST",
+                "JAPAN_EAST",
+                "JAPAN_WEST",
+                "ASIA_SOUTH_EAST",
+                "KOREA_CENTRAL",
+                "KOREA_SOUTH",
+                "FRANCE_CENTRAL",
+                "FRANCE_SOUTH",
+                "SOUTH_AFRICA_NORTH",
+                "SOUTH_AFRICA_WEST",
+                "UAE_CENTRAL",
+                "UAE_NORTH",
+                "QATAR_CENTRAL",
+                "POLAND_CENTRAL",
+                "ISRAEL_CENTRAL",
+                "ITALY_NORTH",
+                "SPAIN_CENTRAL",
+                "MEXICO_CENTRAL",
+                "NEW_ZEALAND_NORTH",
+                "US_GOV_VIRGINIA",
+                "US_GOV_ARIZONA",
+                "US_GOV_TEXAS"
+              ],
+              "title": "Azure Regions",
+              "type": "string"
+            },
+            {
+              "description": "Physical location where MongoDB Cloud deploys your AWS-hosted MongoDB cluster nodes. The region you choose can affect network latency for clients accessing your databases. When MongoDB Cloud deploys a dedicated cluster, it checks if a VPC or VPC connection exists for that provider and region. If not, MongoDB Cloud creates them as part of the deployment. MongoDB Cloud assigns the VPC a CIDR block. To limit a new VPC peering connection to one CIDR block and region, create the connection first. Deploy the cluster after the connection starts.",
+              "enum": [
+                "US_GOV_WEST_1",
+                "US_GOV_EAST_1",
+                "US_EAST_1",
+                "US_EAST_2",
+                "US_WEST_1",
+                "US_WEST_2",
+                "CA_CENTRAL_1",
+                "EU_NORTH_1",
+                "EU_WEST_1",
+                "EU_WEST_2",
+                "EU_WEST_3",
+                "EU_CENTRAL_1",
+                "EU_CENTRAL_2",
+                "AP_EAST_1",
+                "AP_EAST_2",
+                "AP_NORTHEAST_1",
+                "AP_NORTHEAST_2",
+                "AP_NORTHEAST_3",
+                "AP_SOUTHEAST_1",
+                "AP_SOUTHEAST_2",
+                "AP_SOUTHEAST_3",
+                "AP_SOUTHEAST_4",
+                "AP_SOUTHEAST_5",
+                "AP_SOUTHEAST_6",
+                "AP_SOUTHEAST_7",
+                "AP_SOUTH_1",
+                "AP_SOUTH_2",
+                "SA_EAST_1",
+                "CN_NORTH_1",
+                "CN_NORTHWEST_1",
+                "ME_SOUTH_1",
+                "ME_CENTRAL_1",
+                "AF_SOUTH_1",
+                "EU_SOUTH_1",
+                "EU_SOUTH_2",
+                "IL_CENTRAL_1",
+                "CA_WEST_1",
+                "MX_CENTRAL_1",
+                "GLOBAL"
+              ],
+              "title": "AWS Regions",
+              "type": "string"
+            }
+          ],
+          "type": "object"
+        },
+        "status": {
+          "description": "State of the Encryption At Rest private endpoint.",
+          "enum": [
+            "INITIATING",
+            "PENDING_ACCEPTANCE",
+            "ACTIVE",
+            "FAILED",
+            "PENDING_RECREATION",
+            "DELETING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Azure Key Vault EAR Private Endpoint",
+      "type": "object"
+    }
+  }
+}

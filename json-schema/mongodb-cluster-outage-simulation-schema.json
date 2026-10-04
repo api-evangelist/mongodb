@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-cluster-outage-simulation-schema.json",
+  "title": "ClusterOutageSimulation",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-cluster-outage-simulation-api-openapi.yml#/components/schemas/ClusterOutageSimulation",
+  "properties": {
+    "clusterName": {
+      "description": "Human-readable label that identifies the cluster that undergoes outage simulation.",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "expirationDate": {
+      "description": "Date and time when MongoDB Cloud expires the outage simulation. This parameter expresses its value in the ISO 8601 timestamp format in UTC. If not provided, defaults to 3 days from the start date.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal character string that identifies the project that contains the cluster to undergo outage simulation.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal character string that identifies the outage simulation.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "outageFilters": {
+      "description": "List of settings that specify the type of cluster outage simulation.",
+      "items": {
+        "$ref": "#/$defs/AtlasClusterOutageSimulationOutageFilter"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "startRequestDate": {
+      "description": "Date and time when MongoDB Cloud started the regional outage simulation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "state": {
+      "description": "Phase of the outage simulation.\n\n| State       | Indication |\n|-------------|------------|\n| `START_REQUESTED`    | User has requested cluster outage simulation.|\n| `STARTING`           | MongoDB Cloud is starting cluster outage simulation.|\n| `SIMULATING`         | MongoDB Cloud is simulating cluster outage.|\n| `RECOVERY_REQUESTED` | User has requested recovery from the simulated outage.|\n| `RECOVERING`         | MongoDB Cloud is recovering the cluster from the simulated outage.|\n| `COMPLETE`           | MongoDB Cloud has completed the cluster outage simulation.|",
+      "enum": [
+        "START_REQUESTED",
+        "STARTING",
+        "SIMULATING",
+        "RECOVERY_REQUESTED",
+        "RECOVERING",
+        "COMPLETE"
+      ],
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "AtlasClusterOutageSimulationOutageFilter": {
+      "properties": {
+        "cloudProvider": {
+          "description": "The cloud provider of the region that undergoes the outage simulation.",
+          "enum": [
+            "AWS",
+            "GCP",
+            "AZURE"
+          ],
+          "type": "string"
+        },
+        "regionName": {
+          "description": "The name of the region to undergo an outage simulation.",
+          "type": "string"
+        },
+        "type": {
+          "description": "The type of cluster outage to simulate. `REGION` simulates a cluster outage for a region.",
+          "enum": [
+            "REGION"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

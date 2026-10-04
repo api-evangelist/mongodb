@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-managed-namespaces-schema.json",
+  "title": "ManagedNamespaces",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-global-clusters-api-openapi.yml#/components/schemas/ManagedNamespaces",
+  "properties": {
+    "collection": {
+      "description": "Human-readable label of the collection to manage for this Global Cluster.",
+      "type": "string"
+    },
+    "customShardKey": {
+      "description": "Database parameter used to divide the *collection* into shards. Global clusters require a compound shard key. This compound shard key combines the location parameter and the user-selected custom key.",
+      "type": "string"
+    },
+    "db": {
+      "description": "Human-readable label of the database to manage for this Global Cluster.",
+      "type": "string"
+    },
+    "isCustomShardKeyHashed": {
+      "default": false,
+      "description": "Flag that indicates whether someone hashed the custom shard key for the specified collection. If you set this value to `false`, MongoDB Cloud uses ranged sharding.",
+      "type": "boolean"
+    },
+    "isShardKeyUnique": {
+      "default": false,
+      "description": "Flag that indicates whether someone [hashed](https://www.mongodb.com/docs/manual/reference/method/sh.shardCollection/#hashed-shard-keys) the custom shard key. If this parameter returns `false`, this cluster uses [ranged sharding](https://www.mongodb.com/docs/manual/core/ranged-sharding/).",
+      "type": "boolean"
+    },
+    "numInitialChunks": {
+      "description": "Minimum number of chunks to create initially when sharding an empty collection with a [hashed shard key](https://www.mongodb.com/docs/manual/core/hashed-sharding/).",
+      "format": "int64",
+      "maximum": 8192,
+      "type": "integer"
+    },
+    "presplitHashedZones": {
+      "default": false,
+      "description": "Flag that indicates whether MongoDB Cloud should create and distribute initial chunks for an empty or non-existing collection. MongoDB Cloud distributes data based on the defined zones and zone ranges for the collection.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "collection",
+    "customShardKey",
+    "db"
+  ],
+  "type": "object"
+}

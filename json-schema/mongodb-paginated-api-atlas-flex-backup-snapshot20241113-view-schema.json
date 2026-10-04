@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-api-atlas-flex-backup-snapshot20241113-view-schema.json",
+  "title": "PaginatedApiAtlasFlexBackupSnapshot20241113View",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-flex-snapshots-api-openapi.yml#/components/schemas/PaginatedApiAtlasFlexBackupSnapshot20241113View",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/FlexBackupSnapshot20241113"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "FlexBackupSnapshot20241113": {
+      "description": "Details for one snapshot of a flex cluster.",
+      "properties": {
+        "expiration": {
+          "description": "Date and time when the download link no longer works. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "finishTime": {
+          "description": "Date and time when MongoDB Cloud completed writing this snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the snapshot.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "mongoDBVersion": {
+          "description": "MongoDB host version that the snapshot runs.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "scheduledTime": {
+          "description": "Date and time when MongoDB Cloud will take the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "startTime": {
+          "description": "Date and time when MongoDB Cloud began taking the snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "Phase of the workflow for this snapshot at the time this resource made this request.",
+          "enum": [
+            "PENDING",
+            "QUEUED",
+            "RUNNING",
+            "FAILED",
+            "COMPLETED"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Flex Backup Snapshot",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

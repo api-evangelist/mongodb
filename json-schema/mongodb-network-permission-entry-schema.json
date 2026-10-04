@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-network-permission-entry-schema.json",
+  "title": "NetworkPermissionEntry",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-project-ip-access-list-api-openapi.yml#/components/schemas/NetworkPermissionEntry",
+  "properties": {
+    "awsSecurityGroup": {
+      "description": "Unique string of the Amazon Web Services (AWS) security group that you want to add to the project's IP access list. Your IP access list entry can be one `awsSecurityGroup`, one `cidrBlock`, or one `ipAddress`. You must configure Virtual Private Connection (VPC) peering for your project before you can add an AWS security group to an IP access list. You cannot set AWS security groups as temporary access list entries. Don't set this parameter if you set `cidrBlock` or `ipAddress`.",
+      "pattern": "^([0-9]*/)?sg-([0-9]*)",
+      "type": "string"
+    },
+    "cidrBlock": {
+      "description": "Range of IP addresses in Classless Inter-Domain Routing (CIDR) notation that you want to add to the project's IP access list. Your IP access list entry can be one `awsSecurityGroup`, one `cidrBlock`, or one `ipAddress`. Don't set this parameter if you set `awsSecurityGroup` or `ipAddress`.",
+      "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}(%2[fF][0-9]{1,3})?|([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}(%2[fF][0-9]{1,3})?|([0-9a-f]{1,4}\\:){1,6}\\:(%2[fF][0-9]{1,3})?$",
+      "type": "string"
+    },
+    "comment": {
+      "description": "Remark that explains the purpose or scope of this IP access list entry.",
+      "maxLength": 80,
+      "type": "string"
+    },
+    "deleteAfterDate": {
+      "description": "Date and time after which MongoDB Cloud deletes the temporary access list entry. This parameter expresses its value in the ISO 8601 timestamp format in UTC and can include the time zone designation. The date must be later than the current date but no later than one week after you submit this request. The resource returns this parameter if you specified an expiration date when creating this IP access list entry.",
+      "format": "date-time",
+      "type": "string"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project that contains the IP access list to which you want to add one or more entries.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "ipAddress": {
+      "description": "IP address that you want to add to the project's IP access list. Your IP access list entry can be one `awsSecurityGroup`, one `cidrBlock`, or one `ipAddress`. Don't set this parameter if you set `awsSecurityGroup` or `cidrBlock`.",
+      "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

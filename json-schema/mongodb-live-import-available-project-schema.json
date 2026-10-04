@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-live-import-available-project-schema.json",
+  "title": "LiveImportAvailableProject",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-cloud-migration-service-api-openapi.yml#/components/schemas/LiveImportAvailableProject",
+  "properties": {
+    "deployments": {
+      "description": "List of clusters that can be migrated to MongoDB Cloud.",
+      "items": {
+        "$ref": "#/$defs/AvailableClustersDeployment"
+      },
+      "type": "array"
+    },
+    "migrationHosts": {
+      "description": "Hostname of MongoDB Agent list that you configured to perform a migration.",
+      "items": {
+        "description": "Hostname of MongoDB Agent that you configured to perform a migration.",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "name": {
+      "description": "Human-readable label that identifies this project.",
+      "maxLength": 64,
+      "minLength": 1,
+      "readOnly": true,
+      "type": "string"
+    },
+    "projectId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project to be migrated.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "deployments",
+    "migrationHosts",
+    "name",
+    "projectId"
+  ],
+  "type": "object",
+  "$defs": {
+    "AvailableClustersDeployment": {
+      "description": "Deployments that can be migrated to MongoDB Atlas.",
+      "properties": {
+        "agentVersion": {
+          "description": "Version of MongoDB Agent that monitors/manages the cluster.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "clusterId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the cluster.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "dbSizeBytes": {
+          "description": "Size of this database on disk at the time of the request expressed in bytes.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "featureCompatibilityVersion": {
+          "description": "Version of MongoDB features that this cluster supports.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "managed": {
+          "description": "Flag that indicates whether Automation manages this cluster.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "mongoDBVersion": {
+          "description": "Version of MongoDB that this cluster runs.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable label that identifies this cluster.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "oplogSizeMB": {
+          "description": "Size of the Oplog on disk at the time of the request expressed in MB.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "sharded": {
+          "description": "Flag that indicates whether someone configured this cluster as a sharded cluster.\n\n- If `true`, this cluster serves as a sharded cluster.\n- If `false`, this cluster serves as a replica set.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "shardsSize": {
+          "description": "Number of shards that comprise this cluster.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "tlsEnabled": {
+          "description": "Flag that indicates whether someone enabled TLS for this cluster.",
+          "readOnly": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "featureCompatibilityVersion",
+        "managed",
+        "mongoDBVersion",
+        "name",
+        "sharded",
+        "tlsEnabled"
+      ],
+      "title": "Available Clusters",
+      "type": "object"
+    }
+  }
+}

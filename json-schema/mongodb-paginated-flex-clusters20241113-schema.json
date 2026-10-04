@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-flex-clusters20241113-schema.json",
+  "title": "PaginatedFlexClusters20241113",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-flex-clusters-api-openapi.yml#/components/schemas/PaginatedFlexClusters20241113",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/FlexClusterDescription20241113"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "FlexBackupSettings20241113": {
+      "description": "Flex backup configuration.",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "description": "Flag that indicates whether backups are performed for this flex cluster. Backup uses flex cluster backups.",
+          "readOnly": true,
+          "type": "boolean"
+        }
+      },
+      "readOnly": true,
+      "title": "Flex Backup Configuration",
+      "type": "object"
+    },
+    "FlexClusterDescription20241113": {
+      "description": "Group of settings that configure a MongoDB Flex cluster.",
+      "properties": {
+        "backupSettings": {
+          "$ref": "#/$defs/FlexBackupSettings20241113"
+        },
+        "clusterType": {
+          "default": "REPLICASET",
+          "description": "Flex cluster topology.",
+          "enum": [
+            "REPLICASET"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "connectionStrings": {
+          "$ref": "#/$defs/FlexConnectionStrings20241113"
+        },
+        "createDate": {
+          "description": "Date and time when MongoDB Cloud created this instance. This parameter expresses its value in ISO 8601 format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal character string that identifies the project.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the instance.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "mongoDBVersion": {
+          "description": "Version of MongoDB that the instance runs.",
+          "pattern": "([\\d]+\\.[\\d]+\\.[\\d]+)",
+          "readOnly": true,
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable label that identifies the instance.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "providerSettings": {
+          "$ref": "#/$defs/FlexProviderSettings20241113"
+        },
+        "stateName": {
+          "description": "Human-readable label that indicates any current activity being taken on this cluster by the Atlas control plane. With the exception of CREATING and DELETING states, clusters should always be available and have a Primary node even when in states indicating ongoing activity.\n\n - `IDLE`: Atlas is making no changes to this cluster and all changes requested via the UI or API can be assumed to have been applied.\n - `CREATING`: A cluster being provisioned for the very first time returns state CREATING until it is ready for connections. Ensure IP Access List and DB Users are configured before attempting to connect.\n - `UPDATING`: A change requested via the UI, API, AutoScaling, or other scheduled activity is taking place.\n - `DELETING`: The cluster is in the process of deletion and will soon be deleted.\n - `REPAIRING`: One or more nodes in the cluster are being returned to service by the Atlas control plane. Other nodes should continue to provide service as normal.",
+          "enum": [
+            "IDLE",
+            "CREATING",
+            "UPDATING",
+            "DELETING",
+            "REPAIRING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "tags": {
+          "description": "List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.",
+          "items": {
+            "$ref": "#/$defs/ResourceTag"
+          },
+          "type": "array"
+        },
+        "terminationProtectionEnabled": {
+          "default": false,
+          "description": "Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.",
+          "type": "boolean"
+        },
+        "versionReleaseSystem": {
+          "default": "LTS",
+          "description": "Method by which the cluster maintains the MongoDB versions.",
+          "enum": [
+            "LTS"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "providerSettings"
+      ],
+      "title": "Flex Cluster Description",
+      "type": "object"
+    },
+    "FlexConnectionStrings20241113": {
+      "description": "Collection of Uniform Resource Locators that point to the MongoDB database.",
+      "properties": {
+        "standard": {
+          "description": "Public connection string that you can use to connect to this cluster. This connection string uses the `mongodb://` protocol.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "standardSrv": {
+          "description": "Public connection string that you can use to connect to this flex cluster. This connection string uses the `mongodb+srv://` protocol.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "title": "Flex Cluster Connection Strings",
+      "type": "object"
+    },
+    "FlexProviderSettings20241113": {
+      "description": "Group of cloud provider settings that configure the provisioned MongoDB flex cluster.",
+      "properties": {
+        "backingProviderName": {
+          "description": "Cloud service provider on which MongoDB Cloud provisioned the flex cluster.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "diskSizeGB": {
+          "description": "Storage capacity available to the flex cluster expressed in gigabytes.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "providerName": {
+          "default": "FLEX",
+          "description": "Human-readable label that identifies the provider type.",
+          "enum": [
+            "FLEX"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "regionName": {
+          "description": "Human-readable label that identifies the geographic location of your MongoDB flex cluster. The region you choose can affect network latency for clients accessing your databases. For a complete list of region names, see [AWS](https://docs.atlas.mongodb.com/reference/amazon-aws/#std-label-amazon-aws), [GCP](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "title": "Cloud Service Provider Settings for a Flex Cluster",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ResourceTag": {
+      "description": "Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.",
+      "properties": {
+        "key": {
+          "description": "Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "Resource Tag",
+      "type": "object"
+    }
+  }
+}

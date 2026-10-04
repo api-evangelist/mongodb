@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-private-network-endpoint-id-entry-view-schema.json",
+  "title": "PaginatedPrivateNetworkEndpointIdEntryView",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-data-federation-api-openapi.yml#/components/schemas/PaginatedPrivateNetworkEndpointIdEntryView",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/PrivateNetworkEndpointIdEntry"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "PrivateNetworkEndpointIdEntry": {
+      "properties": {
+        "azureLinkId": {
+          "description": "Link ID that identifies the Azure private endpoint connection.",
+          "type": "string"
+        },
+        "comment": {
+          "description": "Human-readable string to associate with this private endpoint.",
+          "type": "string"
+        },
+        "customerEndpointDNSName": {
+          "description": "Human-readable label to identify customer's VPC endpoint DNS name. If defined, you must also specify a value for `region`.",
+          "type": "string"
+        },
+        "customerEndpointIPAddress": {
+          "description": "IP address used to connect to the Azure private endpoint.",
+          "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+          "type": "string"
+        },
+        "endpointId": {
+          "description": "Unique 22-character alphanumeric string that identifies the private endpoint.",
+          "pattern": "^vpce-[0-9a-f]{17}$",
+          "type": "string"
+        },
+        "errorMessage": {
+          "description": "Error message describing a failure approving the private endpoint request.",
+          "type": "string"
+        },
+        "provider": {
+          "default": "AWS",
+          "description": "Human-readable label that identifies the cloud service provider. Atlas Data Lake supports Amazon Web Services only.",
+          "enum": [
+            "AWS"
+          ],
+          "type": "string"
+        },
+        "region": {
+          "description": "Human-readable label to identify the region of customer's VPC endpoint. If defined, you must also specify a value for `customerEndpointDNSName`.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status of the private endpoint connection request.",
+          "enum": [
+            "PENDING",
+            "OK",
+            "FAILED",
+            "DELETING"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "default": "DATA_LAKE",
+          "description": "Human-readable label that identifies the resource type associated with this private endpoint.",
+          "enum": [
+            "DATA_LAKE"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "endpointId"
+      ],
+      "type": "object"
+    }
+  }
+}

@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
+  title: Mongodb Serverless Instances API
+  version: '2.0'
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Serverless Instances API
-  version: '2.0'
-  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+  x-refined-note:
+  - x-xgen-sha differs across the merged source definitions and was not carried
+  description: 'Operations tagged Serverless Instances across 2 of this provider''s published API definitions: mongodb-atlas-openapi.yaml, mongodb-openapi.yaml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://cloud.mongodb.com
 security:
@@ -84,6 +85,8 @@ paths:
         customMethod: false
         verb: listInstances
       x-xgen-operation-id-override: listServerlessInstances
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/serverless/{name}:
     get:
       deprecated: true
@@ -157,21 +160,83 @@ paths:
         customMethod: false
         verb: getInstance
       x-xgen-operation-id-override: getServerlessInstance
+    servers:
+    - url: https://cloud.mongodb.com
 components:
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
       schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+        default: false
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
       schema:
+        default: 100
+        maximum: 500
+        minimum: 1
         type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
       schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
         type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    includeCount_2:
+      description: Flag that indicates whether MongoDB Cloud calculates the total number of items for the response. When set to `false`, MongoDB Cloud may skip an additional count operation. The response may still include `totalCount` when the count is available without additional calculation.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
   schemas:
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
     Link:
       properties:
         href:
@@ -183,27 +248,93 @@ components:
           example: self
           type: string
       type: object
-    ServerlessInstanceDescriptionConnectionStrings:
-      description: Collection of Uniform Resource Locators that point to the MongoDB database.
-      externalDocs:
-        description: Connection string URI format.
-        url: https://docs.mongodb.com/manual/reference/connection-string/
+    PaginatedServerlessInstanceDescriptionView:
       properties:
-        privateEndpoint:
-          description: List of private endpoint-aware connection strings that you can use to connect to this serverless instance through a private endpoint. This parameter returns only if you created a private endpoint for this serverless instance and it is AVAILABLE.
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
           items:
-            $ref: '#/components/schemas/ServerlessConnectionStringsPrivateEndpointList'
+            $ref: '#/components/schemas/Link'
           readOnly: true
           type: array
-        standardSrv:
-          description: Public connection string that you can use to connect to this serverless instance. This connection string uses the `mongodb+srv://` protocol.
-          externalDocs:
-            description: Connection String URI Format
-            url: https://docs.mongodb.com/manual/reference/connection-string/
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ServerlessInstanceDescription'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    ClusterServerlessBackupOptions:
+      description: Group of settings that configure serverless backup.
+      properties:
+        serverlessContinuousBackupEnabled:
+          default: true
+          description: "Flag that indicates whether the serverless instance uses **Serverless Continuous Backup**.\n If this parameter is `false`, the serverless instance uses **Basic Backup**.\n\n | Option | Description |\n |---|---|\n | Serverless Continuous Backup | Atlas takes incremental [snapshots](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/#std-label-serverless-snapshots) of the data in your serverless instance every six hours and lets you restore the data from a selected point in time within the last 72 hours. Atlas also takes daily snapshots and retains these daily snapshots for 35 days. To learn more, see [Serverless Instance Costs](https://www.mongodb.com/docs/atlas/billing/serverless-instance-costs/#std-label-serverless-instance-costs). |\n | Basic Backup | Atlas takes incremental [snapshots](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/#std-label-serverless-snapshots) of the data in your serverless instance every six hours and retains only the two most recent snapshots. You can use this option for free. |"
+          type: boolean
+      title: Serverless Backup Options
+      type: object
+    ResourceTag:
+      description: 'Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.'
+      properties:
+        key:
+          description: 'Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.'
+          maxLength: 255
+          minLength: 1
+          type: string
+        value:
+          description: 'Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.'
+          maxLength: 255
+          minLength: 1
+          type: string
+      required:
+      - key
+      - value
+      title: Resource Tag
+      type: object
+    ServerlessProviderSettings:
+      description: Group of cloud provider settings that configure the provisioned MongoDB serverless instance.
+      properties:
+        backingProviderName:
+          description: Cloud service provider on which MongoDB Cloud provisioned the serverless instance.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          type: string
+        effectiveDiskSizeGBLimit:
+          description: Storage capacity of instance data volumes expressed in gigabytes. This value is not configurable for Serverless or effectively Flex clusters.
+          format: int32
+          readOnly: true
+          type: integer
+        effectiveInstanceSizeName:
+          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
+        effectiveProviderName:
+          description: Cloud service provider on which MongoDB Cloud effectively provisioned the serverless instance.
           readOnly: true
           type: string
-      readOnly: true
-      title: Serverless Instance Connection Strings
+        providerName:
+          default: SERVERLESS
+          description: Human-readable label that identifies the cloud service provider.
+          enum:
+          - SERVERLESS
+          type: string
+        regionName:
+          description: Human-readable label that identifies the geographic location of your MongoDB serverless instance. The region you choose can affect network latency for clients accessing your databases. For a complete list of region names, see [AWS](https://docs.atlas.mongodb.com/reference/amazon-aws/#std-label-amazon-aws), [GCP](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).
+          type: string
+      required:
+      - backingProviderName
+      - regionName
+      title: Cloud Service Provider Settings for a Serverless Instance
       type: object
     ApiError:
       properties:
@@ -237,43 +368,27 @@ components:
       - error
       - errorCode
       type: object
-    ServerlessConnectionStringsPrivateEndpointItem:
-      description: Details of a private endpoint deployed for this serverless instance.
+    ServerlessInstanceDescriptionConnectionStrings:
+      description: Collection of Uniform Resource Locators that point to the MongoDB database.
+      externalDocs:
+        description: Connection string URI format.
+        url: https://docs.mongodb.com/manual/reference/connection-string/
       properties:
-        endpointId:
-          description: Unique string that the cloud provider uses to identify the private endpoint.
+        privateEndpoint:
+          description: List of private endpoint-aware connection strings that you can use to connect to this serverless instance through a private endpoint. This parameter returns only if you created a private endpoint for this serverless instance and it is AVAILABLE.
+          items:
+            $ref: '#/components/schemas/ServerlessConnectionStringsPrivateEndpointList'
+          readOnly: true
+          type: array
+        standardSrv:
+          description: Public connection string that you can use to connect to this serverless instance. This connection string uses the `mongodb+srv://` protocol.
+          externalDocs:
+            description: Connection String URI Format
+            url: https://docs.mongodb.com/manual/reference/connection-string/
           readOnly: true
           type: string
-        providerName:
-          description: Cloud provider where the private endpoint is deployed.
-          enum:
-          - AWS
-          - AZURE
-          readOnly: true
-          type: string
-        region:
-          description: Region where the private endpoint is deployed.
-          readOnly: true
-          type: string
-      title: Serverless Instance Private Endpoint Connection Strings Endpoint
-      type: object
-    ResourceTag:
-      description: 'Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.'
-      properties:
-        key:
-          description: 'Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.'
-          maxLength: 255
-          minLength: 1
-          type: string
-        value:
-          description: 'Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.'
-          maxLength: 255
-          minLength: 1
-          type: string
-      required:
-      - key
-      - value
-      title: Resource Tag
+      readOnly: true
+      title: Serverless Instance Connection Strings
       type: object
     ServerlessConnectionStringsPrivateEndpointList:
       description: Private endpoint connection string that you can use to connect to this serverless instance through a private endpoint.
@@ -298,28 +413,6 @@ components:
           readOnly: true
           type: string
       title: Serverless Instance Private Endpoint Connection String
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
       type: object
     BaseCloudProviderInstanceSize:
       description: Instance size boundary to which your cluster can automatically scale.
@@ -402,6 +495,36 @@ components:
         type: string
       readOnly: true
       type: object
+    ServerlessConnectionStringsPrivateEndpointItem:
+      description: Details of a private endpoint deployed for this serverless instance.
+      properties:
+        endpointId:
+          description: Unique string that the cloud provider uses to identify the private endpoint.
+          readOnly: true
+          type: string
+        providerName:
+          description: Cloud provider where the private endpoint is deployed.
+          enum:
+          - AWS
+          - AZURE
+          readOnly: true
+          type: string
+        region:
+          description: Region where the private endpoint is deployed.
+          readOnly: true
+          type: string
+      title: Serverless Instance Private Endpoint Connection Strings Endpoint
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
     ServerlessInstanceDescription:
       description: Group of settings that configure a MongoDB serverless instance.
       properties:
@@ -469,51 +592,7 @@ components:
       - providerSettings
       title: Serverless Instance Description
       type: object
-    ClusterServerlessBackupOptions:
-      description: Group of settings that configure serverless backup.
-      properties:
-        serverlessContinuousBackupEnabled:
-          default: true
-          description: "Flag that indicates whether the serverless instance uses **Serverless Continuous Backup**.\n If this parameter is `false`, the serverless instance uses **Basic Backup**.\n\n | Option | Description |\n |---|---|\n | Serverless Continuous Backup | Atlas takes incremental [snapshots](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/#std-label-serverless-snapshots) of the data in your serverless instance every six hours and lets you restore the data from a selected point in time within the last 72 hours. Atlas also takes daily snapshots and retains these daily snapshots for 35 days. To learn more, see [Serverless Instance Costs](https://www.mongodb.com/docs/atlas/billing/serverless-instance-costs/#std-label-serverless-instance-costs). |\n | Basic Backup | Atlas takes incremental [snapshots](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/#std-label-serverless-snapshots) of the data in your serverless instance every six hours and retains only the two most recent snapshots. You can use this option for free. |"
-          type: boolean
-      title: Serverless Backup Options
-      type: object
-    ServerlessProviderSettings:
-      description: Group of cloud provider settings that configure the provisioned MongoDB serverless instance.
-      properties:
-        backingProviderName:
-          description: Cloud service provider on which MongoDB Cloud provisioned the serverless instance.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          type: string
-        effectiveDiskSizeGBLimit:
-          description: Storage capacity of instance data volumes expressed in gigabytes. This value is not configurable for Serverless or effectively Flex clusters.
-          format: int32
-          readOnly: true
-          type: integer
-        effectiveInstanceSizeName:
-          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
-        effectiveProviderName:
-          description: Cloud service provider on which MongoDB Cloud effectively provisioned the serverless instance.
-          readOnly: true
-          type: string
-        providerName:
-          default: SERVERLESS
-          description: Human-readable label that identifies the cloud service provider.
-          enum:
-          - SERVERLESS
-          type: string
-        regionName:
-          description: Human-readable label that identifies the geographic location of your MongoDB serverless instance. The region you choose can affect network latency for clients accessing your databases. For a complete list of region names, see [AWS](https://docs.atlas.mongodb.com/reference/amazon-aws/#std-label-amazon-aws), [GCP](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).
-          type: string
-      required:
-      - backingProviderName
-      - regionName
-      title: Cloud Service Provider Settings for a Serverless Instance
-      type: object
-    PaginatedServerlessInstanceDescriptionView:
+    PaginatedServerlessInstanceDescriptionView_2:
       properties:
         links:
           description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
@@ -531,7 +610,7 @@ components:
           readOnly: true
           type: array
         totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          description: Total number of documents available. When `includeCount` is set to `false`, MongoDB Cloud may omit this value or return it when the count is available without additional calculation. The total number is an estimate and may not be exact.
           format: int32
           minimum: 0
           readOnly: true
@@ -539,18 +618,187 @@ components:
       required:
       - results
       type: object
+    ApiError_2:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type:
+          - string
+          - 'null'
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - error
+      - errorCode
+      type: object
+    BaseCloudProviderInstanceSize_2:
+      description: Instance size boundary to which your cluster can automatically scale.
+      oneOf:
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M100
+        - M140
+        - M200
+        - M300
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - R700
+        - M40_NVME
+        - M50_NVME
+        - M60_NVME
+        - M80_NVME
+        - M200_NVME
+        - M400_NVME
+        - M30_GEN_2
+        - M40_GEN_2
+        - M50_GEN_2
+        - M60_GEN_2
+        - M80_GEN_2
+        - M140_GEN_2
+        - M200_GEN_2
+        - M300_GEN_2
+        - M700_GEN_2
+        - R40_GEN_2
+        - R50_GEN_2
+        - R60_GEN_2
+        - R80_GEN_2
+        - R200_GEN_2
+        - R300_GEN_2
+        - R400_GEN_2
+        - R700_GEN_2
+        - M40_NVME_GEN_2
+        - M50_NVME_GEN_2
+        - M60_NVME_GEN_2
+        - M80_NVME_GEN_2
+        - M200_NVME_GEN_2
+        - M400_NVME_GEN_2
+        title: AWS Instance Sizes
+        type: string
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M90
+        - M200
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - M60_NVME
+        - M80_NVME
+        - M200_NVME
+        - M300_NVME
+        - M400_NVME
+        - M600_NVME
+        title: Azure Instance Sizes
+        type: string
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M140
+        - M200
+        - M250
+        - M300
+        - M400
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - R600
+        - M30_GEN_2
+        - M40_GEN_2
+        - M50_GEN_2
+        - M60_GEN_2
+        - M80_GEN_2
+        - M140_GEN_2
+        - M200_GEN_2
+        - M300_GEN_2
+        - M700_GEN_2
+        - R40_GEN_2
+        - R50_GEN_2
+        - R60_GEN_2
+        - R80_GEN_2
+        - R200_GEN_2
+        - R300_GEN_2
+        - R400_GEN_2
+        title: GCP Instance Sizes
+        type: string
+      readOnly: true
+      type: object
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
   responses:
-    conflict:
+    unauthorized:
       content:
         application/json:
           example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Conflict.
+      description: Unauthorized.
     forbidden:
       content:
         application/json:
@@ -562,6 +810,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
     tooManyRequests:
       content:
         application/json:
@@ -580,28 +839,6 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
     internalServerError:
       content:
         application/json:
@@ -613,71 +850,28 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
-    notFound:
+    conflict:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-  parameters:
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
+      description: Conflict.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
   securitySchemes:
     DigestAuth:
       scheme: digest
@@ -689,6 +883,9 @@ components:
           scopes: {}
           tokenUrl: https://cloud.mongodb.com/api/oauth/token
       type: oauth2
+x-refined-from:
+- mongodb-atlas-openapi.yaml
+- mongodb-openapi.yaml
 x-externalLinks:
 - label: Back to Atlas Docs
   url: https://www.mongodb.com/docs/atlas/

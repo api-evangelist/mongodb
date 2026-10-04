@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-user-access-list-response-schema.json",
+  "title": "UserAccessListResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-programmatic-api-keys-api-openapi.yml#/components/schemas/UserAccessListResponse",
+  "properties": {
+    "cidrBlock": {
+      "description": "Range of IP addresses in Classless Inter-Domain Routing (CIDR) notation in the access list for the API key.",
+      "pattern": "^((([0-9]{1,3}\\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$",
+      "type": "string"
+    },
+    "count": {
+      "description": "Total number of requests that have originated from the Internet Protocol (IP) address given as the value of the `lastUsedAddress` parameter.",
+      "format": "int32",
+      "minimum": 1,
+      "readOnly": true,
+      "type": "integer"
+    },
+    "created": {
+      "description": "Date and time when someone added the network addresses to the specified API access list. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "ipAddress": {
+      "description": "Network address in the access list for the API key.",
+      "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+      "type": "string"
+    },
+    "lastUsed": {
+      "description": "Date and time when MongoDB Cloud received the most recent request that originated from this Internet Protocol version 4 or version 6 address. The resource returns this parameter when at least one request has originated from this IP address. MongoDB Cloud updates this parameter each time a client accesses the permitted resource. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "lastUsedAddress": {
+      "description": "Network address that issued the most recent request to the API. This parameter requires the address to be expressed as one Internet Protocol version 4 or version 6 address. The resource returns this parameter after this IP address made at least one request.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

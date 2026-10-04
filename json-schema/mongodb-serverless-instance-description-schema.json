@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-serverless-instance-description-schema.json",
+  "title": "Serverless Instance Description",
+  "description": "Group of settings that configure a MongoDB serverless instance.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-clusters-api-openapi.yml#/components/schemas/ServerlessInstanceDescription",
+  "properties": {
+    "connectionStrings": {
+      "$ref": "#/$defs/ServerlessInstanceDescriptionConnectionStrings"
+    },
+    "createDate": {
+      "description": "Date and time when MongoDB Cloud created this serverless instance. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal character string that identifies the project.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the serverless instance.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "mongoDBVersion": {
+      "description": "Version of MongoDB that the serverless instance runs.",
+      "pattern": "([\\d]+\\.[\\d]+\\.[\\d]+)",
+      "readOnly": true,
+      "type": "string"
+    },
+    "name": {
+      "description": "Human-readable label that identifies the serverless instance.",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+      "type": "string"
+    },
+    "providerSettings": {
+      "$ref": "#/$defs/ServerlessProviderSettings"
+    },
+    "serverlessBackupOptions": {
+      "$ref": "#/$defs/ClusterServerlessBackupOptions"
+    },
+    "stateName": {
+      "description": "Human-readable label that indicates any current activity being taken on this cluster by the Atlas control plane. With the exception of CREATING and DELETING states, clusters should always be available and have a Primary node even when in states indicating ongoing activity.\n\n - `IDLE`: Atlas is making no changes to this cluster and all changes requested via the UI or API can be assumed to have been applied.\n - `CREATING`: A cluster being provisioned for the very first time returns state CREATING until it is ready for connections. Ensure IP Access List and DB Users are configured before attempting to connect.\n - `UPDATING`: A change requested via the UI, API, AutoScaling, or other scheduled activity is taking place.\n - `DELETING`: The cluster is in the process of deletion and will soon be deleted.\n - `REPAIRING`: One or more nodes in the cluster are being returned to service by the Atlas control plane. Other nodes should continue to provide service as normal.",
+      "enum": [
+        "IDLE",
+        "CREATING",
+        "UPDATING",
+        "DELETING",
+        "REPAIRING"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "tags": {
+      "description": "List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the serverless instance.",
+      "items": {
+        "$ref": "#/$defs/ResourceTag"
+      },
+      "type": "array"
+    },
+    "terminationProtectionEnabled": {
+      "default": false,
+      "description": "Flag that indicates whether termination protection is enabled on the serverless instance. If set to `true`, MongoDB Cloud won't delete the serverless instance. If set to `false`, MongoDB Cloud will delete the serverless instance.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "providerSettings"
+  ],
+  "type": "object",
+  "$defs": {
+    "BaseCloudProviderInstanceSize": {
+      "description": "Instance size boundary to which your cluster can automatically scale.",
+      "oneOf": [
+        {
+          "enum": [
+            "M10",
+            "M20",
+            "M30",
+            "M40",
+            "M50",
+            "M60",
+            "M80",
+            "M100",
+            "M140",
+            "M200",
+            "M300",
+            "R40",
+            "R50",
+            "R60",
+            "R80",
+            "R200",
+            "R300",
+            "R400",
+            "R700",
+            "M40_NVME",
+            "M50_NVME",
+            "M60_NVME",
+            "M80_NVME",
+            "M200_NVME",
+            "M400_NVME"
+          ],
+          "title": "AWS Instance Sizes",
+          "type": "string"
+        },
+        {
+          "enum": [
+            "M10",
+            "M20",
+            "M30",
+            "M40",
+            "M50",
+            "M60",
+            "M80",
+            "M90",
+            "M200",
+            "R40",
+            "R50",
+            "R60",
+            "R80",
+            "R200",
+            "R300",
+            "R400",
+            "M60_NVME",
+            "M80_NVME",
+            "M200_NVME",
+            "M300_NVME",
+            "M400_NVME",
+            "M600_NVME"
+          ],
+          "title": "Azure Instance Sizes",
+          "type": "string"
+        },
+        {
+          "enum": [
+            "M10",
+            "M20",
+            "M30",
+            "M40",
+            "M50",
+            "M60",
+            "M80",
+            "M140",
+            "M200",
+            "M250",
+            "M300",
+            "M400",
+            "R40",
+            "R50",
+            "R60",
+            "R80",
+            "R200",
+            "R300",
+            "R400",
+            "R600"
+          ],
+          "title": "GCP Instance Sizes",
+          "type": "string"
+        }
+      ],
+      "readOnly": true,
+      "type": "object"
+    },
+    "ClusterServerlessBackupOptions": {
+      "description": "Group of settings that configure serverless backup.",
+      "properties": {
+        "serverlessContinuousBackupEnabled": {
+          "default": true,
+          "description": "Flag that indicates whether the serverless instance uses **Serverless Continuous Backup**.\n If this parameter is `false`, the serverless instance uses **Basic Backup**.\n\n | Option | Description |\n |---|---|\n | Serverless Continuous Backup | Atlas takes incremental [snapshots](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/#std-label-serverless-snapshots) of the data in your serverless instance every six hours and lets you restore the data from a selected point in time within the last 72 hours. Atlas also takes daily snapshots and retains these daily snapshots for 35 days. To learn more, see [Serverless Instance Costs](https://www.mongodb.com/docs/atlas/billing/serverless-instance-costs/#std-label-serverless-instance-costs). |\n | Basic Backup | Atlas takes incremental [snapshots](https://www.mongodb.com/docs/atlas/backup/cloud-backup/overview/#std-label-serverless-snapshots) of the data in your serverless instance every six hours and retains only the two most recent snapshots. You can use this option for free. |",
+          "type": "boolean"
+        }
+      },
+      "title": "Serverless Backup Options",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ResourceTag": {
+      "description": "Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.",
+      "properties": {
+        "key": {
+          "description": "Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "Resource Tag",
+      "type": "object"
+    },
+    "ServerlessConnectionStringsPrivateEndpointItem": {
+      "description": "Details of a private endpoint deployed for this serverless instance.",
+      "properties": {
+        "endpointId": {
+          "description": "Unique string that the cloud provider uses to identify the private endpoint.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "providerName": {
+          "description": "Cloud provider where the private endpoint is deployed.",
+          "enum": [
+            "AWS",
+            "AZURE"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "region": {
+          "description": "Region where the private endpoint is deployed.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Serverless Instance Private Endpoint Connection Strings Endpoint",
+      "type": "object"
+    },
+    "ServerlessConnectionStringsPrivateEndpointList": {
+      "description": "Private endpoint connection string that you can use to connect to this serverless instance through a private endpoint.",
+      "properties": {
+        "endpoints": {
+          "description": "List that contains the private endpoints through which you connect to MongoDB Cloud when you use `connectionStrings.privateEndpoint[n].srvConnectionString`.",
+          "items": {
+            "$ref": "#/$defs/ServerlessConnectionStringsPrivateEndpointItem"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "srvConnectionString": {
+          "description": "Private endpoint-aware connection string that uses the `mongodb+srv://` protocol to connect to MongoDB Cloud through a private endpoint. The `mongodb+srv` protocol tells the driver to look up the seed list of hosts in the Domain Name System (DNS).",
+          "readOnly": true,
+          "type": "string"
+        },
+        "type": {
+          "description": "MongoDB process type to which your application connects.",
+          "enum": [
+            "MONGOS"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Serverless Instance Private Endpoint Connection String",
+      "type": "object"
+    },
+    "ServerlessInstanceDescriptionConnectionStrings": {
+      "description": "Collection of Uniform Resource Locators that point to the MongoDB database.",
+      "properties": {
+        "privateEndpoint": {
+          "description": "List of private endpoint-aware connection strings that you can use to connect to this serverless instance through a private endpoint. This parameter returns only if you created a private endpoint for this serverless instance and it is AVAILABLE.",
+          "items": {
+            "$ref": "#/$defs/ServerlessConnectionStringsPrivateEndpointList"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "standardSrv": {
+          "description": "Public connection string that you can use to connect to this serverless instance. This connection string uses the `mongodb+srv://` protocol.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "title": "Serverless Instance Connection Strings",
+      "type": "object"
+    },
+    "ServerlessProviderSettings": {
+      "description": "Group of cloud provider settings that configure the provisioned MongoDB serverless instance.",
+      "properties": {
+        "backingProviderName": {
+          "description": "Cloud service provider on which MongoDB Cloud provisioned the serverless instance.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string"
+        },
+        "effectiveDiskSizeGBLimit": {
+          "description": "Storage capacity of instance data volumes expressed in gigabytes. This value is not configurable for Serverless or effectively Flex clusters.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "effectiveInstanceSizeName": {
+          "$ref": "#/$defs/BaseCloudProviderInstanceSize"
+        },
+        "effectiveProviderName": {
+          "description": "Cloud service provider on which MongoDB Cloud effectively provisioned the serverless instance.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "providerName": {
+          "default": "SERVERLESS",
+          "description": "Human-readable label that identifies the cloud service provider.",
+          "enum": [
+            "SERVERLESS"
+          ],
+          "type": "string"
+        },
+        "regionName": {
+          "description": "Human-readable label that identifies the geographic location of your MongoDB serverless instance. The region you choose can affect network latency for clients accessing your databases. For a complete list of region names, see [AWS](https://docs.atlas.mongodb.com/reference/amazon-aws/#std-label-amazon-aws), [GCP](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "backingProviderName",
+        "regionName"
+      ],
+      "title": "Cloud Service Provider Settings for a Serverless Instance",
+      "type": "object"
+    }
+  }
+}

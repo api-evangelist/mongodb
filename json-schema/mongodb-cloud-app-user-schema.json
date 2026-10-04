@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-cloud-app-user-schema.json",
+  "title": "CloudAppUser",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-mongodb-cloud-users-api-openapi.yml#/components/schemas/CloudAppUser",
+  "properties": {
+    "country": {
+      "description": "Two alphabet characters that identifies MongoDB Cloud user's geographic location. This parameter uses the ISO 3166-1a2 code format.",
+      "pattern": "^([A-Z]{2})$",
+      "type": "string"
+    },
+    "createdAt": {
+      "description": "Date and time when the current account is created. This value is in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "emailAddress": {
+      "deprecated": true,
+      "description": "Email address that belongs to the MongoDB Cloud user.",
+      "format": "email",
+      "readOnly": true,
+      "type": "string"
+    },
+    "firstName": {
+      "description": "First or given name that belongs to the MongoDB Cloud user.",
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud user.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "lastAuth": {
+      "description": "Date and time when the current account last authenticated. This value is in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "lastName": {
+      "description": "Last name, family name, or surname that belongs to the MongoDB Cloud user.",
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "mobileNumber": {
+      "description": "Mobile phone number that belongs to the MongoDB Cloud user.",
+      "pattern": "(?:(?:\\\\+?1\\\\s*(?:[.-]\\\\s*)?)?(?:(\\\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\\\s*)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\\\s*(?:[.-]\\\\s*)?)([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\\\s*(?:[.-]\\\\s*)?([0-9]{4})$",
+      "type": "string"
+    },
+    "password": {
+      "description": "Password applied with the username to log in to MongoDB Cloud. MongoDB Cloud does not return this parameter except in response to creating a new MongoDB Cloud user. Only the MongoDB Cloud user can update their password after it has been set from the MongoDB Cloud console.",
+      "format": "password",
+      "minLength": 8,
+      "type": "string"
+    },
+    "roles": {
+      "description": "List of objects that display the MongoDB Cloud user's roles and the corresponding organization or project to which that role applies. A role can apply to one organization or one project but not both.",
+      "items": {
+        "$ref": "#/$defs/CloudAccessRoleAssignment"
+      },
+      "type": "array"
+    },
+    "teamIds": {
+      "description": "List of unique 24-hexadecimal digit strings that identifies the teams to which this MongoDB Cloud user belongs.",
+      "items": {
+        "description": "Unique 24-hexadecimal digit string that identifies the team to which this MongoDB Cloud user belongs.",
+        "pattern": "^([a-f0-9]{24})$",
+        "type": "string"
+      },
+      "readOnly": true,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "username": {
+      "description": "Email address that represents the username of the MongoDB Cloud user.",
+      "format": "email",
+      "type": "string"
+    }
+  },
+  "required": [
+    "country",
+    "emailAddress",
+    "firstName",
+    "lastName",
+    "mobileNumber",
+    "password",
+    "roles",
+    "username"
+  ],
+  "type": "object",
+  "$defs": {
+    "CloudAccessRoleAssignment": {
+      "description": "MongoDB Cloud user's roles and the corresponding organization or project to which that role applies. Each role can apply to one organization or one project but not both.",
+      "properties": {
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project to which this role belongs. You can set a value for this parameter or `orgId` but not both in the same request.",
+          "maxLength": 24,
+          "minLength": 24,
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. You can set a value for this parameter or `groupId` but not both in the same request.",
+          "maxLength": 24,
+          "minLength": 24,
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "roleName": {
+          "description": "Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.",
+          "type": "string"
+        }
+      },
+      "title": "Role Assignment",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

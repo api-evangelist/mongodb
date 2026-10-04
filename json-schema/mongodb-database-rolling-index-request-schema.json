@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-database-rolling-index-request-schema.json",
+  "title": "DatabaseRollingIndexRequest",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-rolling-index-api-openapi.yml#/components/schemas/DatabaseRollingIndexRequest",
+  "properties": {
+    "collation": {
+      "$ref": "#/$defs/Collation"
+    },
+    "collection": {
+      "description": "Human-readable label of the collection for which MongoDB Cloud creates an index.",
+      "type": "string",
+      "writeOnly": true
+    },
+    "db": {
+      "description": "Human-readable label of the database that holds the collection on which MongoDB Cloud creates an index.",
+      "type": "string",
+      "writeOnly": true
+    },
+    "keys": {
+      "description": "List that contains one or more objects that describe the parameters that you want to index.",
+      "items": {
+        "additionalProperties": {
+          "description": "Key-value pair that sets the parameter to index as the key and the type of index as its value. To create a [multi-key index](https://docs.mongodb.com/manual/core/index-multikey/), list each parameter in its own object within this array.",
+          "maxProperties": 1,
+          "minProperties": 1,
+          "type": "string",
+          "writeOnly": true
+        },
+        "description": "Key-value pair that sets the parameter to index as the key and the type of index as its value. To create a [multi-key index](https://docs.mongodb.com/manual/core/index-multikey/), list each parameter in its own object within this array.",
+        "maxProperties": 1,
+        "minProperties": 1,
+        "type": "object",
+        "writeOnly": true
+      },
+      "type": "array",
+      "writeOnly": true
+    },
+    "options": {
+      "$ref": "#/$defs/IndexOptions"
+    }
+  },
+  "required": [
+    "collection",
+    "db",
+    "keys"
+  ],
+  "type": "object",
+  "$defs": {
+    "Collation": {
+      "description": "One or more settings that specify language-specific rules to compare strings within this index.",
+      "properties": {
+        "alternate": {
+          "default": "non-ignorable",
+          "description": "Method to handle whitespace and punctuation as base characters for purposes of comparison. `\"non-ignorable\"` will evaluate Whitespace and Punctuation as Base Characters. `\"shifted\"` will not, MongoDB Cloud distinguishes these characters when `\"strength\" > 3`.",
+          "enum": [
+            "non-ignorable",
+            "shifted"
+          ],
+          "type": "string"
+        },
+        "backwards": {
+          "default": false,
+          "description": "Flag that indicates whether strings with diacritics sort from back of the string. Some French dictionary orders strings in this way. `true` will compare from back to front. `false` will compare from front to back.",
+          "type": "boolean"
+        },
+        "caseFirst": {
+          "default": "off",
+          "description": "Method to handle sort order of case differences during tertiary level comparisons. `\"upper\"` sorts Uppercase before lowercase. `\"lower\"` sorts Lowercase before uppercase. `\"off\"` is similar to \"lower\" with slight differences.",
+          "enum": [
+            "lower",
+            "off",
+            "upper"
+          ],
+          "type": "string"
+        },
+        "caseLevel": {
+          "default": false,
+          "description": "Flag that indicates whether to include case comparison when `\"strength\" : 1` or `\"strength\" : 2`.\n- `true` - Include casing in comparison\n  - Strength Level: 1 - Base characters and case.\n  - Strength Level: 2 - Base characters, diacritics (and possible other secondary differences),   and case.\n- `false` - Case is NOT included in comparison.",
+          "type": "boolean"
+        },
+        "locale": {
+          "description": "International Components for Unicode (ICU) code that represents a localized language. To specify simple binary comparison, set `\"locale\" : \"simple\"`.",
+          "enum": [
+            "af",
+            "sq",
+            "am",
+            "ar",
+            "hy",
+            "as",
+            "az",
+            "bn",
+            "be",
+            "bs",
+            "bs_Cyrl",
+            "bg",
+            "my",
+            "ca",
+            "chr",
+            "zh",
+            "zh_Hant",
+            "hr",
+            "cs",
+            "da",
+            "nl",
+            "dz",
+            "en",
+            "en_US",
+            "en_US_POSIX",
+            "eo",
+            "et",
+            "ee",
+            "fo",
+            "fil",
+            "fi_FI",
+            "fr",
+            "fr_CA",
+            "gl",
+            "ka",
+            "de",
+            "de_AT",
+            "el",
+            "gu",
+            "ha",
+            "haw",
+            "he",
+            "hi",
+            "hu",
+            "is",
+            "ig",
+            "smn",
+            "id",
+            "ga",
+            "it",
+            "ja",
+            "kl",
+            "kn",
+            "kk",
+            "km",
+            "kok",
+            "ko",
+            "ky",
+            "lk",
+            "lo",
+            "lv",
+            "li",
+            "lt",
+            "dsb",
+            "lb",
+            "mk",
+            "ms",
+            "ml",
+            "mt",
+            "mr",
+            "mn",
+            "ne",
+            "se",
+            "nb",
+            "nn",
+            "or",
+            "om",
+            "ps",
+            "fa",
+            "fa_AF",
+            "pl",
+            "pt",
+            "pa",
+            "ro",
+            "ru",
+            "sr",
+            "sr_Latn",
+            "si",
+            "sk",
+            "sl",
+            "es",
+            "sw",
+            "sv",
+            "ta",
+            "te",
+            "th",
+            "bo",
+            "to",
+            "tr",
+            "uk",
+            "hsb",
+            "ur",
+            "ug",
+            "vi",
+            "wae",
+            "cy",
+            "yi",
+            "yo",
+            "zu",
+            "simple"
+          ],
+          "type": "string"
+        },
+        "maxVariable": {
+          "description": "Field that indicates which characters can be ignored when `\"alternate\" : \"shifted\"`.`\"punct\"` ignores both whitespace and punctuation. `\"space\"` ignores whitespace. This has no affect if `\"alternate\" : \"non-ignorable\"`.",
+          "enum": [
+            "punct",
+            "space"
+          ],
+          "type": "string"
+        },
+        "normalization": {
+          "default": false,
+          "description": "Flag that indicates whether to check if the text requires normalization and then perform it. Most text doesn't require this normalization processing.\n\n`true` will check if fully normalized and perform normalization to compare text. `false` will not check.",
+          "type": "boolean"
+        },
+        "numericOrdering": {
+          "default": false,
+          "description": "Flag that indicates whether to compare sequences of digits as numbers or as strings. `true` will compare as numbers, this results in `10 > 2`. `false` will Compare as strings. This results in `\"10\" < \"2\"`.",
+          "type": "boolean"
+        },
+        "strength": {
+          "default": 3,
+          "description": "Degree of comparison to perform when sorting words.\n\nMongoDB Cloud accepts the following _numeric values_ that correspond to the _comparison level_ and what that _comparison method_ is.\n\n- `1` - \"Primary\" - Compares the base characters only, ignoring other differences such as diacritics and case.\n- `2` - \"Secondary\" - Compares base characters (primary) and diacritics (secondary). Primary differences take precedence over secondary differences.\n- `3` - \"Tertiary\" - Compares base characters (primary), diacritics (secondary), and case and variants (tertiary). Differences between base characters takes precedence over secondary differences which take precedence over tertiary differences.\n- `4` - \"Quaternary\" - Compares for the specific use case to consider punctuation when levels 1 through 3 ignore punctuation or for processing Japanese text.\n- `5` - \"Identical\" - Compares for the specific use case of tie breaker.",
+          "format": "int32",
+          "maximum": 5,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "locale"
+      ],
+      "type": "object",
+      "writeOnly": true
+    },
+    "IndexOptions": {
+      "description": "One or more settings that determine how the MongoDB Cloud creates this MongoDB index.",
+      "properties": {
+        "2dsphereIndexVersion": {
+          "default": 3,
+          "description": "Index version number applied to the 2dsphere index. MongoDB 3.2 and later use version 3. Use this option to override the default version number. This option applies to the **2dsphere** index type only.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "background": {
+          "default": false,
+          "description": "Flag that indicates whether MongoDB should build the index in the background. This applies to MongoDB databases running feature compatibility version 4.0 or earlier. MongoDB databases running FCV 4.2 or later build indexes using an optimized build process. This process holds the exclusive lock only at the beginning and end of the build process. The rest of the build process yields to interleaving read and write operations. MongoDB databases running FCV 4.2 or later ignore this option. This option applies to all index types.",
+          "type": "boolean"
+        },
+        "bits": {
+          "default": 26,
+          "description": "Number of precision applied to the stored geohash value of the location data. This option applies to the **2d** index type only.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "bucketSize": {
+          "description": "Number of units within which to group the location values. You could group in the same bucket those location values within the specified number of units to each other. This option applies to the geoHaystack index type only.\n\nMongoDB 5.0 removed geoHaystack Indexes and the `geoSearch` command.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "columnstoreProjection": {
+          "additionalProperties": {
+            "description": "The `columnstoreProjection` document allows to include or exclude sub-schemas schema. One cannot combine inclusion and exclusion statements. Accordingly, the <value> can be either of the following:\n1 or true to include the field and recursively all fields it is a prefix of in the index\n0 or false to exclude the field and recursively all fields it is a prefix of from the index.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "The `columnstoreProjection` document allows to include or exclude sub-schemas schema. One cannot combine inclusion and exclusion statements. Accordingly, the <value> can be either of the following:\n1 or true to include the field and recursively all fields it is a prefix of in the index\n0 or false to exclude the field and recursively all fields it is a prefix of from the index.",
+          "type": "object"
+        },
+        "default_language": {
+          "default": "english",
+          "description": "Human language that determines the list of stop words and the rules for the stemmer and tokenizer. This option accepts the supported languages using its name in lowercase English or the ISO 639-2 code. If you set this parameter to `\"none\"`, then the text search uses simple tokenization with no list of stop words and no stemming. This option applies to the **text** index type only.",
+          "type": "string"
+        },
+        "expireAfterSeconds": {
+          "description": "Number of seconds that MongoDB retains documents in a Time To Live (TTL) index.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "hidden": {
+          "default": false,
+          "description": "Flag that determines whether the index is hidden from the query planner. A hidden index is not evaluated as part of the query plan selection.",
+          "type": "boolean"
+        },
+        "language_override": {
+          "default": "language",
+          "description": "Human-readable label that identifies the document parameter that contains the override language for the document. This option applies to the **text** index type only.",
+          "type": "string"
+        },
+        "max": {
+          "default": 180,
+          "description": "Upper inclusive boundary to limit the longitude and latitude values. This option applies to the 2d index type only.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "min": {
+          "default": -180,
+          "description": "Lower inclusive boundary to limit the longitude and latitude values. This option applies to the 2d index type only.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Human-readable label that identifies this index. This option applies to all index types.",
+          "type": "string"
+        },
+        "partialFilterExpression": {
+          "additionalProperties": {
+            "description": "Rules that limit the documents that the index references to a filter expression. All MongoDB index types accept a `partialFilterExpression` option. `partialFilterExpression` can include following expressions:\n\n- equality (`\"parameter\" : \"value\"` or using the `$eq` operator)\n- `\"$exists\": true`\n, maximum: `$gt`, `$gte`, `$lt`, `$lte` comparisons\n- `$type`\n- `$and` (top-level only)\n This option applies to all index types.",
+            "type": "object"
+          },
+          "description": "Rules that limit the documents that the index references to a filter expression. All MongoDB index types accept a `partialFilterExpression` option. `partialFilterExpression` can include following expressions:\n\n- equality (`\"parameter\" : \"value\"` or using the `$eq` operator)\n- `\"$exists\": true`\n, maximum: `$gt`, `$gte`, `$lt`, `$lte` comparisons\n- `$type`\n- `$and` (top-level only)\n This option applies to all index types.",
+          "type": "object"
+        },
+        "sparse": {
+          "default": false,
+          "description": "Flag that indicates whether the index references documents that only have the specified parameter. These indexes use less space but behave differently in some situations like when sorting. The following index types default to sparse and ignore this option: `2dsphere`, `2d`, `geoHaystack`, `text`.\n\nCompound indexes that includes one or more indexes with `2dsphere` keys alongside other key types, only the `2dsphere` index parameters determine which documents the index references. If you run MongoDB 3.2 or later, use partial indexes. This option applies to all index types.",
+          "type": "boolean"
+        },
+        "storageEngine": {
+          "additionalProperties": {
+            "description": "Storage engine set for the specific index. This value can be set only at creation. This option uses the following format: `\"storageEngine\" : { \"<storage-engine-name>\" : \"<options>\" }` MongoDB validates storage engine configuration options when creating indexes. To support replica sets with members with different storage engines, MongoDB logs these options to the oplog during replication. This option applies to all index types.",
+            "type": "object"
+          },
+          "description": "Storage engine set for the specific index. This value can be set only at creation. This option uses the following format: `\"storageEngine\" : { \"<storage-engine-name>\" : \"<options>\" }` MongoDB validates storage engine configuration options when creating indexes. To support replica sets with members with different storage engines, MongoDB logs these options to the oplog during replication. This option applies to all index types.",
+          "type": "object"
+        },
+        "textIndexVersion": {
+          "default": 3,
+          "description": "Version applied to this text index. MongoDB 3.2 and later use version `3`. Use this option to override the default version number. This option applies to the **text** index type only.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "weights": {
+          "additionalProperties": {
+            "description": "Relative importance to place upon provided index parameters. This object expresses this as key/value pairs of index parameter and weight to apply to that parameter. You can specify weights for some or all the indexed parameters. The weight must be an integer between 1 and 99,999. MongoDB 5.0 and later can apply **weights** to **text** indexes only.",
+            "type": "object"
+          },
+          "description": "Relative importance to place upon provided index parameters. This object expresses this as key/value pairs of index parameter and weight to apply to that parameter. You can specify weights for some or all the indexed parameters. The weight must be an integer between 1 and 99,999. MongoDB 5.0 and later can apply **weights** to **text** indexes only.",
+          "type": "object"
+        }
+      },
+      "type": "object",
+      "writeOnly": true
+    }
+  }
+}

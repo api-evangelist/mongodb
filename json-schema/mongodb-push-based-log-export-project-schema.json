@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-push-based-log-export-project-schema.json",
+  "title": "PushBasedLogExportProject",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-push-based-log-export-api-openapi.yml#/components/schemas/PushBasedLogExportProject",
+  "properties": {
+    "bucketName": {
+      "description": "The name of the bucket to which the agent will send the logs to.",
+      "type": "string"
+    },
+    "createDate": {
+      "description": "Date and time that this feature was enabled on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "iamRoleId": {
+      "description": "ID of the AWS IAM role that will be used to write to the S3 bucket.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "prefixPath": {
+      "description": "S3 directory in which vector will write to in order to store the logs. An empty string denotes the root directory.",
+      "type": "string"
+    },
+    "state": {
+      "description": "Describes whether or not the feature is enabled and what status it is in.",
+      "enum": [
+        "UNCONFIGURED",
+        "INITIATING",
+        "BUCKET_VERIFIED",
+        "BUCKET_VERIFICATION_FAILED",
+        "ASSUME_ROLE_FAILED",
+        "ACTIVE"
+      ],
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-create-endpoint-request-schema.json",
+  "title": "CreateEndpointRequest",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-private-endpoint-services-api-openapi.yml#/components/schemas/CreateEndpointRequest",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/CreateAWSEndpointRequest"
+    },
+    {
+      "$ref": "#/$defs/CreateAzureEndpointRequest"
+    },
+    {
+      "$ref": "#/$defs/CreateGCPEndpointGroupRequest"
+    }
+  ],
+  "type": "object",
+  "$defs": {
+    "CreateAWSEndpointRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CreateEndpointRequest"
+        },
+        {
+          "properties": {
+            "id": {
+              "description": "Unique string that identifies the private endpoint's network interface that someone added to this private endpoint service.",
+              "pattern": "^vpce-[0-9a-f]{17}$",
+              "type": "string",
+              "writeOnly": true
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Group of Private Endpoint settings.",
+      "required": [
+        "id"
+      ],
+      "title": "AWS",
+      "type": "object"
+    },
+    "CreateAzureEndpointRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CreateEndpointRequest"
+        },
+        {
+          "properties": {
+            "id": {
+              "description": "Unique string that identifies the private endpoint's network interface that someone added to this private endpoint service.",
+              "type": "string",
+              "writeOnly": true
+            },
+            "privateEndpointIPAddress": {
+              "description": "IPv4 address of the private endpoint in your Azure VNet that someone added to this private endpoint service.",
+              "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Group of Private Endpoint settings.",
+      "required": [
+        "id",
+        "privateEndpointIPAddress"
+      ],
+      "title": "AZURE",
+      "type": "object"
+    },
+    "CreateEndpointRequest": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateAWSEndpointRequest"
+        },
+        {
+          "$ref": "#/$defs/CreateAzureEndpointRequest"
+        },
+        {
+          "$ref": "#/$defs/CreateGCPEndpointGroupRequest"
+        }
+      ],
+      "type": "object"
+    },
+    "CreateGCPEndpointGroupRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CreateEndpointRequest"
+        },
+        {
+          "properties": {
+            "endpointGroupName": {
+              "description": "Human-readable label that identifies a set of endpoints. If this private endpoint belongs to a port-mapped endpoint service, this field is still required but ignored.",
+              "type": "string",
+              "writeOnly": true
+            },
+            "endpoints": {
+              "description": "List of individual private endpoints that comprise this endpoint group. If this endpoint belongs to a port-mapped endpoint service, this field will only take in a list of one private endpoint.",
+              "items": {
+                "$ref": "#/$defs/CreateGCPForwardingRuleRequest"
+              },
+              "type": "array"
+            },
+            "gcpProjectId": {
+              "description": "Unique string that identifies the Google Cloud project in which you created the endpoints.",
+              "pattern": "^p-[0-9a-z]{24}$",
+              "type": "string",
+              "writeOnly": true
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Group of Private Endpoint settings.",
+      "required": [
+        "endpointGroupName",
+        "gcpProjectId"
+      ],
+      "title": "GCP",
+      "type": "object"
+    },
+    "CreateGCPForwardingRuleRequest": {
+      "properties": {
+        "endpointName": {
+          "description": "Human-readable label that identifies the Google Cloud consumer forwarding rule that you created.",
+          "type": "string",
+          "writeOnly": true
+        },
+        "ipAddress": {
+          "description": "One Private Internet Protocol version 4 (IPv4) address to which this Google Cloud consumer forwarding rule resolves.",
+          "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+          "type": "string",
+          "writeOnly": true
+        }
+      },
+      "title": "GCP Forwarding Rules",
+      "type": "object"
+    }
+  }
+}

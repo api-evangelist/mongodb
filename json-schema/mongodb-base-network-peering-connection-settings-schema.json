@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-base-network-peering-connection-settings-schema.json",
+  "title": "BaseNetworkPeeringConnectionSettings",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-network-peering-api-openapi.yml#/components/schemas/BaseNetworkPeeringConnectionSettings",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/AwsNetworkPeeringConnectionSettings"
+    },
+    {
+      "$ref": "#/$defs/AzureNetworkPeeringConnectionSettings"
+    },
+    {
+      "$ref": "#/$defs/GCPNetworkPeeringConnectionSettings"
+    }
+  ],
+  "properties": {
+    "containerId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the network peering connection.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "providerName": {
+      "description": "Cloud service provider that serves the requested network peering connection.",
+      "enum": [
+        "AWS",
+        "AZURE",
+        "GCP"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "containerId"
+  ],
+  "type": "object",
+  "$defs": {
+    "AwsNetworkPeeringConnectionSettings": {
+      "description": "Group of Network Peering connection settings.",
+      "properties": {
+        "accepterRegionName": {
+          "description": "Amazon Web Services (AWS) region where the Virtual Peering Connection (VPC) that you peered with the MongoDB Cloud VPC resides. The resource returns `null` if your VPC and the MongoDB Cloud VPC reside in the same region.",
+          "type": "string"
+        },
+        "awsAccountId": {
+          "description": "Unique twelve-digit string that identifies the Amazon Web Services (AWS) account that owns the VPC that you peered with the MongoDB Cloud VPC.",
+          "pattern": "^[0-9]{12}$",
+          "type": "string"
+        },
+        "connectionId": {
+          "description": "Unique string that identifies the peering connection on AWS.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "containerId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "errorStateName": {
+          "description": "Type of error that can be returned when requesting an Amazon Web Services (AWS) peering connection. The resource returns `null` if the request succeeded.",
+          "enum": [
+            "REJECTED",
+            "EXPIRED",
+            "INVALID_ARGUMENT"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the network peering connection.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "providerName": {
+          "description": "Cloud service provider that serves the requested network peering connection.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string"
+        },
+        "routeTableCidrBlock": {
+          "description": "Internet Protocol (IP) addresses expressed in Classless Inter-Domain Routing (CIDR) notation of the VPC's subnet that you want to peer with the MongoDB Cloud VPC.",
+          "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+          "type": "string"
+        },
+        "statusName": {
+          "description": "State of the network peering connection at the time you made the request.",
+          "enum": [
+            "INITIATING",
+            "PENDING_ACCEPTANCE",
+            "FAILED",
+            "FINALIZING",
+            "AVAILABLE",
+            "TERMINATING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "vpcId": {
+          "description": "Unique string that identifies the VPC on Amazon Web Services (AWS) that you want to peer with the MongoDB Cloud VPC.",
+          "pattern": "^vpc-[0-9a-f]{17}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accepterRegionName",
+        "awsAccountId",
+        "containerId",
+        "routeTableCidrBlock",
+        "vpcId"
+      ],
+      "title": "AWS",
+      "type": "object"
+    },
+    "AzureNetworkPeeringConnectionSettings": {
+      "description": "Group of Network Peering connection settings.",
+      "properties": {
+        "azureDirectoryId": {
+          "description": "Unique string that identifies the Azure AD directory in which the VNet peered with the MongoDB Cloud VNet resides.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "azureSubscriptionId": {
+          "description": "Unique string that identifies the Azure subscription in which the VNet you peered with the MongoDB Cloud VNet resides.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "containerId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "errorState": {
+          "description": "Error message returned when a requested Azure network peering resource returns `\"status\" : \"FAILED\"`. The resource returns `null` if the request succeeded.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the network peering connection.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "providerName": {
+          "description": "Cloud service provider that serves the requested network peering connection.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string"
+        },
+        "resourceGroupName": {
+          "description": "Human-readable label that identifies the resource group in which the VNet to peer with the MongoDB Cloud VNet resides.",
+          "pattern": "^([-\\w._()])+$",
+          "type": "string"
+        },
+        "status": {
+          "description": "State of the network peering connection at the time you made the request.",
+          "enum": [
+            "ADDING_PEER",
+            "AVAILABLE",
+            "FAILED",
+            "DELETION_FAILED",
+            "DELETING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "vnetName": {
+          "description": "Human-readable label that identifies the VNet that you want to peer with the MongoDB Cloud VNet.",
+          "pattern": "^([-\\w._()])$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "azureDirectoryId",
+        "azureSubscriptionId",
+        "containerId",
+        "resourceGroupName",
+        "vnetName"
+      ],
+      "title": "AZURE",
+      "type": "object"
+    },
+    "GCPNetworkPeeringConnectionSettings": {
+      "description": "Group of Network Peering connection settings.",
+      "properties": {
+        "containerId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud network container that contains the specified network peering connection.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "errorMessage": {
+          "description": "Details of the error returned when requesting a GCP network peering resource. The resource returns `null` if the request succeeded.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "gcpProjectId": {
+          "description": "Human-readable label that identifies the GCP project that contains the network that you want to peer with the MongoDB Cloud VPC.",
+          "pattern": "^[a-z][0-9a-z-]{4,28}[0-9a-z]{1}",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the network peering connection.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "networkName": {
+          "description": "Human-readable label that identifies the network to peer with the MongoDB Cloud VPC.",
+          "pattern": "[a-z]([-a-z0-9]{0,62}[a-z0-9]{0,1})?",
+          "type": "string"
+        },
+        "providerName": {
+          "description": "Cloud service provider that serves the requested network peering connection.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "description": "State of the network peering connection at the time you made the request.",
+          "enum": [
+            "ADDING_PEER",
+            "WAITING_FOR_USER",
+            "AVAILABLE",
+            "FAILED",
+            "DELETING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "containerId",
+        "gcpProjectId",
+        "networkName"
+      ],
+      "title": "GCP",
+      "type": "object"
+    }
+  }
+}

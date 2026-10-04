@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-live-migration-request20240530-schema.json",
+  "title": "LiveMigrationRequest20240530",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-cloud-migration-service-api-openapi.yml#/components/schemas/LiveMigrationRequest20240530",
+  "properties": {
+    "_id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the migration request.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "destination": {
+      "$ref": "#/$defs/Destination"
+    },
+    "dropDestinationData": {
+      "default": false,
+      "description": "Flag that indicates whether the migration process drops all collections from the destination cluster before the migration starts.",
+      "type": "boolean",
+      "writeOnly": true
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "migrationHosts": {
+      "description": "List of migration hosts used for this migration.",
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 1,
+      "minItems": 1,
+      "type": "array"
+    },
+    "sharding": {
+      "$ref": "#/$defs/ShardingRequest"
+    },
+    "source": {
+      "$ref": "#/$defs/Source"
+    }
+  },
+  "required": [
+    "destination",
+    "migrationHosts",
+    "source"
+  ],
+  "type": "object",
+  "$defs": {
+    "Destination": {
+      "description": "Document that describes the destination of the migration.",
+      "properties": {
+        "clusterName": {
+          "description": "Label that identifies the destination cluster.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the destination project.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "hostnameSchemaType": {
+          "description": "The network type to use between the migration host and the destination cluster.",
+          "enum": [
+            "PUBLIC",
+            "PRIVATE_LINK",
+            "VPC_PEERING"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "privateLinkId": {
+          "description": "Represents the endpoint to use when the host schema type is `PRIVATE_LINK`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "clusterName",
+        "groupId",
+        "hostnameSchemaType"
+      ],
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ShardEntry": {
+      "description": "Sharding configuration for a collection to be sharded on the destination cluster.",
+      "properties": {
+        "collection": {
+          "description": "Human-readable label that identifies the collection to be sharded on the destination cluster.",
+          "type": "string",
+          "writeOnly": true
+        },
+        "database": {
+          "description": "Human-readable label that identifies the database that contains the collection to be sharded on the destination cluster.",
+          "type": "string",
+          "writeOnly": true
+        },
+        "shardCollection": {
+          "$ref": "#/$defs/ShardKeys"
+        }
+      },
+      "required": [
+        "collection",
+        "database",
+        "shardCollection"
+      ],
+      "type": "object"
+    },
+    "ShardKeys": {
+      "description": "Document that configures the shard key on the destination cluster.",
+      "properties": {
+        "key": {
+          "description": "List of fields to use for the shard key.",
+          "items": {
+            "additionalProperties": {
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "type": "array",
+          "uniqueItems": true,
+          "writeOnly": true
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "type": "object",
+      "writeOnly": true
+    },
+    "ShardingRequest": {
+      "description": "Document that configures sharding on the destination cluster when migrating from a replica set source to a sharded cluster destination on MongoDB 6.0 or higher. If you don't wish to shard any collections on the destination cluster, leave this empty.",
+      "properties": {
+        "createSupportingIndexes": {
+          "description": "Flag that lets the migration create supporting indexes for the shard keys, if none exists, as the destination cluster also needs compatible indexes for the specified shard keys.",
+          "type": "boolean",
+          "writeOnly": true
+        },
+        "shardingEntries": {
+          "description": "List of shard configurations to shard destination collections. Atlas shards only those collections that you include in the sharding entries array.",
+          "items": {
+            "$ref": "#/$defs/ShardEntry"
+          },
+          "type": "array",
+          "uniqueItems": true,
+          "writeOnly": true
+        }
+      },
+      "required": [
+        "createSupportingIndexes",
+        "shardingEntries"
+      ],
+      "type": "object",
+      "writeOnly": true
+    },
+    "Source": {
+      "description": "Document that describes the source of the migration.",
+      "properties": {
+        "caCertificatePath": {
+          "description": "Path to the CA certificate that signed SSL certificates use to authenticate to the source cluster.",
+          "type": "string"
+        },
+        "clusterName": {
+          "description": "Label that identifies the source cluster name.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the source project.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "managedAuthentication": {
+          "description": "Flag that indicates whether MongoDB Automation manages authentication to the source cluster. If true, do not provide values for username and password.",
+          "type": "boolean"
+        },
+        "password": {
+          "description": "Password that authenticates the username to the source cluster.",
+          "type": "string",
+          "writeOnly": true
+        },
+        "ssl": {
+          "description": "Flag that indicates whether you have SSL enabled.",
+          "type": "boolean"
+        },
+        "username": {
+          "description": "Label that identifies the SCRAM-SHA user that connects to the source cluster.",
+          "type": "string",
+          "writeOnly": true
+        }
+      },
+      "required": [
+        "clusterName",
+        "groupId",
+        "managedAuthentication",
+        "ssl"
+      ],
+      "type": "object"
+    }
+  }
+}

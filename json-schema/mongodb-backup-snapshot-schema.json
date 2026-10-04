@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-backup-snapshot-schema.json",
+  "title": "BackupSnapshot",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-legacy-backup-api-openapi.yml#/components/schemas/BackupSnapshot",
+  "properties": {
+    "clusterId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the cluster with the snapshots you want to return.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "clusterName": {
+      "description": "Human-readable label that identifies the cluster.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "complete": {
+      "description": "Flag that indicates whether the snapshot exists. This flag returns `false` while MongoDB Cloud creates the snapshot.",
+      "readOnly": true,
+      "type": "boolean"
+    },
+    "created": {
+      "$ref": "#/$defs/ApiBSONTimestampView"
+    },
+    "doNotDelete": {
+      "description": "Flag that indicates whether someone can delete this snapshot. You can't set `\"doNotDelete\" : true` and set a timestamp for **expires** in the same request.",
+      "type": "boolean"
+    },
+    "expires": {
+      "description": "Date and time when MongoDB Cloud deletes the snapshot. If `\"doNotDelete\" : true`, MongoDB Cloud removes any value set for this parameter. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "type": "string"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project that owns the snapshots.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the snapshot.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "incremental": {
+      "description": "Flag indicating if this is an incremental or a full snapshot.",
+      "readOnly": true,
+      "type": "boolean"
+    },
+    "lastOplogAppliedTimestamp": {
+      "$ref": "#/$defs/ApiBSONTimestampView"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "parts": {
+      "description": "Metadata that describes the complete snapshot.\n\n- For a replica set, this array contains a single document.\n- For a sharded cluster, this array contains one document for each shard plus one document for the config host.",
+      "items": {
+        "$ref": "#/$defs/BackupSnapshotPart"
+      },
+      "readOnly": true,
+      "type": "array"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "ApiBSONTimestampView": {
+      "description": "BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.",
+      "properties": {
+        "date": {
+          "description": "Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "increment": {
+          "description": "Order of the database operation that the oplog recorded at specific date and time.",
+          "format": "int32",
+          "minimum": 1199145600,
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "readOnly": true,
+      "title": "BSON Timestamp",
+      "type": "object"
+    },
+    "BackupSnapshotPart": {
+      "description": "Characteristics that identify this snapshot.",
+      "properties": {
+        "clusterId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the cluster with the snapshots you want to return.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "completedTime": {
+          "description": "Date and time when the snapshot completed. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "compressionSetting": {
+          "description": "Human-readable label that identifies the method of compression for the snapshot.",
+          "enum": [
+            "NONE",
+            "GZIP"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "dataSizeBytes": {
+          "description": "Total size of the data stored on each node in the cluster. This parameter expresses its value in bytes.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "encryptionEnabled": {
+          "description": "Flag that indicates whether someone encrypted this snapshot.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "fcv": {
+          "description": "Number that indicates the feature compatibility version of MongoDB that the replica set primary ran when MongoDB Cloud created the snapshot.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "fileSizeBytes": {
+          "description": "Number that indicates the total size of the data files in bytes.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "machineId": {
+          "description": "Hostname and port that indicate the node on which MongoDB Cloud created the snapshot.",
+          "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\\.){1,10}[a-z]+)?(\\:[0-9]{4,5})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "masterKeyUUID": {
+          "description": "Unique string that identifies the Key Management Interoperability (KMIP) master key used to encrypt the snapshot data. The resource returns this parameter when `\"parts.encryptionEnabled\" : true`.",
+          "format": "uuid",
+          "readOnly": true,
+          "type": "string"
+        },
+        "mongodVersion": {
+          "description": "Number that indicates the version of MongoDB that the replica set primary ran when MongoDB Cloud created the snapshot.",
+          "pattern": "([\\d]+\\.[\\d]+\\.[\\d]+)",
+          "readOnly": true,
+          "type": "string"
+        },
+        "replicaSetName": {
+          "description": "Human-readable label that identifies the replica set.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "replicaState": {
+          "description": "The node's role at the time when snapshot process began.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "storageSizeBytes": {
+          "description": "Number that indicates the total size of space allocated for document storage.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "typeName": {
+          "description": "Human-readable label that identifies the type of server from which MongoDB Cloud took this snapshot.",
+          "enum": [
+            "REPLICA_SET",
+            "CONFIG_SERVER",
+            "CONFIG_SERVER_REPLICA_SET",
+            "CONFIG_SHARD_REPLICA_SET"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "title": "Snapshot Components",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

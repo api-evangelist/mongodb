@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-api-invoice-view-schema.json",
+  "title": "PaginatedApiInvoiceView",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-invoices-api-openapi.yml#/components/schemas/PaginatedApiInvoiceView",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/BillingInvoice"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "BillingInvoice": {
+      "properties": {
+        "amountBilledCents": {
+          "description": "Sum of services that the specified organization consumed in the period covered in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "amountPaidCents": {
+          "description": "Sum that the specified organization paid toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this invoice. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "creditsCents": {
+          "description": "Sum that MongoDB credited the specified organization toward this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "endDate": {
+          "description": "Date and time when MongoDB Cloud finished the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the invoice submitted to the specified organization. Charges typically post the next day.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lineItems": {
+          "description": "List that contains individual services included in this invoice.",
+          "items": {
+            "$ref": "#/$defs/InvoiceLineItem"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "linkedInvoices": {
+          "description": "List that contains the invoices for organizations linked to the paying organization.",
+          "items": {
+            "$ref": "#/$defs/BillingInvoice"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the organization charged for services consumed from MongoDB Cloud.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "payments": {
+          "description": "List that contains funds transferred to MongoDB to cover the specified service noted in this invoice.",
+          "items": {
+            "$ref": "#/$defs/BillingPayment"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "refunds": {
+          "description": "List that contains payments that MongoDB returned to the organization for this invoice.",
+          "items": {
+            "$ref": "#/$defs/BillingRefund"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "salesTaxCents": {
+          "description": "Sum of sales tax applied to this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "startDate": {
+          "description": "Date and time when MongoDB Cloud began the billing period that this invoice covers. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "startingBalanceCents": {
+          "description": "Sum that the specified organization owed to MongoDB when MongoDB issued this invoice. This parameter expresses its value in US Dollars.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "statusName": {
+          "description": "Phase of payment processing in which this invoice exists when you made this request. Accepted phases include:\n\n- `CLOSED`: MongoDB finalized all charges in the billing cycle but has yet to charge the customer.\n- `FAILED`: MongoDB attempted to charge the provided credit card but charge for that amount failed.\n- `FORGIVEN`: Customer initiated payment which MongoDB later forgave.\n- `FREE`: All charges totalled zero so the customer won't be charged.\n- `INVOICED`: MongoDB handled these charges using elastic invoicing.\n- `PAID`: MongoDB succeeded in charging the provided credit card.\n- `PENDING`: Invoice includes charges for the current billing cycle.\n- `PREPAID`: Customer has a pre-paid plan so they won't be charged.",
+          "enum": [
+            "PENDING",
+            "CLOSED",
+            "FORGIVEN",
+            "FAILED",
+            "PAID",
+            "FREE",
+            "PREPAID",
+            "INVOICED"
+          ],
+          "type": "string"
+        },
+        "subtotalCents": {
+          "description": "Sum of all positive invoice line items contained in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "updated": {
+          "description": "Date and time when MongoDB Cloud last updated the value of this payment. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "BillingPayment": {
+      "description": "Funds transferred to MongoDB to cover the specified service in this invoice.",
+      "properties": {
+        "amountBilledCents": {
+          "description": "Sum of services that the specified organization consumed in the period covered in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "amountPaidCents": {
+          "description": "Sum that the specified organization paid toward the associated invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "created": {
+          "description": "Date and time when the customer made this payment attempt. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "currency": {
+          "description": "The currency in which payment was paid. This parameter expresses its value in 3-letter ISO 4217 currency code.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this payment toward the associated invoice.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "salesTaxCents": {
+          "description": "Sum of sales tax applied to this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "statusName": {
+          "description": "Phase of payment processing for the associated invoice when you made this request. These phases include:\n\n- `CANCELLED`: Customer or MongoDB cancelled the payment.\n- `ERROR`: Issue arose when attempting to complete payment.\n- `FAILED`: MongoDB tried to charge the credit card without success.\n- `FAILED_AUTHENTICATION`: Strong Customer Authentication has failed. Confirm that your payment method is authenticated.\n- `FORGIVEN`: Customer initiated payment which MongoDB later forgave.\n- `INVOICED`: MongoDB issued an invoice that included this line item.\n- `NEW`: Customer provided a method of payment, but MongoDB hasn't tried to charge the credit card.\n- `PAID`: Customer submitted a successful payment.\n- `PARTIAL_PAID`: Customer paid for part of this line item.",
+          "enum": [
+            "NEW",
+            "FORGIVEN",
+            "FAILED",
+            "PAID",
+            "PARTIAL_PAID",
+            "CANCELLED",
+            "INVOICED",
+            "FAILED_AUTHENTICATION",
+            "PROCESSING",
+            "PENDING_REVERSAL",
+            "REFUNDED"
+          ],
+          "type": "string"
+        },
+        "subtotalCents": {
+          "description": "Sum of all positive invoice line items contained in this invoice. This parameter expresses its value in cents (100ths of one US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "unitPrice": {
+          "description": "The unit price applied to `amountBilledCents` to compute total payment amount. This value is represented as a decimal string.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "updated": {
+          "description": "Date and time when the customer made an update to this payment attempt. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Payment",
+      "type": "object"
+    },
+    "BillingRefund": {
+      "description": "One payment that MongoDB returned to the organization for this invoice.",
+      "properties": {
+        "amountCents": {
+          "description": "Sum of the funds returned to the specified organization expressed in cents (100th of US Dollar).",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this refund. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "paymentId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the payment that the organization had made.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "reason": {
+          "description": "Justification that MongoDB accepted to return funds to the organization.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Refund",
+      "type": "object"
+    },
+    "InvoiceLineItem": {
+      "description": "One service included in this invoice.",
+      "properties": {
+        "clusterName": {
+          "description": "Human-readable label that identifies the cluster that incurred the charge.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "created": {
+          "description": "Date and time when MongoDB Cloud created this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "discountCents": {
+          "description": "Sum by which MongoDB discounted this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar). The resource returns this parameter when a discount applies.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "endDate": {
+          "description": "Date and time when when MongoDB Cloud finished charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project associated to this line item.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "groupName": {
+          "description": "Human-readable label that identifies the project.",
+          "type": "string"
+        },
+        "note": {
+          "description": "Comment that applies to this line item.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "percentDiscount": {
+          "description": "Percentage by which MongoDB discounted this line item. The resource returns this parameter when a discount applies.",
+          "format": "float",
+          "readOnly": true,
+          "type": "number"
+        },
+        "quantity": {
+          "description": "Number of units included for the line item. These can be expressions of storage (GB), time (hours), or other units.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "sku": {
+          "description": "Human-readable description of the service that this line item provided. This Stock Keeping Unit (SKU) could be the instance type, a support charge, advanced security, or another service.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "startDate": {
+          "description": "Date and time when MongoDB Cloud began charging for this line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "stitchAppName": {
+          "description": "Human-readable label that identifies the Atlas App Services application associated with this line item.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "description": "A map of key-value pairs corresponding to the tags associated with the line item resource.",
+            "items": {
+              "description": "A map of key-value pairs corresponding to the tags associated with the line item resource.",
+              "readOnly": true,
+              "type": "string"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "description": "A map of key-value pairs corresponding to the tags associated with the line item resource.",
+          "readOnly": true,
+          "type": "object"
+        },
+        "tierLowerBound": {
+          "description": "Lower bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierLowerBound` appears only if your `lineItems[n].sku` is tiered.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "tierUpperBound": {
+          "description": "Upper bound for usage amount range in current SKU tier. \n\n**NOTE**: `lineItems[n].tierUpperBound` appears only if your `lineItems[n].sku` is tiered.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "totalPriceCents": {
+          "description": "Sum of the cost set for this line item. MongoDB Cloud expresses this value in cents (100ths of one US Dollar) and calculates this value as `unitPriceDollars` * `quantity` * 100.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "unit": {
+          "description": "Element used to express what **quantity** this line item measures. This value can be elements of time, storage capacity, and the like.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "unitPriceDollars": {
+          "description": "Value per **unit** for this line item expressed in US Dollars.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        }
+      },
+      "title": "Line Item",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

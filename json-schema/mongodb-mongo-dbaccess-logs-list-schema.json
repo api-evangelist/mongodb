@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-mongo-dbaccess-logs-list-schema.json",
+  "title": "MongoDBAccessLogsList",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-access-tracking-api-openapi.yml#/components/schemas/MongoDBAccessLogsList",
+  "properties": {
+    "accessLogs": {
+      "description": "Authentication attempt, one per object, made against the cluster.",
+      "items": {
+        "$ref": "#/$defs/MongoDBAccessLogs"
+      },
+      "readOnly": true,
+      "type": "array"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "MongoDBAccessLogs": {
+      "description": "Authentication attempt, one per object, made against the cluster.",
+      "properties": {
+        "authResult": {
+          "description": "Flag that indicates whether the response should return successful authentication attempts only.",
+          "type": "boolean"
+        },
+        "authSource": {
+          "description": "Database against which someone attempted to authenticate.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "failureReason": {
+          "description": "Reason that the authentication failed. Null if authentication succeeded.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal character string that identifies the project.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "hostname": {
+          "description": "Human-readable label that identifies the hostname of the target node that received the authentication attempt.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "ipAddress": {
+          "description": "Internet Protocol address that attempted to authenticate with the database.",
+          "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "logLine": {
+          "description": "Text of the host log concerning the authentication attempt.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Date and time when someone made this authentication attempt. MongoDB Cloud represents this timestamp in ISO 8601 format in UTC.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "username": {
+          "description": "Username used to authenticate against the database.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

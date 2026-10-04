@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-performance-advisor-response-schema.json",
+  "title": "PerformanceAdvisorResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-performance-advisor-api-openapi.yml#/components/schemas/PerformanceAdvisorResponse",
+  "properties": {
+    "shapes": {
+      "description": "List of query predicates, sorts, and projections that the Performance Advisor suggests.",
+      "items": {
+        "$ref": "#/$defs/PerformanceAdvisorShape"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "suggestedIndexes": {
+      "description": "List that contains the documents with information about the indexes that the Performance Advisor suggests.",
+      "items": {
+        "$ref": "#/$defs/PerformanceAdvisorIndex"
+      },
+      "readOnly": true,
+      "type": "array"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "PerformanceAdvisorIndex": {
+      "properties": {
+        "avgObjSize": {
+          "description": "The average size of an object in the collection of this index.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this index.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "impact": {
+          "description": "List that contains unique 24-hexadecimal character string that identifies the query shapes in this response that the Performance Advisor suggests.",
+          "items": {
+            "description": "One unique 24-hexadecimal character string that identifies one query shape.",
+            "type": "string"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "index": {
+          "description": "List that contains documents that specify a key in the index and its sort order.",
+          "items": {
+            "additionalProperties": {
+              "description": "One index key paired with its sort order. A value of `1` indicates an ascending sort order. A value of `-1` indicates a descending sort order. Keys in indexes with multiple keys appear in the same order that they appear in the index.",
+              "enum": [
+                1,
+                -1
+              ],
+              "format": "int32",
+              "type": "integer"
+            },
+            "description": "One index key paired with its sort order. A value of `1` indicates an ascending sort order. A value of `-1` indicates a descending sort order. Keys in indexes with multiple keys appear in the same order that they appear in the index.",
+            "type": "object"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "namespace": {
+          "description": "Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "weight": {
+          "description": "Estimated performance improvement that the suggested index provides. This value corresponds to **Impact** in the Performance Advisor user interface.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "PerformanceAdvisorOpStats": {
+      "description": "Details that this resource returned about the specified query.",
+      "properties": {
+        "ms": {
+          "description": "Length of time expressed during which the query finds suggested indexes among the managed namespaces in the cluster. This parameter expresses its value in milliseconds. This parameter relates to the **duration** query parameter.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "nReturned": {
+          "description": "Number of results that the query returns.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "nScanned": {
+          "description": "Number of documents that the query read.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "ts": {
+          "description": "Date and time from which the query retrieves the suggested indexes. This parameter expresses its value in the number of seconds that have elapsed since the UNIX epoch. This parameter relates to the **since** query parameter.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    },
+    "PerformanceAdvisorOperationView": {
+      "properties": {
+        "predicates": {
+          "description": "List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.",
+          "items": {
+            "description": "List that contains the search criteria that the query uses. To use the values in key-value pairs in these predicates requires **Project Data Access Read Only** permissions or greater. Otherwise, MongoDB Cloud redacts these values.",
+            "readOnly": true,
+            "type": "object"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "stats": {
+          "$ref": "#/$defs/PerformanceAdvisorOpStats"
+        }
+      },
+      "type": "object"
+    },
+    "PerformanceAdvisorShape": {
+      "properties": {
+        "avgMs": {
+          "description": "Average duration in milliseconds for the queries examined that match this shape.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "count": {
+          "description": "Number of queries examined that match this shape.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this shape. This string exists only for the duration of this API request.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "inefficiencyScore": {
+          "description": "Average number of documents read for every document that the query returns.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "namespace": {
+          "description": "Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "operations": {
+          "description": "List that contains specific about individual queries.",
+          "items": {
+            "$ref": "#/$defs/PerformanceAdvisorOperationView"
+          },
+          "readOnly": true,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
+  title: Mongodb Programmatic API Keys API
+  version: '2.0'
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Programmatic API Keys API
-  version: '2.0'
-  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+  x-refined-note:
+  - x-xgen-sha differs across the merged source definitions and was not carried
+  description: 'Operations tagged Programmatic API Keys across 2 of this provider''s published API definitions: mongodb-atlas-openapi.yaml, mongodb-openapi.yaml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://cloud.mongodb.com
 security:
@@ -129,6 +130,8 @@ paths:
       x-rolesRequirements:
       - Project Access Manager
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Programmatic-API-Keys/operation/createGroupApiKey
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/apiKeys/{apiUserId}:
     delete:
       description: Removes one organization API key from the specified project. To use this resource, the requesting Service Account or API Key must have the Project Owner role or Project Access Manager role.
@@ -331,6 +334,8 @@ paths:
       x-xgen-method-verb-override:
         customMethod: 'True'
         verb: add
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/orgs/{orgId}/apiKeys:
     get:
       description: Returns all organization API keys for the specified organization. The organization API keys grant programmatic access to an organization. You can't use the API key to log into MongoDB Cloud through the console. To use this resource, the requesting Service Account or API Key must have the Organization Member role.
@@ -446,6 +451,8 @@ paths:
       x-rolesRequirements:
       - Organization Owner
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Programmatic-API-Keys/operation/createOrgApiKey
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/orgs/{orgId}/apiKeys/{apiUserId}:
     delete:
       description: Removes one organization API key from the specified organization. When you remove an API key from an organization, MongoDB Cloud also removes that key from any projects that use that key. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
@@ -631,6 +638,8 @@ paths:
       x-rolesRequirements:
       - Organization Owner
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Programmatic-API-Keys/operation/updateOrgApiKey
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/orgs/{orgId}/apiKeys/{apiUserId}/accessList:
     get:
       description: Returns all access list entries that you configured for the specified organization API key. To use this resource, the requesting Service Account or API Key must have the Organization Member role.
@@ -772,6 +781,8 @@ paths:
         customMethod: false
         verb: createEntry
       x-xgen-operation-id-override: createOrgAccessEntry
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/orgs/{orgId}/apiKeys/{apiUserId}/accessList/{ipAddress}:
     delete:
       description: Removes the specified access list entry from the specified organization API key. Resources require all API requests originate from the IP addresses on the API access list. To use this resource, the requesting Service Account or API Key must have the Read Write role. In addition, you cannot remove the requesting IP address from the requesting organization API key.
@@ -913,21 +924,193 @@ paths:
         customMethod: false
         verb: getEntry
       x-xgen-operation-id-override: getOrgAccessEntry
+    servers:
+    - url: https://cloud.mongodb.com
 components:
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
       schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+        default: false
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
       schema:
+        default: 100
+        maximum: 500
+        minimum: 1
         type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
       schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
         type: integer
+    orgId:
+      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
+      in: path
+      name: orgId
+      required: true
+      schema:
+        example: 4888442a3354817a7320eb61
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    includeCount_2:
+      description: Flag that indicates whether MongoDB Cloud calculates the total number of items for the response. When set to `false`, MongoDB Cloud may skip an additional count operation. The response may still include `totalCount` when the count is available without additional calculation.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
   schemas:
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    UserAccessListResponse:
+      properties:
+        cidrBlock:
+          description: Range of IP addresses in Classless Inter-Domain Routing (CIDR) notation in the access list for the API key.
+          example: 203.0.113.0/24
+          pattern: ^((([0-9]{1,3}\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$
+          type: string
+        count:
+          description: Total number of requests that have originated from the Internet Protocol (IP) address given as the value of the `lastUsedAddress` parameter.
+          format: int32
+          minimum: 1
+          readOnly: true
+          type: integer
+        created:
+          description: Date and time when someone added the network addresses to the specified API access list. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        ipAddress:
+          description: Network address in the access list for the API key.
+          example: 203.0.113.10
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+          type: string
+        lastUsed:
+          description: Date and time when MongoDB Cloud received the most recent request that originated from this Internet Protocol version 4 or version 6 address. The resource returns this parameter when at least one request has originated from this IP address. MongoDB Cloud updates this parameter each time a client accesses the permitted resource. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        lastUsedAddress:
+          description: Network address that issued the most recent request to the API. This parameter requires the address to be expressed as one Internet Protocol version 4 or version 6 address. The resource returns this parameter after this IP address made at least one request.
+          example: 203.0.113.10
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+      type: object
+    UserAccessRoleAssignment:
+      properties:
+        roles:
+          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this project.
+          externalDocs:
+            description: MongoDB Cloud API Key Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          items:
+            type: string
+          type: array
+        userId:
+          description: Unique 24-hexadecimal digit string that identifies the organization API key.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+      type: object
+    CreateAtlasProjectApiKey:
+      properties:
+        desc:
+          description: Purpose or explanation provided when someone created this project API key.
+          maxLength: 250
+          minLength: 1
+          type: string
+        roles:
+          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this project.
+          externalDocs:
+            description: MongoDB Cloud API Key Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          items:
+            type: string
+          minItems: 1
+          type: array
+      required:
+      - desc
+      - roles
+      type: object
+    UpdateAtlasOrganizationApiKey:
+      properties:
+        desc:
+          description: Purpose or explanation provided when someone creates this organization API key.
+          maxLength: 250
+          minLength: 1
+          type: string
+        roles:
+          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this organization.
+          items:
+            enum:
+            - ORG_OWNER
+            - ORG_MEMBER
+            - ORG_GROUP_CREATOR
+            - ORG_BILLING_ADMIN
+            - ORG_BILLING_READ_ONLY
+            - ORG_STREAM_PROCESSING_ADMIN
+            - ORG_READ_ONLY
+            type: string
+          type: array
+      type: object
     Link:
       properties:
         href:
@@ -980,23 +1163,6 @@ components:
             $ref: '#/components/schemas/CloudAccessRoleAssignment'
           type: array
       type: object
-    UserAccessRoleAssignment:
-      properties:
-        roles:
-          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this project.
-          externalDocs:
-            description: MongoDB Cloud API Key Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
-          items:
-            type: string
-          type: array
-        userId:
-          description: Unique 24-hexadecimal digit string that identifies the organization API key.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-      type: object
     ApiError:
       properties:
         badRequestDetail:
@@ -1028,6 +1194,68 @@ components:
       required:
       - error
       - errorCode
+      type: object
+    PaginatedApiApiUserView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ApiKeyUserDetails'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PaginatedApiUserAccessListResponseView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/UserAccessListResponse'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
       type: object
     UpdateAtlasProjectApiKey:
       properties:
@@ -1070,157 +1298,6 @@ components:
           type: string
       title: Role Assignment
       type: object
-    UserAccessListRequest:
-      properties:
-        cidrBlock:
-          description: Range of network addresses that you want to add to the access list for the API key. This parameter requires the range to be expressed in classless inter-domain routing (CIDR) notation of Internet Protocol version 4 or version 6 addresses. You can set a value for this parameter or `ipAddress` but not both in the same request.
-          example: 203.0.113.0/24
-          pattern: ^((([0-9]{1,3}\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$
-          type: string
-        ipAddress:
-          description: Network address that you want to add to the access list for the API key. This parameter requires the address to be expressed as one Internet Protocol version 4 or version 6 address. You can set a value for this parameter or `cidrBlock` but not both in the same request.
-          example: 203.0.113.10
-          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
-          type: string
-      type: object
-    PaginatedApiUserAccessListResponseView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/UserAccessListResponse'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    UpdateAtlasOrganizationApiKey:
-      properties:
-        desc:
-          description: Purpose or explanation provided when someone creates this organization API key.
-          maxLength: 250
-          minLength: 1
-          type: string
-        roles:
-          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this organization.
-          items:
-            enum:
-            - ORG_OWNER
-            - ORG_MEMBER
-            - ORG_GROUP_CREATOR
-            - ORG_BILLING_ADMIN
-            - ORG_BILLING_READ_ONLY
-            - ORG_STREAM_PROCESSING_ADMIN
-            - ORG_READ_ONLY
-            type: string
-          type: array
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
-    PaginatedApiApiUserView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/ApiKeyUserDetails'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    UserAccessListResponse:
-      properties:
-        cidrBlock:
-          description: Range of IP addresses in Classless Inter-Domain Routing (CIDR) notation in the access list for the API key.
-          example: 203.0.113.0/24
-          pattern: ^((([0-9]{1,3}\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$
-          type: string
-        count:
-          description: Total number of requests that have originated from the Internet Protocol (IP) address given as the value of the `lastUsedAddress` parameter.
-          format: int32
-          minimum: 1
-          readOnly: true
-          type: integer
-        created:
-          description: Date and time when someone added the network addresses to the specified API access list. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        ipAddress:
-          description: Network address in the access list for the API key.
-          example: 203.0.113.10
-          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
-          type: string
-        lastUsed:
-          description: Date and time when MongoDB Cloud received the most recent request that originated from this Internet Protocol version 4 or version 6 address. The resource returns this parameter when at least one request has originated from this IP address. MongoDB Cloud updates this parameter each time a client accesses the permitted resource. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        lastUsedAddress:
-          description: Network address that issued the most recent request to the API. This parameter requires the address to be expressed as one Internet Protocol version 4 or version 6 address. The resource returns this parameter after this IP address made at least one request.
-          example: 203.0.113.10
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-      type: object
     CreateAtlasOrganizationApiKey:
       description: Organization Service Account that Atlas creates for this organization. If omitted, Atlas doesn't create an organization Service Account for this organization. If specified, this object requires all body parameters. Note that API Keys cannot be specified in the same request.
       properties:
@@ -1247,38 +1324,183 @@ components:
       - desc
       - roles
       type: object
-    CreateAtlasProjectApiKey:
+    UserAccessListRequest:
+      properties:
+        cidrBlock:
+          description: Range of network addresses that you want to add to the access list for the API key. This parameter requires the range to be expressed in classless inter-domain routing (CIDR) notation of Internet Protocol version 4 or version 6 addresses. You can set a value for this parameter or `ipAddress` but not both in the same request.
+          example: 203.0.113.0/24
+          pattern: ^((([0-9]{1,3}\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$
+          type: string
+        ipAddress:
+          description: Network address that you want to add to the access list for the API key. This parameter requires the address to be expressed as one Internet Protocol version 4 or version 6 address. You can set a value for this parameter or `cidrBlock` but not both in the same request.
+          example: 203.0.113.10
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+          type: string
+      type: object
+    UpdateAtlasOrganizationApiKey_2:
       properties:
         desc:
-          description: Purpose or explanation provided when someone created this project API key.
+          description: Purpose or explanation provided when someone creates this organization API key.
           maxLength: 250
           minLength: 1
           type: string
         roles:
-          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this project.
-          externalDocs:
-            description: MongoDB Cloud API Key Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this organization.
           items:
-            type: string
+            enum:
+            - ORG_OWNER
+            - ORG_MEMBER
+            - ORG_GROUP_CREATOR
+            - ORG_BILLING_ADMIN
+            - ORG_BILLING_READ_ONLY
+            - ORG_STREAM_PROCESSING_ADMIN
+            - ORG_READ_ONLY
+            type:
+            - string
+            - 'null'
+          type: array
+      type: object
+    ApiError_2:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type:
+          - string
+          - 'null'
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - error
+      - errorCode
+      type: object
+    PaginatedApiApiUserView_2:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/ApiKeyUserDetails'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. When `includeCount` is set to `false`, MongoDB Cloud may omit this value or return it when the count is available without additional calculation. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    PaginatedApiUserAccessListResponseView_2:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/UserAccessListResponse'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. When `includeCount` is set to `false`, MongoDB Cloud may omit this value or return it when the count is available without additional calculation. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    CreateAtlasOrganizationApiKey_2:
+      description: Organization Service Account that Atlas creates for this organization. If omitted, Atlas doesn't create an organization Service Account for this organization. If specified, this object requires all body parameters. Note that API Keys cannot be specified in the same request.
+      properties:
+        desc:
+          description: Purpose or explanation provided when someone created this organization API key.
+          maxLength: 250
+          minLength: 1
+          type: string
+        roles:
+          description: List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this organization.
+          items:
+            enum:
+            - ORG_OWNER
+            - ORG_MEMBER
+            - ORG_GROUP_CREATOR
+            - ORG_BILLING_ADMIN
+            - ORG_BILLING_READ_ONLY
+            - ORG_STREAM_PROCESSING_ADMIN
+            - ORG_READ_ONLY
+            type:
+            - string
+            - 'null'
           minItems: 1
           type: array
       required:
       - desc
       - roles
       type: object
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
   responses:
-    conflict:
+    unauthorized:
       content:
         application/json:
           example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Conflict.
+      description: Unauthorized.
     forbidden:
       content:
         application/json:
@@ -1290,6 +1512,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
     tooManyRequests:
       content:
         application/json:
@@ -1308,28 +1541,6 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
     internalServerError:
       content:
         application/json:
@@ -1341,80 +1552,28 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
-    notFound:
+    conflict:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-  parameters:
-    orgId:
-      description: Unique 24-hexadecimal digit string that identifies the organization that contains your projects. Use the [`/orgs`](#tag/Organizations/operation/listOrganizations) endpoint to retrieve all organizations to which the authenticated user has access.
-      in: path
-      name: orgId
-      required: true
-      schema:
-        example: 4888442a3354817a7320eb61
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
+      description: Conflict.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
   securitySchemes:
     DigestAuth:
       scheme: digest
@@ -1426,6 +1585,9 @@ components:
           scopes: {}
           tokenUrl: https://cloud.mongodb.com/api/oauth/token
       type: oauth2
+x-refined-from:
+- mongodb-atlas-openapi.yaml
+- mongodb-openapi.yaml
 x-externalLinks:
 - label: Back to Atlas Docs
   url: https://www.mongodb.com/docs/atlas/

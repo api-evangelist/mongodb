@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-query-shapes-schema.json",
+  "title": "PaginatedQueryShapes",
+  "description": "Paginated collection of query shapes. This endpoint returns a maximum of 100 results.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-query-shape-insights-api-openapi.yml#/components/schemas/PaginatedQueryShapes",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/QueryShapeResponse"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "QueryShapeResponse": {
+      "description": "Response containing the details and status of a query shape. The query shape field may be null if the user lacks PII view access.",
+      "properties": {
+        "command": {
+          "description": "The MongoDB command type issued for a query shape.",
+          "enum": [
+            "FIND",
+            "DISTINCT",
+            "AGGREGATE"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "queryShape": {
+          "description": "A query shape is a set of specifications that group similar queries together. Specifications can include filters, sorts, projections, aggregation pipeline stages, a namespace, and others. Queries that have similar specifications have the same query shape. This field may be null if the user lacks PII view access.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "queryShapeHash": {
+          "description": "A hexadecimal string that represents the hash of a MongoDB query shape.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "The rejection status of a query shape. Use REJECTED to prevent the query shape from executing on the cluster, or UNREJECTED to allow it to execute.",
+          "enum": [
+            "REJECTED",
+            "UNREJECTED"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "queryShapeHash",
+        "status"
+      ],
+      "type": "object"
+    }
+  }
+}

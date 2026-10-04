@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-api-atlas-checkpoint-view-schema.json",
+  "title": "PaginatedApiAtlasCheckpointView",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-legacy-backup-api-openapi.yml#/components/schemas/PaginatedApiAtlasCheckpointView",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/ApiAtlasCheckpointView"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "ApiAtlasCheckpointView": {
+      "properties": {
+        "clusterId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the cluster that contains the checkpoint.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "completed": {
+          "description": "Date and time when the checkpoint completed and the balancer restarted. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that owns the checkpoints.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies checkpoint.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "parts": {
+          "description": "Metadata that describes the complete snapshot.\n\n- For a replica set, this array contains a single document.\n- For a sharded cluster, this array contains one document for each shard plus one document for the config host.",
+          "items": {
+            "$ref": "#/$defs/ApiCheckpointPartView"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "restorable": {
+          "description": "Flag that indicates whether MongoDB Cloud can use the checkpoint for a restore.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "started": {
+          "description": "Date and time when the balancer stopped and began the checkpoint. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Date and time to which the checkpoint restores. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApiBSONTimestampView": {
+      "description": "BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.",
+      "properties": {
+        "date": {
+          "description": "Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "increment": {
+          "description": "Order of the database operation that the oplog recorded at specific date and time.",
+          "format": "int32",
+          "minimum": 1199145600,
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "readOnly": true,
+      "title": "BSON Timestamp",
+      "type": "object"
+    },
+    "ApiCheckpointPartView": {
+      "description": "Metadata contained in one document that describes the complete snapshot taken for this node.",
+      "properties": {
+        "replicaSetName": {
+          "description": "Human-readable label that identifies the replica set to which this checkpoint applies.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "shardName": {
+          "description": "Human-readable label that identifies the shard to which this checkpoint applies.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "tokenDiscovered": {
+          "description": "Flag that indicates whether the token exists.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "tokenTimestamp": {
+          "$ref": "#/$defs/ApiBSONTimestampView"
+        },
+        "typeName": {
+          "description": "Human-readable label that identifies the type of host that the part represents.",
+          "enum": [
+            "REPLICA_SET",
+            "CONFIG_SERVER",
+            "CONFIG_SERVER_REPLICA_SET"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

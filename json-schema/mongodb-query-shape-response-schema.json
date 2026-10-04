@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-query-shape-response-schema.json",
+  "title": "QueryShapeResponse",
+  "description": "Response containing the details and status of a query shape. The query shape field may be null if the user lacks PII view access.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-query-shape-insights-api-openapi.yml#/components/schemas/QueryShapeResponse",
+  "properties": {
+    "command": {
+      "description": "The MongoDB command type issued for a query shape.",
+      "enum": [
+        "FIND",
+        "DISTINCT",
+        "AGGREGATE"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "namespace": {
+      "description": "Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "queryShape": {
+      "description": "A query shape is a set of specifications that group similar queries together. Specifications can include filters, sorts, projections, aggregation pipeline stages, a namespace, and others. Queries that have similar specifications have the same query shape. This field may be null if the user lacks PII view access.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "queryShapeHash": {
+      "description": "A hexadecimal string that represents the hash of a MongoDB query shape.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "status": {
+      "description": "The rejection status of a query shape. Use REJECTED to prevent the query shape from executing on the cluster, or UNREJECTED to allow it to execute.",
+      "enum": [
+        "REJECTED",
+        "UNREJECTED"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "queryShapeHash",
+    "status"
+  ],
+  "type": "object"
+}

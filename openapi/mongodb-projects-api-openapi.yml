@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
+  title: Mongodb Projects API
+  version: '2.0'
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Projects API
-  version: '2.0'
-  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+  x-refined-note:
+  - x-xgen-sha differs across the merged source definitions and was not carried
+  description: 'Operations tagged Projects across 2 of this provider''s published API definitions: mongodb-atlas-openapi.yaml, mongodb-openapi.yaml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://cloud.mongodb.com
 security:
@@ -132,6 +133,8 @@ paths:
         label: curl (Digest)
         source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups\" \\\n  -d '{ <Payload> }'"
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/createGroup
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/byName/{groupName}:
     get:
       description: Returns details about the specified project. Projects group clusters into logical collections that support an application environment, workload, or both. Each project can have its own users, teams, security, tags, and alert settings. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
@@ -191,6 +194,8 @@ paths:
         label: curl (Digest)
         source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/byName/{groupName}?pretty=true\""
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/getGroupByName
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}:
     delete:
       description: Removes the specified project. Projects group clusters into logical collections that support an application environment, workload, or both. Each project can have its own users, teams, security, tags, and alert settings. You can delete a project only if there are no Online Archives for the clusters in the project. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
@@ -352,6 +357,8 @@ paths:
       x-rolesRequirements:
       - Project Owner
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/updateGroup
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/access:
     post:
       deprecated: true
@@ -425,6 +432,8 @@ paths:
         customMethod: 'True'
         verb: addUser
       x-xgen-operation-id-override: addGroupUser
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/invites:
     get:
       deprecated: true
@@ -603,6 +612,8 @@ paths:
       - Project Owner
       x-sunset: '2027-07-01'
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/createGroupInvite
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/invites/{invitationId}:
     delete:
       deprecated: true
@@ -787,6 +798,8 @@ paths:
         customMethod: false
         verb: updateById
       x-xgen-operation-id-override: updateInviteById
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/ipAddresses:
     get:
       description: Returns all IP addresses for this project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
@@ -837,6 +850,8 @@ paths:
       x-rolesRequirements:
       - Project Read Only
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/getGroupIpAddresses
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/limits:
     get:
       description: Returns all the limits for the specified project. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
@@ -893,6 +908,8 @@ paths:
       x-rolesRequirements:
       - Project Read Only
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/listGroupLimits
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/limits/{limitName}:
     delete:
       description: Removes the specified project limit. Depending on the limit, Atlas either resets the limit to its default value or removes the limit entirely. To use this resource, the requesting Service Account or API Key must have the Project Owner role.
@@ -1217,6 +1234,8 @@ paths:
       x-xgen-method-verb-override:
         customMethod: 'True'
         verb: set
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/mongoDBVersions:
     get:
       description: Returns the MongoDB Long Term Support Major Versions available to new clusters in this project.
@@ -1305,6 +1324,8 @@ paths:
       - Project Read Only
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/getGroupMongoDbVersions
       x-xgen-operation-id-override: getMongoDbVersions
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/settings:
     get:
       description: Returns details about the specified project's settings. To use this resource, the requesting Service Account or API Key must have the Project Read Only role.
@@ -1411,6 +1432,8 @@ paths:
       x-rolesRequirements:
       - Project Owner
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/updateGroupSettings
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}/users/{userId}/roles:
     put:
       deprecated: true
@@ -1477,6 +1500,8 @@ paths:
       - Project Owner
       x-sunset: '2027-07-01'
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/updateGroupUserRoles
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/groups/{groupId}:migrate:
     post:
       description: Migrates a project from its current organization to another organization. All project users and their roles will be copied to the same project in the destination organization. You must include an organization API key with the Organization Owner role for the destination organization to verify access to the destination organization when you authenticate with Programmatic API Keys. Otherwise, the requesting user must have the Organization Owner role in both organizations. To use this resource, the requesting Service Account or API Key must have the Organization Owner role.
@@ -1535,31 +1560,76 @@ paths:
       x-rolesRequirements:
       - Organization Owner
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Projects/operation/migrateGroup
+    servers:
+    - url: https://cloud.mongodb.com
 components:
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
-      schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
-      schema:
-        type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
   schemas:
-    Link:
+    GroupRole:
       properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project to which this role belongs.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
           type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
+        groupRole:
+          description: Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include project-level roles.
+          externalDocs:
+            description: MongoDB Cloud User Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/#project-roles
           type: string
+      type: object
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    DataFederationLimit:
+      description: Details of user managed limits.
+      discriminator:
+        mapping:
+          atlas.project.deployment.clusters: '#/components/schemas/DefaultLimit'
+          atlas.project.deployment.nodesPerPrivateLinkRegion: '#/components/schemas/DefaultLimit'
+          atlas.project.deployment.serverlessMTMs: '#/components/schemas/DefaultLimit'
+          atlas.project.security.databaseAccess.customRoles: '#/components/schemas/DefaultLimit'
+          atlas.project.security.databaseAccess.users: '#/components/schemas/DefaultLimit'
+          atlas.project.security.networkAccess.crossRegionEntries: '#/components/schemas/DefaultLimit'
+          atlas.project.security.networkAccess.entries: '#/components/schemas/DefaultLimit'
+        propertyName: name
+      properties:
+        currentUsage:
+          description: Amount that indicates the current usage of the limit.
+          format: int64
+          readOnly: true
+          type: integer
+        defaultLimit:
+          description: Default value of the limit.
+          format: int64
+          readOnly: true
+          type: integer
+        maximumLimit:
+          description: Maximum value of the limit.
+          format: int64
+          readOnly: true
+          type: integer
+        name:
+          description: Human-readable label that identifies the user-managed limit to modify.
+          readOnly: true
+          type: string
+        value:
+          description: Amount to set the limit to.
+          format: int64
+          type: integer
+      required:
+      - name
+      - value
+      title: Limits
       type: object
     GroupInvitationRequest:
       properties:
@@ -1575,44 +1645,6 @@ components:
         username:
           description: Email address of the MongoDB Cloud user invited to the specified project.
           format: email
-          type: string
-      type: object
-    GroupRole:
-      properties:
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project to which this role belongs.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        groupRole:
-          description: Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include project-level roles.
-          externalDocs:
-            description: MongoDB Cloud User Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/#project-roles
-          type: string
-      type: object
-    GroupMigrationRequest:
-      properties:
-        destinationOrgId:
-          description: Unique 24-hexadecimal digit string that identifies the organization to move the specified project to.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        destinationOrgPrivateApiKey:
-          description: Unique string that identifies the private part of the API Key used to verify access to the destination organization. This parameter is required only when you authenticate with Programmatic API Keys.
-          example: 55c3bbb6-b4bb-0be1-e66d20841f3e
-          externalDocs:
-            description: Grant Programmatic Access to Atlas
-            url: https://dochub.mongodb.org/core/atlas-create-prog-api-key
-          type: string
-        destinationOrgPublicApiKey:
-          description: Unique string that identifies the public part of the API Key used to verify access to the destination organization. This parameter is required only when you authenticate with Programmatic API Keys.
-          example: zmmrboas
-          externalDocs:
-            description: Grant Programmatic Access to Atlas
-            url: https://dochub.mongodb.org/core/atlas-create-prog-api-key
-          maxLength: 8
-          minLength: 8
           type: string
       type: object
     PaginatedAtlasGroupView:
@@ -1640,6 +1672,180 @@ components:
           type: integer
       required:
       - results
+      type: object
+    GroupUpdate:
+      description: Request view to update the group.
+      properties:
+        name:
+          description: Human-readable label that identifies the project included in the MongoDB Cloud organization.
+          type: string
+        tags:
+          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the project.
+          externalDocs:
+            description: Resource Tags
+            url: https://www.mongodb.com/docs/atlas/tags
+          items:
+            $ref: '#/components/schemas/ResourceTag'
+          type: array
+        withDefaultAlertsSettings:
+          description: Flag that indicates whether the project can automatically create default alerts.
+          type: boolean
+      type: object
+    GroupSettings:
+      description: Collection of settings that configures the project.
+      properties:
+        isClusterAiAssistantEnabled:
+          description: Flag that indicates whether the AI Cluster Assistant is enabled for the specified project.
+          type: boolean
+        isCollectDatabaseSpecificsStatisticsEnabled:
+          description: Flag that indicates whether to collect database-specific metrics for the specified project.
+          type: boolean
+        isDataExplorerEnabled:
+          description: Flag that indicates whether to enable the Data Explorer for the specified project.
+          type: boolean
+        isDataExplorerGenAIFeaturesEnabled:
+          description: Flag that indicates whether to enable the use of generative AI features which make requests to 3rd party services in Data Explorer for the specified project.
+          type: boolean
+        isDataExplorerGenAISampleDocumentPassingEnabled:
+          default: false
+          description: Flag that indicates whether to enable the passing of sample field values with the use of generative AI features in the Data Explorer for the specified project.
+          type: boolean
+        isExtendedStorageSizesEnabled:
+          description: Flag that indicates whether to enable extended storage sizes for the specified project.
+          type: boolean
+        isNativeRerankingEnabled:
+          description: Flag that indicates whether to enable Native Reranking with Voyage AI models in the Aggregation Pipeline for the specified project.
+          type: boolean
+        isPerformanceAdvisorEnabled:
+          description: Flag that indicates whether to enable the Performance Advisor and Profiler for the specified project.
+          type: boolean
+        isRealtimePerformancePanelEnabled:
+          description: Flag that indicates whether to enable the Real Time Performance Panel for the specified project.
+          type: boolean
+        isSchemaAdvisorEnabled:
+          description: Flag that indicates whether to enable the Schema Advisor for the specified project.
+          type: boolean
+      type: object
+    PaginatedAvailableVersionView:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/MdbAvailableVersion'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    GroupInvitationUpdateRequest:
+      properties:
+        roles:
+          description: One or more project-level roles to assign to the MongoDB Cloud user.
+          externalDocs:
+            description: MongoDB Cloud User Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      type: object
+    ClusterIPAddresses:
+      description: List of IP addresses in a cluster.
+      properties:
+        clusterName:
+          description: Human-readable label that identifies the cluster.
+          readOnly: true
+          type: string
+        futureInbound:
+          description: List of future inbound IP addresses associated with the cluster. If your network allows outbound HTTP requests only to specific IP addresses, you must allow access to the following IP addresses so that your application can connect to your Atlas cluster.
+          items:
+            type: string
+          readOnly: true
+          type: array
+        futureOutbound:
+          description: List of future outbound IP addresses associated with the cluster. If your network allows inbound HTTP requests only from specific IP addresses, you must allow access from the following IP addresses so that your Atlas cluster can communicate with your webhooks and KMS.
+          items:
+            type: string
+          readOnly: true
+          type: array
+        inbound:
+          description: List of inbound IP addresses associated with the cluster. If your network allows outbound HTTP requests only to specific IP addresses, you must allow access to the following IP addresses so that your application can connect to your Atlas cluster.
+          items:
+            type: string
+          readOnly: true
+          type: array
+        outbound:
+          description: List of outbound IP addresses associated with the cluster. If your network allows inbound HTTP requests only from specific IP addresses, you must allow access from the following IP addresses so that your Atlas cluster can communicate with your webhooks and KMS.
+          items:
+            type: string
+          readOnly: true
+          type: array
+      title: Cluster IP Addresses
+      type: object
+    ResourceTag:
+      description: 'Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.'
+      properties:
+        key:
+          description: 'Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.'
+          maxLength: 255
+          minLength: 1
+          type: string
+        value:
+          description: 'Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.'
+          maxLength: 255
+          minLength: 1
+          type: string
+      required:
+      - key
+      - value
+      title: Resource Tag
+      type: object
+    UpdateGroupRolesForUser:
+      properties:
+        groupRoles:
+          description: One or more project-level roles to assign to the MongoDB Cloud user.
+          externalDocs:
+            description: MongoDB Atlas User Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
       type: object
     ApiError:
       properties:
@@ -1672,6 +1878,19 @@ components:
       required:
       - error
       - errorCode
+      type: object
+    GroupIPAddresses:
+      description: List of IP addresses in a project.
+      properties:
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        services:
+          $ref: '#/components/schemas/GroupService'
+      title: Group IP Address
       type: object
     GroupInvitation:
       properties:
@@ -1731,211 +1950,6 @@ components:
           readOnly: true
           type: string
       type: object
-    GroupUpdate:
-      description: Request view to update the group.
-      properties:
-        name:
-          description: Human-readable label that identifies the project included in the MongoDB Cloud organization.
-          type: string
-        tags:
-          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the project.
-          externalDocs:
-            description: Resource Tags
-            url: https://www.mongodb.com/docs/atlas/tags
-          items:
-            $ref: '#/components/schemas/ResourceTag'
-          type: array
-        withDefaultAlertsSettings:
-          description: Flag that indicates whether the project can automatically create default alerts.
-          type: boolean
-      type: object
-    GroupIPAddresses:
-      description: List of IP addresses in a project.
-      properties:
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud project.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        services:
-          $ref: '#/components/schemas/GroupService'
-      title: Group IP Address
-      type: object
-    ClusterIPAddresses:
-      description: List of IP addresses in a cluster.
-      properties:
-        clusterName:
-          description: Human-readable label that identifies the cluster.
-          readOnly: true
-          type: string
-        futureInbound:
-          description: List of future inbound IP addresses associated with the cluster. If your network allows outbound HTTP requests only to specific IP addresses, you must allow access to the following IP addresses so that your application can connect to your Atlas cluster.
-          items:
-            type: string
-          readOnly: true
-          type: array
-        futureOutbound:
-          description: List of future outbound IP addresses associated with the cluster. If your network allows inbound HTTP requests only from specific IP addresses, you must allow access from the following IP addresses so that your Atlas cluster can communicate with your webhooks and KMS.
-          items:
-            type: string
-          readOnly: true
-          type: array
-        inbound:
-          description: List of inbound IP addresses associated with the cluster. If your network allows outbound HTTP requests only to specific IP addresses, you must allow access to the following IP addresses so that your application can connect to your Atlas cluster.
-          items:
-            type: string
-          readOnly: true
-          type: array
-        outbound:
-          description: List of outbound IP addresses associated with the cluster. If your network allows inbound HTTP requests only from specific IP addresses, you must allow access from the following IP addresses so that your Atlas cluster can communicate with your webhooks and KMS.
-          items:
-            type: string
-          readOnly: true
-          type: array
-      title: Cluster IP Addresses
-      type: object
-    ResourceTag:
-      description: 'Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.'
-      properties:
-        key:
-          description: 'Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.'
-          maxLength: 255
-          minLength: 1
-          type: string
-        value:
-          description: 'Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.'
-          maxLength: 255
-          minLength: 1
-          type: string
-      required:
-      - key
-      - value
-      title: Resource Tag
-      type: object
-    DataFederationLimit:
-      description: Details of user managed limits.
-      discriminator:
-        mapping:
-          atlas.project.deployment.clusters: '#/components/schemas/DefaultLimit'
-          atlas.project.deployment.nodesPerPrivateLinkRegion: '#/components/schemas/DefaultLimit'
-          atlas.project.deployment.serverlessMTMs: '#/components/schemas/DefaultLimit'
-          atlas.project.security.databaseAccess.customRoles: '#/components/schemas/DefaultLimit'
-          atlas.project.security.databaseAccess.users: '#/components/schemas/DefaultLimit'
-          atlas.project.security.networkAccess.crossRegionEntries: '#/components/schemas/DefaultLimit'
-          atlas.project.security.networkAccess.entries: '#/components/schemas/DefaultLimit'
-        propertyName: name
-      properties:
-        currentUsage:
-          description: Amount that indicates the current usage of the limit.
-          format: int64
-          readOnly: true
-          type: integer
-        defaultLimit:
-          description: Default value of the limit.
-          format: int64
-          readOnly: true
-          type: integer
-        maximumLimit:
-          description: Maximum value of the limit.
-          format: int64
-          readOnly: true
-          type: integer
-        name:
-          description: Human-readable label that identifies the user-managed limit to modify.
-          readOnly: true
-          type: string
-        value:
-          description: Amount to set the limit to.
-          format: int64
-          type: integer
-      required:
-      - name
-      - value
-      title: Limits
-      type: object
-    PaginatedAvailableVersionView:
-      properties:
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        results:
-          description: List of returned documents that MongoDB Cloud provides when completing this request.
-          items:
-            $ref: '#/components/schemas/MdbAvailableVersion'
-          readOnly: true
-          type: array
-        totalCount:
-          description: Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.
-          format: int32
-          minimum: 0
-          readOnly: true
-          type: integer
-      required:
-      - results
-      type: object
-    MdbAvailableVersion:
-      properties:
-        cloudProvider:
-          description: Cloud service provider on which MongoDB Cloud provisions the hosts. Set dedicated clusters to `AWS`, `GCP`, `AZURE` or `TENANT`.
-          enum:
-          - AWS
-          - AZURE
-          - GCP
-          - TENANT
-          type: string
-        defaultStatus:
-          description: Whether the version is the current default for the Instance Size and Cloud Provider.
-          enum:
-          - DEFAULT
-          - NOT_DEFAULT
-          type: string
-        instanceSize:
-          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        version:
-          description: The MongoDB Major Version in question.
-          externalDocs:
-            description: MongoDB Versioning
-            url: https://www.mongodb.com/docs/manual/reference/versioning/
-          type: string
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
-    FieldViolation:
-      properties:
-        description:
-          description: A description of why the request element is bad.
-          type: string
-        field:
-          description: A path that leads to a field in the request body.
-          type: string
-      required:
-      - description
-      - field
-      type: object
     GroupService:
       description: List of IP addresses in a project categorized by services.
       properties:
@@ -1947,27 +1961,6 @@ components:
           type: array
       readOnly: true
       title: Group Service IP Addresses
-      type: object
-    UpdateGroupRolesForUser:
-      properties:
-        groupRoles:
-          description: One or more project-level roles to assign to the MongoDB Cloud user.
-          externalDocs:
-            description: MongoDB Atlas User Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
-          items:
-            type: string
-          type: array
-          uniqueItems: true
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
       type: object
     BaseCloudProviderInstanceSize:
       description: Instance size boundary to which your cluster can automatically scale.
@@ -2050,128 +2043,6 @@ components:
         type: string
       readOnly: true
       type: object
-    GroupSettings:
-      description: Collection of settings that configures the project.
-      properties:
-        isClusterAiAssistantEnabled:
-          description: Flag that indicates whether the AI Cluster Assistant is enabled for the specified project.
-          type: boolean
-        isCollectDatabaseSpecificsStatisticsEnabled:
-          description: Flag that indicates whether to collect database-specific metrics for the specified project.
-          type: boolean
-        isDataExplorerEnabled:
-          description: Flag that indicates whether to enable the Data Explorer for the specified project.
-          type: boolean
-        isDataExplorerGenAIFeaturesEnabled:
-          description: Flag that indicates whether to enable the use of generative AI features which make requests to 3rd party services in Data Explorer for the specified project.
-          type: boolean
-        isDataExplorerGenAISampleDocumentPassingEnabled:
-          default: false
-          description: Flag that indicates whether to enable the passing of sample field values with the use of generative AI features in the Data Explorer for the specified project.
-          type: boolean
-        isExtendedStorageSizesEnabled:
-          description: Flag that indicates whether to enable extended storage sizes for the specified project.
-          type: boolean
-        isNativeRerankingEnabled:
-          description: Flag that indicates whether to enable Native Reranking with Voyage AI models in the Aggregation Pipeline for the specified project.
-          type: boolean
-        isPerformanceAdvisorEnabled:
-          description: Flag that indicates whether to enable the Performance Advisor and Profiler for the specified project.
-          type: boolean
-        isRealtimePerformancePanelEnabled:
-          description: Flag that indicates whether to enable the Real Time Performance Panel for the specified project.
-          type: boolean
-        isSchemaAdvisorEnabled:
-          description: Flag that indicates whether to enable the Schema Advisor for the specified project.
-          type: boolean
-      type: object
-    Group:
-      properties:
-        clusterCount:
-          description: Quantity of MongoDB Cloud clusters deployed in this project.
-          format: int64
-          readOnly: true
-          type: integer
-        created:
-          description: Date and time when MongoDB Cloud created this project. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
-          format: date-time
-          readOnly: true
-          type: string
-        id:
-          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud project.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        name:
-          description: Human-readable label that identifies the project included in the MongoDB Cloud organization.
-          pattern: ^[\p{L}\p{N}\-_.(),:&@+']{1,64}$
-          type: string
-        orgId:
-          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud organization to which the project belongs.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        regionUsageRestrictions:
-          default: COMMERCIAL_FEDRAMP_REGIONS_ONLY
-          description: 'Applies to Atlas for Government only.
-
-
-            In Commercial Atlas, this field will be rejected in requests and missing in responses.
-
-
-            This field sets restrictions on available regions in the project.
-
-
-            `COMMERCIAL_FEDRAMP_REGIONS_ONLY`: Only allows deployments in FedRAMP Moderate regions.
-
-
-            `GOV_REGIONS_ONLY`: Only allows deployments in GovCloud regions.'
-          enum:
-          - COMMERCIAL_FEDRAMP_REGIONS_ONLY
-          - GOV_REGIONS_ONLY
-          externalDocs:
-            url: https://www.mongodb.com/docs/atlas/government/overview/supported-regions/#supported-cloud-providers-and-regions
-          type: string
-        tags:
-          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the project.
-          externalDocs:
-            description: Resource Tags
-            url: https://www.mongodb.com/docs/atlas/tags
-          items:
-            $ref: '#/components/schemas/ResourceTag'
-          type: array
-        withDefaultAlertsSettings:
-          default: true
-          description: Flag that indicates whether to create the project with default alert settings.
-          type: boolean
-      required:
-      - clusterCount
-      - created
-      - name
-      - orgId
-      type: object
-    GroupInvitationUpdateRequest:
-      properties:
-        roles:
-          description: One or more project-level roles to assign to the MongoDB Cloud user.
-          externalDocs:
-            description: MongoDB Cloud User Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
-          items:
-            type: string
-          type: array
-          uniqueItems: true
-      type: object
     OrganizationInvitation:
       properties:
         createdAt:
@@ -2249,18 +2120,484 @@ components:
       required:
       - orgName
       type: object
+    MdbAvailableVersion:
+      properties:
+        cloudProvider:
+          description: Cloud service provider on which MongoDB Cloud provisions the hosts. Set dedicated clusters to `AWS`, `GCP`, `AZURE` or `TENANT`.
+          enum:
+          - AWS
+          - AZURE
+          - GCP
+          - TENANT
+          type: string
+        defaultStatus:
+          description: Whether the version is the current default for the Instance Size and Cloud Provider.
+          enum:
+          - DEFAULT
+          - NOT_DEFAULT
+          type: string
+        instanceSize:
+          $ref: '#/components/schemas/BaseCloudProviderInstanceSize'
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        version:
+          description: The MongoDB Major Version in question.
+          externalDocs:
+            description: MongoDB Versioning
+            url: https://www.mongodb.com/docs/manual/reference/versioning/
+          type: string
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    GroupMigrationRequest:
+      properties:
+        destinationOrgId:
+          description: Unique 24-hexadecimal digit string that identifies the organization to move the specified project to.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        destinationOrgPrivateApiKey:
+          description: Unique string that identifies the private part of the API Key used to verify access to the destination organization. This parameter is required only when you authenticate with Programmatic API Keys.
+          example: 55c3bbb6-b4bb-0be1-e66d20841f3e
+          externalDocs:
+            description: Grant Programmatic Access to Atlas
+            url: https://dochub.mongodb.org/core/atlas-create-prog-api-key
+          type: string
+        destinationOrgPublicApiKey:
+          description: Unique string that identifies the public part of the API Key used to verify access to the destination organization. This parameter is required only when you authenticate with Programmatic API Keys.
+          example: zmmrboas
+          externalDocs:
+            description: Grant Programmatic Access to Atlas
+            url: https://dochub.mongodb.org/core/atlas-create-prog-api-key
+          maxLength: 8
+          minLength: 8
+          type: string
+      type: object
+    Group:
+      properties:
+        clusterCount:
+          description: Quantity of MongoDB Cloud clusters deployed in this project.
+          format: int64
+          readOnly: true
+          type: integer
+        created:
+          description: Date and time when MongoDB Cloud created this project. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        id:
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud project.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        name:
+          description: Human-readable label that identifies the project included in the MongoDB Cloud organization.
+          pattern: ^[\p{L}\p{N}\-_.(),:&@+']{1,64}$
+          type: string
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the MongoDB Cloud organization to which the project belongs.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        regionUsageRestrictions:
+          default: COMMERCIAL_FEDRAMP_REGIONS_ONLY
+          description: 'Applies to Atlas for Government only.
+
+
+            In Commercial Atlas, this field will be rejected in requests and missing in responses.
+
+
+            This field sets restrictions on available regions in the project.
+
+
+            `COMMERCIAL_FEDRAMP_REGIONS_ONLY`: Only allows deployments in FedRAMP Moderate regions.
+
+
+            `GOV_REGIONS_ONLY`: Only allows deployments in GovCloud regions.'
+          enum:
+          - COMMERCIAL_FEDRAMP_REGIONS_ONLY
+          - GOV_REGIONS_ONLY
+          externalDocs:
+            url: https://www.mongodb.com/docs/atlas/government/overview/supported-regions/#supported-cloud-providers-and-regions
+          type: string
+        tags:
+          description: List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the project.
+          externalDocs:
+            description: Resource Tags
+            url: https://www.mongodb.com/docs/atlas/tags
+          items:
+            $ref: '#/components/schemas/ResourceTag'
+          type: array
+        withDefaultAlertsSettings:
+          default: true
+          description: Flag that indicates whether to create the project with default alert settings.
+          type: boolean
+      required:
+      - clusterCount
+      - created
+      - name
+      - orgId
+      type: object
+    PaginatedAtlasGroupView_2:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/Group'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. When `includeCount` is set to `false`, MongoDB Cloud may omit this value or return it when the count is available without additional calculation. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    GroupSettings_2:
+      description: Collection of settings that configures the project.
+      properties:
+        isAtlasHomePageAiAssistantEnabled:
+          description: Flag that indicates whether the MongoDB Assistant on the Atlas Home Page is enabled for the specified project.
+          type: boolean
+        isClusterAiAssistantEnabled:
+          description: Flag that indicates whether the AI Cluster Assistant is enabled for the specified project.
+          type: boolean
+        isCollectDatabaseSpecificsStatisticsEnabled:
+          description: Flag that indicates whether to collect database-specific metrics for the specified project.
+          type: boolean
+        isDataExplorerEnabled:
+          description: Flag that indicates whether to enable the Data Explorer for the specified project.
+          type: boolean
+        isDataExplorerGenAIFeaturesEnabled:
+          description: Flag that indicates whether to enable the use of generative AI features which make requests to 3rd party services in Data Explorer for the specified project.
+          type: boolean
+        isDataExplorerGenAISampleDocumentPassingEnabled:
+          default: false
+          description: Flag that indicates whether to enable the passing of sample field values with the use of generative AI features in the Data Explorer for the specified project.
+          type: boolean
+        isDataValidationEnabled:
+          description: Flag that indicates whether data validation is enabled for all clusters in the specified project.
+          type: boolean
+        isExtendedStorageSizesEnabled:
+          description: Flag that indicates whether to enable extended storage sizes for the specified project.
+          type: boolean
+        isNativeRerankingEnabled:
+          description: Flag that indicates whether to enable Native Reranking with Voyage AI models in the Aggregation Pipeline for the specified project.
+          type: boolean
+        isPerformanceAdvisorEnabled:
+          description: Flag that indicates whether to enable the Performance Advisor and Profiler for the specified project.
+          type: boolean
+        isRealtimePerformancePanelEnabled:
+          description: Flag that indicates whether to enable the Real Time Performance Panel for the specified project.
+          type: boolean
+        isSchemaAdvisorEnabled:
+          description: Flag that indicates whether to enable the Schema Advisor for the specified project.
+          type: boolean
+      type: object
+    PaginatedAvailableVersionView_2:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/MdbAvailableVersion'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. When `includeCount` is set to `false`, MongoDB Cloud may omit this value or return it when the count is available without additional calculation. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    ApiError_2:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type:
+          - string
+          - 'null'
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - error
+      - errorCode
+      type: object
+    BaseCloudProviderInstanceSize_2:
+      description: Instance size boundary to which your cluster can automatically scale.
+      oneOf:
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M100
+        - M140
+        - M200
+        - M300
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - R700
+        - M40_NVME
+        - M50_NVME
+        - M60_NVME
+        - M80_NVME
+        - M200_NVME
+        - M400_NVME
+        - M30_GEN_2
+        - M40_GEN_2
+        - M50_GEN_2
+        - M60_GEN_2
+        - M80_GEN_2
+        - M140_GEN_2
+        - M200_GEN_2
+        - M300_GEN_2
+        - M700_GEN_2
+        - R40_GEN_2
+        - R50_GEN_2
+        - R60_GEN_2
+        - R80_GEN_2
+        - R200_GEN_2
+        - R300_GEN_2
+        - R400_GEN_2
+        - R700_GEN_2
+        - M40_NVME_GEN_2
+        - M50_NVME_GEN_2
+        - M60_NVME_GEN_2
+        - M80_NVME_GEN_2
+        - M200_NVME_GEN_2
+        - M400_NVME_GEN_2
+        title: AWS Instance Sizes
+        type: string
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M90
+        - M200
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - M60_NVME
+        - M80_NVME
+        - M200_NVME
+        - M300_NVME
+        - M400_NVME
+        - M600_NVME
+        title: Azure Instance Sizes
+        type: string
+      - enum:
+        - M10
+        - M20
+        - M30
+        - M40
+        - M50
+        - M60
+        - M80
+        - M140
+        - M200
+        - M250
+        - M300
+        - M400
+        - R40
+        - R50
+        - R60
+        - R80
+        - R200
+        - R300
+        - R400
+        - R600
+        - M30_GEN_2
+        - M40_GEN_2
+        - M50_GEN_2
+        - M60_GEN_2
+        - M80_GEN_2
+        - M140_GEN_2
+        - M200_GEN_2
+        - M300_GEN_2
+        - M700_GEN_2
+        - R40_GEN_2
+        - R50_GEN_2
+        - R60_GEN_2
+        - R80_GEN_2
+        - R200_GEN_2
+        - R300_GEN_2
+        - R400_GEN_2
+        title: GCP Instance Sizes
+        type: string
+      readOnly: true
+      type: object
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+    includeCount_2:
+      description: Flag that indicates whether MongoDB Cloud calculates the total number of items for the response. When set to `false`, MongoDB Cloud may skip an additional count operation. The response may still include `totalCount` when the count is available without additional calculation.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
   responses:
-    conflict:
+    unauthorized:
       content:
         application/json:
           example:
-            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
-            error: 409
-            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
-            reason: Conflict
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Conflict.
+      description: Unauthorized.
     forbidden:
       content:
         application/json:
@@ -2272,6 +2609,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Forbidden.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
     tooManyRequests:
       content:
         application/json:
@@ -2290,28 +2638,6 @@ components:
           $ref: '#/components/headers/HeaderRateLimitRemaining'
         Retry-After:
           $ref: '#/components/headers/HeaderRetryAfter'
-    badRequest:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
-            error: 400
-            errorCode: VALIDATION_ERROR
-            reason: Bad Request
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Bad Request.
-    unauthorized:
-      content:
-        application/json:
-          example:
-            detail: (This is just an example, the exception may not be related to this endpoint)
-            error: 401
-            errorCode: NOT_ORG_GROUP_CREATOR
-            reason: Unauthorized
-          schema:
-            $ref: '#/components/schemas/ApiError'
-      description: Unauthorized.
     paymentRequired:
       content:
         application/json:
@@ -2334,71 +2660,28 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
-    notFound:
+    conflict:
       content:
         application/json:
           example:
-            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
-            error: 404
-            errorCode: RESOURCE_NOT_FOUND
-            reason: Not Found
+            detail: '(This is just an example, the exception may not be related to this endpoint) Cannot delete organization link while there is active migration in following project ids: 60c4fd418ebe251047c50554'
+            error: 409
+            errorCode: CANNOT_DELETE_ORG_ACTIVE_LIVE_MIGRATION_ATLAS_ORG_LINK
+            reason: Conflict
           schema:
             $ref: '#/components/schemas/ApiError'
-      description: Not Found.
-  parameters:
-    pageNum:
-      description: Number of the page that displays the current set of the total objects that the response returns.
-      in: query
-      name: pageNum
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    itemsPerPage:
-      description: Number of items that the response returns per page.
-      in: query
-      name: itemsPerPage
-      schema:
-        default: 100
-        maximum: 500
-        minimum: 1
-        type: integer
-    groupId:
-      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
-
-
-        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
-      in: path
-      name: groupId
-      required: true
-      schema:
-        example: 32b6e34b3d91647abb20e7b8
-        pattern: ^([a-f0-9]{24})$
-        type: string
-    includeCount:
-      description: Flag that indicates whether the response returns the total number of items (`totalCount`) in the response.
-      in: query
-      name: includeCount
-      schema:
-        default: true
-        type: boolean
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
+      description: Conflict.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
   securitySchemes:
     DigestAuth:
       scheme: digest
@@ -2410,6 +2693,9 @@ components:
           scopes: {}
           tokenUrl: https://cloud.mongodb.com/api/oauth/token
       type: oauth2
+x-refined-from:
+- mongodb-atlas-openapi.yaml
+- mongodb-openapi.yaml
 x-externalLinks:
 - label: Back to Atlas Docs
   url: https://www.mongodb.com/docs/atlas/

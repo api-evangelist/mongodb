@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-private-network-endpoint-id-entry-schema.json",
+  "title": "PrivateNetworkEndpointIdEntry",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-data-federation-api-openapi.yml#/components/schemas/PrivateNetworkEndpointIdEntry",
+  "properties": {
+    "azureLinkId": {
+      "description": "Link ID that identifies the Azure private endpoint connection.",
+      "type": "string"
+    },
+    "comment": {
+      "description": "Human-readable string to associate with this private endpoint.",
+      "type": "string"
+    },
+    "customerEndpointDNSName": {
+      "description": "Human-readable label to identify customer's VPC endpoint DNS name. If defined, you must also specify a value for `region`.",
+      "type": "string"
+    },
+    "customerEndpointIPAddress": {
+      "description": "IP address used to connect to the Azure private endpoint.",
+      "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+      "type": "string"
+    },
+    "endpointId": {
+      "description": "Unique 22-character alphanumeric string that identifies the private endpoint.",
+      "pattern": "^vpce-[0-9a-f]{17}$",
+      "type": "string"
+    },
+    "errorMessage": {
+      "description": "Error message describing a failure approving the private endpoint request.",
+      "type": "string"
+    },
+    "provider": {
+      "default": "AWS",
+      "description": "Human-readable label that identifies the cloud service provider. Atlas Data Lake supports Amazon Web Services only.",
+      "enum": [
+        "AWS"
+      ],
+      "type": "string"
+    },
+    "region": {
+      "description": "Human-readable label to identify the region of customer's VPC endpoint. If defined, you must also specify a value for `customerEndpointDNSName`.",
+      "type": "string"
+    },
+    "status": {
+      "description": "Status of the private endpoint connection request.",
+      "enum": [
+        "PENDING",
+        "OK",
+        "FAILED",
+        "DELETING"
+      ],
+      "type": "string"
+    },
+    "type": {
+      "default": "DATA_LAKE",
+      "description": "Human-readable label that identifies the resource type associated with this private endpoint.",
+      "enum": [
+        "DATA_LAKE"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "endpointId"
+  ],
+  "type": "object"
+}

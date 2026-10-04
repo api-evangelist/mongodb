@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-flex-cluster-description-create20241113-schema.json",
+  "title": "Flex Cluster Description Create",
+  "description": "Settings that you can specify when you create a flex cluster.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-flex-clusters-api-openapi.yml#/components/schemas/FlexClusterDescriptionCreate20241113",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "name": {
+      "description": "Human-readable label that identifies the instance.",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+      "type": "string",
+      "writeOnly": true
+    },
+    "providerSettings": {
+      "$ref": "#/$defs/FlexProviderSettingsCreate20241113"
+    },
+    "tags": {
+      "description": "List that contains key-value pairs between 1 to 255 characters in length for tagging and categorizing the instance.",
+      "items": {
+        "$ref": "#/$defs/ResourceTag"
+      },
+      "type": "array"
+    },
+    "terminationProtectionEnabled": {
+      "default": false,
+      "description": "Flag that indicates whether termination protection is enabled on the cluster. If set to `true`, MongoDB Cloud won't delete the cluster. If set to `false`, MongoDB Cloud will delete the cluster.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "name",
+    "providerSettings"
+  ],
+  "type": "object",
+  "$defs": {
+    "FlexProviderSettingsCreate20241113": {
+      "description": "Group of cloud provider settings that configure the provisioned MongoDB flex cluster.",
+      "properties": {
+        "backingProviderName": {
+          "description": "Cloud service provider on which MongoDB Cloud provisioned the flex cluster.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string",
+          "writeOnly": true
+        },
+        "diskSizeGB": {
+          "description": "Storage capacity available to the flex cluster expressed in gigabytes.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "providerName": {
+          "default": "FLEX",
+          "description": "Human-readable label that identifies the provider type.",
+          "enum": [
+            "FLEX"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "regionName": {
+          "description": "Human-readable label that identifies the geographic location of your MongoDB flex cluster. The region you choose can affect network latency for clients accessing your databases. For a complete list of region names, see [AWS](https://docs.atlas.mongodb.com/reference/amazon-aws/#std-label-amazon-aws), [GCP](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).",
+          "type": "string",
+          "writeOnly": true
+        }
+      },
+      "required": [
+        "backingProviderName",
+        "regionName"
+      ],
+      "title": "Cloud Service Provider Settings for a Flex Cluster",
+      "type": "object",
+      "writeOnly": true
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ResourceTag": {
+      "description": "Key-value pair that tags and categorizes a MongoDB Cloud organization, project, or cluster. For example, `environment : production`.",
+      "properties": {
+        "key": {
+          "description": "Constant that defines the set of the tag. For example, `environment` in the `environment : production` tag.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Variable that belongs to the set of the tag. For example, `production` in the `environment : production` tag.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "Resource Tag",
+      "type": "object"
+    }
+  }
+}

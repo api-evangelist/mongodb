@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-cloud-provider-access-role-schema.json",
+  "title": "CloudProviderAccessRole",
+  "description": "Cloud provider access role.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-cloud-provider-access-api-openapi.yml#/components/schemas/CloudProviderAccessRole",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/CloudProviderAccessAWSIAMRole"
+    },
+    {
+      "$ref": "#/$defs/CloudProviderAccessAzureServicePrincipal"
+    },
+    {
+      "$ref": "#/$defs/CloudProviderAccessGCPServiceAccount"
+    }
+  ],
+  "properties": {
+    "providerName": {
+      "description": "Human-readable label that identifies the cloud provider of the role.",
+      "enum": [
+        "AWS",
+        "AZURE",
+        "GCP"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "providerName"
+  ],
+  "type": "object",
+  "$defs": {
+    "CloudProviderAccessAWSIAMRole": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CloudProviderAccessRole"
+        },
+        {
+          "properties": {
+            "atlasAWSAccountArn": {
+              "description": "Amazon Resource Name that identifies the Amazon Web Services (AWS) user account that MongoDB Cloud uses when it assumes the Identity and Access Management (IAM) role.",
+              "maxLength": 2048,
+              "minLength": 20,
+              "readOnly": true,
+              "type": "string"
+            },
+            "atlasAssumedRoleExternalId": {
+              "description": "Unique external ID that MongoDB Cloud uses when it assumes the IAM role in your Amazon Web Services (AWS) account.",
+              "format": "uuid",
+              "readOnly": true,
+              "type": "string"
+            },
+            "authorizedDate": {
+              "description": "Date and time when someone authorized this role for the specified cloud service provider. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+              "format": "date-time",
+              "readOnly": true,
+              "type": "string"
+            },
+            "createdDate": {
+              "description": "Date and time when someone created this role for the specified cloud service provider. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+              "format": "date-time",
+              "readOnly": true,
+              "type": "string"
+            },
+            "featureUsages": {
+              "description": "List that contains application features associated with this Amazon Web Services (AWS) Identity and Access Management (IAM) role.",
+              "items": {
+                "$ref": "#/$defs/CloudProviderAccessFeatureUsage"
+              },
+              "readOnly": true,
+              "type": "array"
+            },
+            "iamAssumedRoleArn": {
+              "description": "Amazon Resource Name (ARN) that identifies the Amazon Web Services (AWS) Identity and Access Management (IAM) role that MongoDB Cloud assumes when it accesses resources in your AWS account.",
+              "maxLength": 2048,
+              "minLength": 20,
+              "type": "string"
+            },
+            "roleId": {
+              "description": "Unique 24-hexadecimal digit string that identifies the role.",
+              "pattern": "^([a-f0-9]{24})$",
+              "readOnly": true,
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Details that describe the features linked to the Amazon Web Services (AWS) Identity and Access Management (IAM) role.",
+      "required": [
+        "providerName"
+      ],
+      "type": "object"
+    },
+    "CloudProviderAccessAzureServicePrincipal": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CloudProviderAccessRole"
+        },
+        {
+          "properties": {
+            "_id": {
+              "description": "Unique 24-hexadecimal digit string that identifies the role.",
+              "pattern": "^([a-f0-9]{24})$",
+              "readOnly": true,
+              "type": "string"
+            },
+            "atlasAzureAppId": {
+              "description": "Azure Active Directory Application ID of Atlas. This field is optional and will be derived from the Azure subscription if not provided.",
+              "format": "uuid",
+              "type": "string"
+            },
+            "createdDate": {
+              "description": "Date and time when this Azure Service Principal was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+              "format": "date-time",
+              "readOnly": true,
+              "type": "string"
+            },
+            "featureUsages": {
+              "description": "List that contains application features associated with this Azure Service Principal.",
+              "items": {
+                "$ref": "#/$defs/CloudProviderAccessFeatureUsage"
+              },
+              "readOnly": true,
+              "type": "array"
+            },
+            "lastUpdatedDate": {
+              "description": "Date and time when this Azure Service Principal was last updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+              "format": "date-time",
+              "readOnly": true,
+              "type": "string"
+            },
+            "servicePrincipalId": {
+              "description": "UUID string that identifies the Azure Service Principal.",
+              "format": "uuid",
+              "type": "string"
+            },
+            "tenantId": {
+              "description": "UUID String that identifies the Azure Active Directory Tenant ID.",
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Details that describe the features linked to the Azure Service Principal.",
+      "required": [
+        "providerName"
+      ],
+      "type": "object"
+    },
+    "CloudProviderAccessFeatureUsage": {
+      "description": "MongoDB Cloud features associated with this Amazon Web Services (AWS) Identity and Access Management (IAM) role.",
+      "properties": {
+        "featureType": {
+          "description": "Human-readable label that describes one MongoDB Cloud feature linked to this Amazon Web Services (AWS) Identity and Access Management (IAM) role.",
+          "enum": [
+            "ATLAS_DATA_LAKE",
+            "ENCRYPTION_AT_REST",
+            "EXPORT_SNAPSHOT",
+            "PUSH_BASED_LOG_EXPORT",
+            "ATLAS_LOG_INTEGRATION"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CloudProviderAccessGCPServiceAccount": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CloudProviderAccessRole"
+        },
+        {
+          "properties": {
+            "createdDate": {
+              "description": "Date and time when this Google Service Account was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+              "format": "date-time",
+              "readOnly": true,
+              "type": "string"
+            },
+            "featureUsages": {
+              "description": "List that contains application features associated with this Google Service Account.",
+              "items": {
+                "$ref": "#/$defs/CloudProviderAccessFeatureUsage"
+              },
+              "readOnly": true,
+              "type": "array"
+            },
+            "gcpServiceAccountForAtlas": {
+              "description": "Email address for the Google Service Account created by Atlas.",
+              "pattern": "^mongodb-atlas-[0-9a-z]{16}@p-[0-9a-z]{24}.iam.gserviceaccount.com$",
+              "type": "string"
+            },
+            "roleId": {
+              "description": "Unique 24-hexadecimal digit string that identifies the role.",
+              "pattern": "^([a-f0-9]{24})$",
+              "readOnly": true,
+              "type": "string"
+            },
+            "status": {
+              "description": "Provision status of the service account.",
+              "enum": [
+                "IN_PROGRESS",
+                "COMPLETE",
+                "FAILED",
+                "NOT_INITIATED"
+              ],
+              "readOnly": true,
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Details that describe the features linked to the GCP Service Account.",
+      "required": [
+        "providerName"
+      ],
+      "type": "object"
+    },
+    "CloudProviderAccessRole": {
+      "description": "Cloud provider access role.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CloudProviderAccessAWSIAMRole"
+        },
+        {
+          "$ref": "#/$defs/CloudProviderAccessAzureServicePrincipal"
+        },
+        {
+          "$ref": "#/$defs/CloudProviderAccessGCPServiceAccount"
+        }
+      ],
+      "properties": {
+        "providerName": {
+          "description": "Human-readable label that identifies the cloud provider of the role.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "providerName"
+      ],
+      "type": "object"
+    }
+  }
+}

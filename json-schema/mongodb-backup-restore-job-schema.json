@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-backup-restore-job-schema.json",
+  "title": "BackupRestoreJob",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-legacy-backup-api-openapi.yml#/components/schemas/BackupRestoreJob",
+  "properties": {
+    "batchId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the batch to which this restore job belongs. This parameter exists only for a sharded cluster restore.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "checkpointId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the sharded cluster checkpoint. The checkpoint represents the point in time back to which you want to restore you data. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`. Use this parameter with sharded clusters only.\n\n- If you set `checkpointId`, you can't set `oplogInc`, `oplogTs`, `snapshotId`, or `pointInTimeUTCMillis`.\n- If you provide this parameter, this endpoint restores all data up to this checkpoint to the database you specify in the `delivery` object.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string",
+      "writeOnly": true
+    },
+    "clusterId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the cluster with the snapshot you want to return. This parameter returns for restore clusters.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "clusterName": {
+      "description": "Human-readable label that identifies the cluster containing the snapshots you want to retrieve.",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "created": {
+      "description": "Date and time when someone requested this restore job. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "delivery": {
+      "$ref": "#/$defs/BackupRestoreJobDelivery"
+    },
+    "deploymentJobId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the an imported deployment job. This parameter exists when restoring from an imported snapshot/cluster shot.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "encryptionEnabled": {
+      "description": "Flag that indicates whether someone encrypted the data in the restored snapshot.",
+      "readOnly": true,
+      "type": "boolean"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project that owns the snapshots.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "hashes": {
+      "description": "List that contains documents mapping each restore file to a hashed checksum. This parameter applies after you download the corresponding `delivery.url`. If `\"methodName\" : \"HTTP\"`, this list contains one object that represents the hash of the `.tar.gz` file.",
+      "items": {
+        "$ref": "#/$defs/RestoreJobFileHash"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the restore job.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "masterKeyUUID": {
+      "description": "Universally Unique Identifier (UUID) that identifies the Key Management Interoperability (KMIP) master key used to encrypt the snapshot data. This parameter applies only when `\"encryptionEnabled\" : \"true\"`.",
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    },
+    "oplogInc": {
+      "description": "Thirty-two-bit incrementing ordinal that represents operations within a given second. When paired with `oplogTs`, this represents the point in time to which MongoDB Cloud restores your data. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.\n\n- If you set `oplogInc`, you must set `oplogTs`, and can't set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.\n- If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.",
+      "format": "int32",
+      "minimum": 1,
+      "type": "integer",
+      "writeOnly": true
+    },
+    "oplogTs": {
+      "description": "Date and time from which you want to restore this snapshot. This parameter expresses its value in ISO 8601 format in UTC. This represents the first part of an Oplog timestamp. When paired with `oplogInc`, they represent the last database operation to which you want to restore your data. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`. Run a query against `local.oplog.rs` on your replica set to find the desired timestamp.\n\n- If you set `oplogTs`, you must set `oplogInc`, and you can't set `checkpointId`, `snapshotId`, or `pointInTimeUTCMillis`.\n- If you provide this parameter, this endpoint restores all data up to and including this Oplog timestamp to the database you specified in the `delivery` object.",
+      "pattern": "^(?:[1-9]\\\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\\\\d|2[0-3]):[0-5]\\\\d:[0-5]\\\\d(?:\\\\.\\\\d{1,9})?(?:Z|[+-][01]\\\\d:[0-5]\\\\d)$",
+      "type": "string",
+      "writeOnly": true
+    },
+    "pointInTimeUTCMillis": {
+      "description": "Timestamp from which you want to restore this snapshot. This parameter expresses its value in the number of milliseconds elapsed since the UNIX epoch. This timestamp must fall within the last 24 hours of the current time. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.\n\n- If you provide this parameter, this endpoint restores all data up to this point in time to the database you specified in the `delivery` object.\n- If you set `pointInTimeUTCMillis`, you can't set `oplogInc`, `oplogTs`, `snapshotId`, or `checkpointId`.",
+      "format": "int64",
+      "minimum": 1199145600000,
+      "type": "integer",
+      "writeOnly": true
+    },
+    "snapshotId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the snapshot to restore. If you set `snapshotId`, you can't set `oplogInc`, `oplogTs`, `pointInTimeUTCMillis`, or `checkpointId`.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "statusName": {
+      "description": "Human-readable label that identifies the status of the downloadable file at the time of the request.",
+      "enum": [
+        "IN_PROGRESS",
+        "BROKEN",
+        "KILLED",
+        "FINISHED"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "timestamp": {
+      "$ref": "#/$defs/ApiBSONTimestampView"
+    }
+  },
+  "required": [
+    "delivery"
+  ],
+  "type": "object",
+  "$defs": {
+    "ApiBSONTimestampView": {
+      "description": "BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.",
+      "properties": {
+        "date": {
+          "description": "Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "increment": {
+          "description": "Order of the database operation that the oplog recorded at specific date and time.",
+          "format": "int32",
+          "minimum": 1199145600,
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "readOnly": true,
+      "title": "BSON Timestamp",
+      "type": "object"
+    },
+    "BackupRestoreJobDelivery": {
+      "description": "Method and details that indicate how to deliver the restored snapshot data.",
+      "properties": {
+        "authHeader": {
+          "description": "Header name to use when downloading the restore, used with `\"delivery.methodName\" : \"HTTP\"`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "authValue": {
+          "description": "Header value to use when downloading the restore, used with `\"delivery.methodName\" : \"HTTP\"`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "expirationHours": {
+          "description": "Number of hours after the restore job completes that indicates when the Uniform Resource Locator (URL) for the snapshot download file expires. The resource returns this parameter when `\"delivery.methodName\" : \"HTTP\"`.",
+          "format": "int32",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "expires": {
+          "description": "Date and time when the Uniform Resource Locator (URL) for the snapshot download file expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter when `\"delivery.methodName\" : \"HTTP\"`.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "maxDownloads": {
+          "description": "Positive integer that indicates how many times you can use the Uniform Resource Locator (URL) for the snapshot download file. The resource returns this parameter when `\"delivery.methodName\" : \"HTTP\"`.",
+          "format": "int32",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "methodName": {
+          "description": "Human-readable label that identifies the means for delivering the data. If you set `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`, you must also set: `delivery.targetGroupId` and `delivery.targetClusterName` or `delivery.targetClusterId`. The response returns `\"delivery.methodName\" : \"HTTP\"` as an automated restore uses HyperText Transport Protocol (HTTP) to deliver the restore job to the target host.",
+          "enum": [
+            "CLIENT_PIT_HTTP",
+            "QUERY",
+            "AUTOMATED_RESTORE",
+            "HTTP",
+            "THIRD_PARTY_COPY",
+            "CLIENT_PIT_SCP",
+            "SCP"
+          ],
+          "type": "string"
+        },
+        "statusName": {
+          "description": "State of the downloadable snapshot file when MongoDB Cloud received this request.",
+          "enum": [
+            "NOT_STARTED",
+            "IN_PROGRESS",
+            "READY",
+            "FAILED",
+            "INTERRUPTED",
+            "EXPIRED",
+            "MAX_DOWNLOADS_EXCEEDED",
+            "PENDING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "targetClusterId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the target cluster. Use the `clusterId` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints. This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.\n\n If the target cluster doesn't have backup enabled, two resources return parameters with empty values:\n\n- **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements\n- **Get a Snapshot** endpoint doesn't return a `clusterId` parameter.\n\nTo return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "targetClusterName": {
+          "description": "Human-readable label that identifies the target cluster. Use the `clusterName` returned in the response body of the **Get All Snapshots** and **Get a Snapshot** endpoints.  This parameter applies when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.\n\nIf the target cluster doesn't have backup enabled, two resources return parameters with empty values:\n\n- **Get All Snapshots** endpoint returns an empty results array without `clusterId` elements\n- **Get a Snapshot** endpoint doesn't return a `clusterId` parameter.\n\nTo return a response with the `clusterId` parameter, either use the `delivery.targetClusterName` parameter or enable backup on the target cluster.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "type": "string"
+        },
+        "targetGroupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project that contains the destination cluster for the restore job. The resource returns this parameter when `\"delivery.methodName\" : \"AUTOMATED_RESTORE\"`.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "url": {
+          "deprecated": true,
+          "description": "Uniform Resource Locator (URL) from which you can download the restored snapshot data. URL includes the verification key. The resource returns this parameter when `\"delivery.methodName\" : \"HTTP\"`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "urlV2": {
+          "description": "Uniform Resource Locator (URL) from which you can download the restored snapshot data. This should be preferred over `url`. The verification key must be sent as an HTTP header. The resource returns this parameter when `\"delivery.methodName\" : \"HTTP\"`.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "methodName"
+      ],
+      "title": "Restore Snapshot Delivery Metadata",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "RestoreJobFileHash": {
+      "description": "Key and value pair that map one restore file to one hashed checksum. This parameter applies after you download the corresponding `delivery.url`.",
+      "properties": {
+        "fileName": {
+          "description": "Human-readable label that identifies the hashed file.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "hash": {
+          "description": "Hashed checksum that maps to the restore file.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "typeName": {
+          "description": "Human-readable label that identifies the hashing algorithm used to compute the hash value.",
+          "enum": [
+            "SHA1"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-cloud-database-user-schema.json",
+  "title": "CloudDatabaseUser",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-database-users-api-openapi.yml#/components/schemas/CloudDatabaseUser",
+  "properties": {
+    "awsIAMType": {
+      "default": "NONE",
+      "description": "Human-readable label that indicates whether the new database user authenticates with the Amazon Web Services (AWS) Identity and Access Management (IAM) credentials associated with the user or the user's role.",
+      "enum": [
+        "NONE",
+        "USER",
+        "ROLE"
+      ],
+      "type": "string"
+    },
+    "databaseName": {
+      "default": "admin",
+      "description": "The database against which the database user authenticates. Database users must provide both a username and authentication database to log into MongoDB. If the user authenticates with AWS IAM, x.509, LDAP, or OIDC Workload this value should be `$external`. If the user authenticates with SCRAM-SHA or OIDC Workforce, this value should be `admin`.",
+      "enum": [
+        "admin",
+        "$external"
+      ],
+      "type": "string"
+    },
+    "deleteAfterDate": {
+      "description": "Date and time when MongoDB Cloud deletes the user. This parameter expresses its value in the ISO 8601 timestamp format in UTC and can include the time zone designation. You must specify a future date that falls within one week of making the Application Programming Interface (API) request.",
+      "format": "date-time",
+      "type": "string"
+    },
+    "description": {
+      "description": "Description of this database user.",
+      "maxLength": 100,
+      "type": "string"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project.",
+      "type": "string",
+      "writeOnly": true
+    },
+    "labels": {
+      "description": "List that contains the key-value pairs for tagging and categorizing the MongoDB database user. The labels that you define do not appear in the console.",
+      "items": {
+        "$ref": "#/$defs/ComponentLabel"
+      },
+      "type": "array"
+    },
+    "ldapAuthType": {
+      "default": "NONE",
+      "description": "Part of the Lightweight Directory Access Protocol (LDAP) record that the database uses to authenticate this database user on the LDAP host.",
+      "enum": [
+        "NONE",
+        "GROUP",
+        "USER"
+      ],
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "oidcAuthType": {
+      "default": "NONE",
+      "description": "Human-readable label that indicates whether the new database user or group authenticates with OIDC federated authentication. To create a federated authentication user, specify the value of USER in this field. To create a federated authentication group, specify the value of `IDP_GROUP` in this field.",
+      "enum": [
+        "NONE",
+        "IDP_GROUP",
+        "USER"
+      ],
+      "type": "string"
+    },
+    "password": {
+      "description": "Alphanumeric string that authenticates this database user against the database specified in `databaseName`. To authenticate with SCRAM-SHA, you must specify this parameter. This parameter doesn't appear in this response.",
+      "minLength": 8,
+      "type": "string",
+      "writeOnly": true
+    },
+    "roles": {
+      "description": "List that provides the pairings of one role with one applicable database.",
+      "items": {
+        "$ref": "#/$defs/DatabaseUserRole"
+      },
+      "type": "array"
+    },
+    "scopes": {
+      "description": "List that contains clusters, MongoDB Atlas Data Lakes, and MongoDB Atlas Streams Workspaces that this database user can access. If omitted, MongoDB Cloud grants the database user access to all the clusters, MongoDB Atlas Data Lakes, and MongoDB Atlas Streams Workspaces in the project.",
+      "items": {
+        "$ref": "#/$defs/UserScope"
+      },
+      "type": "array"
+    },
+    "username": {
+      "description": "Human-readable label that represents the user that authenticates to MongoDB. The format of this label depends on the method of authentication:\n\n| Authentication Method | Parameter Needed | Parameter Value | username Format |\n|---|---|---|---|\n| AWS IAM | `awsIAMType` | `ROLE` | <abbr title=\"Amazon Resource Name\">ARN</abbr> |\n| AWS IAM | `awsIAMType` | `USER` | <abbr title=\"Amazon Resource Name\">ARN</abbr> |\n| x.509 | `x509Type` | `CUSTOMER` | [RFC 2253](https://tools.ietf.org/html/2253) Distinguished Name |\n| x.509 | `x509Type` | `MANAGED` | [RFC 2253](https://tools.ietf.org/html/2253) Distinguished Name |\n| LDAP | `ldapAuthType` | `USER` | [RFC 2253](https://tools.ietf.org/html/2253) Distinguished Name |\n| LDAP | `ldapAuthType` | `GROUP` | [RFC 2253](https://tools.ietf.org/html/2253) Distinguished Name |\n| OIDC Workforce | `oidcAuthType` | `IDP_GROUP` | Atlas OIDC IdP ID (found in federation settings), followed by a '/', followed by the IdP group name |\n| OIDC Workload | `oidcAuthType` | `USER` | Atlas OIDC IdP ID (found in federation settings), followed by a '/', followed by the IdP user name |\n| SCRAM-SHA | `awsIAMType`, `x509Type`, `ldapAuthType`, `oidcAuthType` | `NONE` | Alphanumeric string |\n",
+      "maxLength": 1024,
+      "type": "string"
+    },
+    "x509Type": {
+      "default": "NONE",
+      "description": "X.509 method that MongoDB Cloud uses to authenticate the database user.\n\n- For application-managed X.509, specify `MANAGED`.\n- For self-managed X.509, specify `CUSTOMER`.\n\nUsers created with the `CUSTOMER` method require a Common Name (CN) in the **username** parameter. You must create externally authenticated users on the `$external` database.",
+      "enum": [
+        "NONE",
+        "CUSTOMER",
+        "MANAGED"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "databaseName",
+    "groupId",
+    "roles",
+    "username"
+  ],
+  "type": "object",
+  "$defs": {
+    "ComponentLabel": {
+      "description": "Human-readable labels applied to this MongoDB Cloud component.",
+      "properties": {
+        "key": {
+          "description": "Key applied to tag and categorize this component.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Value set to the Key applied to tag and categorize this component.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "title": "Component Label",
+      "type": "object"
+    },
+    "DatabaseUserRole": {
+      "description": "Range of resources available to this database user.",
+      "properties": {
+        "collectionName": {
+          "description": "Collection on which this role applies.",
+          "type": "string"
+        },
+        "databaseName": {
+          "description": "Database to which the user is granted access privileges.",
+          "type": "string"
+        },
+        "roleName": {
+          "description": "Human-readable label that identifies a group of privileges assigned to a database user. This value can either be a built-in role or a custom role.",
+          "enum": [
+            "atlasAdmin",
+            "backup",
+            "clusterMonitor",
+            "dbAdmin",
+            "dbAdminAnyDatabase",
+            "enableSharding",
+            "read",
+            "readAnyDatabase",
+            "readWrite",
+            "readWriteAnyDatabase",
+            "<a custom role name>"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "databaseName",
+        "roleName"
+      ],
+      "title": "Database User Role",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "UserScope": {
+      "description": "Range of resources available to this database user.",
+      "properties": {
+        "name": {
+          "description": "Human-readable label that identifies the cluster or MongoDB Atlas Data Lake that this database user can access.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "type": "string"
+        },
+        "type": {
+          "description": "Category of resource that this database user can access.",
+          "enum": [
+            "CLUSTER",
+            "DATA_LAKE",
+            "STREAM"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "Database User Scope",
+      "type": "object"
+    }
+  }
+}

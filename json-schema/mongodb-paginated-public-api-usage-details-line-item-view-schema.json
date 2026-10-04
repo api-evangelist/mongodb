@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-public-api-usage-details-line-item-view-schema.json",
+  "title": "PaginatedPublicApiUsageDetailsLineItemView",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-invoices-api-openapi.yml#/components/schemas/PaginatedPublicApiUsageDetailsLineItemView",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/PublicApiUsageDetailsLineItemView"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "PublicApiUsageDetailsLineItemView": {
+      "properties": {
+        "billDate": {
+          "description": "Billing date of the line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "clusterName": {
+          "description": "Cluster associated with the line item.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description of the line item, which can include SKU name and other identifying information.",
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Group id associated with the line item.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "quantity": {
+          "description": "Quantity of line item in units associated with SKU.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "totalPriceCents": {
+          "description": "Price * quantity in applicable units, expressed as an integral number of cents.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "unitPriceDollars": {
+          "description": "Price in units associated with the SKU for the line item.",
+          "format": "double",
+          "type": "number"
+        },
+        "usageDate": {
+          "description": "Usage date of the line item. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

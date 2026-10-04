@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-ingestion-pipeline-run-schema.json",
+  "title": "Data Lake Pipeline Run",
+  "description": "Run details of a Data Lake Pipeline.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-data-lake-pipelines-api-openapi.yml#/components/schemas/IngestionPipelineRun",
+  "properties": {
+    "_id": {
+      "description": "Unique 24-hexadecimal character string that identifies a Data Lake Pipeline run.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "backupFrequencyType": {
+      "description": "Backup schedule interval of the Data Lake Pipeline.",
+      "enum": [
+        "HOURLY",
+        "DAILY",
+        "WEEKLY",
+        "MONTHLY",
+        "YEARLY",
+        "ON_DEMAND"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "createdDate": {
+      "description": "Timestamp that indicates when the pipeline run was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "datasetName": {
+      "description": "Human-readable label that identifies the dataset that Atlas generates during this pipeline run. You can use this dataset as a `dataSource` in a Federated Database collection.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "datasetRetentionPolicy": {
+      "$ref": "#/$defs/DatasetRetentionPolicy"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal character string that identifies the project.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "lastUpdatedDate": {
+      "description": "Timestamp that indicates the last time that the pipeline run was updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "phase": {
+      "description": "Processing phase of the Data Lake Pipeline.",
+      "enum": [
+        "SNAPSHOT",
+        "EXPORT",
+        "INGESTION"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "pipelineId": {
+      "description": "Unique 24-hexadecimal character string that identifies a Data Lake Pipeline.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "scheduledDeletionDate": {
+      "description": "Timestamp that indicates when the pipeline run will expire and its dataset will be deleted. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "snapshotId": {
+      "description": "Unique 24-hexadecimal character string that identifies the snapshot of a cluster.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "state": {
+      "description": "State of the pipeline run.",
+      "enum": [
+        "PENDING",
+        "IN_PROGRESS",
+        "DONE",
+        "FAILED",
+        "DATASET_DELETED"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "stats": {
+      "$ref": "#/$defs/PipelineRunStats"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "DatasetRetentionPolicy": {
+      "description": "Dataset Retention Policy for a Scheduled Data Lake Pipeline.",
+      "properties": {
+        "lastModifiedDate": {
+          "description": "Date when retention policy was last modified. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "units": {
+          "description": "Quantity of time in which the Data Lake Pipeline measures dataset retention.",
+          "enum": [
+            "DAYS",
+            "WEEKS",
+            "MONTHS"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "description": "Number that indicates the amount of days, weeks, or months that the Data Lake Pipeline will retain datasets.",
+          "format": "int32",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "units",
+        "value"
+      ],
+      "title": "Dataset Retention Policy",
+      "type": "object"
+    },
+    "PipelineRunStats": {
+      "description": "Runtime statistics for this Data Lake Pipeline run.",
+      "properties": {
+        "bytesExported": {
+          "description": "Total data size in bytes exported for this pipeline run.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "numDocs": {
+          "description": "Number of docs ingested for a this pipeline run.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "readOnly": true,
+      "title": "Data Lake Pipeline Run Statistics",
+      "type": "object"
+    }
+  }
+}

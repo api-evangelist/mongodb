@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-auth-federation-role-mapping-schema.json",
+  "title": "Federated Authentication Role Mapping",
+  "description": "Mapping settings that link one IdP and MongoDB Cloud.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-federated-authentication-api-openapi.yml#/components/schemas/AuthFederationRoleMapping",
+  "properties": {
+    "externalGroupName": {
+      "description": "Unique human-readable label that identifies the identity provider group to which this role mapping applies.",
+      "maxLength": 200,
+      "minLength": 1,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies this role mapping.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "roleAssignments": {
+      "description": "Atlas roles and the unique identifiers of the groups and organizations associated with each role. The array must include at least one element with an Organization role and its respective `orgId`. Each element in the array can have a value for `orgId` or `groupId`, but not both.",
+      "items": {
+        "$ref": "#/$defs/ConnectedOrgConfigRoleAssignment"
+      },
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "externalGroupName",
+    "roleAssignments"
+  ],
+  "type": "object",
+  "$defs": {
+    "ConnectedOrgConfigRoleAssignment": {
+      "properties": {
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project to which this role belongs. Each element within `roleAssignments` can have a value for `groupId` or `orgId`, but not both.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. Each element within `roleAssignments` can have a value for `orgId` or `groupId`, but not both.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "role": {
+          "description": "Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

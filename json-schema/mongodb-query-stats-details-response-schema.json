@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-query-stats-details-response-schema.json",
+  "title": "QueryStatsDetailsResponse",
+  "description": "Metadata and summary statistics for a given query shape.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-query-shape-insights-api-openapi.yml#/components/schemas/QueryStatsDetailsResponse",
+  "properties": {
+    "firstSeen": {
+      "$ref": "#/$defs/QueryShapeSeenMetadata"
+    },
+    "lastSeen": {
+      "$ref": "#/$defs/QueryShapeSeenMetadata"
+    },
+    "queryStats": {
+      "$ref": "#/$defs/QueryStatsSummary"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "QueryShapeSeenMetadata": {
+      "description": "Metadata about when a query shape was seen.",
+      "properties": {
+        "applicationName": {
+          "description": "The name of the application that this query shape came from. This can be set via the MongoDB connection string. The application name is set to unknown for internal MongoDB queries.",
+          "type": "string"
+        },
+        "driverName": {
+          "description": "The name of the MongoDB driver that this query shape was executed from. The driver name is set to unknown for internal MongoDB queries.",
+          "type": "string"
+        },
+        "driverVersion": {
+          "description": "The version of the MongoDB driver that this query shape was executed from. The driver version is set to unknown for internal MongoDB queries.",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Unix epoch milliseconds of the time.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "QueryStatsSummary": {
+      "description": "A summary of execution statistics for a given query shape.",
+      "properties": {
+        "avgWorkingMillis": {
+          "description": "Average total time in milliseconds spent running queries with the given query shape. If the query resulted in `getMore` commands, this metric includes the time spent processing the `getMore` requests. This metric does not include time spent waiting for the client.",
+          "format": "double",
+          "type": "number"
+        },
+        "bytesRead": {
+          "description": "The number of bytes read by the given query shape from the disk to the cache.",
+          "format": "double",
+          "type": "number"
+        },
+        "command": {
+          "description": "The MongoDB command issued for this query shape.",
+          "enum": [
+            "find",
+            "distinct",
+            "aggregate"
+          ],
+          "type": "string"
+        },
+        "cpuTime": {
+          "description": "Total CPU time in nanoseconds consumed by queries with the given query shape. Available for MDB 8.2 and higher.",
+          "format": "double",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "docsExamined": {
+          "description": "Total number of documents examined by queries with the given query shape.",
+          "format": "double",
+          "type": "number"
+        },
+        "docsExaminedRatio": {
+          "description": "Ratio of documents examined to documents returned by queries with the given query shape.",
+          "format": "double",
+          "type": "number"
+        },
+        "docsReturned": {
+          "description": "Total number of documents returned by queries with the given query shape.",
+          "format": "double",
+          "type": "number"
+        },
+        "execCount": {
+          "description": "Total number of times that queries with the given query shape have been executed.",
+          "format": "double",
+          "type": "number"
+        },
+        "keysExamined": {
+          "description": "Total number of in-bounds and out-of-bounds index keys examined by queries with the given query shape.",
+          "format": "double",
+          "type": "number"
+        },
+        "keysExaminedRatio": {
+          "description": "Ratio of in-bounds and out-of-bounds index keys examined to indexes containing documents returned by queries with the given query shape.",
+          "format": "double",
+          "type": "number"
+        },
+        "lastExecMicros": {
+          "description": "Execution runtime in microseconds for the most recent query with the given query shape.",
+          "format": "double",
+          "type": "number"
+        },
+        "namespace": {
+          "description": "Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.",
+          "type": "string"
+        },
+        "p50ExecMicros": {
+          "description": "The 50th percentile value of execution time in microseconds.",
+          "format": "double",
+          "type": "number"
+        },
+        "p90ExecMicros": {
+          "description": "The 90th percentile value of execution time in microseconds.",
+          "format": "double",
+          "type": "number"
+        },
+        "p99ExecMicros": {
+          "description": "The 99th percentile value of execution time in microseconds.",
+          "format": "double",
+          "type": "number"
+        },
+        "queryShape": {
+          "description": "A query shape is a set of specifications that group similar queries together. Specifications can include filters, sorts, projections, aggregation pipeline stages, a namespace, and others. Queries that have similar specifications have the same query shape.",
+          "type": "string"
+        },
+        "queryShapeHash": {
+          "description": "A hexadecimal string that represents the hash of a MongoDB query shape.",
+          "type": "string"
+        },
+        "systemQuery": {
+          "description": "Indicates whether this query shape represents a system-initiated query.",
+          "type": "boolean"
+        },
+        "totalTimeToResponseMicros": {
+          "description": "Time in microseconds spent from the beginning of query processing to the first server response.",
+          "format": "double",
+          "type": "number"
+        },
+        "totalWorkingMillis": {
+          "description": "Total time in milliseconds spent running queries with the given query shape. If the query resulted in `getMore` commands, this metric includes the time spent processing the `getMore` requests. This metric does not include time spent waiting for the client.",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

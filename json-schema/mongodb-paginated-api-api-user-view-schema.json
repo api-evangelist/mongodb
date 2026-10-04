@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-paginated-api-api-user-view-schema.json",
+  "title": "PaginatedApiApiUserView",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-programmatic-api-keys-api-openapi.yml#/components/schemas/PaginatedApiApiUserView",
+  "properties": {
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "results": {
+      "description": "List of returned documents that MongoDB Cloud provides when completing this request.",
+      "items": {
+        "$ref": "#/$defs/ApiKeyUserDetails"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "totalCount": {
+      "description": "Total number of documents available. MongoDB Cloud omits this value if `includeCount` is set to `false`. The total number is an estimate and may not be exact.",
+      "format": "int32",
+      "minimum": 0,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "type": "object",
+  "$defs": {
+    "ApiKeyUserDetails": {
+      "description": "Details of the Programmatic API Keys.",
+      "properties": {
+        "desc": {
+          "description": "Purpose or explanation provided when someone created this organization API key.",
+          "maxLength": 250,
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this organization API key assigned to this project.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "privateKey": {
+          "description": "Redacted private key returned for this organization API key. This key displays unredacted when first created.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "publicKey": {
+          "description": "Public API key value set for the specified organization API key.",
+          "maxLength": 8,
+          "minLength": 8,
+          "readOnly": true,
+          "type": "string"
+        },
+        "roles": {
+          "description": "List that contains the roles that the API key needs to have. All roles you provide must be valid for the specified project or organization. Each request must include a minimum of one valid role. The resource returns all project and organization roles assigned to the API key.",
+          "items": {
+            "$ref": "#/$defs/CloudAccessRoleAssignment"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "CloudAccessRoleAssignment": {
+      "description": "MongoDB Cloud user's roles and the corresponding organization or project to which that role applies. Each role can apply to one organization or one project but not both.",
+      "properties": {
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project to which this role belongs. You can set a value for this parameter or `orgId` but not both in the same request.",
+          "maxLength": 24,
+          "minLength": 24,
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. You can set a value for this parameter or `groupId` but not both in the same request.",
+          "maxLength": 24,
+          "minLength": 24,
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "roleName": {
+          "description": "Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.",
+          "type": "string"
+        }
+      },
+      "title": "Role Assignment",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

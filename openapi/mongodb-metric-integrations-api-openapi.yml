@@ -1,0 +1,928 @@
+openapi: 3.2.0
+info:
+  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
+  license:
+    name: CC BY-NC-SA 3.0 US
+    url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
+  termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
+  title: MongoDB Atlas Administration Metric Integrations API
+  version: '2.0'
+  x-xgen-sha: 8f9485d239f53f5b963c55e11f5f05a34bec9586
+servers:
+- url: https://cloud.mongodb.com
+security:
+- ServiceAccounts: []
+- DigestAuth: []
+tags:
+- description: Returns, creates, updates, and removes metric integration configurations for a project.
+  name: Metric Integrations
+paths:
+  /api/atlas/v2/groups/{groupId}/metricIntegrations:
+    get:
+      description: Returns all metric integration configurations for the project. Optionally filter by integration type and provider type.
+      operationId: listGroupMetricIntegrations
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/includeCount'
+      - $ref: '#/components/parameters/itemsPerPage'
+      - $ref: '#/components/parameters/pageNum'
+      - $ref: '#/components/parameters/pretty'
+      - description: Optional filter by integration type (e.g., `OTEL`).
+        in: query
+        name: integrationType
+        schema:
+          type: string
+      - description: Optional filter by provider type (e.g., `CUSTOM`). When specified, `integrationType` must also be specified.
+        in: query
+        name: providerType
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMetricIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return All Active Metric Integrations
+      tags:
+      - Metric Integrations
+      x-codeSamples:
+      - label: Atlas CLI
+        lang: cURL
+        source: atlas api metricIntegrations listGroupMetricIntegrations --help
+      - label: Go
+        lang: go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.ListGroupMetricIntegrationsApiParams{}\n\tsdkResp, httpResp, err := client.MetricIntegrationsApi.\n\t\tListGroupMetricIntegrationsWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - label: curl (Service Accounts)
+        lang: cURL
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations?pretty=true\""
+      - label: curl (Digest)
+        lang: cURL
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations?pretty=true\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Metric-Integrations/operation/listGroupMetricIntegrations
+    post:
+      description: Creates a new metric integration configuration identified by a unique ID.
+      operationId: createGroupMetricIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      requestBody:
+        content:
+          application/vnd.atlas.2025-03-12+json:
+            schema:
+              $ref: '#/components/schemas/MetricIntegrationRequest'
+            x-xgen-version: '2025-03-12'
+        description: Metric integration configuration to create.
+        required: true
+      responses:
+        '201':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/MetricIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: Created
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Create One Metric Integration
+      tags:
+      - Metric Integrations
+      x-codeSamples:
+      - label: Atlas CLI
+        lang: cURL
+        source: atlas api metricIntegrations createGroupMetricIntegration --help
+      - label: Go
+        lang: go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.CreateGroupMetricIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.MetricIntegrationsApi.\n\t\tCreateGroupMetricIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - label: curl (Service Accounts)
+        lang: cURL
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations\" \\\n  -d '{ <Payload> }'"
+      - label: curl (Digest)
+        lang: cURL
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X POST \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Metric-Integrations/operation/createGroupMetricIntegration
+  /api/atlas/v2/groups/{groupId}/metricIntegrations/{metricIntegrationId}:
+    delete:
+      description: Removes the configuration for one metric integration identified by its unique ID.
+      operationId: deleteGroupMetricIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique identifier of the metric integration configuration.
+        in: path
+        name: metricIntegrationId
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              x-xgen-version: '2025-03-12'
+          description: No Content
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Remove One Metric Integration
+      tags:
+      - Metric Integrations
+      x-codeSamples:
+      - label: Atlas CLI
+        lang: cURL
+        source: atlas api metricIntegrations deleteGroupMetricIntegration --help
+      - label: Go
+        lang: go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.DeleteGroupMetricIntegrationApiParams{}\n\thttpResp, err := client.MetricIntegrationsApi.\n\t\tDeleteGroupMetricIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - label: curl (Service Accounts)
+        lang: cURL
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations/{metricIntegrationId}\""
+      - label: curl (Digest)
+        lang: cURL
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X DELETE \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations/{metricIntegrationId}\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Metric-Integrations/operation/deleteGroupMetricIntegration
+    get:
+      description: Returns the configuration for one metric integration identified by its unique ID.
+      operationId: getGroupMetricIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique identifier of the metric integration configuration.
+        in: path
+        name: metricIntegrationId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/MetricIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Return One Metric Integration
+      tags:
+      - Metric Integrations
+      x-codeSamples:
+      - label: Atlas CLI
+        lang: cURL
+        source: atlas api metricIntegrations getGroupMetricIntegration --help
+      - label: Go
+        lang: go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.GetGroupMetricIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.MetricIntegrationsApi.\n\t\tGetGroupMetricIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - label: curl (Service Accounts)
+        lang: cURL
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations/{metricIntegrationId}?pretty=true\""
+      - label: curl (Digest)
+        lang: cURL
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations/{metricIntegrationId}?pretty=true\""
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Metric-Integrations/operation/getGroupMetricIntegration
+    put:
+      description: Updates the configuration for one metric integration identified by its unique ID.
+      operationId: updateGroupMetricIntegration
+      parameters:
+      - $ref: '#/components/parameters/envelope'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/pretty'
+      - description: Unique identifier of the metric integration configuration.
+        in: path
+        name: metricIntegrationId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/vnd.atlas.2025-03-12+json:
+            schema:
+              $ref: '#/components/schemas/MetricIntegrationUpdateRequest'
+            x-xgen-version: '2025-03-12'
+        description: Updated metric integration configuration.
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.atlas.2025-03-12+json:
+              schema:
+                $ref: '#/components/schemas/MetricIntegrationResponse'
+              x-xgen-version: '2025-03-12'
+          description: OK
+          headers:
+            RateLimit-Limit:
+              $ref: '#/components/headers/HeaderRateLimitLimit'
+            RateLimit-Remaining:
+              $ref: '#/components/headers/HeaderRateLimitRemaining'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: '#/components/responses/notFound'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update One Metric Integration
+      tags:
+      - Metric Integrations
+      x-codeSamples:
+      - label: Atlas CLI
+        lang: cURL
+        source: atlas api metricIntegrations updateGroupMetricIntegration --help
+      - label: Go
+        lang: go
+        source: "import (\n\t\"os\"\n\t\"context\"\n\t\"log\"\n\tsdk \"go.mongodb.org/atlas-sdk/v20250312001/admin\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\tclientID := os.Getenv(\"MONGODB_ATLAS_CLIENT_ID\")\n\tclientSecret := os.Getenv(\"MONGODB_ATLAS_CLIENT_SECRET\")\n\n\t// See https://dochub.mongodb.org/core/atlas-go-sdk-oauth\n\tclient, err := sdk.NewClient(sdk.UseOAuthAuth(clientID, clientSecret))\n\n\tif err != nil {\n\t\tlog.Fatalf(\"Error: %v\", err)\n\t}\n\n\tparams = &sdk.UpdateGroupMetricIntegrationApiParams{}\n\tsdkResp, httpResp, err := client.MetricIntegrationsApi.\n\t\tUpdateGroupMetricIntegrationWithParams(ctx, params).\n\t\tExecute()\n}\n"
+      - label: curl (Service Accounts)
+        lang: cURL
+        source: "curl --include --header \"Authorization: Bearer ${ACCESS_TOKEN}\" \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations/{metricIntegrationId}\" \\\n  -d '{ <Payload> }'"
+      - label: curl (Digest)
+        lang: cURL
+        source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  --header \"Content-Type: application/json\" \\\n  -X PUT \"https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/metricIntegrations/{metricIntegrationId}\" \\\n  -d '{ <Payload> }'"
+      x-rolesRequirements:
+      - Project Owner
+      x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Metric-Integrations/operation/updateGroupMetricIntegration
+components:
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
+      schema:
+        default: false
+        type: boolean
+    itemsPerPage:
+      description: Number of items that the response returns per page.
+      in: query
+      name: itemsPerPage
+      schema:
+        default: 100
+        maximum: 500
+        minimum: 1
+        type: integer
+    includeCount:
+      description: Flag that indicates whether MongoDB Cloud calculates the total number of items for the response. When set to `false`, MongoDB Cloud may skip an additional count operation. The response may still include `totalCount` when the count is available without additional calculation.
+      in: query
+      name: includeCount
+      schema:
+        default: true
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
+      schema:
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
+    pageNum:
+      description: Number of the page that displays the current set of the total objects that the response returns.
+      in: query
+      name: pageNum
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    groupId:
+      description: 'Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access.
+
+
+        **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id. For existing groups, your group/project id remains the same. The resource and corresponding endpoints use the term groups.'
+      in: path
+      name: groupId
+      required: true
+      schema:
+        example: 32b6e34b3d91647abb20e7b8
+        pattern: ^([a-f0-9]{24})$
+        type: string
+  schemas:
+    FieldViolation:
+      properties:
+        description:
+          description: A description of why the request element is bad.
+          type: string
+        field:
+          description: A path that leads to a field in the request body.
+          type: string
+      required:
+      - description
+      - field
+      type: object
+    OAuthConfigRequest:
+      description: OAuth 2.0 client credentials configuration. Required when `authType` is `OAUTH2`. Secrets are never returned.
+      properties:
+        clientAuthMethod:
+          description: How the client authenticates to the token endpoint. `CLIENT_SECRET` sends a shared secret. `PRIVATE_KEY_JWT` signs a client assertion with an Atlas-generated, Atlas-managed key. Register the returned JWKS URL with your identity provider.
+          enum:
+          - CLIENT_SECRET
+          - PRIVATE_KEY_JWT
+          type: string
+        clientId:
+          description: OAuth 2.0 client identifier registered with the token endpoint.
+          example: atlas-otel
+          maxLength: 2048
+          type: string
+        clientSecret:
+          description: Shared client secret. Required when `clientAuthMethod` is `CLIENT_SECRET`, and rejected for `PRIVATE_KEY_JWT`. Encrypted at rest and never returned.
+          format: password
+          type: string
+          writeOnly: true
+        scopes:
+          description: Optional OAuth 2.0 scopes requested on the token, sent as a space delimited `scope` parameter. Applies to both client authentication methods.
+          items:
+            maxLength: 256
+            type: string
+          maxItems: 20
+          type: array
+          uniqueItems: true
+        tokenEndpoint:
+          description: OAuth 2.0 token endpoint URL. Must use HTTPS.
+          example: https://idp.example.com/oauth2/token
+          maxLength: 2048
+          type: string
+        tokenRequestParams:
+          additionalProperties:
+            description: Optional provider-specific parameters added to the token request, for example a resource indicator. Applies to both client authentication methods.
+            example: '{"resource":"https://otel.example.com/metrics"}'
+            maxProperties: 10
+            type: string
+          description: Optional provider-specific parameters added to the token request, for example a resource indicator. Applies to both client authentication methods.
+          example:
+            resource: https://otel.example.com/metrics
+          maxProperties: 10
+          type: object
+      required:
+      - clientAuthMethod
+      - clientId
+      - tokenEndpoint
+      title: OAuth Config Request
+      type: object
+    OAuthSigningKeyInfo:
+      description: Read-only metadata for the Atlas-managed signing key used by `PRIVATE_KEY_JWT`. Present only for that method. Register the `jwksUri` with your identity provider. Atlas rotates the underlying key without changing this URL.
+      properties:
+        algorithm:
+          description: Signing algorithm of the Atlas-managed key.
+          example: RS256
+          readOnly: true
+          type: string
+        createdAt:
+          description: When the currently active signing key was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.
+          format: date-time
+          readOnly: true
+          type: string
+        jwksUri:
+          description: Public JWKS URL serving this integration's signing keys. Fixed for the lifetime of the integration.
+          example: https://cloud.mongodb.com/api/keys/clientJwks/9f6c2a1e-8b3d-4e7a-a2c5-1f0e9d41d000
+          readOnly: true
+          type: string
+        kid:
+          description: Key ID stamped on client assertions, the `SHA-1` thumbprint of the key certificate in uppercase hexadecimal. Changes when Atlas rotates the key.
+          readOnly: true
+          type: string
+      readOnly: true
+      title: OAuth Signing Key Info
+      type: object
+    Link:
+      properties:
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
+          type: string
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
+          type: string
+      type: object
+    PaginatedMetricIntegrationResponse:
+      properties:
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        results:
+          description: List of returned documents that MongoDB Cloud provides when completing this request.
+          items:
+            $ref: '#/components/schemas/MetricIntegrationResponse'
+          readOnly: true
+          type: array
+        totalCount:
+          description: Total number of documents available. When `includeCount` is set to `false`, MongoDB Cloud may omit this value or return it when the count is available without additional calculation. The total number is an estimate and may not be exact.
+          format: int32
+          minimum: 0
+          readOnly: true
+          type: integer
+      required:
+      - results
+      type: object
+    MetricIntegrationUpdateRequest:
+      description: Request schema for updating a metric integration. Omitted OAuth fields keep their stored values. An explicit null, an empty `scopes` array, or an empty `tokenRequestParams` object clears that field. Omitting `clientSecret` keeps the stored secret.
+      properties:
+        aggregationTemporality:
+          description: The temporality to send to the metric integration.
+          enum:
+          - DELTA
+          - CUMULATIVE
+          type: string
+        authType:
+          description: Authentication method the integration uses when exporting metrics to the endpoint. `HEADER` authenticates with the static HTTP headers provided in the `headers` field, which must be set when this value is used. `OAUTH2` acquires a bearer token from an OAuth 2.0 token endpoint using the `oauth` field.
+          enum:
+          - HEADER
+          - OAUTH2
+          type: string
+        endpoint:
+          description: OpenTelemetry collector endpoint URL. Must use HTTPS.
+          example: https://otel-collector.example.com:4318/v1/metrics
+          maxLength: 2048
+          type: string
+        headers:
+          description: HTTP headers for authentication and configuration. Total size limit 2KB. Required when `authType` is `HEADER`.
+          items:
+            $ref: '#/components/schemas/Header'
+          maxItems: 10
+          minItems: 1
+          type: array
+          writeOnly: true
+        integrationType:
+          description: Type of metric integration. Identifies which protocol will be used for the integration. This value cannot be modified after the integration is created.
+          enum:
+          - OTEL
+          type: string
+        metricSelection:
+          description: Array of metric categories to export. Determines which types of metrics are sent to the integration.
+          items:
+            enum:
+            - ATLAS_STREAM_PROCESSING
+            - MONGODB_METRICS
+            - HARDWARE_METRICS
+            type: string
+          maxItems: 30
+          minItems: 1
+          type: array
+          uniqueItems: true
+        oauth:
+          $ref: '#/components/schemas/OAuthConfigRequest'
+        providerType:
+          description: The provider type for the metric integration. Identifies the third-party service provider.
+          enum:
+          - CUSTOM
+          - DATADOG
+          - DYNATRACE
+          - NEW_RELIC
+          type: string
+      required:
+      - aggregationTemporality
+      - authType
+      - endpoint
+      - integrationType
+      - metricSelection
+      - providerType
+      title: Metric Integration Update Request
+      type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type:
+          - string
+          - 'null'
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - error
+      - errorCode
+      type: object
+    OAuthConfigResponse:
+      description: OAuth 2.0 configuration returned for a metric integration. Secrets are never returned.
+      properties:
+        clientAuthMethod:
+          description: How the client authenticates to the token endpoint.
+          enum:
+          - CLIENT_SECRET
+          - PRIVATE_KEY_JWT
+          type: string
+        clientId:
+          description: OAuth 2.0 client identifier registered with the token endpoint.
+          maxLength: 2048
+          type: string
+        scopes:
+          description: OAuth 2.0 scopes requested on the token.
+          items:
+            maxLength: 256
+            type: string
+          maxItems: 20
+          type: array
+          uniqueItems: true
+        signingKeyInfo:
+          $ref: '#/components/schemas/OAuthSigningKeyInfo'
+        tokenEndpoint:
+          description: OAuth 2.0 token endpoint URL.
+          maxLength: 2048
+          type: string
+        tokenRequestParams:
+          additionalProperties:
+            description: Provider-specific parameters added to the token request.
+            maxProperties: 10
+            type: string
+          description: Provider-specific parameters added to the token request.
+          maxProperties: 10
+          type: object
+      required:
+      - clientAuthMethod
+      - clientId
+      - tokenEndpoint
+      title: OAuth Config Response
+      type: object
+    MetricIntegrationRequest:
+      description: Request schema for creating a metric integration.
+      properties:
+        aggregationTemporality:
+          description: The temporality to send to the metric integration.
+          enum:
+          - DELTA
+          - CUMULATIVE
+          type: string
+        authType:
+          description: Authentication method the integration uses when exporting metrics to the endpoint. `HEADER` authenticates with the static HTTP headers provided in the `headers` field, which must be set when this value is used. `OAUTH2` acquires a bearer token from an OAuth 2.0 token endpoint using the `oauth` field.
+          enum:
+          - HEADER
+          - OAUTH2
+          type: string
+        endpoint:
+          description: OpenTelemetry collector endpoint URL. Must use HTTPS.
+          example: https://otel-collector.example.com:4318/v1/metrics
+          maxLength: 2048
+          type: string
+        headers:
+          description: HTTP headers for authentication and configuration. Total size limit 2KB. Required when `authType` is `HEADER`.
+          items:
+            $ref: '#/components/schemas/Header'
+          maxItems: 10
+          minItems: 1
+          type: array
+          writeOnly: true
+        integrationType:
+          description: Type of metric integration. Identifies which protocol will be used for the integration. This value cannot be modified after the integration is created.
+          enum:
+          - OTEL
+          type: string
+        metricSelection:
+          description: Array of metric categories to export. Determines which types of metrics are sent to the integration.
+          items:
+            enum:
+            - ATLAS_STREAM_PROCESSING
+            - MONGODB_METRICS
+            - HARDWARE_METRICS
+            type: string
+          maxItems: 30
+          minItems: 1
+          type: array
+          uniqueItems: true
+        oauth:
+          $ref: '#/components/schemas/OAuthConfigRequest'
+        providerType:
+          description: The provider type for the metric integration. Identifies the third-party service provider.
+          enum:
+          - CUSTOM
+          - DATADOG
+          - DYNATRACE
+          - NEW_RELIC
+          type: string
+      required:
+      - aggregationTemporality
+      - authType
+      - endpoint
+      - integrationType
+      - metricSelection
+      - providerType
+      title: Metric Integration Request
+      type: object
+    Header:
+      description: HTTP header with name and value.
+      properties:
+        name:
+          description: Header name.
+          example: Authorization
+          type: string
+        value:
+          description: Header value.
+          example: Bearer token123
+          format: password
+          type: string
+          writeOnly: true
+      required:
+      - name
+      - value
+      type: object
+    MetricIntegrationResponse:
+      description: Response schema for metric integration operations.
+      properties:
+        aggregationTemporality:
+          description: The temporality to send to the metric integration.
+          enum:
+          - DELTA
+          - CUMULATIVE
+          type: string
+        authType:
+          description: Authentication method the integration uses when exporting metrics to the endpoint.
+          enum:
+          - HEADER
+          - OAUTH2
+          type: string
+        endpoint:
+          description: OpenTelemetry collector endpoint URL.
+          example: https://otel-collector.example.com:4318/v1/metrics
+          maxLength: 2048
+          type: string
+        headersRedacted:
+          description: HTTP headers for authentication and configuration. Values are redacted and never returned in plaintext.
+          items:
+            $ref: '#/components/schemas/RedactedHeader'
+          maxItems: 10
+          minItems: 1
+          readOnly: true
+          type: array
+        integrationType:
+          description: Type of metric integration. Identifies which protocol will be used for the integration.
+          enum:
+          - OTEL
+          type: string
+        metricIntegrationId:
+          description: Unique identifier of the metric integration configuration.
+          example: 507f1f77bcf86cd799439011
+          maxLength: 24
+          minLength: 24
+          readOnly: true
+          type: string
+          x-xgen-server-computed-immutable: true
+        metricSelection:
+          description: Array of metric categories to export. Determines which types of metrics are sent to the integration.
+          items:
+            enum:
+            - ATLAS_STREAM_PROCESSING
+            - MONGODB_METRICS
+            - HARDWARE_METRICS
+            type: string
+          maxItems: 30
+          minItems: 1
+          type: array
+          uniqueItems: true
+        oauth:
+          $ref: '#/components/schemas/OAuthConfigResponse'
+        providerType:
+          description: The provider type for the metric integration. Identifies the third-party service provider.
+          enum:
+          - CUSTOM
+          - DATADOG
+          - DYNATRACE
+          - NEW_RELIC
+          type: string
+      required:
+      - aggregationTemporality
+      - authType
+      - endpoint
+      - integrationType
+      - metricIntegrationId
+      - metricSelection
+      - providerType
+      title: Metric Integration Response
+      type: object
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    RedactedHeader:
+      description: HTTP header with a redacted value.
+      properties:
+        name:
+          description: Header name.
+          example: Authorization
+          readOnly: true
+          type: string
+        value:
+          description: Redacted header value.
+          example: '********oken'
+          readOnly: true
+          type: string
+      required:
+      - name
+      - value
+      type: object
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
+  responses:
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Unauthorized.
+    forbidden:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 403
+            errorCode: CANNOT_CHANGE_GROUP_NAME
+            reason: Forbidden
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Forbidden.
+    notFound:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) Cannot find resource AWS
+            error: 404
+            errorCode: RESOURCE_NOT_FOUND
+            reason: Not Found
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Not Found.
+    tooManyRequests:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 429
+            errorCode: RATE_LIMITED
+            reason: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Too Many Requests.
+      headers:
+        RateLimit-Limit:
+          $ref: '#/components/headers/HeaderRateLimitLimit'
+        RateLimit-Remaining:
+          $ref: '#/components/headers/HeaderRateLimitRemaining'
+        Retry-After:
+          $ref: '#/components/headers/HeaderRetryAfter'
+    internalServerError:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 500
+            errorCode: UNEXPECTED_ERROR
+            reason: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error.
+    badRequest:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint) No provider AWS exists.
+            error: 400
+            errorCode: VALIDATION_ERROR
+            reason: Bad Request
+          schema:
+            $ref: '#/components/schemas/ApiError'
+      description: Bad Request.
+  securitySchemes:
+    DigestAuth:
+      scheme: digest
+      type: http
+    ServiceAccounts:
+      description: Learn more about [Service Accounts](https://www.mongodb.com/docs/atlas/api/service-accounts-overview).
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://cloud.mongodb.com/api/oauth/token
+      type: oauth2
+x-externalLinks:
+- label: Back to Atlas Docs
+  url: https://www.mongodb.com/docs/atlas/
+- label: API Changelog
+  url: https://www.mongodb.com/docs/atlas/reference/api-resources-spec/changelog/
+x-topics:
+- content: The MongoDB Atlas Administration API is rate limited. To learn more about rate limiting, see the [Atlas Documentation on Rate Limiting](http://dochub.mongodb.org/core/atlas-api-rate-limit)
+  title: Rate Limiting

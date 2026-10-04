@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  description: The MongoDB Atlas Administration API allows developers to manage all components in MongoDB Atlas.
+  title: Mongodb Root API
+  version: '2.0'
   license:
     name: CC BY-NC-SA 3.0 US
     url: https://creativecommons.org/licenses/by-nc-sa/3.0/us/
   termsOfService: https://www.mongodb.com/mongodb-management-service-terms-and-conditions
-  title: MongoDB Atlas Administration Root API
-  version: '2.0'
-  x-xgen-sha: 3d70e065843c008b9871ea7836c98c9de6f202f9
+  x-refined-note:
+  - x-xgen-sha differs across the merged source definitions and was not carried
+  description: 'Operations tagged Root across 2 of this provider''s published API definitions: mongodb-atlas-openapi.yaml, mongodb-openapi.yaml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://cloud.mongodb.com
 security:
@@ -65,6 +66,8 @@ paths:
       x-xgen-method-verb-override:
         customMethod: false
         verb: getSystemStatus
+    servers:
+    - url: https://cloud.mongodb.com
   /api/atlas/v2/unauth/controlPlaneIPAddresses:
     get:
       description: Returns all control plane IP addresses.
@@ -107,165 +110,28 @@ paths:
         source: "curl --user \"${PUBLIC_KEY}:${PRIVATE_KEY}\" \\\n  --digest --include \\\n  --header \"Accept: application/vnd.atlas.2025-03-12+json\" \\\n  -X GET \"https://cloud.mongodb.com/api/atlas/v2/unauth/controlPlaneIPAddresses?pretty=true\""
       x-xgen-docs-url: https://mongodb.com/docs/atlas/reference/api-resources-spec/v2/#tag/Root/operation/listControlPlaneIpAddresses
       x-xgen-operation-id-override: listControlPlaneAddresses
+    servers:
+    - url: https://cloud.mongodb.com
 components:
-  headers:
-    HeaderRateLimitRemaining:
-      description: The number of requests remaining in the current rate limit window before the limit is reached.
+  parameters:
+    envelope:
+      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
+      in: query
+      name: envelope
       schema:
-        type: integer
-    HeaderRetryAfter:
-      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+        default: false
+        type: boolean
+    pretty:
+      description: Flag that indicates whether the response body should be in the prettyprint format.
+      in: query
+      name: pretty
       schema:
-        type: integer
-    HeaderRateLimitLimit:
-      description: The maximum number of requests that a user can make within a specific time window.
-      schema:
-        type: integer
+        default: false
+        externalDocs:
+          description: Prettyprint
+          url: https://en.wikipedia.org/wiki/Prettyprint
+        type: boolean
   schemas:
-    Link:
-      properties:
-        href:
-          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: https://cloud.mongodb.com/api/atlas
-          type: string
-        rel:
-          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
-          example: self
-          type: string
-      type: object
-    ApiError:
-      properties:
-        badRequestDetail:
-          $ref: '#/components/schemas/BadRequestDetail'
-        detail:
-          description: Describes the specific conditions or reasons that cause each type of error.
-          type: string
-        error:
-          description: HTTP status code returned with this error.
-          externalDocs:
-            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-          format: int32
-          readOnly: true
-          type: integer
-        errorCode:
-          description: Application error code returned with this error.
-          readOnly: true
-          type: string
-        parameters:
-          description: Parameters used to give more information about the error.
-          items:
-            type: object
-          readOnly: true
-          type: array
-        reason:
-          description: Application error message returned with this error.
-          readOnly: true
-          type: string
-      required:
-      - error
-      - errorCode
-      type: object
-    ControlPlaneIPAddresses:
-      description: List of IP addresses in the Atlas control plane.
-      properties:
-        inbound:
-          $ref: '#/components/schemas/InboundControlPlaneCloudProviderIPAddresses'
-        outbound:
-          $ref: '#/components/schemas/OutboundControlPlaneCloudProviderIPAddresses'
-      title: Control Plane IP Addresses
-      type: object
-    CloudAccessRoleAssignment:
-      description: MongoDB Cloud user's roles and the corresponding organization or project to which that role applies. Each role can apply to one organization or one project but not both.
-      properties:
-        groupId:
-          description: Unique 24-hexadecimal digit string that identifies the project to which this role belongs. You can set a value for this parameter or `orgId` but not both in the same request.
-          example: 32b6e34b3d91647abb20e7b8
-          maxLength: 24
-          minLength: 24
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        orgId:
-          description: Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. You can set a value for this parameter or `groupId` but not both in the same request.
-          example: 32b6e34b3d91647abb20e7b8
-          maxLength: 24
-          minLength: 24
-          pattern: ^([a-f0-9]{24})$
-          type: string
-        roleName:
-          description: Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.
-          externalDocs:
-            description: MongoDB Cloud User Roles
-            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
-          type: string
-      title: Role Assignment
-      type: object
-    AccessListItemView:
-      properties:
-        cidrBlock:
-          description: Range of IP addresses in Classless Inter-Domain Routing (CIDR) notation that found in this project's access list.
-          pattern: ^((([0-9]{1,3}\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$
-          readOnly: true
-          type: string
-        ipAddress:
-          description: IP address included in the API access list.
-          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
-          readOnly: true
-          type: string
-      required:
-      - ipAddress
-      type: object
-    InboundControlPlaneCloudProviderIPAddresses:
-      description: List of inbound IP addresses to the Atlas control plane, categorized by cloud provider. If your application allows outbound HTTP requests only to specific IP addresses, you must allow access to the following IP addresses so that your API requests can reach the Atlas control plane.
-      properties:
-        aws:
-          additionalProperties:
-            description: Control plane IP addresses in AWS. Each key identifies an Amazon Web Services (AWS) region. Each value identifies control plane IP addresses in the AWS region.
-            items:
-              description: Control plane IP addresses in AWS. Each key identifies an Amazon Web Services (AWS) region. Each value identifies control plane IP addresses in the AWS region.
-              readOnly: true
-              type: string
-            readOnly: true
-            type: array
-          description: Control plane IP addresses in AWS. Each key identifies an Amazon Web Services (AWS) region. Each value identifies control plane IP addresses in the AWS region.
-          readOnly: true
-          type: object
-        azure:
-          additionalProperties:
-            description: Control plane IP addresses in Azure. Each key identifies an Azure region. Each value identifies control plane IP addresses in the Azure region.
-            items:
-              description: Control plane IP addresses in Azure. Each key identifies an Azure region. Each value identifies control plane IP addresses in the Azure region.
-              readOnly: true
-              type: string
-            readOnly: true
-            type: array
-          description: Control plane IP addresses in Azure. Each key identifies an Azure region. Each value identifies control plane IP addresses in the Azure region.
-          readOnly: true
-          type: object
-        gcp:
-          additionalProperties:
-            description: Control plane IP addresses in GCP. Each key identifies a Google Cloud (GCP) region. Each value identifies control plane IP addresses in the GCP region.
-            items:
-              description: Control plane IP addresses in GCP. Each key identifies a Google Cloud (GCP) region. Each value identifies control plane IP addresses in the GCP region.
-              readOnly: true
-              type: string
-            readOnly: true
-            type: array
-          description: Control plane IP addresses in GCP. Each key identifies a Google Cloud (GCP) region. Each value identifies control plane IP addresses in the GCP region.
-          readOnly: true
-          type: object
-      readOnly: true
-      title: Inbound Control Plane IP Addresses By Cloud Provider
-      type: object
-    BadRequestDetail:
-      description: Bad request detail.
-      properties:
-        fields:
-          description: Describes all violations in a client request.
-          items:
-            $ref: '#/components/schemas/FieldViolation'
-          type: array
-      readOnly: true
-      type: object
     FieldViolation:
       properties:
         description:
@@ -278,75 +144,25 @@ components:
       - description
       - field
       type: object
-    ApiKey:
-      description: Details contained in one API key.
+    ControlPlaneIPAddresses:
+      description: List of IP addresses in the Atlas control plane.
       properties:
-        accessList:
-          description: List of network addresses granted access to this API using this API key.
-          items:
-            $ref: '#/components/schemas/AccessListItemView'
-          readOnly: true
-          type: array
-        id:
-          description: Unique 24-hexadecimal digit string that identifies this organization API key.
-          example: 32b6e34b3d91647abb20e7b8
-          pattern: ^([a-f0-9]{24})$
-          readOnly: true
-          type: string
-        publicKey:
-          description: Public API key value set for the specified organization API key.
-          maxLength: 8
-          minLength: 8
-          readOnly: true
-          type: string
-        roles:
-          description: List that contains roles that the API key needs to have. All roles you provide must be valid for the specified project or organization. Each request must include a minimum of one valid role. The resource returns all project and organization roles assigned to the Cloud user.
-          items:
-            $ref: '#/components/schemas/CloudAccessRoleAssignment'
-          readOnly: true
-          type: array
-      readOnly: true
-      required:
-      - accessList
-      - id
-      - publicKey
-      - roles
-      type:
-      - object
-      - 'null'
-    SystemStatus:
+        inbound:
+          $ref: '#/components/schemas/InboundControlPlaneCloudProviderIPAddresses'
+        outbound:
+          $ref: '#/components/schemas/OutboundControlPlaneCloudProviderIPAddresses'
+      title: Control Plane IP Addresses
+      type: object
+    Link:
       properties:
-        apiKey:
-          $ref: '#/components/schemas/ApiKey'
-        appName:
-          description: Human-readable label that identifies the service from which you requested this response.
-          enum:
-          - MongoDB Atlas
-          readOnly: true
+        href:
+          description: Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: https://cloud.mongodb.com/api/atlas
           type: string
-        build:
-          description: Unique 40-hexadecimal digit hash that identifies the latest git commit merged for this application.
-          example: 83be55e140f493c88e7f578aae96548dd881587b
-          readOnly: true
+        rel:
+          description: Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.
+          example: self
           type: string
-        links:
-          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
-          externalDocs:
-            description: Web Linking Specification (RFC 5988)
-            url: https://datatracker.ietf.org/doc/html/rfc5988
-          items:
-            $ref: '#/components/schemas/Link'
-          readOnly: true
-          type: array
-        throttling:
-          description: Flag that indicates whether someone enabled throttling on this service.
-          readOnly: true
-          type: boolean
-      required:
-      - apiKey
-      - appName
-      - build
-      - throttling
       type: object
     OutboundControlPlaneCloudProviderIPAddresses:
       description: List of outbound IP addresses from the Atlas control plane, categorized by cloud provider. If your network allows inbound HTTP requests only from specific IP addresses, you must allow access from the following IP addresses so that Atlas can communicate with your webhooks and KMS.
@@ -390,6 +206,359 @@ components:
       readOnly: true
       title: Outbound Control Plane IP Addresses By Cloud Provider
       type: object
+    ApiError:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type: string
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type: string
+      required:
+      - error
+      - errorCode
+      type: object
+    AccessListItemView:
+      properties:
+        cidrBlock:
+          description: Range of IP addresses in Classless Inter-Domain Routing (CIDR) notation that found in this project's access list.
+          pattern: ^((([0-9]{1,3}\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$
+          readOnly: true
+          type: string
+        ipAddress:
+          description: IP address included in the API access list.
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+          readOnly: true
+          type: string
+      required:
+      - ipAddress
+      type: object
+    ApiKey:
+      description: Details contained in one API key.
+      properties:
+        accessList:
+          description: List of network addresses granted access to this API using this API key.
+          items:
+            $ref: '#/components/schemas/AccessListItemView'
+          readOnly: true
+          type: array
+        id:
+          description: Unique 24-hexadecimal digit string that identifies this organization API key.
+          example: 32b6e34b3d91647abb20e7b8
+          pattern: ^([a-f0-9]{24})$
+          readOnly: true
+          type: string
+        publicKey:
+          description: Public API key value set for the specified organization API key.
+          maxLength: 8
+          minLength: 8
+          readOnly: true
+          type: string
+        roles:
+          description: List that contains roles that the API key needs to have. All roles you provide must be valid for the specified project or organization. Each request must include a minimum of one valid role. The resource returns all project and organization roles assigned to the Cloud user.
+          items:
+            $ref: '#/components/schemas/CloudAccessRoleAssignment'
+          readOnly: true
+          type: array
+      readOnly: true
+      required:
+      - accessList
+      - id
+      - publicKey
+      - roles
+      type:
+      - object
+      - 'null'
+    BadRequestDetail:
+      description: Bad request detail.
+      properties:
+        fields:
+          description: Describes all violations in a client request.
+          items:
+            $ref: '#/components/schemas/FieldViolation'
+          type: array
+      readOnly: true
+      type: object
+    SystemStatus:
+      properties:
+        apiKey:
+          $ref: '#/components/schemas/ApiKey'
+        appName:
+          description: Human-readable label that identifies the service from which you requested this response.
+          enum:
+          - MongoDB Atlas
+          readOnly: true
+          type: string
+        build:
+          description: Unique 40-hexadecimal digit hash that identifies the latest git commit merged for this application.
+          example: 83be55e140f493c88e7f578aae96548dd881587b
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        throttling:
+          description: Flag that indicates whether someone enabled throttling on this service.
+          readOnly: true
+          type: boolean
+      required:
+      - apiKey
+      - appName
+      - build
+      - throttling
+      type: object
+    InboundControlPlaneCloudProviderIPAddresses:
+      description: List of inbound IP addresses to the Atlas control plane, categorized by cloud provider. If your application allows outbound HTTP requests only to specific IP addresses, you must allow access to the following IP addresses so that your API requests can reach the Atlas control plane.
+      properties:
+        aws:
+          additionalProperties:
+            description: Control plane IP addresses in AWS. Each key identifies an Amazon Web Services (AWS) region. Each value identifies control plane IP addresses in the AWS region.
+            items:
+              description: Control plane IP addresses in AWS. Each key identifies an Amazon Web Services (AWS) region. Each value identifies control plane IP addresses in the AWS region.
+              readOnly: true
+              type: string
+            readOnly: true
+            type: array
+          description: Control plane IP addresses in AWS. Each key identifies an Amazon Web Services (AWS) region. Each value identifies control plane IP addresses in the AWS region.
+          readOnly: true
+          type: object
+        azure:
+          additionalProperties:
+            description: Control plane IP addresses in Azure. Each key identifies an Azure region. Each value identifies control plane IP addresses in the Azure region.
+            items:
+              description: Control plane IP addresses in Azure. Each key identifies an Azure region. Each value identifies control plane IP addresses in the Azure region.
+              readOnly: true
+              type: string
+            readOnly: true
+            type: array
+          description: Control plane IP addresses in Azure. Each key identifies an Azure region. Each value identifies control plane IP addresses in the Azure region.
+          readOnly: true
+          type: object
+        gcp:
+          additionalProperties:
+            description: Control plane IP addresses in GCP. Each key identifies a Google Cloud (GCP) region. Each value identifies control plane IP addresses in the GCP region.
+            items:
+              description: Control plane IP addresses in GCP. Each key identifies a Google Cloud (GCP) region. Each value identifies control plane IP addresses in the GCP region.
+              readOnly: true
+              type: string
+            readOnly: true
+            type: array
+          description: Control plane IP addresses in GCP. Each key identifies a Google Cloud (GCP) region. Each value identifies control plane IP addresses in the GCP region.
+          readOnly: true
+          type: object
+      readOnly: true
+      title: Inbound Control Plane IP Addresses By Cloud Provider
+      type: object
+    CloudAccessRoleAssignment:
+      description: MongoDB Cloud user's roles and the corresponding organization or project to which that role applies. Each role can apply to one organization or one project but not both.
+      properties:
+        groupId:
+          description: Unique 24-hexadecimal digit string that identifies the project to which this role belongs. You can set a value for this parameter or `orgId` but not both in the same request.
+          example: 32b6e34b3d91647abb20e7b8
+          maxLength: 24
+          minLength: 24
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        orgId:
+          description: Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. You can set a value for this parameter or `groupId` but not both in the same request.
+          example: 32b6e34b3d91647abb20e7b8
+          maxLength: 24
+          minLength: 24
+          pattern: ^([a-f0-9]{24})$
+          type: string
+        roleName:
+          description: Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.
+          externalDocs:
+            description: MongoDB Cloud User Roles
+            url: https://www.mongodb.com/docs/atlas/reference/user-roles/
+          type: string
+      title: Role Assignment
+      type: object
+    GatewayIpAddresses:
+      description: IP addresses for a specific gateway, organized by direction and cloud provider.
+      properties:
+        inbound:
+          $ref: '#/components/schemas/InboundControlPlaneCloudProviderIPAddresses'
+        outbound:
+          $ref: '#/components/schemas/OutboundControlPlaneCloudProviderIPAddresses'
+      readOnly: true
+      title: Gateway IP Addresses
+      type: object
+    ControlPlaneIPAddresses_2:
+      description: List of IP addresses in the Atlas control plane.
+      properties:
+        gateways:
+          description: List of gateways, each representing a group of service-specific IP addresses that customers can add to their allow lists independently. Includes the Atlas Gateway (data plane) group when present.
+          items:
+            $ref: '#/components/schemas/Gateway'
+          maxItems: 25
+          readOnly: true
+          type: array
+        inbound:
+          $ref: '#/components/schemas/InboundControlPlaneCloudProviderIPAddresses'
+        outbound:
+          $ref: '#/components/schemas/OutboundControlPlaneCloudProviderIPAddresses'
+      title: Control Plane IP Addresses
+      type: object
+    Gateway:
+      description: Represents a service-specific gateway, such as the Atlas Gateway, with its IP addresses.
+      properties:
+        ips:
+          $ref: '#/components/schemas/GatewayIpAddresses'
+        name:
+          description: Name of the service that this gateway represents.
+          readOnly: true
+          type: string
+      title: Gateway
+      type: object
+    ApiError_2:
+      properties:
+        badRequestDetail:
+          $ref: '#/components/schemas/BadRequestDetail'
+        detail:
+          description: Describes the specific conditions or reasons that cause each type of error.
+          type:
+          - string
+          - 'null'
+        error:
+          description: HTTP status code returned with this error.
+          externalDocs:
+            url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+          format: int32
+          readOnly: true
+          type: integer
+        errorCode:
+          description: Application error code returned with this error.
+          readOnly: true
+          type: string
+        parameters:
+          description: Parameters used to give more information about the error.
+          items:
+            type: object
+          readOnly: true
+          type: array
+        reason:
+          description: Application error message returned with this error.
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - error
+      - errorCode
+      type: object
+    AccessListItemView_2:
+      properties:
+        cidrBlock:
+          description: Range of IP addresses in Classless Inter-Domain Routing (CIDR) notation that found in this project's access list.
+          pattern: ^((([0-9]{1,3}\.){3}[0-9]{1,3})|(:{0,2}([0-9a-f]{1,4}:){0,7}[0-9a-f]{1,4}[:]{0,2}))((%2[fF]|/)[0-9]{1,3})+$
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        ipAddress:
+          description: IP address included in the API access list.
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - ipAddress
+      type: object
+    AuthenticatedUser:
+      description: Details about the MongoDB Cloud user that this request is authenticated as.
+      properties:
+        username:
+          description: Email address that represents the username of the MongoDB Cloud user.
+          format: email
+          readOnly: true
+          type: string
+      readOnly: true
+      type:
+      - object
+      - 'null'
+    SystemStatus_2:
+      properties:
+        apiKey:
+          $ref: '#/components/schemas/ApiKey'
+        appName:
+          description: Human-readable label that identifies the service from which you requested this response.
+          enum:
+          - MongoDB Atlas
+          readOnly: true
+          type: string
+        build:
+          description: Unique 40-hexadecimal digit hash that identifies the latest git commit merged for this application.
+          example: 83be55e140f493c88e7f578aae96548dd881587b
+          readOnly: true
+          type: string
+        ipAddress:
+          description: IPv4 or IPv6 address from which you requested this response. Use this value to confirm which address IP access lists evaluate for your requests.
+          example: 216.172.40.186
+          pattern: ^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$
+          readOnly: true
+          type: string
+        links:
+          description: List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.
+          externalDocs:
+            description: Web Linking Specification (RFC 5988)
+            url: https://datatracker.ietf.org/doc/html/rfc5988
+          items:
+            $ref: '#/components/schemas/Link'
+          readOnly: true
+          type: array
+        throttling:
+          description: Flag that indicates whether someone enabled throttling on this service.
+          readOnly: true
+          type: boolean
+        user:
+          $ref: '#/components/schemas/AuthenticatedUser'
+      required:
+      - appName
+      - build
+      - ipAddress
+      - throttling
+      type: object
+  headers:
+    HeaderRateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window before the limit is reached.
+      schema:
+        type: integer
+    HeaderRateLimitLimit:
+      description: The maximum number of requests that a user can make within a specific time window.
+      schema:
+        type: integer
+    HeaderRetryAfter:
+      description: The minimum time you should wait, in seconds, before retrying the API request. This header might be returned for 429 or 503 error responses.
+      schema:
+        type: integer
   responses:
     forbidden:
       content:
@@ -431,24 +600,17 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
       description: Internal Server Error.
-  parameters:
-    envelope:
-      description: Flag that indicates whether Application wraps the response in an `envelope` JSON object. Some API clients cannot access the HTTP response headers or status code. To remediate this, set envelope=true in the query. Endpoints that return a list of results use the results object as an envelope. Application adds the status parameter to the response body.
-      in: query
-      name: envelope
-      schema:
-        default: false
-        type: boolean
-    pretty:
-      description: Flag that indicates whether the response body should be in the prettyprint format.
-      in: query
-      name: pretty
-      schema:
-        default: false
-        externalDocs:
-          description: Prettyprint
-          url: https://en.wikipedia.org/wiki/Prettyprint
-        type: boolean
+    unauthorized:
+      content:
+        application/json:
+          example:
+            detail: (This is just an example, the exception may not be related to this endpoint)
+            error: 401
+            errorCode: NOT_ORG_GROUP_CREATOR
+            reason: Unauthorized
+          schema:
+            $ref: '#/components/schemas/ApiError_2'
+      description: Unauthorized.
   securitySchemes:
     DigestAuth:
       scheme: digest
@@ -460,6 +622,9 @@ components:
           scopes: {}
           tokenUrl: https://cloud.mongodb.com/api/oauth/token
       type: oauth2
+x-refined-from:
+- mongodb-atlas-openapi.yaml
+- mongodb-openapi.yaml
 x-externalLinks:
 - label: Back to Atlas Docs
   url: https://www.mongodb.com/docs/atlas/

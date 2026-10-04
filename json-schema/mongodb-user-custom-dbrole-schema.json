@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-user-custom-dbrole-schema.json",
+  "title": "UserCustomDBRole",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-custom-database-roles-api-openapi.yml#/components/schemas/UserCustomDBRole",
+  "properties": {
+    "actions": {
+      "description": "List of the individual privilege actions that the role grants.",
+      "items": {
+        "$ref": "#/$defs/DatabasePrivilegeAction"
+      },
+      "type": "array"
+    },
+    "inheritedRoles": {
+      "description": "List of the built-in roles that this custom role inherits.",
+      "items": {
+        "$ref": "#/$defs/DatabaseInheritedRole"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "roleName": {
+      "description": "Human-readable label that identifies the role for the request. This name must be unique for this custom role in this project.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "roleName"
+  ],
+  "type": "object",
+  "$defs": {
+    "DatabaseInheritedRole": {
+      "description": "Role inherited from another context for this database user.",
+      "properties": {
+        "db": {
+          "description": "Human-readable label that identifies the database on which someone grants the action to one MongoDB user.",
+          "type": "string"
+        },
+        "role": {
+          "description": "Human-readable label that identifies the role inherited. Set this value to `admin` for every role except `read` or `readWrite`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "db",
+        "role"
+      ],
+      "title": "Inherited Role",
+      "type": "object"
+    },
+    "DatabasePermittedNamespaceResource": {
+      "description": "Namespace to which this database user has access.",
+      "properties": {
+        "cluster": {
+          "description": "Flag that indicates whether to grant the action on the cluster resource. If `true`, MongoDB Cloud ignores the `actions.resources.collection` and `actions.resources.db` parameters.",
+          "type": "boolean"
+        },
+        "collection": {
+          "description": "Human-readable label that identifies the collection on which you grant the action to one MongoDB user. If you don't set this parameter, you grant the action to all collections in the database specified in the `actions.resources.db` parameter. If you set `\"actions.resources.cluster\" : true`, MongoDB Cloud ignores this parameter.",
+          "type": "string"
+        },
+        "db": {
+          "description": "Human-readable label that identifies the database on which you grant the action to one MongoDB user. If you set `\"actions.resources.cluster\" : true`, MongoDB Cloud ignores this parameter.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cluster",
+        "collection",
+        "db"
+      ],
+      "title": "Permitted Namespace",
+      "type": "object"
+    },
+    "DatabasePrivilegeAction": {
+      "description": "Privilege action that the role grants.",
+      "properties": {
+        "action": {
+          "description": "Human-readable label that identifies the privilege action.",
+          "enum": [
+            "FIND",
+            "INSERT",
+            "REMOVE",
+            "UPDATE",
+            "BYPASS_DOCUMENT_VALIDATION",
+            "USE_UUID",
+            "KILL_OP",
+            "BYPASS_DEFAULT_MAX_TIME_MS",
+            "CREATE_COLLECTION",
+            "CREATE_INDEX",
+            "DROP_COLLECTION",
+            "ENABLE_PROFILER",
+            "KILL_ANY_CURSOR",
+            "CHANGE_STREAM",
+            "COLL_MOD",
+            "COMPACT",
+            "CONVERT_TO_CAPPED",
+            "DROP_DATABASE",
+            "DROP_INDEX",
+            "RE_INDEX",
+            "RENAME_COLLECTION_SAME_DB",
+            "SET_USER_WRITE_BLOCK",
+            "BYPASS_USER_WRITE_BLOCK",
+            "LIST_SESSIONS",
+            "KILL_ANY_SESSION",
+            "COLL_STATS",
+            "CONN_POOL_STATS",
+            "DB_HASH",
+            "DB_STATS",
+            "GET_CMD_LINE_OPTS",
+            "GET_LOG",
+            "GET_PARAMETER",
+            "GET_SHARD_MAP",
+            "HOST_INFO",
+            "IN_PROG",
+            "LIST_DATABASES",
+            "LIST_COLLECTIONS",
+            "LIST_INDEXES",
+            "LIST_SHARDS",
+            "NET_STAT",
+            "REPL_SET_GET_CONFIG",
+            "REPL_SET_GET_STATUS",
+            "SERVER_STATUS",
+            "VALIDATE",
+            "SHARDING_STATE",
+            "TOP",
+            "SQL_GET_SCHEMA",
+            "SQL_SET_SCHEMA",
+            "VIEW_ALL_HISTORY",
+            "OUT_TO_S3",
+            "OUT_TO_AZURE",
+            "OUT_TO_GCS",
+            "STORAGE_GET_CONFIG",
+            "STORAGE_SET_CONFIG",
+            "FLUSH_ROUTER_CONFIG",
+            "ENABLE_SHARDING",
+            "CHECK_METADATA_CONSISTENCY",
+            "MOVE_CHUNK",
+            "SPLIT_CHUNK",
+            "ANALYZE_SHARD_KEY",
+            "REFINE_COLLECTION_SHARD_KEY",
+            "CLEAR_JUMBO_FLAG",
+            "RESHARD_COLLECTION",
+            "SHARDED_DATA_DISTRIBUTION",
+            "GET_STREAM_PROCESSOR",
+            "CREATE_STREAM_PROCESSOR",
+            "PROCESS_STREAM_PROCESSOR",
+            "MODIFY_STREAM_PROCESSOR",
+            "START_STREAM_PROCESSOR",
+            "STOP_STREAM_PROCESSOR",
+            "DROP_STREAM_PROCESSOR",
+            "SAMPLE_STREAM_PROCESSOR",
+            "LIST_STREAM_PROCESSORS",
+            "LIST_CONNECTIONS",
+            "STREAM_PROCESSOR_STATS"
+          ],
+          "type": "string"
+        },
+        "resources": {
+          "description": "List of resources on which you grant the action.",
+          "items": {
+            "$ref": "#/$defs/DatabasePermittedNamespaceResource"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "resources"
+      ],
+      "title": "Database Privilege Action",
+      "type": "object"
+    }
+  }
+}

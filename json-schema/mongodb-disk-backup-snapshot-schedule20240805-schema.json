@@ -1,0 +1,457 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-disk-backup-snapshot-schedule20240805-schema.json",
+  "title": "DiskBackupSnapshotSchedule20240805",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-cloud-backups-api-openapi.yml#/components/schemas/DiskBackupSnapshotSchedule20240805",
+  "properties": {
+    "autoCopySettingsEnabled": {
+      "description": "Flag that indicates whether the copy settings are automatically managed by MongoDB Cloud and sync to the cluster topology.",
+      "type": "boolean"
+    },
+    "autoExportEnabled": {
+      "description": "Flag that indicates whether MongoDB Cloud automatically exports Cloud Backup Snapshots to the Export Bucket.",
+      "type": "boolean"
+    },
+    "clusterId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the cluster with the Snapshot you want to return.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "clusterName": {
+      "description": "Human-readable label that identifies the cluster with the Snapshot you want to return.",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "copyPolicyItemsEnabled": {
+      "description": "Flag that indicates whether copy settings use `copyPolicyItems` instead of `frequencies`. When true, requests must supply `copyPolicyItems` and responses return `copyPolicyItems` only. When false or omitted, requests must supply `frequencies` and responses return `frequencies` only.",
+      "type": "boolean"
+    },
+    "copySettings": {
+      "description": "List that contains a document for each copy setting item in the desired backup policy.",
+      "items": {
+        "$ref": "#/$defs/DiskBackupCopySetting20240805"
+      },
+      "type": "array"
+    },
+    "deleteCopiedBackups": {
+      "description": "List that contains a document for each deleted copy setting whose backup copies you want to delete.",
+      "items": {
+        "$ref": "#/$defs/DeleteCopiedBackups20240805"
+      },
+      "type": "array",
+      "writeOnly": true
+    },
+    "deleteCopySnapshots": {
+      "description": "Flag that indicates whether to delete Snapshot copies that MongoDB Cloud took previously when their associated `copyPolicyItems` are removed from a `copySetting`. This option requires `copyPolicyItemsEnabled` to be true.",
+      "type": "boolean",
+      "writeOnly": true
+    },
+    "deleteSnapshots": {
+      "description": "Flag that indicates whether to delete Snapshots that MongoDB Cloud took previously when deleting the associated backup policy.",
+      "type": "boolean",
+      "writeOnly": true
+    },
+    "export": {
+      "$ref": "#/$defs/AutoExportPolicyView"
+    },
+    "extraRetentionSettings": {
+      "description": "List that contains a document for each extra retention setting item in the desired backup policy.",
+      "items": {
+        "$ref": "#/$defs/ExtraRetentionSetting"
+      },
+      "type": "array"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "nextSnapshot": {
+      "description": "Date and time when MongoDB Cloud takes the next Snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "policies": {
+      "description": "Rules set for this backup schedule.",
+      "items": {
+        "$ref": "#/$defs/AdvancedDiskBackupSnapshotSchedulePolicy"
+      },
+      "maxItems": 1,
+      "type": "array"
+    },
+    "referenceHourOfDay": {
+      "description": "Hour of day in Coordinated Universal Time (UTC) that represents when MongoDB Cloud takes the Snapshot.",
+      "format": "int32",
+      "type": "integer"
+    },
+    "referenceMinuteOfHour": {
+      "description": "Minute of the `referenceHourOfDay` that represents when MongoDB Cloud takes the Snapshot.",
+      "format": "int32",
+      "type": "integer"
+    },
+    "restoreWindowDays": {
+      "description": "Number of previous days that you can restore back to with Continuous Cloud Backup accuracy. You must specify a positive, non-zero integer. This parameter applies to continuous Cloud Backups only.",
+      "format": "int32",
+      "type": "integer"
+    },
+    "updateCopySnapshots": {
+      "description": "Flag that indicates whether to apply the retention changes for updated copy policy items to Snapshot copies that MongoDB Cloud took previously.",
+      "type": "boolean",
+      "writeOnly": true
+    },
+    "updateSnapshots": {
+      "description": "Flag that indicates whether to apply the retention changes in the updated backup policy to Snapshots that MongoDB Cloud took previously.",
+      "type": "boolean",
+      "writeOnly": true
+    },
+    "useOrgAndGroupNamesInExportPrefix": {
+      "description": "Flag that indicates whether to use organization and project names instead of organization and project UUIDs in the path to the metadata files that MongoDB Cloud uploads to your Export Bucket.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "policies"
+  ],
+  "type": "object",
+  "$defs": {
+    "AdvancedDiskBackupSnapshotSchedulePolicy": {
+      "description": "List that contains a document for each backup policy item in the desired backup policy.",
+      "properties": {
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this backup policy.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "policyItems": {
+          "description": "List that contains the specifications for one policy.",
+          "items": {
+            "$ref": "#/$defs/DiskBackupApiPolicyItem"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "policyItems"
+      ],
+      "type": "object"
+    },
+    "AutoExportPolicyView": {
+      "description": "Policy for automatically exporting Cloud Backup Snapshots.",
+      "properties": {
+        "exportBucketId": {
+          "description": "Unique 24-hexadecimal character string that identifies the Export Bucket.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "frequencyType": {
+          "description": "Human-readable label that indicates the rate at which the export policy item occurs.",
+          "enum": [
+            "monthly",
+            "yearly"
+          ],
+          "type": "string"
+        }
+      },
+      "title": "export",
+      "type": "object"
+    },
+    "DeleteCopiedBackups20240805": {
+      "description": "Deleted copy setting whose backup copies need to also be deleted.",
+      "properties": {
+        "cloudProvider": {
+          "description": "Human-readable label that identifies the cloud provider for the deleted copy setting whose backup copies you want to delete.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string",
+          "writeOnly": true
+        },
+        "regionName": {
+          "description": "Target region for the deleted copy setting whose backup copies you want to delete. Please supply the 'Atlas Region'.",
+          "type": "string",
+          "writeOnly": true
+        },
+        "zoneId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the zone in a cluster. For global clusters, there can be multiple zones to choose from. For sharded clusters and replica set clusters, there is only one zone in the cluster. To find the Zone Id, do a GET request to Return One Cluster from One Project and consult the `replicationSpecs` array.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string",
+          "writeOnly": true
+        }
+      },
+      "type": "object",
+      "writeOnly": true
+    },
+    "DiskBackupApiPolicyItem": {
+      "description": "Specifications for one policy.",
+      "properties": {
+        "frequencyInterval": {
+          "description": "Number that indicates the frequency interval for a set of Snapshots. A value of `1` specifies the first instance of the corresponding `frequencyType`.\n\n- In a yearly policy item, `1` indicates that the yearly Snapshot occurs on the first day of January and `12` indicates the first day of December.\n\n- In a monthly policy item, `1` indicates that the monthly Snapshot occurs on the first day of the month and `40` indicates the last day of the month.\n\n- In a weekly policy item, `1` indicates that the weekly Snapshot occurs on Monday and `7` indicates Sunday.\n\n- In an hourly policy item, you can set the frequency interval to `1`, `2`, `4`, `6`, `8`, or `12`. For hourly policy items for NVMe clusters, MongoDB Cloud accepts only `12` as the frequency interval value.\n\n MongoDB Cloud ignores this setting for non-hourly policy items in Backup Compliance Policy settings.",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            40
+          ],
+          "format": "int32",
+          "type": "integer"
+        },
+        "frequencyType": {
+          "description": "Human-readable label that identifies the frequency type associated with the backup policy.",
+          "enum": [
+            "daily",
+            "hourly",
+            "weekly",
+            "monthly",
+            "yearly",
+            "ondemand"
+          ],
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this backup policy item.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "retentionUnit": {
+          "description": "Unit of time in which MongoDB Cloud measures Snapshot retention.",
+          "enum": [
+            "days",
+            "weeks",
+            "months",
+            "years"
+          ],
+          "type": "string"
+        },
+        "retentionValue": {
+          "description": "Duration in days, weeks, months, or years that MongoDB Cloud retains the Snapshot. For less frequent policy items, MongoDB Cloud requires that you specify a value greater than or equal to the value specified for more frequent policy items.\n\nFor example: If the hourly policy item specifies a retention of two days, you must specify two days or greater for the retention of the weekly policy item.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "frequencyInterval",
+        "frequencyType",
+        "retentionUnit",
+        "retentionValue"
+      ],
+      "type": "object"
+    },
+    "DiskBackupCopyPolicyItem": {
+      "description": "Specifications for one copy policy item.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DiskBackupOnDemandCopyPolicyItem"
+        },
+        {
+          "$ref": "#/$defs/DiskBackupTimeBasedCopyPolicyItem"
+        }
+      ],
+      "properties": {
+        "frequencyType": {
+          "description": "Human-readable label that identifies the frequency type associated with the copy policy.",
+          "enum": [
+            "daily",
+            "hourly",
+            "weekly",
+            "monthly",
+            "yearly",
+            "ondemand"
+          ],
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this copy policy item.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "frequencyType"
+      ],
+      "type": "object"
+    },
+    "DiskBackupCopySetting20240805": {
+      "description": "Copy setting item in the desired backup policy.",
+      "properties": {
+        "cloudProvider": {
+          "description": "Human-readable label that identifies the cloud provider that stores the snapshot copy.",
+          "enum": [
+            "AWS",
+            "AZURE",
+            "GCP"
+          ],
+          "type": "string"
+        },
+        "copyPolicyItems": {
+          "description": "List that contains a document for each copy policy item. Allowed only when `copyPolicyItemsEnabled` is true. Responses omit this field when `copyPolicyItemsEnabled` is false or omitted.",
+          "items": {
+            "$ref": "#/$defs/DiskBackupCopyPolicyItem"
+          },
+          "maxItems": 6,
+          "type": "array"
+        },
+        "frequencies": {
+          "deprecated": true,
+          "description": "Deprecated: use `copyPolicyItems`, which defines which snapshots to copy and their retention. Allowed only when `copyPolicyItemsEnabled` is false or omitted. Responses omit this field when `copyPolicyItemsEnabled` is true.",
+          "items": {
+            "enum": [
+              "HOURLY",
+              "DAILY",
+              "WEEKLY",
+              "MONTHLY",
+              "YEARLY",
+              "ON_DEMAND"
+            ],
+            "type": "string"
+          },
+          "maxItems": 6,
+          "type": "array"
+        },
+        "lastNumberOfSnapshots": {
+          "description": "Number of most recent snapshots to copy to the target region. If specified, Atlas copies this number of the most recent snapshots rather than using a frequency-based or policy-based copy schedule. This field is mutually exclusive with `frequencies` and `copyPolicyItems`.",
+          "format": "int32",
+          "maximum": 500,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "regionName": {
+          "description": "Target region to copy snapshots belonging to `zoneId`. Please supply the 'Atlas Region'.",
+          "type": "string"
+        },
+        "shouldCopyOplogs": {
+          "description": "Flag that indicates whether to copy the oplogs to the target region. You can use the oplogs to perform point-in-time restores.",
+          "type": "boolean"
+        },
+        "zoneId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the zone in a cluster. For global clusters, there can be multiple zones to choose from. For sharded clusters and replica set clusters, there is only one zone in the cluster. To find the Zone Id, do a GET request to Return One Cluster from One Project and consult the `replicationSpecs` array.",
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "zoneId"
+      ],
+      "type": "object"
+    },
+    "DiskBackupOnDemandCopyPolicyItem": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/DiskBackupCopyPolicyItem"
+        }
+      ],
+      "description": "Specifications for one on-demand copy policy item.",
+      "required": [
+        "frequencyType"
+      ],
+      "type": "object"
+    },
+    "DiskBackupTimeBasedCopyPolicyItem": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/DiskBackupCopyPolicyItem"
+        },
+        {
+          "properties": {
+            "retentionUnit": {
+              "description": "Unit of time in which MongoDB Cloud measures snapshot copy retention.",
+              "enum": [
+                "days",
+                "weeks",
+                "months",
+                "years"
+              ],
+              "type": "string"
+            },
+            "retentionValue": {
+              "description": "Duration in days, weeks, months, or years that MongoDB Cloud retains the snapshot copy.",
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Specifications for one time-based copy policy item.",
+      "required": [
+        "frequencyType",
+        "retentionUnit",
+        "retentionValue"
+      ],
+      "type": "object"
+    },
+    "ExtraRetentionSetting": {
+      "description": "Extra retention setting item in the desired backup policy.",
+      "properties": {
+        "frequencyType": {
+          "description": "The frequency type for the extra retention settings for the cluster.",
+          "enum": [
+            "HOURLY",
+            "DAILY",
+            "WEEKLY",
+            "MONTHLY",
+            "YEARLY",
+            "ON_DEMAND"
+          ],
+          "type": "string"
+        },
+        "retentionDays": {
+          "description": "The number of extra retention days for the cluster.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

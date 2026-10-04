@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-api-atlas-non-compliant-resource-view-schema.json",
+  "title": "ApiAtlasNonCompliantResourceView",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-resource-policies-api-openapi.yml#/components/schemas/ApiAtlasNonCompliantResourceView",
+  "properties": {
+    "orgId": {
+      "description": "Unique 24-hexadecimal character string that identifies the organization the resource belongs to.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "resourceId": {
+      "description": "Unique 24-hexadecimal character string that identifies the non-compliant resource.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "resourceName": {
+      "description": "Unique human readable string that identifies the non-compliant resource.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "resourcePoliciesCausingNonCompliance": {
+      "description": "List of resource policies causing the resource to be considered non-compliant.",
+      "items": {
+        "$ref": "#/$defs/ApiAtlasResourcePolicyMetadataView"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "resourceType": {
+      "description": "Human-readable label that displays the type of a resource.",
+      "enum": [
+        "DEPRECATED_PROJECT",
+        "DEPRECATED_CLUSTER",
+        "PROJECT",
+        "CLUSTER"
+      ],
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "ApiAtlasPolicyMetadataView": {
+      "properties": {
+        "policyId": {
+          "description": "Unique 24-hexadecimal character string that identifies the policy.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApiAtlasResourcePolicyMetadataView": {
+      "properties": {
+        "policiesCausingNonCompliance": {
+          "description": "List of policies that are in conflict with the current state of the resource.",
+          "items": {
+            "$ref": "#/$defs/ApiAtlasPolicyMetadataView"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "resourcePolicyId": {
+          "description": "Unique 24-hexadecimal character string that identifies the atlas resource policy.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resourcePolicyName": {
+          "description": "Human-readable label that describes the atlas resource policy.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

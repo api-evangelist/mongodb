@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-data-lake-ingestion-pipeline-schema.json",
+  "title": "Data Lake Pipeline",
+  "description": "Details of a Data Lake Pipeline.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-data-lake-pipelines-api-openapi.yml#/components/schemas/DataLakeIngestionPipeline",
+  "properties": {
+    "_id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the Data Lake Pipeline.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "createdDate": {
+      "description": "Timestamp that indicates when the Data Lake Pipeline was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "datasetRetentionPolicy": {
+      "$ref": "#/$defs/DatasetRetentionPolicy"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the group.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "lastUpdatedDate": {
+      "description": "Timestamp that indicates the last time that the Data Lake Pipeline was updated. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "name": {
+      "description": "Name of this Data Lake Pipeline.",
+      "type": "string"
+    },
+    "sink": {
+      "$ref": "#/$defs/IngestionSink"
+    },
+    "source": {
+      "$ref": "#/$defs/IngestionSource"
+    },
+    "state": {
+      "description": "State of this Data Lake Pipeline.",
+      "enum": [
+        "ACTIVE",
+        "PAUSED"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "transformations": {
+      "description": "Fields to be excluded for this Data Lake Pipeline.",
+      "items": {
+        "$ref": "#/$defs/FieldTransformation"
+      },
+      "type": "array"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "DatasetRetentionPolicy": {
+      "description": "Dataset Retention Policy for a Scheduled Data Lake Pipeline.",
+      "properties": {
+        "lastModifiedDate": {
+          "description": "Date when retention policy was last modified. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "units": {
+          "description": "Quantity of time in which the Data Lake Pipeline measures dataset retention.",
+          "enum": [
+            "DAYS",
+            "WEEKS",
+            "MONTHS"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "description": "Number that indicates the amount of days, weeks, or months that the Data Lake Pipeline will retain datasets.",
+          "format": "int32",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "units",
+        "value"
+      ],
+      "title": "Dataset Retention Policy",
+      "type": "object"
+    },
+    "FieldTransformation": {
+      "description": "Field Transformations during ingestion of a Data Lake Pipeline.",
+      "properties": {
+        "field": {
+          "description": "Key in the document.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of transformation applied during the export of the namespace in a Data Lake Pipeline.",
+          "enum": [
+            "EXCLUDE"
+          ],
+          "type": "string"
+        }
+      },
+      "title": "Field Transformation",
+      "type": "object"
+    },
+    "IngestionSink": {
+      "description": "Ingestion destination of a Data Lake Pipeline.",
+      "properties": {
+        "type": {
+          "description": "Type of ingestion destination of this Data Lake Pipeline.",
+          "enum": [
+            "DLS"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Ingestion Destination",
+      "type": "object"
+    },
+    "IngestionSource": {
+      "description": "Ingestion Source of a Data Lake Pipeline.",
+      "properties": {
+        "type": {
+          "description": "Type of ingestion source of this Data Lake Pipeline.",
+          "enum": [
+            "PERIODIC_CPS",
+            "ON_DEMAND_CPS"
+          ],
+          "type": "string"
+        }
+      },
+      "title": "Ingestion Source",
+      "type": "object"
+    }
+  }
+}

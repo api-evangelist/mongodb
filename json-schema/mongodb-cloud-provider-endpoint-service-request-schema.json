@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-cloud-provider-endpoint-service-request-schema.json",
+  "title": "CloudProviderEndpointServiceRequest",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-private-endpoint-services-api-openapi.yml#/components/schemas/CloudProviderEndpointServiceRequest",
+  "properties": {
+    "portMappingEnabled": {
+      "default": false,
+      "description": "Flag that indicates whether this endpoint service uses PSC port-mapping. This is only applicable for GCP Private Endpoint Services.",
+      "type": "boolean",
+      "writeOnly": true
+    },
+    "providerName": {
+      "description": "Human-readable label that identifies the cloud service provider for which you want to create the private endpoint service.",
+      "enum": [
+        "AWS",
+        "AZURE",
+        "GCP"
+      ],
+      "type": "string",
+      "writeOnly": true
+    },
+    "region": {
+      "description": "Cloud provider region in which you want to create the private endpoint service. Regions accepted as values differ for [Amazon Web Services](https://docs.atlas.mongodb.com/reference/amazon-aws/), [Google Cloud Platform](https://docs.atlas.mongodb.com/reference/google-gcp/), and [Microsoft Azure](https://docs.atlas.mongodb.com/reference/microsoft-azure/).",
+      "type": "string",
+      "writeOnly": true
+    },
+    "supportedRemoteRegions": {
+      "description": "List of regions that the endpoint service supports. Native cross region support is implemented for AWS only.",
+      "items": {
+        "description": "AWS region name",
+        "type": "string"
+      },
+      "maxItems": 35,
+      "type": [
+        "array",
+        "null"
+      ],
+      "writeOnly": true
+    }
+  },
+  "required": [
+    "providerName",
+    "region"
+  ],
+  "type": "object"
+}

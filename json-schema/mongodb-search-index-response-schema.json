@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-search-index-response-schema.json",
+  "title": "Search Index Response",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-atlas-search-api-openapi.yml#/components/schemas/SearchIndexResponse",
+  "properties": {
+    "collectionName": {
+      "description": "Label that identifies the collection that contains one or more Atlas Search indexes.",
+      "type": "string"
+    },
+    "database": {
+      "description": "Label that identifies the database that contains the collection with one or more Atlas Search indexes.",
+      "type": "string"
+    },
+    "indexID": {
+      "description": "Unique 24-hexadecimal digit string that identifies this Atlas Search index.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "latestDefinition": {
+      "$ref": "#/$defs/SearchIndexDefinition"
+    },
+    "latestDefinitionVersion": {
+      "$ref": "#/$defs/SearchIndexDefinitionVersion"
+    },
+    "name": {
+      "description": "Label that identifies this index. Within each namespace, the names of all indexes must be unique.",
+      "type": "string"
+    },
+    "queryable": {
+      "description": "Flag that indicates whether the index is queryable on all hosts.",
+      "type": "boolean"
+    },
+    "status": {
+      "description": "Condition of the search index when you made this request.\n\n- `DELETING`: The index is being deleted.\n- `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.\n- `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.\n- `PENDING`: Atlas has not yet started building the index.\n- `BUILDING`: Atlas is building or re-building the index after an edit.\n- `READY`: The index is ready and can support queries.",
+      "enum": [
+        "DELETING",
+        "FAILED",
+        "STALE",
+        "PENDING",
+        "BUILDING",
+        "READY",
+        "DOES_NOT_EXIST"
+      ],
+      "type": "string"
+    },
+    "statusDetail": {
+      "description": "List of documents detailing index status on each host.",
+      "items": {
+        "$ref": "#/$defs/SearchHostStatusDetail"
+      },
+      "type": "array"
+    },
+    "type": {
+      "description": "Type of the index. The default type is search.",
+      "enum": [
+        "search",
+        "vectorSearch"
+      ],
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "SearchHostStatusDetail": {
+      "properties": {
+        "hostname": {
+          "description": "Hostname that corresponds to the status detail.",
+          "type": "string"
+        },
+        "mainIndex": {
+          "$ref": "#/$defs/SearchMainIndexStatusDetail"
+        },
+        "queryable": {
+          "description": "Flag that indicates whether the index is queryable on the host.",
+          "type": "boolean"
+        },
+        "stagedIndex": {
+          "$ref": "#/$defs/SearchStagedIndexStatusDetail"
+        },
+        "status": {
+          "description": "Condition of the search index when you made this request.\n\n- `DELETING`: The index is being deleted.\n- `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.\n- `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.\n- `PENDING`: Atlas has not yet started building the index.\n- `BUILDING`: Atlas is building or re-building the index after an edit.\n- `READY`: The index is ready and can support queries.",
+          "enum": [
+            "DELETING",
+            "FAILED",
+            "STALE",
+            "PENDING",
+            "BUILDING",
+            "READY",
+            "DOES_NOT_EXIST"
+          ],
+          "type": "string"
+        }
+      },
+      "title": "Search Host Status Detail",
+      "type": "object"
+    },
+    "SearchIndexDefinition": {
+      "description": "The search index definition set by the user.",
+      "properties": {
+        "numPartitions": {
+          "default": 1,
+          "description": "Number of index partitions. Allowed values are [1, 2, 4].",
+          "format": "int32",
+          "type": "integer"
+        },
+        "storedSource": {
+          "description": "Flag that indicates whether to store all fields (true) on Atlas Search. By default, Atlas doesn't store (false) the fields on Atlas Search.  Alternatively, you can specify an object that only contains the list of fields to store (include) or not store (exclude) on Atlas Search. Note that storing all fields (true) is not allowed for vector search indexes. To learn more, see Stored Source Fields.",
+          "type": "object"
+        }
+      },
+      "title": "Search Index Definition",
+      "type": "object"
+    },
+    "SearchIndexDefinitionVersion": {
+      "description": "Object which includes the version number of the index definition and the time that the index definition was created.",
+      "properties": {
+        "createdAt": {
+          "description": "The time at which this index definition was created. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "version": {
+          "description": "The version number associated with this index definition when it was created.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "title": "Search Index Definition Version",
+      "type": "object"
+    },
+    "SearchMainIndexStatusDetail": {
+      "description": "Contains status information about the active index.",
+      "properties": {
+        "definition": {
+          "$ref": "#/$defs/SearchIndexDefinition"
+        },
+        "definitionVersion": {
+          "$ref": "#/$defs/SearchIndexDefinitionVersion"
+        },
+        "message": {
+          "description": "Optional message describing an error.",
+          "type": "string"
+        },
+        "queryable": {
+          "description": "Flag that indicates whether the index generation is queryable on the host.",
+          "type": "boolean"
+        },
+        "status": {
+          "description": "Condition of the search index when you made this request.\n\n- `DELETING`: The index is being deleted.\n- `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.\n- `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.\n- `PENDING`: Atlas has not yet started building the index.\n- `BUILDING`: Atlas is building or re-building the index after an edit.\n- `READY`: The index is ready and can support queries.",
+          "enum": [
+            "DELETING",
+            "FAILED",
+            "STALE",
+            "PENDING",
+            "BUILDING",
+            "READY",
+            "DOES_NOT_EXIST"
+          ],
+          "type": "string"
+        }
+      },
+      "title": "Search Main Index Status Detail",
+      "type": "object"
+    },
+    "SearchStagedIndexStatusDetail": {
+      "description": "Contains status information about an index building in the background.",
+      "properties": {
+        "definition": {
+          "$ref": "#/$defs/SearchIndexDefinition"
+        },
+        "definitionVersion": {
+          "$ref": "#/$defs/SearchIndexDefinitionVersion"
+        },
+        "message": {
+          "description": "Optional message describing an error.",
+          "type": "string"
+        },
+        "queryable": {
+          "description": "Flag that indicates whether the index generation is queryable on the host.",
+          "type": "boolean"
+        },
+        "status": {
+          "description": "Condition of the search index when you made this request.\n\n- `DELETING`: The index is being deleted.\n- `FAILED` The index build failed. Indexes can enter the FAILED state due to an invalid index definition.\n- `STALE`: The index is queryable but has stopped replicating data from the indexed collection. Searches on the index may return out-of-date data.\n- `PENDING`: Atlas has not yet started building the index.\n- `BUILDING`: Atlas is building or re-building the index after an edit.\n- `READY`: The index is ready and can support queries.",
+          "enum": [
+            "DELETING",
+            "FAILED",
+            "STALE",
+            "PENDING",
+            "BUILDING",
+            "READY",
+            "DOES_NOT_EXIST"
+          ],
+          "type": "string"
+        }
+      },
+      "title": "Search Staged Index Status Detail",
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-flex-backup-restore-job-create20241113-schema.json",
+  "title": "Create Flex Backup Restore Job",
+  "description": "Details to create one restore job of a flex cluster.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-flex-restore-jobs-api-openapi.yml#/components/schemas/FlexBackupRestoreJobCreate20241113",
+  "properties": {
+    "deliveryType": {
+      "description": "Means by which this resource returns the snapshot to the requesting MongoDB Cloud user.",
+      "enum": [
+        "RESTORE",
+        "DOWNLOAD"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "expirationDate": {
+      "description": "Date and time when the download link no longer works. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the restore job.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "instanceName": {
+      "description": "Human-readable label that identifies the source instance.",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "projectId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project from which the restore job originated.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "restoreFinishedDate": {
+      "description": "Date and time when MongoDB Cloud completed writing this snapshot. MongoDB Cloud changes the status of the restore job to `CLOSED`. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "restoreScheduledDate": {
+      "description": "Date and time when MongoDB Cloud will restore this snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "snapshotFinishedDate": {
+      "description": "Date and time when MongoDB Cloud completed writing this snapshot. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "snapshotId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the snapshot to restore.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string",
+      "writeOnly": true
+    },
+    "snapshotUrl": {
+      "description": "Internet address from which you can download the compressed snapshot files. The resource returns this parameter when  `\"deliveryType\" : \"DOWNLOAD\"`.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "status": {
+      "description": "Phase of the restore workflow for this job at the time this resource made this request.",
+      "enum": [
+        "PENDING",
+        "QUEUED",
+        "RUNNING",
+        "FAILED",
+        "COMPLETED"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "targetDeploymentItemName": {
+      "description": "Human-readable label that identifies the instance or cluster on the target project to which you want to restore the snapshot. You can restore the snapshot to another flex cluster or dedicated cluster tier.",
+      "pattern": "^[\\p{L}\\p{N}\\-_.(),:&@+']{1,64}$",
+      "type": "string",
+      "writeOnly": true
+    },
+    "targetProjectId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project that contains the instance or cluster to which you want to restore the snapshot.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string",
+      "writeOnly": true
+    }
+  },
+  "required": [
+    "snapshotId",
+    "targetDeploymentItemName"
+  ],
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

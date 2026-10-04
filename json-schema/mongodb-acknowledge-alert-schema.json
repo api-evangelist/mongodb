@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-acknowledge-alert-schema.json",
+  "title": "Acknowledge Alert",
+  "description": "Acknowledging an alert prevents successive notifications. Specify the `acknowledgeUntil` date and optional comment or `unacknowledgeAlert` boolean.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-alerts-api-openapi.yml#/components/schemas/AcknowledgeAlert",
+  "properties": {
+    "acknowledgedUntil": {
+      "description": "Date and time until which this alert has been acknowledged. This parameter expresses its value in the ISO 8601 timestamp format in UTC. The resource returns this parameter if a MongoDB User previously acknowledged this alert.",
+      "format": "date-time",
+      "type": "string"
+    },
+    "acknowledgementComment": {
+      "description": "Comment that a MongoDB Cloud user submitted when acknowledging the alert.",
+      "maxLength": 200,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "unacknowledgeAlert": {
+      "description": "Flag that indicates to unacknowledge a previously acknowledged alert. By default this value is set to false. If set to true, it will override the `acknowledgedUntil` parameter.",
+      "type": "boolean"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-serverless-tenant-endpoint-schema.json",
+  "title": "ServerlessTenantEndpoint",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-serverless-private-endpoints-api-openapi.yml#/components/schemas/ServerlessTenantEndpoint",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/ServerlessAWSTenantEndpoint"
+    },
+    {
+      "$ref": "#/$defs/ServerlessAzureTenantEndpoint"
+    }
+  ],
+  "properties": {
+    "_id": {
+      "description": "Unique 24-hexadecimal digit string that identifies the private endpoint.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "cloudProviderEndpointId": {
+      "description": "Unique string that identifies the private endpoint's network interface.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "comment": {
+      "description": "Human-readable comment associated with the private endpoint.",
+      "maxLength": 80,
+      "readOnly": true,
+      "type": "string"
+    },
+    "endpointServiceName": {
+      "description": "Unique string that identifies the PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.",
+      "pattern": "^com\\.amazonaws\\.vpce\\.[a-z-0-9]+\\.vpce-svc-[0-9a-f]{17}|pls_[0-9a-f]{24}$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "errorMessage": {
+      "description": "Human-readable error message that indicates error condition associated with establishing the private endpoint connection.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "status": {
+      "description": "Human-readable label that indicates the current operating status of the private endpoint.",
+      "enum": [
+        "RESERVATION_REQUESTED",
+        "RESERVED",
+        "INITIATING",
+        "AVAILABLE",
+        "FAILED",
+        "DELETING"
+      ],
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "ServerlessAWSTenantEndpoint": {
+      "description": "View for a serverless AWS tenant endpoint.",
+      "properties": {
+        "_id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the private endpoint.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "cloudProviderEndpointId": {
+          "description": "Unique string that identifies the private endpoint's network interface.",
+          "pattern": "^vpce-[0-9a-f]{17}$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "comment": {
+          "description": "Human-readable comment associated with the private endpoint.",
+          "maxLength": 80,
+          "readOnly": true,
+          "type": "string"
+        },
+        "endpointServiceName": {
+          "description": "Unique string that identifies the Amazon Web Services (AWS) PrivateLink endpoint service. MongoDB Cloud returns null while it creates the endpoint service.",
+          "pattern": "^com\\.amazonaws\\.vpce\\.[a-z-0-9]+\\.vpce-svc-[0-9a-f]{17}",
+          "readOnly": true,
+          "type": "string"
+        },
+        "errorMessage": {
+          "description": "Human-readable error message that indicates error condition associated with establishing the private endpoint connection.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "providerName": {
+          "description": "Human-readable label that identifies the cloud service provider.",
+          "enum": [
+            "AWS"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "Human-readable label that indicates the current operating status of the private endpoint.",
+          "enum": [
+            "RESERVATION_REQUESTED",
+            "RESERVED",
+            "INITIATING",
+            "AVAILABLE",
+            "FAILED",
+            "DELETING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "AWS",
+      "type": "object"
+    },
+    "ServerlessAzureTenantEndpoint": {
+      "description": "View for a serverless Azure tenant endpoint.",
+      "properties": {
+        "_id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the private endpoint.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "cloudProviderEndpointId": {
+          "description": "Unique string that identifies the Azure private endpoint's network interface that someone added to this private endpoint service.",
+          "pattern": "^/subscriptions/[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/resource[gG]roups/private[Ll]ink/providers/Microsoft\\.Network/privateEndpoints/[-\\w._()]+$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "comment": {
+          "description": "Human-readable comment associated with the private endpoint.",
+          "maxLength": 80,
+          "readOnly": true,
+          "type": "string"
+        },
+        "endpointServiceName": {
+          "description": "Unique string that identifies the Azure private endpoint service. MongoDB Cloud returns null while it creates the endpoint service.",
+          "pattern": "^pls_[0-9a-f]{24}$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "errorMessage": {
+          "description": "Human-readable error message that indicates error condition associated with establishing the private endpoint connection.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "privateEndpointIpAddress": {
+          "description": "IPv4 address of the private endpoint in your Azure VNet that someone added to this private endpoint service.",
+          "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}|([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "privateLinkServiceResourceId": {
+          "description": "Root-relative path that identifies the Azure Private Link Service that MongoDB Cloud manages. MongoDB Cloud returns null while it creates the endpoint service.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "providerName": {
+          "description": "Human-readable label that identifies the cloud service provider.",
+          "enum": [
+            "AZURE"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "status": {
+          "description": "Human-readable label that indicates the current operating status of the private endpoint.",
+          "enum": [
+            "RESERVATION_REQUESTED",
+            "RESERVED",
+            "INITIATING",
+            "AVAILABLE",
+            "FAILED",
+            "DELETING"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "title": "Azure",
+      "type": "object"
+    }
+  }
+}

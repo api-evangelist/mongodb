@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-performance-advisor-slow-query-list-schema.json",
+  "title": "PerformanceAdvisorSlowQueryList",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-performance-advisor-api-openapi.yml#/components/schemas/PerformanceAdvisorSlowQueryList",
+  "properties": {
+    "slowQueries": {
+      "description": "List of operations that the Performance Advisor detected that took longer to execute than a specified threshold.",
+      "items": {
+        "$ref": "#/$defs/PerformanceAdvisorSlowQuery"
+      },
+      "readOnly": true,
+      "type": "array"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "PerformanceAdvisorSlowQuery": {
+      "description": "Details of one slow query that the Performance Advisor detected.",
+      "properties": {
+        "line": {
+          "description": "Text of the MongoDB log related to this slow query.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "metrics": {
+          "$ref": "#/$defs/PerformanceAdvisorSlowQueryMetrics"
+        },
+        "namespace": {
+          "description": "Human-readable label that identifies the namespace on the specified host. The resource expresses this parameter value as `<database>.<collection>`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "opType": {
+          "description": "Operation type (read/write/command) associated with this slow query log.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "replicaState": {
+          "description": "Replica state associated with this slow query log.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    },
+    "PerformanceAdvisorSlowQueryMetrics": {
+      "description": "Metrics from a slow query log.",
+      "properties": {
+        "docsExamined": {
+          "description": "The number of documents in the collection that MongoDB scanned in order to carry out the operation.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "docsExaminedReturnedRatio": {
+          "description": "Ratio of documents examined to documents returned.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "docsReturned": {
+          "description": "The number of documents returned by the operation.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "fromUserConnection": {
+          "description": "This boolean will be true when the server can identify the query source as non-server. This field is only available for MDB 8.0+.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "hasIndexCoverage": {
+          "description": "Indicates if the query has index coverage.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "hasSort": {
+          "description": "This boolean will be true when a query cannot use the ordering in the index to return the requested sorted results; i.e. MongoDB must sort the documents after it receives the documents from a cursor.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "keysExamined": {
+          "description": "The number of index keys that MongoDB scanned in order to carry out the operation.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "keysExaminedReturnedRatio": {
+          "description": "Ratio of keys examined to documents returned.",
+          "format": "double",
+          "readOnly": true,
+          "type": "number"
+        },
+        "numYields": {
+          "description": "The number of times the operation yielded to allow other operations to complete.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "operationExecutionTime": {
+          "description": "Total execution time of a query in milliseconds.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "responseLength": {
+          "description": "The length in bytes of the operation's result document.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    }
+  }
+}

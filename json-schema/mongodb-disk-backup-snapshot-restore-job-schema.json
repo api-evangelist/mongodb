@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-disk-backup-snapshot-restore-job-schema.json",
+  "title": "DiskBackupSnapshotRestoreJob",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-cloud-backups-api-openapi.yml#/components/schemas/DiskBackupSnapshotRestoreJob",
+  "properties": {
+    "cancelled": {
+      "description": "Flag that indicates whether someone canceled this restore job.",
+      "readOnly": true,
+      "type": "boolean"
+    },
+    "components": {
+      "description": "Information on the restore job for each replica set in the sharded cluster.",
+      "items": {
+        "$ref": "#/$defs/DiskBackupRestoreMember"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "deliveryType": {
+      "description": "Human-readable label that categorizes the restore job to create.",
+      "enum": [
+        "automated",
+        "download",
+        "pointInTime"
+      ],
+      "type": "string"
+    },
+    "deliveryUrl": {
+      "description": "One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download. MongoDB Cloud returns this parameter when `\"deliveryType\" : \"download\"`.",
+      "items": {
+        "description": "One Uniform Resource Locator that points to the compressed snapshot files for manual download.",
+        "type": "string"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "desiredTimestamp": {
+      "$ref": "#/$defs/ApiBSONTimestampView"
+    },
+    "expired": {
+      "description": "Flag that indicates whether the restore job expired.",
+      "readOnly": true,
+      "type": "boolean"
+    },
+    "expiresAt": {
+      "description": "Date and time when the restore job expires. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "failed": {
+      "description": "Flag that indicates whether the restore job failed.",
+      "readOnly": true,
+      "type": "boolean"
+    },
+    "finishedAt": {
+      "description": "Date and time when the restore job completed. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique 24-hexadecimal character string that identifies the restore job.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "oplogInc": {
+      "description": "Oplog operation number from which you want to restore this snapshot. This number represents the second part of an Oplog timestamp. The resource returns this parameter when `\"deliveryType\" : \"pointInTime\"` and `oplogTs` exceeds `0`.",
+      "format": "int32",
+      "minimum": 1,
+      "type": "integer"
+    },
+    "oplogTs": {
+      "description": "Date and time from which you want to restore this snapshot. This parameter expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch. This number represents the first part of an Oplog timestamp. The resource returns this parameter when `\"deliveryType\" : \"pointInTime\"` and `oplogTs` exceeds `0`.",
+      "format": "int32",
+      "minimum": 1199145600,
+      "type": "integer"
+    },
+    "pointInTimeUTCSeconds": {
+      "description": "Date and time from which MongoDB Cloud restored this snapshot. This parameter expresses this timestamp in the number of seconds that have elapsed since the UNIX epoch. The resource returns this parameter when `\"deliveryType\" : \"pointInTime\"` and `pointInTimeUTCSeconds` exceeds `0`.",
+      "format": "int32",
+      "minimum": 1199145600,
+      "type": "integer"
+    },
+    "privateDownloadDeliveryUrls": {
+      "description": "One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download and the corresponding private endpoint(s). MongoDB Cloud returns this parameter when `\"deliveryType\" : \"download\"` and the download can be performed privately.",
+      "items": {
+        "$ref": "#/$defs/ApiPrivateDownloadDeliveryUrl"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "snapshotId": {
+      "description": "Unique 24-hexadecimal character string that identifies the snapshot.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "targetClusterName": {
+      "description": "Human-readable label that identifies the target cluster to which the restore job restores the snapshot. The resource returns this parameter when `\"deliveryType\":` `\"automated\"`. Required for `automated` and `pointInTime` restore types.",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+      "type": "string"
+    },
+    "targetGroupId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the target project for the specified `targetClusterName`. Required for `automated` and `pointInTime` restore types.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "timestamp": {
+      "description": "Date and time when MongoDB Cloud took the snapshot associated with `snapshotId`. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "deliveryType"
+  ],
+  "type": "object",
+  "$defs": {
+    "ApiBSONTimestampView": {
+      "description": "BSON timestamp that indicates when the checkpoint token entry in the oplog occurred.",
+      "properties": {
+        "date": {
+          "description": "Date and time when the oplog recorded this database operation. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "increment": {
+          "description": "Order of the database operation that the oplog recorded at specific date and time.",
+          "format": "int32",
+          "minimum": 1199145600,
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "readOnly": true,
+      "title": "BSON Timestamp",
+      "type": "object"
+    },
+    "ApiPrivateDownloadDeliveryUrl": {
+      "description": "One Uniform Resource Locator (URL) that points to the compressed snapshot files for manual download and the corresponding private endpoint.",
+      "properties": {
+        "deliveryUrl": {
+          "description": "One Uniform Resource Locator that points to the compressed snapshot files for manual download.",
+          "type": "string"
+        },
+        "endpointId": {
+          "description": "Unique 22-character alphanumeric string that identifies the private endpoint.",
+          "pattern": "^vpce-[0-9a-f]{17}$",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DiskBackupRestoreMember": {
+      "properties": {
+        "downloadUrl": {
+          "description": "One Uniform Resource Locator that points to the compressed snapshot files for manual download. MongoDB Cloud returns this parameter when `\"deliveryType\" : \"download\"`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "privateDownloadDeliveryUrls": {
+          "description": "One or more Uniform Resource Locators (URLs) that point to the compressed snapshot files for manual download and the corresponding private endpoint(s). MongoDB Cloud returns this parameter when `\"deliveryType\" : \"download\"` and the download can be performed privately.",
+          "items": {
+            "$ref": "#/$defs/ApiPrivateDownloadDeliveryUrl"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "replicaSetName": {
+          "description": "Human-readable label that identifies the replica set on the sharded cluster.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

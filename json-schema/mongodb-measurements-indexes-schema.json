@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-measurements-indexes-schema.json",
+  "title": "MeasurementsIndexes",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-monitoring-and-logs-api-openapi.yml#/components/schemas/MeasurementsIndexes",
+  "properties": {
+    "collectionName": {
+      "description": "Human-readable label that identifies the collection.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "databaseName": {
+      "description": "Human-readable label that identifies the database that the specified MongoDB process serves.",
+      "readOnly": true,
+      "type": "string"
+    },
+    "end": {
+      "description": "Date and time that specifies when to stop retrieving measurements. If you set **end**, you must set **start**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "granularity": {
+      "description": "Duration that specifies the interval between measurement data points. The parameter expresses its value in ISO 8601 timestamp format in UTC. If you set this parameter, you must set either **period** or **start** and **end**.",
+      "enum": [
+        "PT1M",
+        "PT5M",
+        "PT1H",
+        "P1D"
+      ],
+      "readOnly": true,
+      "type": "string"
+    },
+    "groupId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the project. The project contains MongoDB processes that you want to return. The MongoDB process can be either the `mongod` or `mongos`.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "indexIds": {
+      "description": "List that contains the Atlas Search index identifiers.",
+      "items": {
+        "description": "Unique 24-hexadecimal digit string that identifies the index.",
+        "type": "string"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "indexStatsMeasurements": {
+      "description": "List that contains the Atlas Search index stats measurements.",
+      "items": {
+        "$ref": "#/$defs/MetricsMeasurement"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "links": {
+      "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "processId": {
+      "description": "Combination of hostname and Internet Assigned Numbers Authority (IANA) port that serves the MongoDB process. The host must be the hostname, fully qualified domain name (FQDN), or Internet Protocol address (IPv4 or IPv6) of the host that runs the MongoDB process (`mongod` or `mongos`). The port must be the IANA port on which the MongoDB process listens for requests.",
+      "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}|([0-9a-f]{1,4}\\:){7}([0-9a-f]{1,4})|(([a-z0-9]+\\.){1,10}[a-z]+)?(\\:[0-9]{4,5})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "start": {
+      "description": "Date and time that specifies when to start retrieving measurements. If you set **start**, you must set **end**. You can't set this parameter and **period** in the same request. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "MetricDataPoint": {
+      "description": "Value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.",
+      "properties": {
+        "timestamp": {
+          "description": "Date and time when this data point occurred. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "value": {
+          "description": "Value that comprises this data point.",
+          "readOnly": true,
+          "type": "number"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    },
+    "MetricsMeasurement": {
+      "properties": {
+        "dataPoints": {
+          "description": "List that contains the value of, and metadata provided for, one data point generated at a particular moment in time. If no data point exists for a particular moment in time, the `value` parameter returns `null`.",
+          "items": {
+            "$ref": "#/$defs/MetricDataPoint"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "name": {
+          "description": "Human-readable label of the measurement that this data point covers.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "units": {
+          "description": "Element used to quantify the measurement. The resource returns units of throughput, storage, and time.",
+          "enum": [
+            "BYTES",
+            "BYTES_PER_SECOND",
+            "GIGABYTES",
+            "GIGABYTES_PER_HOUR",
+            "MEGABYTES_PER_SECOND",
+            "MICROSECONDS",
+            "MILLISECONDS",
+            "PERCENT",
+            "SCALAR",
+            "SCALAR_PER_SECOND"
+          ],
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

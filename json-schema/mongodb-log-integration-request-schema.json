@@ -1,0 +1,412 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-log-integration-request-schema.json",
+  "title": "Log Export Integration Request",
+  "description": "Request schema for creating or updating a log integration.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-push-based-log-export-api-openapi.yml#/components/schemas/LogIntegrationRequest",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/S3LogIntegrationRequest"
+    },
+    {
+      "$ref": "#/$defs/DatadogLogIntegrationRequest"
+    },
+    {
+      "$ref": "#/$defs/GcsLogIntegrationRequest"
+    },
+    {
+      "$ref": "#/$defs/OtelLogIntegrationRequest"
+    },
+    {
+      "$ref": "#/$defs/SplunkLogIntegrationRequest"
+    },
+    {
+      "$ref": "#/$defs/AzureLogIntegrationRequest"
+    }
+  ],
+  "properties": {
+    "logTypes": {
+      "description": "Array of log types exported by this integration.",
+      "items": {
+        "enum": [
+          "MONGOD",
+          "MONGOS",
+          "MONGOD_AUDIT",
+          "MONGOS_AUDIT"
+        ],
+        "type": "string"
+      },
+      "maxItems": 10,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "type": {
+      "description": "Type of log integration. Identifies which service will receive the exported logs. This value cannot be modified after the integration is created.",
+      "enum": [
+        "S3_LOG_EXPORT",
+        "DATADOG_LOG_EXPORT",
+        "GCS_LOG_EXPORT",
+        "OTEL_LOG_EXPORT",
+        "SPLUNK_LOG_EXPORT",
+        "AZURE_LOG_EXPORT"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "logTypes",
+    "type"
+  ],
+  "type": "object",
+  "$defs": {
+    "AzureLogIntegrationRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/LogIntegrationRequest"
+        },
+        {
+          "properties": {
+            "prefixPath": {
+              "description": "Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.",
+              "type": "string"
+            },
+            "roleId": {
+              "description": "Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "type": "string"
+            },
+            "storageAccountName": {
+              "description": "Storage account name where logs will be stored.",
+              "type": "string"
+            },
+            "storageContainerName": {
+              "description": "Storage container name for log files.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.",
+              "enum": [
+                "AZURE_LOG_EXPORT"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Request schema for creating or updating an Azure Blob Storage log export integration.",
+      "required": [
+        "logTypes",
+        "prefixPath",
+        "roleId",
+        "storageAccountName",
+        "storageContainerName",
+        "type"
+      ],
+      "title": "Azure Log Export Integration Request",
+      "type": "object"
+    },
+    "DatadogLogIntegrationRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/LogIntegrationRequest"
+        },
+        {
+          "properties": {
+            "apiKey": {
+              "description": "API key for authentication.",
+              "format": "password",
+              "type": "string"
+            },
+            "region": {
+              "description": "Datadog site/region for log ingestion. Valid values: US1, US3, US5, EU, AP1, AP2, US1_FED.",
+              "enum": [
+                "US1",
+                "US3",
+                "US5",
+                "EU",
+                "AP1",
+                "AP2",
+                "US1_FED"
+              ],
+              "type": "string"
+            },
+            "type": {
+              "description": "Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.",
+              "enum": [
+                "DATADOG_LOG_EXPORT"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Request schema for creating or updating a Datadog log export integration.",
+      "required": [
+        "apiKey",
+        "logTypes",
+        "region",
+        "type"
+      ],
+      "title": "Datadog Log Export Integration Request",
+      "type": "object"
+    },
+    "GcsLogIntegrationRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/LogIntegrationRequest"
+        },
+        {
+          "properties": {
+            "bucketName": {
+              "description": "Name of the bucket to store log files.",
+              "type": "string"
+            },
+            "prefixPath": {
+              "description": "Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.",
+              "type": "string"
+            },
+            "roleId": {
+              "description": "Unique 24-character hexadecimal string that identifies the Atlas Cloud Provider Access role.",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "type": "string"
+            },
+            "type": {
+              "description": "Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.",
+              "enum": [
+                "GCS_LOG_EXPORT"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Request schema for creating or updating a Google Cloud Storage log export integration.",
+      "required": [
+        "bucketName",
+        "logTypes",
+        "prefixPath",
+        "roleId",
+        "type"
+      ],
+      "title": "GCS Log Export Integration Request",
+      "type": "object"
+    },
+    "Header": {
+      "description": "HTTP header with name and value.",
+      "properties": {
+        "name": {
+          "description": "Header name.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Header value.",
+          "format": "password",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "LogIntegrationRequest": {
+      "description": "Request schema for creating or updating a log integration.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/S3LogIntegrationRequest"
+        },
+        {
+          "$ref": "#/$defs/DatadogLogIntegrationRequest"
+        },
+        {
+          "$ref": "#/$defs/GcsLogIntegrationRequest"
+        },
+        {
+          "$ref": "#/$defs/OtelLogIntegrationRequest"
+        },
+        {
+          "$ref": "#/$defs/SplunkLogIntegrationRequest"
+        },
+        {
+          "$ref": "#/$defs/AzureLogIntegrationRequest"
+        }
+      ],
+      "properties": {
+        "logTypes": {
+          "description": "Array of log types exported by this integration.",
+          "items": {
+            "enum": [
+              "MONGOD",
+              "MONGOS",
+              "MONGOD_AUDIT",
+              "MONGOS_AUDIT"
+            ],
+            "type": "string"
+          },
+          "maxItems": 10,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "type": {
+          "description": "Type of log integration. Identifies which service will receive the exported logs. This value cannot be modified after the integration is created.",
+          "enum": [
+            "S3_LOG_EXPORT",
+            "DATADOG_LOG_EXPORT",
+            "GCS_LOG_EXPORT",
+            "OTEL_LOG_EXPORT",
+            "SPLUNK_LOG_EXPORT",
+            "AZURE_LOG_EXPORT"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "logTypes",
+        "type"
+      ],
+      "title": "Log Export Integration Request",
+      "type": "object"
+    },
+    "OtelLogIntegrationRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/LogIntegrationRequest"
+        },
+        {
+          "properties": {
+            "otelEndpoint": {
+              "description": "OpenTelemetry collector endpoint URL. Must be HTTPS and not exceed 2048 characters.",
+              "type": "string"
+            },
+            "otelSuppliedHeaders": {
+              "description": "HTTP headers for authentication and configuration. Maximum 10 headers, total size limit 2KB.",
+              "items": {
+                "$ref": "#/$defs/Header"
+              },
+              "maxItems": 10,
+              "minItems": 1,
+              "type": "array"
+            },
+            "type": {
+              "description": "Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.",
+              "enum": [
+                "OTEL_LOG_EXPORT"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Request schema for creating or updating an OpenTelemetry log export integration.",
+      "required": [
+        "logTypes",
+        "otelEndpoint",
+        "otelSuppliedHeaders",
+        "type"
+      ],
+      "title": "OTel Log Export Integration Request",
+      "type": "object"
+    },
+    "S3LogIntegrationRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/LogIntegrationRequest"
+        },
+        {
+          "properties": {
+            "bucketName": {
+              "description": "Name of the bucket to store log files.",
+              "type": "string"
+            },
+            "iamRoleId": {
+              "description": "Unique 24-character hexadecimal string that identifies the AWS IAM role that Atlas uses to access the S3 bucket.",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "type": "string"
+            },
+            "kmsKey": {
+              "description": "AWS KMS key ID or ARN for server-side encryption (optional). If not provided, uses bucket default encryption settings.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "prefixPath": {
+              "description": "Path prefix where the log files will be stored. Atlas will add further sub-directories based on the log type.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.",
+              "enum": [
+                "S3_LOG_EXPORT"
+              ],
+              "type": "string"
+            },
+            "useLegacyPathStructure": {
+              "description": "When true, uses the legacy daily-folder path structure compatible with Push-Based Log Export: `{prefix}/{cluster}/{hostname}/{logType}/{YYYY-MM-DD}/{timestamp}-{logType}.log`. When false (default), uses the flat timestamped structure: `{prefix}/{cluster}/{hostname}/{logType}/{timestamp}-{logType}.log`.",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Request schema for creating or updating an S3 log export integration.",
+      "required": [
+        "bucketName",
+        "iamRoleId",
+        "logTypes",
+        "prefixPath",
+        "type"
+      ],
+      "title": "S3 Log Export Integration Request",
+      "type": "object"
+    },
+    "SplunkLogIntegrationRequest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/LogIntegrationRequest"
+        },
+        {
+          "properties": {
+            "hecToken": {
+              "description": "HTTP Event Collector (HEC) token for authentication.",
+              "format": "password",
+              "type": "string"
+            },
+            "hecUrl": {
+              "description": "HTTP Event Collector (HEC) endpoint URL.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Human-readable label that identifies the service to which you want to integrate with Atlas. The value must match the log integration type. This value cannot be modified after the integration is created.",
+              "enum": [
+                "SPLUNK_LOG_EXPORT"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Request schema for creating or updating a Splunk log export integration.",
+      "required": [
+        "hecToken",
+        "hecUrl",
+        "logTypes",
+        "type"
+      ],
+      "title": "Splunk Log Export Integration Request",
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-create-organization-request-schema.json",
+  "title": "CreateOrganizationRequest",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-organizations-api-openapi.yml#/components/schemas/CreateOrganizationRequest",
+  "properties": {
+    "apiKey": {
+      "$ref": "#/$defs/CreateAtlasOrganizationApiKey"
+    },
+    "federationSettingsId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the federation to link the newly created organization to. If specified, the proposed Organization Owner of the new organization must have the Organization Owner role in an organization associated with the federation.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "name": {
+      "description": "Human-readable label that identifies the organization.",
+      "pattern": "^[\\p{L}\\p{N}\\-_.(),:&@+']{1,64}$",
+      "type": "string"
+    },
+    "orgOwnerId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud user that you want to assign the Organization Owner role. This user must be a member of the same organization as the calling API key. If you provide `federationSettingsId`,  this user must instead have the Organization Owner role on an organization in the specified federation. This parameter is required only when you authenticate with Programmatic API Keys.",
+      "pattern": "^([a-f0-9]{24})$",
+      "type": "string"
+    },
+    "serviceAccount": {
+      "$ref": "#/$defs/OrgServiceAccountRequest"
+    },
+    "skipDefaultAlertsSettings": {
+      "default": false,
+      "description": "Disables automatic alert creation. When set to true, no organization level alerts will be created automatically.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "type": "object",
+  "$defs": {
+    "CreateAtlasOrganizationApiKey": {
+      "description": "Organization Service Account that Atlas creates for this organization. If omitted, Atlas doesn't create an organization Service Account for this organization. If specified, this object requires all body parameters. Note that API Keys cannot be specified in the same request.",
+      "properties": {
+        "desc": {
+          "description": "Purpose or explanation provided when someone created this organization API key.",
+          "maxLength": 250,
+          "minLength": 1,
+          "type": "string"
+        },
+        "roles": {
+          "description": "List of roles to grant this API key. If you provide this list, provide a minimum of one role and ensure each role applies to this organization.",
+          "items": {
+            "enum": [
+              "ORG_OWNER",
+              "ORG_MEMBER",
+              "ORG_GROUP_CREATOR",
+              "ORG_BILLING_ADMIN",
+              "ORG_BILLING_READ_ONLY",
+              "ORG_STREAM_PROCESSING_ADMIN",
+              "ORG_READ_ONLY"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "desc",
+        "roles"
+      ],
+      "type": "object"
+    },
+    "OrgServiceAccountRequest": {
+      "description": "Organization Service Account that Atlas creates for this organization. If omitted, Atlas doesn't create an organization Service Account for this organization. If specified, this object requires all body parameters. Note that API Keys cannot be specified in the same request.",
+      "properties": {
+        "description": {
+          "description": "Human readable description for the Service Account.",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}\\-_.,' ]*$",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable name for the Service Account. The name is modifiable and does not have to be unique.",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}\\-_.,' ]*$",
+          "type": "string"
+        },
+        "roles": {
+          "description": "A list of organization-level roles for the Service Account.",
+          "items": {
+            "description": "Organization roles available for Service Accounts.",
+            "enum": [
+              "ORG_MEMBER",
+              "ORG_READ_ONLY",
+              "ORG_BILLING_ADMIN",
+              "ORG_BILLING_READ_ONLY",
+              "ORG_STREAM_PROCESSING_ADMIN",
+              "ORG_GROUP_CREATOR",
+              "ORG_OWNER"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "secretExpiresAfterHours": {
+          "description": "The expiration time of the new Service Account secret, provided in hours. The minimum and maximum allowed expiration times are subject to change and are controlled by the organization's settings.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "description",
+        "name",
+        "roles",
+        "secretExpiresAfterHours"
+      ],
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-create-organization-response-schema.json",
+  "title": "CreateOrganizationResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-organizations-api-openapi.yml#/components/schemas/CreateOrganizationResponse",
+  "properties": {
+    "apiKey": {
+      "$ref": "#/$defs/ApiKeyUserDetails"
+    },
+    "federationSettingsId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the federation that you linked the newly created organization to.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "orgOwnerId": {
+      "description": "Unique 24-hexadecimal digit string that identifies the MongoDB Cloud user that you assigned the Organization Owner role in the new organization.",
+      "pattern": "^([a-f0-9]{24})$",
+      "readOnly": true,
+      "type": "string"
+    },
+    "organization": {
+      "$ref": "#/$defs/AtlasOrganization"
+    },
+    "serviceAccount": {
+      "$ref": "#/$defs/OrgServiceAccount"
+    },
+    "skipDefaultAlertsSettings": {
+      "default": false,
+      "description": "Disables automatic alert creation. When set to true, no organization level alerts will be created automatically.",
+      "type": "boolean"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "ApiKeyUserDetails": {
+      "description": "Details of the Programmatic API Keys.",
+      "properties": {
+        "desc": {
+          "description": "Purpose or explanation provided when someone created this organization API key.",
+          "maxLength": 250,
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies this organization API key assigned to this project.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "privateKey": {
+          "description": "Redacted private key returned for this organization API key. This key displays unredacted when first created.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "publicKey": {
+          "description": "Public API key value set for the specified organization API key.",
+          "maxLength": 8,
+          "minLength": 8,
+          "readOnly": true,
+          "type": "string"
+        },
+        "roles": {
+          "description": "List that contains the roles that the API key needs to have. All roles you provide must be valid for the specified project or organization. Each request must include a minimum of one valid role. The resource returns all project and organization roles assigned to the API key.",
+          "items": {
+            "$ref": "#/$defs/CloudAccessRoleAssignment"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "AtlasOrganization": {
+      "description": "Details that describe the organization.",
+      "properties": {
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the organization.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "isDeleted": {
+          "description": "Flag that indicates whether this organization has been deleted.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "links": {
+          "description": "List of one or more Uniform Resource Locators (URLs) that point to API sub-resources, related API resources, or both. RFC 5988 outlines these relationships.",
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "name": {
+          "description": "Human-readable label that identifies the organization.",
+          "pattern": "^[\\p{L}\\p{N}\\-_.(),:&@+']{1,64}$",
+          "type": "string"
+        },
+        "skipDefaultAlertsSettings": {
+          "default": false,
+          "description": "Disables automatic alert creation. When set to true, no organization level alerts will be created automatically.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "CloudAccessRoleAssignment": {
+      "description": "MongoDB Cloud user's roles and the corresponding organization or project to which that role applies. Each role can apply to one organization or one project but not both.",
+      "properties": {
+        "groupId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the project to which this role belongs. You can set a value for this parameter or `orgId` but not both in the same request.",
+          "maxLength": 24,
+          "minLength": 24,
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "orgId": {
+          "description": "Unique 24-hexadecimal digit string that identifies the organization to which this role belongs. You can set a value for this parameter or `groupId` but not both in the same request.",
+          "maxLength": 24,
+          "minLength": 24,
+          "pattern": "^([a-f0-9]{24})$",
+          "type": "string"
+        },
+        "roleName": {
+          "description": "Human-readable label that identifies the collection of privileges that MongoDB Cloud grants a specific API key, MongoDB Cloud user, or MongoDB Cloud team. These roles include organization- and project-level roles.",
+          "type": "string"
+        }
+      },
+      "title": "Role Assignment",
+      "type": "object"
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "description": "Uniform Resource Locator (URL) that points another API resource to which this response has some relationship. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        },
+        "rel": {
+          "description": "Uniform Resource Locator (URL) that defines the semantic relationship between this resource and another API resource. This URL often begins with `https://cloud.mongodb.com/api/atlas`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "OrgServiceAccount": {
+      "description": "Organization Service Account that Atlas created for the organization.",
+      "properties": {
+        "clientId": {
+          "description": "The Client ID of the Service Account.",
+          "pattern": "^mdb_sa_id_[a-fA-F\\d]{24}$",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "The date that the Service Account was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "description": {
+          "description": "Human readable description for the Service Account.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable name for the Service Account.",
+          "type": "string"
+        },
+        "roles": {
+          "description": "A list of Organization roles associated with the Service Account.",
+          "items": {
+            "description": "Organization roles available for Service Accounts.",
+            "enum": [
+              "ORG_MEMBER",
+              "ORG_READ_ONLY",
+              "ORG_BILLING_ADMIN",
+              "ORG_BILLING_READ_ONLY",
+              "ORG_STREAM_PROCESSING_ADMIN",
+              "ORG_GROUP_CREATOR",
+              "ORG_OWNER"
+            ],
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "secrets": {
+          "description": "A list of secrets associated with the specified Service Account.",
+          "items": {
+            "$ref": "#/$defs/ServiceAccountSecret"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    },
+    "ServiceAccountSecret": {
+      "properties": {
+        "createdAt": {
+          "description": "The date that the secret was created on. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "expiresAt": {
+          "description": "The date for the expiration of the secret. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique 24-hexadecimal digit string that identifies the secret.",
+          "pattern": "^([a-f0-9]{24})$",
+          "readOnly": true,
+          "type": "string"
+        },
+        "lastUsedAt": {
+          "description": "The last time the secret was used. This parameter expresses its value in the ISO 8601 timestamp format in UTC.",
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "maskedSecretValue": {
+          "description": "The masked Service Account secret.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "secret": {
+          "description": "The secret for the Service Account. It will be returned only the first time after creation.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "createdAt",
+        "expiresAt",
+        "id"
+      ],
+      "type": "object"
+    }
+  }
+}

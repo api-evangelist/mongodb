@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-rate-limit-endpoint-set-response-schema.json",
+  "title": "RateLimitEndpointSetResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-rate-limiting-api-openapi.yml#/components/schemas/RateLimitEndpointSetResponse",
+  "properties": {
+    "capacity": {
+      "$ref": "#/$defs/RateLimitEndpointSetCapacity"
+    },
+    "endpointSetId": {
+      "description": "The ID of the endpoint set.",
+      "type": "string"
+    },
+    "endpointSetName": {
+      "description": "The endpoint set name.",
+      "type": "string"
+    },
+    "endpoints": {
+      "description": "A list of endpoints associated with the specified endpoint set.",
+      "items": {
+        "$ref": "#/$defs/RateLimitEndpointSetEndpoint"
+      },
+      "maxItems": 100,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "refillDurationSeconds": {
+      "$ref": "#/$defs/RateLimitEndpointSetRefillDurationSeconds"
+    },
+    "refillRate": {
+      "$ref": "#/$defs/RateLimitEndpointSetRefillRate"
+    },
+    "scope": {
+      "description": "The scope of the endpoint set.",
+      "enum": [
+        "IP",
+        "GROUP",
+        "ORGANIZATION",
+        "USER"
+      ],
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "RateLimitEndpointSetCapacity": {
+      "description": "The rate limit capacity for the endpoint set.",
+      "properties": {
+        "defaultValue": {
+          "description": "The default request capacity of the endpoint set. Returned if there is a capacity override set for the requested entity.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "value": {
+          "description": "The applied request capacity of the endpoint set.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "RateLimitEndpointSetEndpoint": {
+      "properties": {
+        "method": {
+          "description": "The HTTP method of the endpoint.",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH"
+          ],
+          "type": "string"
+        },
+        "path": {
+          "description": "The URL path of the endpoint.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "RateLimitEndpointSetRefillDurationSeconds": {
+      "description": "The rate limit refill duration for the endpoint set.",
+      "properties": {
+        "defaultValue": {
+          "description": "The default rate limit refill duration, in seconds, of the endpoint set. Returned if there is a rate limit refill duration override set for the requested entity.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "value": {
+          "description": "The applied rate limit refill duration of the endpoint set.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "RateLimitEndpointSetRefillRate": {
+      "description": "The rate limit refill rate for the endpoint set.",
+      "properties": {
+        "defaultValue": {
+          "description": "The default rate limit refill rate of the endpoint set. Returned if there is a rate limit refill rate override set for the requested entity.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "value": {
+          "description": "The applied rate limit refill rate of the endpoint set.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

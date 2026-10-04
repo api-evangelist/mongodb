@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/mongodb/main/json-schema/mongodb-cost-explorer-filter-request-body-schema.json",
+  "title": "CostExplorerFilterRequestBody",
+  "description": "Request body for a cost explorer query.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/mongodb-invoices-api-openapi.yml#/components/schemas/CostExplorerFilterRequestBody",
+  "properties": {
+    "clusters": {
+      "description": "The list of clusters to be included in the Cost Explorer Query.",
+      "items": {
+        "pattern": "^([a-f0-9]{24})$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "endDate": {
+      "description": "The exclusive ending date for the Cost Explorer query. The date must be the start of a month.",
+      "format": "date",
+      "type": "string"
+    },
+    "groupBy": {
+      "description": "The dimension to group the returned usage results by. At least one filter value needs to be provided for a dimension to be used.",
+      "enum": [
+        "organizations",
+        "projects",
+        "clusters",
+        "services"
+      ],
+      "type": "string"
+    },
+    "includePartialMatches": {
+      "description": "Flag to control whether usage that matches the filter criteria, but does not have values for all filter criteria is included in response. Default is false, which excludes the partially matching data.",
+      "type": "boolean"
+    },
+    "organizations": {
+      "description": "The list of organizations to be included in the Cost Explorer Query.",
+      "items": {
+        "pattern": "^([a-f0-9]{24})$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "projects": {
+      "description": "The list of projects to be included in the Cost Explorer Query.",
+      "items": {
+        "pattern": "^([a-f0-9]{24})$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "services": {
+      "description": "The list of SKU services to be included in the Cost Explorer Query.",
+      "items": {
+        "enum": [
+          "Atlas",
+          "Clusters",
+          "Storage",
+          "Serverless Instances",
+          "Backup",
+          "Data Transfer",
+          "BI Connector",
+          "DSC Compute",
+          "DSC Storage",
+          "Premium Features",
+          "Atlas Data Federation",
+          "Atlas Stream Processing",
+          "App Services",
+          "Charts",
+          "Cloud Manager",
+          "Cloud Manager Standard/Premium",
+          "Legacy Backup",
+          "AI Models",
+          "Automated Embedding",
+          "Native Reranking",
+          "Flex Consulting",
+          "Support",
+          "Credits"
+        ],
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "startDate": {
+      "description": "The inclusive starting date for the Cost Explorer query. The date must be the start of a month.",
+      "format": "date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "endDate",
+    "startDate"
+  ],
+  "type": "object"
+}
