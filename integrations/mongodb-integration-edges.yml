@@ -644,6 +644,59 @@ edges:
     detected: '2026-10-22'
   detected_by: sweep-vulnerability-disclosure-cna.py
   first_seen: '2026-10-22'
+- partner_name: Red Hat Ecosystem Catalog (certified partners)
+  partner: red-hat
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://catalog.redhat.com/software/containers/search?p=1&vendor_name=MongoDB
+  category: Red Hat OpenShift / RHEL software certification
+  contract_reference:
+    register: 'Red Hat Ecosystem Catalog (catalog.redhat.com/api/containers/v1: repositories, vendors, certified
+      operator bundles)'
+    standard: Red Hat Container Certification (Red Hat Ecosystem Catalog, registry.connect.redhat.com)
+    spec_file: null
+    role: red-hat-certified-partner
+    registered_name: MongoDB
+    register_id: mongodb
+    matched_domain: mongodb.com
+    matched_by: domain+name-among-holders
+    identity_source: the register's own company_url for the vendor (no lookup)
+    certified_products:
+    - product: Red Hat certified container image
+      product_type: container-image
+      standard: Red Hat Container Certification (Red Hat Ecosystem Catalog, registry.connect.redhat.com)
+      lapsed: false
+      repositories_listed: 24
+      products_sample:
+      - mongodb/enterprise-database
+      - mongodb/enterprise-operator
+      - mongodb/enterprise-operator-bundle
+      - mongodb/init-appdb
+      - mongodb/mongodb-agent
+      - mongodb/mongodb-agent-ubi
+    - product: Red Hat certified OpenShift operator
+      product_type: openshift-operator
+      standard: Red Hat OpenShift Operator Certification (certified-operator-index)
+      lapsed: false
+      operator_packages: 3
+      products_sample:
+      - mongodb-atlas-kubernetes
+      - mongodb-kubernetes
+      ocp_versions:
+      - '4.23'
+      - '5.0'
+      - '5.1'
+    signal_note: 'certified_products = one entry per certified product TYPE (container image, OpenShift operator),
+      standard named on each; lapsed: true when no certified item of that type is current (containers: all Deprecated
+      / past EOL / unpublished; operators: absent from the three newest certified-operator indexes); repository
+      and package counts are context, never counted'
+    detected_by: sweep-red-hat-certified-ecosystem.py
+    detected: '2026-10-22'
+  detected_by: sweep-red-hat-certified-ecosystem.py
+  first_seen: '2026-10-22'
 method: searched
 checked:
 - datadog/integrations/datadog-integration-edges.yml
@@ -698,5 +751,9 @@ checked:
 - https://api.first.org/data/v1/teams
 - https://raw.githubusercontent.com/CVEProject/cve-website/dev/src/assets/data/CNAsList.json
 - https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+- https://catalog.redhat.com/api/containers/v1/operators/bundles?filter=organization==certified-operators
+- https://catalog.redhat.com/api/containers/v1/repositories?page_size=100
+- https://catalog.redhat.com/api/containers/v1/vendors/label/
+- https://catalog.redhat.com/software/partners
 source: https://hightouch.com/docs/destinations/mongodb
 marketplace_apps: []
